@@ -12,15 +12,6 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-exam-builder',
   standalone: true,
   imports: [TranslatePipe],
-  template: `
-    <div class="space-y-6 p-6">
-      <h1 class="text-2xl font-bold text-foreground">
-        {{ 'nav.exams' | translate }}
-      </h1>
-      <p class="text-muted-foreground">
-        Exam Builder — AI-powered question creation coming soon.
-      </p>
-    </div>
-  `,
+  templateUrl: './exam-builder.component.html',
 })
 export class ExamBuilderComponent {}

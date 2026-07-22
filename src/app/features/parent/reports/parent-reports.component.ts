@@ -12,15 +12,6 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-parent-reports',
   standalone: true,
   imports: [TranslatePipe],
-  template: `
-    <div class="space-y-6 p-6">
-      <h1 class="text-2xl font-bold text-foreground">
-        {{ 'nav.reports' | translate }}
-      </h1>
-      <p class="text-muted-foreground">
-        Parent reports — AI-generated progress reports coming soon.
-      </p>
-    </div>
-  `,
+  templateUrl: './parent-reports.component.html',
 })
 export class ParentReportsComponent {}

@@ -11,16 +11,6 @@ import { NavComponent } from '../nav/nav.component';
   selector: 'app-shell',
   standalone: true,
   imports: [RouterOutlet, NavComponent],
-  template: `
-    <div class="flex min-h-screen bg-background">
-      <!-- Sidebar navigation — RTL-aware, uses logical properties -->
-      <app-nav class="w-64 shrink-0" />
-
-      <!-- Main content area -->
-      <main class="flex-1 overflow-auto p-6">
-        <router-outlet />
-      </main>
-    </div>
-  `,
+  templateUrl: './shell.component.html',
 })
 export class ShellComponent {}

@@ -11,15 +11,6 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-student-dashboard',
   standalone: true,
   imports: [TranslatePipe],
-  template: `
-    <div class="space-y-6 p-6">
-      <h1 class="text-2xl font-bold text-foreground">
-        {{ 'nav.dashboard' | translate }}
-      </h1>
-      <p class="text-muted-foreground">
-        Student dashboard — upcoming exams and results coming soon.
-      </p>
-    </div>
-  `,
+  templateUrl: './student-dashboard.component.html',
 })
 export class StudentDashboardComponent {}
