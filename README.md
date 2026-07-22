@@ -2,6 +2,11 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.32.
 
+## UI/UX Design
+
+The UI/UX prototype and design system for Draya can be found on Figma:
+[Draya - دراية (Figma Prototype)](https://www.figma.com/make/fX6g31oH2s0k8EenujqEwS/Draya-%D8%AF%D8%B1%D8%A7%D9%8A%D8%A9--Copy-?t=vdB04uF7HQxMnccY-20&fullscreen=1)
+
 ## Development server
 
 To start a local development server, run:
