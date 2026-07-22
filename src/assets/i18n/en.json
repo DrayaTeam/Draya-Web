@@ -36,6 +36,8 @@
     "confirm": "Confirm",
     "delete": "Delete",
     "edit": "Edit",
-    "back": "Back"
+    "back": "Back",
+    "noData": "No data available",
+    "noDataDescription": "There is currently no information to display here."
   }
 }
