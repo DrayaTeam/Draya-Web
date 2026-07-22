@@ -8,7 +8,7 @@ import { LoginComponent } from './login.component';
 import { AuthService } from '../../../core/auth/auth.service';
 import { Router } from '@angular/router';
 import { signal } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 const mockAuthService = {
@@ -33,9 +33,9 @@ describe('LoginComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         LoginComponent,
-        TranslateModule.forRoot(),
       ],
       providers: [
+        provideTranslateService(),
         { provide: AuthService, useValue: mockAuthService },
         { provide: Router, useValue: mockRouter },
       ],

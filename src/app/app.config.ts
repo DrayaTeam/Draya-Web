@@ -22,17 +22,15 @@ import {
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { appRoutes } from './app.routes';
 import { authInterceptor } from './core/auth/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 
 /** Factory for ngx-translate's HttpLoader — loads JSON files from /assets/i18n/. */
-export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
-  return new TranslateHttpLoader(http, '/assets/i18n/', '.json');
-}
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -71,15 +69,12 @@ export const appConfig: ApplicationConfig = {
 
     // ngx-translate: loads /assets/i18n/{locale}.json via HttpClient.
     // LocaleService (core/locale/locale.service.ts) bootstraps the initial language on startup.
-    importProvidersFrom(
-      TranslateModule.forRoot({
-        defaultLanguage: 'ar',
-        loader: {
-          provide: TranslateLoader,
-          useFactory: HttpLoaderFactory,
-          deps: [HttpClient],
-        },
+    provideTranslateService({
+      fallbackLang: 'ar',
+      loader: provideTranslateHttpLoader({
+        prefix: '/assets/i18n/',
+        suffix: '.json',
       }),
-    ),
+    }),
   ],
 };

@@ -8,7 +8,7 @@ import { NavComponent } from './nav.component';
 import { AuthService } from '../../core/auth/auth.service';
 import { LocaleService } from '../../core/locale/locale.service';
 import { signal } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { RouterTestingModule } from '@angular/router/testing';
 
 const mockAuthService = {
@@ -31,9 +31,9 @@ describe('NavComponent', () => {
       imports: [
         NavComponent,
         RouterTestingModule,
-        TranslateModule.forRoot(),
       ],
       providers: [
+        provideTranslateService(),
         { provide: AuthService, useValue: mockAuthService },
         { provide: LocaleService, useValue: mockLocaleService },
       ],

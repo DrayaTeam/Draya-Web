@@ -18,9 +18,8 @@ export class LocaleService {
   readonly locale = signal<SupportedLocale>(this.loadPersistedLocale());
 
   constructor(private readonly translate: TranslateService) {
-    // Bootstrap ngx-translate with the supported languages and current locale.
+    // Bootstrap ngx-translate with the supported languages. Default lang is set in app.config.ts.
     this.translate.addLangs(['ar', 'en']);
-    this.translate.setDefaultLang(DEFAULT_LOCALE);
 
     // Apply the initial locale (DOM attributes + translation language).
     this.applyLocale(this.locale());
