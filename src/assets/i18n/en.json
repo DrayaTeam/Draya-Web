@@ -1,0 +1,41 @@
+{
+  "app": {
+    "name": "Draya",
+    "tagline": "AI-Powered Learning Platform"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "students": "Students",
+    "exams": "Exams",
+    "reports": "Reports",
+    "settings": "Settings",
+    "profile": "Profile",
+    "notifications": "Notifications",
+    "qa": "Q&A"
+  },
+  "auth": {
+    "login": "Sign In",
+    "logout": "Sign Out",
+    "email": "Email Address",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "loginButton": "Sign In",
+    "loginError": "Invalid email or password.",
+    "sessionExpired": "Your session has expired. Please sign in again."
+  },
+  "roles": {
+    "teacher": "Teacher",
+    "student": "Student",
+    "parent": "Parent"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back"
+  }
+}

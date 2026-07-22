@@ -11,16 +11,26 @@
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
-
   "private": true,
   "dependencies": {
+    "@angular/animations": "^20.3.26",
     "@angular/common": "^20.3.0",
     "@angular/compiler": "^20.3.0",
     "@angular/core": "^20.3.0",
     "@angular/forms": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
+    "@microsoft/signalr": "^10.0.0",
+    "@ngx-translate/core": "^18.0.0",
+    "@ngx-translate/http-loader": "^18.0.0",
+    "@primeng/themes": "^20.5.1-lts",
+    "@tailwindcss/postcss": "^4.3.3",
+    "jwt-decode": "^4.0.0",
+    "primeicons": "^8.0.0",
+    "primeng": "^20.5.1-lts",
     "rxjs": "~7.8.0",
+    "tailwindcss": "^4.3.3",
+    "tailwindcss-primeui": "^0.6.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
