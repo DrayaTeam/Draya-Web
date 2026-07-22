@@ -1,20 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LoadingSpinnerComponent } from './loading-spinner.component';
+import { StatCardComponent } from './stat-card.component';
 import { provideTranslateService } from '@ngx-translate/core';
 
-describe('LoadingSpinnerComponent', () => {
-  let component: LoadingSpinnerComponent;
-  let fixture: ComponentFixture<LoadingSpinnerComponent>;
+describe('StatCardComponent', () => {
+  let component: StatCardComponent;
+  let fixture: ComponentFixture<StatCardComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LoadingSpinnerComponent],
+      imports: [StatCardComponent],
       providers: [provideTranslateService()]
-    })
-    .compileComponents();
+    }).compileComponents();
     
-    fixture = TestBed.createComponent(LoadingSpinnerComponent);
+    fixture = TestBed.createComponent(StatCardComponent);
     component = fixture.componentInstance;
+    component.title = 'Test Title';
+    component.value = 42;
     fixture.detectChanges();
   });
 

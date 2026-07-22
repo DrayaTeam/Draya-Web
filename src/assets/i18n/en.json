@@ -38,6 +38,8 @@
     "edit": "Edit",
     "back": "Back",
     "noData": "No data available",
-    "noDataDescription": "There is currently no information to display here."
+    "noDataDescription": "There is currently no information to display here.",
+    "confirmActionTitle": "Confirm Action",
+    "confirmActionMessage": "Are you sure you want to perform this action?"
   }
 }
