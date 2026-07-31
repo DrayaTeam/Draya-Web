@@ -1,44 +1,54 @@
-// src/app/core/interceptors/error.interceptor.ts
-// Purpose: Global HTTP error handler for the Draya API.
-// Catches 401 (token expired), 403 (forbidden), and 5xx (server errors) responses.
-// On 401: triggers auth logout so stale tokens are cleared and the user is redirected.
-// On other errors: maps to a typed DrayaHttpError and re-throws so feature services can handle.
-
-import {
-  HttpErrorResponse,
-  HttpInterceptorFn,
-  HttpStatusCode,
-} from '@angular/common/http';
+import { HttpInterceptorFn, HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
+import { catchError, throwError, switchMap } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
-
-export interface DrayaHttpError {
-  status: number;
-  message: string;
-  detail?: string;
-}
+import { MessageService } from 'primeng/api';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
+  const messageService = inject(MessageService);
 
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
-      if (err.status === HttpStatusCode.Unauthorized) {
-        // Token expired or invalid — clear session and redirect to login.
-        auth.logout();
+      // Avoid intercepting auth requests or infinite loops
+      const isAuthRequest = req.url.includes('/auth/refresh') || req.url.includes('/auth/login');
+
+      if (err.status === HttpStatusCode.Unauthorized && !isAuthRequest) {
+        return auth.refresh().pipe(
+          switchMap((res) => {
+            const retryReq = req.clone({
+              setHeaders: { Authorization: `Bearer ${res.accessToken}` },
+            });
+            return next(retryReq);
+          }),
+          catchError((refreshErr) => {
+            auth.logout();
+            return throwError(() => refreshErr);
+          })
+        );
       }
 
-      const drayaError: DrayaHttpError = {
+      if (err.status === HttpStatusCode.Forbidden) {
+        messageService.add({
+          severity: 'error',
+          summary: 'غير مسموح',
+          detail: 'ليس لديك الصلاحية للوصول إلى هذا المورد.',
+        });
+      } else if (err.status >= 500) {
+        messageService.add({
+          severity: 'error',
+          summary: 'خطأ في الخادم',
+          detail: 'حدث خطأ في الخادم الداخلي، يرجى المحاولة لاحقًا.',
+        });
+      }
+
+      const drayaError = {
         status: err.status,
-        message:
-          err.error?.message ??
-          err.message ??
-          'An unexpected error occurred.',
+        message: err.error?.message ?? err.message ?? 'An unexpected error occurred.',
         detail: err.error?.detail,
       };
 
       return throwError(() => drayaError);
-    }),
+    })
   );
 };

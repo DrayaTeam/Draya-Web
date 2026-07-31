@@ -26,22 +26,25 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { appRoutes } from './app.routes';
-import { authInterceptor } from './core/auth/auth.interceptor';
+import { tokenInterceptor } from './core/interceptors/token.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { loadingInterceptor } from './core/interceptors/loading.interceptor';
+import { MessageService } from 'primeng/api';
 
 /** Factory for ngx-translate's HttpLoader — loads JSON files from /assets/i18n/. */
 
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    MessageService,
     // Angular change detection (zoneless-ready via event coalescing)
     provideZoneChangeDetection({ eventCoalescing: true }),
 
     // Router: lazy-loaded routes + `routerLink` inputs bound as component inputs
     provideRouter(appRoutes, withComponentInputBinding()),
 
-    // HttpClient: auth interceptor attaches JWT; error interceptor handles 401/5xx
-    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
+    // HttpClient: token interceptor attaches JWT; error interceptor handles 401/5xx; loading interceptor toggles loading
+    provideHttpClient(withInterceptors([tokenInterceptor, errorInterceptor, loadingInterceptor])),
 
     // Angular animations — required by PrimeNG overlay components (Dialog, Drawer, etc.)
     provideAnimationsAsync(),
