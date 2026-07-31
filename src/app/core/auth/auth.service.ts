@@ -1,9 +1,5 @@
-// src/app/core/auth/auth.service.ts
-// Purpose: Signal-based authentication state management for the Draya platform.
-// Handles login, logout, token refresh, and persists the JWT to localStorage.
-// All consumers read auth state reactively via signals (currentUser, isLoggedIn, accessToken).
-
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
@@ -34,11 +30,10 @@ export interface AuthUser {
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
+  private readonly platformId = inject(PLATFORM_ID);
 
   /** Raw JWT access token string, or null if not authenticated. */
-  readonly accessToken = signal<string | null>(
-    localStorage.getItem(TOKEN_KEY),
-  );
+  readonly accessToken = signal<string | null>(null);
 
   /** Decoded claims from the current access token, or null if not authenticated. */
   readonly currentUser = computed<AuthUser | null>(() => {
@@ -61,10 +56,15 @@ export class AuthService {
   });
 
   constructor() {
-    // On init, clear stale expired tokens so guards see a clean state.
-    const stored = localStorage.getItem(TOKEN_KEY);
-    if (stored && isTokenExpired(stored)) {
-      this.clearTokens();
+    if (isPlatformBrowser(this.platformId)) {
+      const stored = localStorage.getItem(TOKEN_KEY);
+      if (stored) {
+        if (isTokenExpired(stored)) {
+          this.clearTokens();
+        } else {
+          this.accessToken.set(stored);
+        }
+      }
     }
   }
 
@@ -77,7 +77,10 @@ export class AuthService {
 
   /** Exchanges the stored refresh token for a new access token. */
   refresh(): Observable<AuthResponse> {
-    const refreshToken = localStorage.getItem(REFRESH_KEY);
+    let refreshToken: string | null = null;
+    if (isPlatformBrowser(this.platformId)) {
+      refreshToken = localStorage.getItem(REFRESH_KEY);
+    }
     return this.http
       .post<AuthResponse>(`${environment.apiBaseUrl}/auth/refresh`, {
         refreshToken,
@@ -92,14 +95,18 @@ export class AuthService {
   }
 
   private storeTokens(res: AuthResponse): void {
-    localStorage.setItem(TOKEN_KEY, res.accessToken);
-    localStorage.setItem(REFRESH_KEY, res.refreshToken);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(TOKEN_KEY, res.accessToken);
+      localStorage.setItem(REFRESH_KEY, res.refreshToken);
+    }
     this.accessToken.set(res.accessToken);
   }
 
   private clearTokens(): void {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(REFRESH_KEY);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(REFRESH_KEY);
+    }
     this.accessToken.set(null);
   }
 }
