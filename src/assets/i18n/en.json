@@ -41,5 +41,10 @@
     "noDataDescription": "There is currently no information to display here.",
     "confirmActionTitle": "Confirm Action",
     "confirmActionMessage": "Are you sure you want to perform this action?"
+  },
+  "error": {
+    "title": "An unexpected error occurred",
+    "defaultMessage": "The page failed to load or the application encountered an unexpected crash. Please check your connection and try again.",
+    "retryButton": "Try Again & Go Home"
   }
 }

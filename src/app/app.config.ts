@@ -13,6 +13,7 @@ import {
   importProvidersFrom,
   provideZoneChangeDetection,
   APP_INITIALIZER,
+  ErrorHandler,
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import {
@@ -32,6 +33,7 @@ import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { MessageService } from 'primeng/api';
 import { DirectionService } from './core/services/direction.service';
+import { GlobalErrorHandler } from './core/errors/global-error-handler';
 
 /** Factory for ngx-translate's HttpLoader — loads JSON files from /assets/i18n/. */
 
@@ -39,6 +41,7 @@ import { DirectionService } from './core/services/direction.service';
 export const appConfig: ApplicationConfig = {
   providers: [
     MessageService,
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
     {
       provide: APP_INITIALIZER,
       useFactory: (dirService: DirectionService) => () => {},

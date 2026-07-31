@@ -47,6 +47,13 @@ export const appRoutes: Routes = [
       },
     ],
   },
+  {
+    path: 'error',
+    loadComponent: () =>
+      import('./shared/components/global-error-fallback/global-error-fallback.component').then(
+        (m) => m.GlobalErrorFallbackComponent
+      ),
+  },
 
   // Wildcard fallback
   {
