@@ -12,6 +12,7 @@ import {
   ApplicationConfig,
   importProvidersFrom,
   provideZoneChangeDetection,
+  APP_INITIALIZER,
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import {
@@ -30,6 +31,7 @@ import { tokenInterceptor } from './core/interceptors/token.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { MessageService } from 'primeng/api';
+import { DirectionService } from './core/services/direction.service';
 
 /** Factory for ngx-translate's HttpLoader — loads JSON files from /assets/i18n/. */
 
@@ -37,6 +39,12 @@ import { MessageService } from 'primeng/api';
 export const appConfig: ApplicationConfig = {
   providers: [
     MessageService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (dirService: DirectionService) => () => {},
+      deps: [DirectionService],
+      multi: true,
+    },
     // Angular change detection (zoneless-ready via event coalescing)
     provideZoneChangeDetection({ eventCoalescing: true }),
 
