@@ -5,8 +5,7 @@
 
 export const environment = {
   production: true,
-  // Replace with your actual ASP.NET Core backend base URL (no trailing slash)
-  apiBaseUrl: 'https://api.draya.io',
-  // Replace with your actual SignalR hub URL (full path to the hub endpoint)
-  signalrHubUrl: 'https://api.draya.io/hubs/qa',
+  apiBaseUrl: 'https://api.draya.app/api/v1',
+  signalrHubUrl: 'https://api.draya.app/hubs/notifications',
 };
+
