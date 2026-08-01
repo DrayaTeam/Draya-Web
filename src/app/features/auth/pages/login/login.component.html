@@ -84,7 +84,7 @@
         </label>
       </div>
       <div class="text-sm">
-        <a href="#" class="font-medium text-[var(--draya-primary-700,#1B6D63)] hover:text-[#14534B]">
+        <a routerLink="/auth/forgot-password" class="font-medium text-[var(--draya-primary-700,#1B6D63)] hover:text-[#14534B]">
           {{ 'auth.forgotPassword' | translate }}
         </a>
       </div>
@@ -110,7 +110,7 @@
 
   <div class="mt-8 text-center text-sm font-medium text-gray-500">
     {{ 'auth.noAccount' | translate }}
-    <a href="#" class="font-bold text-[var(--draya-primary-700,#1B6D63)] hover:text-[#14534B] ms-1 border-b border-[var(--draya-primary-700)] pb-0.5">
+    <a routerLink="/auth/register-student" class="font-bold text-[var(--draya-primary-700,#1B6D63)] hover:text-[#14534B] ms-1 border-b border-[var(--draya-primary-700)] pb-0.5">
       {{ 'auth.createAccount' | translate }}
     </a>
   </div>
