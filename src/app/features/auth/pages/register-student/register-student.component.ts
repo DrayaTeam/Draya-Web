@@ -10,19 +10,11 @@ import { passwordStrengthValidator, calculatePasswordStrength } from '../../vali
 import { minAgeValidator } from '../../validators/min-age.validator';
 import { differentEmailValidator } from '../../validators/different-email.validator';
 import { PasswordStrength } from '../../constants/auth.constants';
+import { matchFieldValidator } from '../../../../shared/validators/match-field.validator';
 
 const noPureNumericValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   if (control.value && /^\d+$/.test(control.value.trim())) {
     return { pureNumeric: true };
-  }
-  return null;
-};
-
-const matchPasswordValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-  const password = control.parent?.get('password')?.value;
-  const confirmPassword = control.value;
-  if (password && confirmPassword && password !== confirmPassword) {
-    return { passwordMismatch: true };
   }
   return null;
 };
@@ -48,7 +40,7 @@ export class RegisterStudentComponent {
     parentGuardianEmail: ['', [Validators.required, Validators.email]],
     dateOfBirth: ['', [Validators.required, minAgeValidator()]],
     password: ['', [Validators.required, passwordStrengthValidator()]],
-    confirmPassword: ['', [Validators.required, matchPasswordValidator]],
+    confirmPassword: ['', [Validators.required, matchFieldValidator('password')]],
     termsAccepted: [false, Validators.requiredTrue]
   }, { validators: [differentEmailValidator()] });
 
