@@ -22,6 +22,16 @@ export const authRoutes: Routes = [
         title: 'Register Student — Draya',
       },
       {
+        path: 'forgot-password',
+        loadComponent: () => import('./pages/forgot-password/forgot-password.component').then((m) => m.ForgotPasswordComponent),
+        title: 'Forgot Password — Draya',
+      },
+      {
+        path: 'reset-password',
+        loadComponent: () => import('./pages/reset-password/reset-password.component').then((m) => m.ResetPasswordComponent),
+        title: 'Reset Password — Draya',
+      },
+      {
         path: '',
         redirectTo: 'login',
         pathMatch: 'full',
