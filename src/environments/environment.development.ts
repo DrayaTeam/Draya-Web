@@ -9,4 +9,5 @@ export const environment = {
   apiBaseUrl: 'https://localhost:7001',
   // Replace with your local SignalR hub URL (e.g. https://localhost:7001/hubs/qa)
   signalrHubUrl: 'https://localhost:7001/hubs/qa',
+  useMockAuthApi: true,
 };

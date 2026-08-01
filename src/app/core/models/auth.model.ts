@@ -32,3 +32,5 @@ export interface TokenRefreshResponse {
   refreshToken: string;
   expiresIn: number;
 }
+
+export type UserProfile = User;
