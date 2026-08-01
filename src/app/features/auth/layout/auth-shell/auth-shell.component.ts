@@ -41,9 +41,9 @@ import { trigger, transition, style, query, animate, group } from '@angular/anim
     <div class="relative min-h-screen w-full bg-white overflow-hidden flex flex-col lg:block">
       
       <!-- Form Side -->
-      <div class="flex flex-col justify-center px-6 py-12 lg:px-16 xl:px-24 bg-white relative lg:absolute lg:top-0 lg:bottom-0 lg:w-1/2 z-10 overflow-y-auto transition-all duration-700 ease-in-out"
+      <div class="flex flex-col px-6 py-8 lg:px-16 xl:px-24 bg-white relative lg:absolute lg:top-0 lg:bottom-0 lg:w-1/2 z-10 overflow-y-auto transition-all duration-700 ease-in-out"
            [ngClass]="isLogin() ? 'lg:start-0' : 'lg:start-1/2'">
-        <div class="w-full relative" [@routeTransition]="getRouteAnimationData(outlet)">
+        <div class="w-full relative m-auto py-8" [@routeTransition]="getRouteAnimationData(outlet)">
           <router-outlet #outlet="outlet"></router-outlet>
         </div>
       </div>
