@@ -27,3 +27,5 @@
 @import "tailwindcss";
 @import '../theme.css';
 @import 'primeicons/primeicons.css';
+
+@source ".";
