@@ -111,8 +111,8 @@ export class AuthMockApiService implements IAuthApi {
   }
 
   refreshToken(refreshToken: string): Observable<AuthResponse> {
-    if (!refreshToken) {
-      const error: ApiError = { code: 'UNAUTHORIZED', message: 'Invalid refresh token' };
+    if (!refreshToken || refreshToken === 'invalid' || refreshToken === 'expired') {
+      const error: ApiError = { code: 'UNAUTHORIZED', message: 'الجلسة منتهية، يرجى تسجيل الدخول مرة أخرى' };
       return throwError(() => error).pipe(delay(this.delayMs));
     }
     
@@ -125,10 +125,16 @@ export class AuthMockApiService implements IAuthApi {
   }
 
   logout(): Observable<void> {
+    // Simulating a successful logout. If a simulated failure was needed,
+    // it would throw an ApiError matching the interceptor's expected shape.
     return of(void 0).pipe(delay(this.delayMs));
   }
 
   getProfile(): Observable<UserProfile> {
+    if (this.users.length === 0) {
+      const error: ApiError = { code: 'UNAUTHORIZED', message: 'غير مصرح لك بالوصول، يرجى تسجيل الدخول' };
+      return throwError(() => error).pipe(delay(this.delayMs));
+    }
     return of(this.users[0]).pipe(delay(this.delayMs));
   }
 }
