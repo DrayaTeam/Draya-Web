@@ -12,6 +12,10 @@ export interface IAuthApi {
   refreshToken(refreshToken: string): Observable<AuthResponse>;
   logout(): Observable<void>;
   getProfile(): Observable<UserProfile>;
+
+  // PROVISIONAL: contract not yet confirmed by backend — revisit endpoint shape once delivered
+  forgotPassword(email: string): Observable<{ message: string }>;
+  resetPassword(payload: { token: string; newPassword: string }): Observable<{ message: string }>;
 }
 
 export const AUTH_API = new InjectionToken<IAuthApi>('AUTH_API', {

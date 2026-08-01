@@ -33,4 +33,13 @@ export class AuthApiService implements IAuthApi {
   getProfile(): Observable<UserProfile> {
     return this.http.get<UserProfile>(`${this.baseUrl}/me`);
   }
+
+  // PROVISIONAL: contract not yet confirmed by backend — revisit endpoint shape once delivered
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(payload: { token: string; newPassword: string }): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/reset-password`, payload);
+  }
 }

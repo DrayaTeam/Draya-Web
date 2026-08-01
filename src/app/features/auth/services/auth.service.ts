@@ -130,4 +130,29 @@ export class AuthService {
       finalize(() => this._isLoading.set(false))
     );
   }
+
+  // PROVISIONAL: contract not yet confirmed by backend — revisit endpoint shape once delivered
+  forgotPassword(email: string): Observable<{ message: string }> {
+    this._isLoading.set(true);
+    this._authError.set(null);
+    return this.authApi.forgotPassword(email).pipe(
+      catchError((error: ApiError) => {
+        this._authError.set(error);
+        return throwError(() => error);
+      }),
+      finalize(() => this._isLoading.set(false))
+    );
+  }
+
+  resetPassword(payload: { token: string; newPassword: string }): Observable<{ message: string }> {
+    this._isLoading.set(true);
+    this._authError.set(null);
+    return this.authApi.resetPassword(payload).pipe(
+      catchError((error: ApiError) => {
+        this._authError.set(error);
+        return throwError(() => error);
+      }),
+      finalize(() => this._isLoading.set(false))
+    );
+  }
 }

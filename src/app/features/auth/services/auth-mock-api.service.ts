@@ -137,4 +137,40 @@ export class AuthMockApiService implements IAuthApi {
     }
     return of(this.users[0]).pipe(delay(this.delayMs));
   }
+
+  // PROVISIONAL: contract not yet confirmed by backend — revisit endpoint shape once delivered
+  forgotPassword(email: string): Observable<{ message: string }> {
+    // Always return a generic success response regardless of whether the email exists
+    return of({ message: 'If this email exists, a reset link has been sent.' }).pipe(delay(this.delayMs));
+  }
+
+  resetPassword(payload: { token: string; newPassword: string }): Observable<{ message: string }> {
+    if (payload.token !== 'mock-valid-token') {
+      const error: ApiError = {
+        code: 'BAD_REQUEST',
+        message: 'Invalid or expired token',
+        details: [{ field: 'token', message: 'The reset link is invalid or has expired.' }]
+      };
+      return throwError(() => error).pipe(delay(this.delayMs));
+    }
+
+    // Defense in depth: validate password strength
+    const pwd = payload.newPassword;
+    const minLengthValid = pwd.length >= 12;
+    const hasUpperCase = /[A-Z]/.test(pwd);
+    const hasLowerCase = /[a-z]/.test(pwd);
+    const hasNumeric = /[0-9]/.test(pwd);
+    const hasSpecial = /[\W_]/.test(pwd);
+    
+    if (!(minLengthValid && hasUpperCase && hasLowerCase && hasNumeric && hasSpecial)) {
+      const error: ApiError = {
+        code: 'BAD_REQUEST',
+        message: 'Password does not meet complexity requirements',
+        details: [{ field: 'newPassword', message: 'كلمة المرور ضعيفة' }]
+      };
+      return throwError(() => error).pipe(delay(this.delayMs));
+    }
+
+    return of({ message: 'Password has been reset successfully.' }).pipe(delay(this.delayMs));
+  }
 }
