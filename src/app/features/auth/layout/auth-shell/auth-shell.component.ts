@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/cor
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { trigger, transition, style, query, animate, group } from '@angular/animations';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -10,17 +11,46 @@ import { CommonModule } from '@angular/common';
   imports: [RouterOutlet, CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block w-full min-h-screen' },
+  animations: [
+    trigger('routeTransition', [
+      transition('* <=> *', [
+        query(':enter, :leave', [
+          style({
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            opacity: 1
+          })
+        ], { optional: true }),
+        query(':enter', [
+          style({ opacity: 0, transform: 'scale(0.98)' })
+        ], { optional: true }),
+        group([
+          query(':leave', [
+            animate('300ms ease-in-out', style({ opacity: 0, transform: 'scale(0.98)' }))
+          ], { optional: true }),
+          query(':enter', [
+            animate('300ms 150ms ease-in-out', style({ opacity: 1, transform: 'scale(1)' }))
+          ], { optional: true })
+        ])
+      ])
+    ])
+  ],
   template: `
-    <div class="flex min-h-screen w-full bg-white transition-all duration-700 ease-in-out"
-         [ngClass]="isLogin() ? 'flex-col lg:flex-row' : 'flex-col lg:flex-row-reverse'">
+    <div class="relative min-h-screen w-full bg-white overflow-hidden flex flex-col lg:block">
       
       <!-- Form Side -->
-      <div class="flex flex-1 flex-col justify-center px-6 py-12 lg:px-16 xl:px-24 bg-white relative z-10 overflow-y-auto">
-        <router-outlet></router-outlet>
+      <div class="flex flex-col justify-center px-6 py-12 lg:px-16 xl:px-24 bg-white relative lg:absolute lg:top-0 lg:bottom-0 lg:w-1/2 z-10 overflow-y-auto transition-all duration-700 ease-in-out"
+           [ngClass]="isLogin() ? 'lg:start-0' : 'lg:start-1/2'">
+        <div class="w-full relative" [@routeTransition]="getRouteAnimationData(outlet)">
+          <router-outlet #outlet="outlet"></router-outlet>
+        </div>
       </div>
 
       <!-- Branding / Illustration Side -->
-      <div class="hidden lg:flex lg:w-1/2 bg-[var(--draya-primary-700,#1B6D63)] text-white flex-col justify-center items-center p-12 relative overflow-hidden transition-all duration-700">
+      <div class="hidden lg:flex lg:absolute lg:top-0 lg:bottom-0 lg:w-1/2 bg-[var(--draya-primary-700,#1B6D63)] text-white flex-col justify-center items-center p-12 overflow-hidden transition-all duration-700 ease-in-out z-20"
+           [ngClass]="isLogin() ? 'lg:start-1/2' : 'lg:start-0'">
         <!-- Decorative Background Circles -->
         <div class="absolute -top-32 -start-32 w-96 h-96 bg-white/5 rounded-full pointer-events-none"></div>
         <div class="absolute -bottom-48 -end-24 w-[32rem] h-[32rem] bg-white/5 rounded-full pointer-events-none"></div>
@@ -70,5 +100,9 @@ export class AuthShellComponent {
     });
     
     this.isLogin.set(this.router.url.includes('/login'));
+  }
+
+  getRouteAnimationData(outlet: any) {
+    return outlet?.activatedRouteData?.['animation'] || this.router.url;
   }
 }
