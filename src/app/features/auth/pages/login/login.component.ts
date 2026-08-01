@@ -7,7 +7,6 @@ import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/auth.service';
 import { ApiError } from '../../../../core/models/api-error.model';
 
-// eslint-disable-next-line @angular-eslint/component-selector
 @Component({
   selector: 'app-auth-login',
   standalone: true,

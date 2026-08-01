@@ -12,6 +12,11 @@ export const authRoutes: Routes = [
         title: 'Sign In — Draya',
       },
       {
+        path: 'register-teacher',
+        loadComponent: () => import('./pages/register-teacher/register-teacher.component').then((m) => m.RegisterTeacherComponent),
+        title: 'Register Teacher — Draya',
+      },
+      {
         path: '',
         redirectTo: 'login',
         pathMatch: 'full',

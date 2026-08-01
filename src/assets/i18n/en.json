@@ -25,7 +25,20 @@
     "welcomeBack": "Welcome back! Please enter your email and password to continue.",
     "rememberMe": "Remember me",
     "createAccount": "Create a new account",
-    "noAccount": "Don't have an account?"
+    "noAccount": "Don't have an account?",
+    "fullName": "Full Name",
+    "phone": "Phone Number",
+    "confirmPassword": "Confirm Password",
+    "terms": "I agree to the Terms of Service and Privacy Policy.",
+    "teacherTab": "I am a Teacher / Academy",
+    "studentTab": "I am a Student",
+    "registerTeacherTitle": "Create a new account",
+    "registerTeacherSubtitle": "Join the Draya ecosystem and build your AI-powered academy.",
+    "passwordStrength": "Password Strength",
+    "strengthWeak": "Weak",
+    "strengthMedium": "Medium",
+    "strengthStrong": "Strong",
+    "alreadyHaveAccount": "Already have an account?"
   },
   "roles": {
     "teacher": "Teacher",

@@ -25,7 +25,20 @@
     "welcomeBack": "أهلاً بك مجدداً! يرجى إدخال البريد الإلكتروني وكلمة المرور للمتابعة.",
     "rememberMe": "تذكرني",
     "createAccount": "أنشئ حساباً جديداً",
-    "noAccount": "ليس لديك حساب؟"
+    "noAccount": "ليس لديك حساب؟",
+    "fullName": "الاسم الكامل",
+    "phone": "رقم الهاتف",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "terms": "أوافق على شروط الخدمة وسياسة الخصوصية.",
+    "teacherTab": "أنا معلم / أكاديمية",
+    "studentTab": "أنا طالب",
+    "registerTeacherTitle": "إنشاء حساب جديد",
+    "registerTeacherSubtitle": "انضم لمنظومة دراية وأنشئ أكاديميتك الخاصة بالذكاء الاصطناعي.",
+    "passwordStrength": "قوة كلمة المرور",
+    "strengthWeak": "ضعيفة",
+    "strengthMedium": "متوسطة",
+    "strengthStrong": "قوية",
+    "alreadyHaveAccount": "لديك حساب بالفعل؟"
   },
   "roles": {
     "teacher": "معلم",
