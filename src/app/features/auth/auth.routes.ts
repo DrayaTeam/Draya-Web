@@ -1,18 +1,21 @@
-// src/app/features/auth/auth.routes.ts
-// Purpose: Lazy-loaded routes for the authentication feature.
-
 import { Routes } from '@angular/router';
+import { AuthShellComponent } from './layout/auth-shell/auth-shell.component';
 
 export const authRoutes: Routes = [
   {
-    path: 'login',
-    loadComponent: () =>
-      import('./login/login.component').then((m) => m.LoginComponent),
-    title: 'Sign In — Draya',
-  },
-  {
     path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
-  },
+    component: AuthShellComponent,
+    children: [
+      {
+        path: 'login',
+        loadComponent: () => import('./pages/login/login.component').then((m) => m.LoginComponent),
+        title: 'Sign In — Draya',
+      },
+      {
+        path: '',
+        redirectTo: 'login',
+        pathMatch: 'full',
+      }
+    ]
+  }
 ];
