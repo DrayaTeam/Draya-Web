@@ -10,7 +10,6 @@
 
 import {
   ApplicationConfig,
-  importProvidersFrom,
   provideZoneChangeDetection,
   APP_INITIALIZER,
   ErrorHandler,
@@ -19,7 +18,6 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import {
   provideHttpClient,
   withInterceptors,
-  HttpClient,
 } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
@@ -44,7 +42,7 @@ export const appConfig: ApplicationConfig = {
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     {
       provide: APP_INITIALIZER,
-      useFactory: (dirService: DirectionService) => () => {},
+      useFactory: (dirService: DirectionService) => () => dirService.init(),
       deps: [DirectionService],
       multi: true,
     },

@@ -1,20 +1,21 @@
-import { ErrorHandler, Injectable, Injector, NgZone } from '@angular/core';
+import { ErrorHandler, Injectable, Injector, NgZone, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
-  constructor(private readonly injector: Injector) {}
+  private readonly injector = inject(Injector);
 
-  handleError(error: any): void {
+  handleError(error: unknown): void {
     const router = this.injector.get(Router);
     const zone = this.injector.get(NgZone);
 
     console.error('Unhandled Exception Caught:', error);
 
     zone.run(() => {
+      const message = error instanceof Error ? error.message : String(error);
       router.navigate(['/error'], {
         skipLocationChange: true,
-        state: { error: error?.message || error?.toString() },
+        state: { error: message },
       });
     });
   }

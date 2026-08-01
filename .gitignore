@@ -46,3 +46,8 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# development
+FRONTEND_SPRINT_PLAN.md
+FRONTEND_SPRINT_PLAN.html
+Draya Platform API.postman_collection.json

@@ -22,5 +22,5 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class StatCardComponent {
   @Input({ required: true }) title!: string;
   @Input({ required: true }) value!: string | number;
-  @Input() iconClass: string = 'i-pi-chart-line';
+  @Input() iconClass = 'i-pi-chart-line';
 }

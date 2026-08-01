@@ -24,10 +24,10 @@ export class SkeletonLoaderComponent implements OnInit {
   @Input() width?: string | number;
   @Input() height?: string | number;
   @Input() variant: 'text' | 'rect' | 'circle' = 'rect';
-  @Input() className: string = '';
+  @Input() className = '';
 
   customStyle: Record<string, string> = {};
-  classes: string = '';
+  classes = '';
 
   ngOnInit(): void {
     const borderRadius =

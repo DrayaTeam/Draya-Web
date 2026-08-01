@@ -29,7 +29,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class GlobalErrorFallbackComponent {
   private readonly router = inject(Router);
-  errorMessage: string = '';
+  errorMessage = '';
 
   constructor() {
     const navigation = this.router.getCurrentNavigation();

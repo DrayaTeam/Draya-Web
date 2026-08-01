@@ -9,8 +9,8 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class ConfirmActionDirective {
   @Input('appConfirmAction') onConfirm!: () => void;
-  @Input() confirmMessage: string = 'common.confirmActionMessage';
-  @Input() confirmHeader: string = 'common.confirmActionTitle';
+  @Input() confirmMessage = 'common.confirmActionMessage';
+  @Input() confirmHeader = 'common.confirmActionTitle';
 
   private readonly confirmationService = inject(ConfirmationService);
   private readonly translateService = inject(TranslateService);

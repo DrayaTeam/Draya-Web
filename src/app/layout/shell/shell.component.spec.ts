@@ -5,7 +5,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ShellComponent } from './shell.component';
 import { NavComponent } from '../nav/nav.component';
-import { RouterOutlet } from '@angular/router';
 import { Component } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 

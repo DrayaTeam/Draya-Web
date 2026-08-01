@@ -38,4 +38,10 @@ export class DirectionService {
     // Align PrimeNG ripple and dynamic states
     this.primeNGConfig.ripple.set(true);
   }
+
+  init(): void {
+    void this.translate.currentLang;
+  }
 }
+
+

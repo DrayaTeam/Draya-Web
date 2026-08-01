@@ -18,7 +18,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   `
 })
 export class EmptyStateComponent {
-  @Input() title: string = 'common.noData';
-  @Input() description: string = 'common.noDataDescription';
-  @Input() iconClass: string = 'i-pi-inbox';
+  @Input() title = 'common.noData';
+  @Input() description = 'common.noDataDescription';
+  @Input() iconClass = 'i-pi-inbox';
 }
