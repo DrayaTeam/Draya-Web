@@ -9,15 +9,7 @@ import { DrayaClaims, decodeToken, isTokenExpired } from './jwt.util';
 const TOKEN_KEY = 'draya_access_token';
 const REFRESH_KEY = 'draya_refresh_token';
 
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-}
+import { LoginRequest, AuthResponse } from '../models/auth.model';
 
 export interface AuthUser {
   id: string;

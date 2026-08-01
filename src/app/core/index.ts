@@ -13,3 +13,4 @@ export * from './auth/auth.service';
 export * from './locale/locale.service';
 export * from './services/direction.service';
 export * from './services/loading.service';
+export * from './services/toast.service';

@@ -1,12 +1,12 @@
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
-import { PrimeNGConfig } from 'primeng/config';
+import { PrimeNG } from 'primeng/config';
 
 @Injectable({ providedIn: 'root' })
 export class DirectionService {
   private readonly translate = inject(TranslateService);
-  private readonly primeNGConfig = inject(PrimeNGConfig);
+  private readonly primeNG = inject(PrimeNG);
   private readonly platformId = inject(PLATFORM_ID);
 
   constructor() {
@@ -15,7 +15,7 @@ export class DirectionService {
         this.updateDirection(event.lang);
       });
 
-      this.updateDirection(this.translate.currentLang || this.translate.defaultLang || 'ar');
+      this.updateDirection(this.translate.currentLang() || this.translate.fallbackLang() || 'ar');
     }
   }
 
@@ -36,12 +36,10 @@ export class DirectionService {
     }
 
     // Align PrimeNG ripple and dynamic states
-    this.primeNGConfig.ripple.set(true);
+    this.primeNG.ripple.set(true);
   }
 
   init(): void {
-    void this.translate.currentLang;
+    void this.translate.currentLang();
   }
 }
-
-

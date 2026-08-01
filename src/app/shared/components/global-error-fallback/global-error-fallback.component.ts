@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-global-error-fallback',
   standalone: true,
-  imports: [TranslateModule],
+  imports: [TranslatePipe],
   template: `
     <div class="flex min-h-screen items-center justify-center bg-background px-4 py-12">
       <div class="flex w-full max-w-md flex-col items-center justify-center rounded-xl border border-red-500/15 bg-red-500/[0.04] p-12 text-center">

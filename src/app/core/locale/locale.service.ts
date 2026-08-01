@@ -16,7 +16,7 @@ export class LocaleService {
 
   constructor() {
     this.translate.addLangs(['ar', 'en']);
-    this.translate.setDefaultLang(DEFAULT_LOCALE);
+    this.translate.setFallbackLang(DEFAULT_LOCALE);
 
     // Apply the initial locale
     this.applyLocale(this.locale());
