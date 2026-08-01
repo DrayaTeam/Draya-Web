@@ -41,6 +41,11 @@ export const appRoutes: Routes = [
           import('./features/parent/parent.routes').then((m) => m.parentRoutes),
       },
       {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/auth/pages/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
         path: '',
         redirectTo: 'auth/login',
         pathMatch: 'full',

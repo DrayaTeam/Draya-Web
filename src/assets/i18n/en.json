@@ -6,12 +6,17 @@
   "nav": {
     "dashboard": "Dashboard",
     "students": "Students",
+    "profile": "Profile",
     "exams": "Exams",
     "reports": "Reports",
     "settings": "Settings",
-    "profile": "Profile",
     "notifications": "Notifications",
     "qa": "Q&A"
+  },
+  "role": {
+    "teacher": "Teacher",
+    "student": "Student",
+    "parent": "Parent"
   },
   "auth": {
     "login": "Sign In",
