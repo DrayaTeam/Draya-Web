@@ -105,7 +105,7 @@ export class AuthMockApiService implements IAuthApi {
     return of({
       accessToken: this.generateMockToken(),
       refreshToken: this.generateMockToken(),
-      expiresIn: 3600,
+      expiresIn: payload.rememberMe ? 3600 * 24 * 7 : 3600,
       user: user
     }).pipe(delay(this.delayMs));
   }
