@@ -113,6 +113,20 @@ export class AuthService {
     );
   }
 
+  refreshToken(token: string): Observable<AuthResponse> {
+    this._isLoading.set(true);
+    this._authError.set(null);
+    return this.authApi.refreshToken(token).pipe(
+      tap((res) => this.handleAuthSuccess(res)),
+      catchError((error: ApiError) => {
+        this._authError.set(error);
+        this.clearStorage();
+        return throwError(() => error);
+      }),
+      finalize(() => this._isLoading.set(false))
+    );
+  }
+
   getProfile(): Observable<User> {
     this._isLoading.set(true);
     this._authError.set(null);
