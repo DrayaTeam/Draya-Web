@@ -139,8 +139,11 @@ export class AuthMockApiService implements IAuthApi {
   }
 
   // PROVISIONAL: contract not yet confirmed by backend — revisit endpoint shape once delivered
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   forgotPassword(email: string): Observable<{ message: string }> {
+    // In a real app we'd send an email. For now, just ensure it's provided.
+    if (!email) {
+      return throwError(() => ({ code: 'BAD_REQUEST', message: 'Email is required' } as ApiError));
+    }
     // Always return a generic success response regardless of whether the email exists
     return of({ message: 'If this email exists, a reset link has been sent.' }).pipe(delay(this.delayMs));
   }
