@@ -1,20 +1,35 @@
 <div class="w-full max-w-md mx-auto">
-  <div class="flex items-center gap-3 mb-10">
-    <div class="bg-[var(--draya-primary-700,#1B6D63)] p-2 rounded-lg text-white">
-      <!-- Graduation Cap / Hat icon -->
-      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12 3L1 9L5 11.18V17.18L12 21L19 17.18V11.18L21 10.09V17H23V9L12 3ZM18.82 9L12 12.72L5.18 9L12 5.28L18.82 9ZM17 15.99L12 18.72L7 15.99V12.27L12 15L17 12.27V15.99Z" />
-      </svg>
+  <!-- Centered Logo Section -->
+  <div class="flex items-center justify-center gap-3 mb-10">
+    <div class="text-end">
+      <h2 class="text-2xl font-bold text-gray-900 leading-none mb-1">{{ 'app.name' | translate }}</h2>
+      <p class="text-xs text-gray-500 font-medium">نظام التقييم الذكي للمستقبل</p>
     </div>
-    <div>
-      <h2 class="text-2xl font-bold text-gray-900 leading-none">{{ 'app.name' | translate }}</h2>
-      <p class="text-xs text-gray-500 mt-1">نظام التقييم الذكي للمستقبل</p>
+    <div class="bg-[var(--draya-primary-700,#1B6D63)] p-2.5 rounded-xl text-white shadow-sm">
+      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 3L1 9L5 11.18V17.18L12 21L19 17.18V11.18L21 10.09V17H23V9L12 3ZM18.82 9L12 12.72L5.18 9L12 5.28L18.82 9Z" />
+      </svg>
     </div>
   </div>
 
-  <div class="mb-8">
+  <!-- Demo States Box (Design only) -->
+  <div class="mb-10 bg-gray-50/50 border border-dashed border-gray-200 rounded-xl p-5 relative overflow-hidden">
+    <div class="absolute top-3 end-3 flex items-center gap-1.5 text-xs font-semibold text-green-700">
+      معاينة حالات واجهة الدخول (Demo States)
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+    </div>
+    <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
+      <div class="bg-[var(--draya-primary-700,#1B6D63)] text-white text-center py-2 rounded-lg font-medium shadow-sm">الافتراضي (Default)</div>
+      <div class="bg-white border border-gray-200 text-gray-600 text-center py-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">جاري التحميل (Loading)</div>
+      <div class="bg-white border border-gray-200 text-gray-600 text-center py-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">بيانات خاطئة (Wrong)</div>
+      <div class="bg-white border border-gray-200 text-gray-600 text-center py-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">الحساب مقفل (Locked)</div>
+      <div class="bg-white border border-gray-200 text-gray-600 text-center py-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer col-span-2">تسجيل ناجح (Success)</div>
+    </div>
+  </div>
+
+  <div class="mb-8 text-center">
     <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ 'auth.login' | translate }}</h1>
-    <p class="text-gray-600">{{ 'auth.welcomeBack' | translate }}</p>
+    <p class="text-sm text-gray-500 max-w-xs mx-auto leading-relaxed">{{ 'auth.welcomeBack' | translate }}</p>
   </div>
 
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
