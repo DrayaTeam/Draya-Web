@@ -3,7 +3,7 @@
   <!-- Logo -->
   <div class="border-b border-border px-6 py-5">
     <span class="text-xl font-bold text-primary">
-      {{ 'app.name' | translate }}
+      {{ 'APP.NAME' | translate }}
     </span>
   </div>
 
@@ -16,7 +16,7 @@
         class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium
                text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">
         <span class="i-pi-th-large h-4 w-4" aria-hidden="true"></span>
-        {{ 'nav.dashboard' | translate }}
+        {{ 'NAV.DASHBOARD' | translate }}
       </a>
     </li>
     <li>
@@ -25,7 +25,7 @@
         routerLinkActive="bg-accent text-accent-foreground"
         class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium
                text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">
-        {{ 'nav.students' | translate }}
+        {{ 'NAV.STUDENTS' | translate }}
       </a>
     </li>
   </ul>
@@ -36,7 +36,7 @@
       routerLink="/profile"
       class="w-full flex items-center rounded-md px-3 py-2 text-start text-sm text-muted-foreground
              hover:bg-accent hover:text-accent-foreground transition-colors">
-      {{ 'nav.profile' | translate }}
+      {{ 'NAV.PROFILE' | translate }}
     </a>
     <button
       (click)="localeService.toggle()"
@@ -48,7 +48,7 @@
       (click)="onLogout()"
       class="w-full rounded-md px-3 py-2 text-start text-sm text-muted-foreground
              hover:bg-accent hover:text-accent-foreground transition-colors">
-      {{ 'auth.logout' | translate }}
+      {{ 'AUTH.SHARED.LOGOUT' | translate }}
     </button>
   </div>
 </nav>

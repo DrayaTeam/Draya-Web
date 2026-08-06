@@ -2,7 +2,7 @@
   <!-- Centered Logo Section -->
   <div class="flex items-center justify-center gap-3 mb-10">
     <div class="text-end">
-      <h2 class="text-2xl font-bold text-gray-900 leading-none mb-1">{{ 'app.name' | translate }}</h2>
+      <h2 class="text-2xl font-bold text-gray-900 leading-none mb-1">{{ 'APP.NAME' | translate }}</h2>
       <p class="text-xs text-gray-500 font-medium">نظام التقييم الذكي للمستقبل</p>
     </div>
     <div class="bg-[var(--draya-primary-700,#1B6D63)] p-2.5 rounded-xl text-white shadow-sm">
@@ -14,15 +14,15 @@
 
 
   <div class="mb-8 text-center">
-    <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ 'auth.login' | translate }}</h1>
-    <p class="text-sm text-gray-500 max-w-xs mx-auto leading-relaxed">{{ 'auth.welcomeBack' | translate }}</p>
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ 'AUTH.SHARED.LOGIN' | translate }}</h1>
+    <p class="text-sm text-gray-500 max-w-xs mx-auto leading-relaxed">{{ 'AUTH.LOGIN.WELCOME_BACK' | translate }}</p>
   </div>
 
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
     
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1" for="email">
-        {{ 'auth.email' | translate }} <span class="text-red-500">*</span>
+        {{ 'AUTH.SHARED.EMAIL' | translate }} <span class="text-red-500">*</span>
       </label>
       <div class="relative">
         <div class="absolute inset-y-0 start-0 ps-3 flex items-center pointer-events-none text-gray-400">
@@ -39,7 +39,7 @@
 
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1" for="password">
-        {{ 'auth.password' | translate }} <span class="text-red-500">*</span>
+        {{ 'AUTH.SHARED.PASSWORD' | translate }} <span class="text-red-500">*</span>
       </label>
       <div class="relative">
         <div class="absolute inset-y-0 start-0 ps-3 flex items-center pointer-events-none text-gray-400">
@@ -66,12 +66,12 @@
         <input id="rememberMe" type="checkbox" formControlName="rememberMe"
                class="h-4 w-4 text-[var(--draya-primary-700,#1B6D63)] focus:ring-[var(--draya-primary-700,#1B6D63)] border-gray-300 rounded cursor-pointer">
         <label for="rememberMe" class="ms-2 block text-sm text-gray-700 cursor-pointer">
-          {{ 'auth.rememberMe' | translate }}
+          {{ 'AUTH.LOGIN.REMEMBER_ME' | translate }}
         </label>
       </div>
       <div class="text-sm">
         <a routerLink="/auth/forgot-password" class="font-medium text-[var(--draya-primary-700,#1B6D63)] hover:text-[#14534B]">
-          {{ 'auth.forgotPassword' | translate }}
+          {{ 'AUTH.SHARED.FORGOT_PASSWORD_LINK' | translate }}
         </a>
       </div>
     </div>
@@ -87,17 +87,17 @@
             class="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-bold text-white bg-[var(--draya-primary-700,#1B6D63)] hover:bg-[#14534B] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--draya-primary-700,#1B6D63)] disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]">
       @if (loading()) {
         <svg class="animate-spin -ms-1 me-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-        {{ 'common.loading' | translate }}
+        {{ 'COMMON.LOADING' | translate }}
       } @else {
-        {{ 'auth.loginButton' | translate }}
+        {{ 'AUTH.LOGIN.SUBMIT_BTN' | translate }}
       }
     </button>
   </form>
 
   <div class="mt-8 text-center text-sm font-medium text-gray-500">
-    {{ 'auth.noAccount' | translate }}
+    {{ 'AUTH.LOGIN.NO_ACCOUNT' | translate }}
     <a routerLink="/auth/register-student" class="font-bold text-[var(--draya-primary-700,#1B6D63)] hover:text-[#14534B] ms-1 border-b border-[var(--draya-primary-700)] pb-0.5">
-      {{ 'auth.createAccount' | translate }}
+      {{ 'AUTH.SHARED.CREATE_ACCOUNT' | translate }}
     </a>
   </div>
 </div>

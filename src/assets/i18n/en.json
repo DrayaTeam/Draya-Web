@@ -1,89 +1,101 @@
 {
-  "app": {
-    "name": "Draya",
-    "tagline": "AI-Powered Learning Platform"
+  "APP": {
+    "NAME": "Draya",
+    "TAGLINE": "AI-Powered Learning Platform"
   },
-  "nav": {
-    "dashboard": "Dashboard",
-    "students": "Students",
-    "profile": "Profile",
-    "exams": "Exams",
-    "reports": "Reports",
-    "settings": "Settings",
-    "notifications": "Notifications",
-    "qa": "Q&A"
+  "NAV": {
+    "DASHBOARD": "Dashboard",
+    "STUDENTS": "Students",
+    "PROFILE": "Profile",
+    "EXAMS": "Exams",
+    "REPORTS": "Reports",
+    "SETTINGS": "Settings",
+    "NOTIFICATIONS": "Notifications",
+    "QA": "Q&A"
   },
-  "role": {
-    "teacher": "Teacher",
-    "student": "Student",
-    "parent": "Parent"
+  "ROLE": {
+    "TEACHER": "Teacher",
+    "STUDENT": "Student",
+    "PARENT": "Parent"
   },
-  "auth": {
-    "login": "Sign In",
-    "logout": "Sign Out",
-    "email": "Email Address",
-    "password": "Password",
-    "forgotPassword": "Forgot password?",
-    "loginButton": "Sign In",
-    "loginError": "Invalid email or password.",
-    "sessionExpired": "Your session has expired. Please sign in again.",
-    "welcomeBack": "Welcome back! Please enter your email and password to continue.",
-    "rememberMe": "Remember me",
-    "createAccount": "Create a new account",
-    "noAccount": "Don't have an account?",
-    "fullName": "Full Name",
-    "phone": "Phone Number",
-    "confirmPassword": "Confirm Password",
-    "terms": "I agree to the Terms of Service and Privacy Policy.",
-    "teacherTab": "I am a Teacher / Academy",
-    "studentTab": "I am a Student",
-    "registerTeacherTitle": "Create a new account",
-    "registerTeacherSubtitle": "Join the Draya ecosystem and build your AI-powered academy.",
-    "registerStudentTitle": "Create Student Account",
-    "registerStudentSubtitle": "Start your AI-powered learning journey and track your progress.",
-    "parentGuardianEmail": "Parent/Guardian Email",
-    "dateOfBirth": "Date of Birth",
-    "forgotPasswordTitle": "Forgot Password?",
-    "forgotPasswordSubtitle": "Enter your email and we'll send you a link to reset your password.",
-    "sendResetLink": "Send Reset Link",
-    "backToLogin": "Back to Login",
-    "resetLinkSent": "Reset Link Sent",
-    "resetLinkSentDesc": "If this email is registered with us, you will receive a reset link shortly.",
-    "resetPasswordTitle": "Reset Password",
-    "resetPasswordSubtitle": "Enter your new password and keep it safe.",
-    "resetPasswordBtn": "Reset Password",
-    "resetSuccess": "Password Reset Successful",
-    "resetSuccessDesc": "Your password has been changed successfully. You can now log in.",
-    "invalidTokenTitle": "Invalid Link",
-    "invalidTokenDesc": "The link you are using is invalid or has expired. Please request a new one.",
-    "passwordStrength": "Password Strength",
-    "strengthWeak": "Weak",
-    "strengthMedium": "Medium",
-    "strengthStrong": "Strong",
-    "alreadyHaveAccount": "Already have an account?"
+  "AUTH": {
+    "SHARED": {
+      "LOGIN": "Sign In",
+      "LOGOUT": "Sign Out",
+      "EMAIL": "Email Address",
+      "PASSWORD": "Password",
+      "FORGOT_PASSWORD_LINK": "Forgot password?",
+      "CREATE_ACCOUNT": "Create a new account",
+      "FULL_NAME": "Full Name",
+      "PHONE": "Phone Number",
+      "CONFIRM_PASSWORD": "Confirm Password",
+      "TERMS": "I agree to the Terms of Service and Privacy Policy.",
+      "TEACHER_TAB": "I am a Teacher / Academy",
+      "STUDENT_TAB": "I am a Student",
+      "BACK_TO_LOGIN": "Back to Login",
+      "PASSWORD_STRENGTH": "Password Strength",
+      "STRENGTH_WEAK": "Weak",
+      "STRENGTH_MEDIUM": "Medium",
+      "STRENGTH_STRONG": "Strong",
+      "ALREADY_HAVE_ACCOUNT": "Already have an account?"
+    },
+    "LOGIN": {
+      "SUBMIT_BTN": "Sign In",
+      "ERROR": "Invalid email or password.",
+      "SESSION_EXPIRED": "Your session has expired. Please sign in again.",
+      "WELCOME_BACK": "Welcome back! Please enter your email and password to continue.",
+      "REMEMBER_ME": "Remember me",
+      "NO_ACCOUNT": "Don't have an account?"
+    },
+    "REGISTER_TEACHER": {
+      "TITLE": "Create a new account",
+      "SUBTITLE": "Join the Draya ecosystem and build your AI-powered academy."
+    },
+    "REGISTER_STUDENT": {
+      "TITLE": "Create Student Account",
+      "SUBTITLE": "Start your AI-powered learning journey and track your progress.",
+      "PARENT_EMAIL": "Parent/Guardian Email",
+      "DOB": "Date of Birth"
+    },
+    "FORGOT_PASSWORD": {
+      "TITLE": "Forgot Password?",
+      "SUBTITLE": "Enter your email and we'll send you a link to reset your password.",
+      "SEND_BTN": "Send Reset Link",
+      "SUCCESS_TITLE": "Reset Link Sent",
+      "SUCCESS_DESC": "If this email is registered with us, you will receive a reset link shortly."
+    },
+    "RESET_PASSWORD": {
+      "TITLE": "Reset Password",
+      "SUBTITLE": "Enter your new password and keep it safe.",
+      "SUBMIT_BTN": "Reset Password",
+      "SUCCESS_TITLE": "Password Reset Successful",
+      "SUCCESS_DESC": "Your password has been changed successfully. You can now log in.",
+      "INVALID_TOKEN_TITLE": "Invalid Link",
+      "INVALID_TOKEN_DESC": "The link you are using is invalid or has expired. Please request a new one."
+    }
   },
-  "roles": {
-    "teacher": "Teacher",
-    "student": "Student",
-    "parent": "Parent"
+  "ROLES": {
+    "TEACHER": "Teacher",
+    "STUDENT": "Student",
+    "PARENT": "Parent"
   },
-  "common": {
-    "loading": "Loading...",
-    "error": "Something went wrong.",
-    "save": "Save",
-    "cancel": "Cancel",
-    "confirm": "Confirm",
-    "delete": "Delete",
-    "edit": "Edit",
-    "back": "Back",
-    "noData": "No data available",
-    "noDataDescription": "There is currently no information to display here.",
-    "confirmActionTitle": "Confirm Action",
-    "confirmActionMessage": "Are you sure you want to perform this action?"
+  "COMMON": {
+    "LOADING": "Loading...",
+    "ERROR": "Something went wrong.",
+    "SAVE": "Save",
+    "CANCEL": "Cancel",
+    "CONFIRM": "Confirm",
+    "DELETE": "Delete",
+    "EDIT": "Edit",
+    "BACK": "Back",
+    "NO_DATA": "No data available",
+    "NO_DATA_DESCRIPTION": "There is currently no information to display here.",
+    "CONFIRM_ACTION_TITLE": "Confirm Action",
+    "CONFIRM_ACTION_MESSAGE": "Are you sure you want to perform this action?"
   },
-  "error": {
-    "title": "An unexpected error occurred",
-    "defaultMessage": "The page failed to load or the application encountered an unexpected crash. Please check your connection and try again.",
-    "retryButton": "Try Again & Go Home"
+  "ERROR": {
+    "TITLE": "An unexpected error occurred",
+    "DEFAULT_MESSAGE": "The page failed to load or the application encountered an unexpected crash. Please check your connection and try again.",
+    "RETRY_BUTTON": "Try Again & Go Home"
   }
 }

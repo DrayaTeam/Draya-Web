@@ -13,15 +13,15 @@ import { TranslatePipe } from '@ngx-translate/core';
           <span class="pi pi-exclamation-circle" style="font-size: 3rem;"></span>
         </div>
         <h3 class="text-lg font-bold text-foreground mb-2">
-          {{ 'error.title' | translate }}
+          {{ 'ERROR.TITLE' | translate }}
         </h3>
         <p class="text-sm text-muted-foreground max-w-xs mb-6 leading-relaxed">
-          {{ errorMessage || ('error.defaultMessage' | translate) }}
+          {{ errorMessage || ('ERROR.DEFAULT_MESSAGE' | translate) }}
         </p>
         <button
           (click)="onRetry()"
           class="px-6 py-2 rounded-lg font-semibold bg-primary text-primary-foreground hover:bg-primary/95 transition active:scale-[0.98]">
-          {{ 'error.retryButton' | translate }}
+          {{ 'ERROR.RETRY_BUTTON' | translate }}
         </button>
       </div>
     </div>
