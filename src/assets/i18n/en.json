@@ -72,6 +72,17 @@
       "SUCCESS_DESC": "Your password has been changed successfully. You can now log in.",
       "INVALID_TOKEN_TITLE": "Invalid Link",
       "INVALID_TOKEN_DESC": "The link you are using is invalid or has expired. Please request a new one."
+    },
+    "VALIDATION": {
+      "REQUIRED": "This field is required.",
+      "INVALID_EMAIL": "Please enter a valid email address.",
+      "PASSWORD_WEAK": "Password is too weak. Please use a stronger password.",
+      "PASSWORD_MISMATCH": "Passwords do not match.",
+      "INVALID_PHONE": "Please enter a valid Egyptian phone number.",
+      "MIN_AGE_ERROR": "You must be at least 10 years old to register.",
+      "INVALID_DATE": "Please enter a valid date.",
+      "FUTURE_DATE": "Date of birth cannot be in the future.",
+      "SAME_EMAIL_ERROR": "Parent email cannot be the same as the student email."
     }
   },
   "ROLES": {
