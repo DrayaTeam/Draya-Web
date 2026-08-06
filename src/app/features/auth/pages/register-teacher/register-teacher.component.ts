@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, inject, signal, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, ElementRef, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
@@ -32,6 +33,7 @@ export class RegisterTeacherComponent {
   private readonly messageService = inject(MessageService, { optional: true });
   private readonly translate = inject(TranslateService);
   private readonly el = inject(ElementRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly registerForm = this.fb.nonNullable.group({
     fullName: ['', [Validators.required, Validators.minLength(3), noPureNumericValidator]],
@@ -49,7 +51,7 @@ export class RegisterTeacherComponent {
   readonly passwordStrength = signal<PasswordStrength>('weak');
 
   constructor() {
-    this.registerForm.controls.password.valueChanges.subscribe(val => {
+    this.registerForm.controls.password.valueChanges.pipe(takeUntilDestroyed()).subscribe(val => {
       this.passwordStrength.set(calculatePasswordStrength(val));
       this.registerForm.controls.confirmPassword.updateValueAndValidity();
     });
@@ -83,7 +85,7 @@ export class RegisterTeacherComponent {
       password: formValue.password
     };
 
-    this.auth.registerTeacher(payload).subscribe({
+    this.auth.registerTeacher(payload).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.router.navigate(['/teacher/dashboard']);
       },
@@ -133,8 +135,8 @@ export class RegisterTeacherComponent {
   private showGenericError() {
     this.messageService?.add({
       severity: 'error',
-      summary: this.translate.instant('error.title'),
-      detail: this.translate.instant('common.error')
+      summary: this.translate.instant('ERROR.TITLE'),
+      detail: this.translate.instant('COMMON.ERROR')
     });
   }
 }

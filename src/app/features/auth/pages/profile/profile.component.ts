@@ -1,8 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject, OnInit, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
-import { User } from '../../../../core/models/user.model';
+
 
 @Component({
   selector: 'app-profile',
@@ -13,6 +14,7 @@ import { User } from '../../../../core/models/user.model';
 })
 export class ProfileComponent implements OnInit {
   private readonly auth = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly loading = this.auth.isLoading;
   readonly error = this.auth.authError;
@@ -20,11 +22,11 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this.user()) {
-      this.auth.getProfile().subscribe();
+      this.auth.getProfile().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }
   }
 
   retry(): void {
-    this.auth.getProfile().subscribe();
+    this.auth.getProfile().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 }

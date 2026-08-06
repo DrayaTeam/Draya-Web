@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, OnInit, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -24,6 +25,7 @@ export class ResetPasswordComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly messageService = inject(MessageService, { optional: true });
   private readonly translate = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly resetForm = this.fb.nonNullable.group({
     password: ['', [Validators.required, passwordStrengthValidator()]],
@@ -41,7 +43,7 @@ export class ResetPasswordComponent implements OnInit {
   private token = '';
 
   constructor() {
-    this.resetForm.controls.password.valueChanges.subscribe(val => {
+    this.resetForm.controls.password.valueChanges.pipe(takeUntilDestroyed()).subscribe(val => {
       this.passwordStrength.set(calculatePasswordStrength(val));
       this.resetForm.controls.confirmPassword.updateValueAndValidity();
     });
@@ -76,7 +78,7 @@ export class ResetPasswordComponent implements OnInit {
 
     const newPassword = this.resetForm.getRawValue().password;
 
-    this.auth.resetPassword({ token: this.token, newPassword }).subscribe({
+    this.auth.resetPassword({ token: this.token, newPassword }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isSuccess.set(true);
       },
@@ -118,8 +120,8 @@ export class ResetPasswordComponent implements OnInit {
   private showGenericError(customMessage?: string) {
     this.messageService?.add({
       severity: 'error',
-      summary: this.translate.instant('error.title'),
-      detail: customMessage || this.translate.instant('common.error')
+      summary: this.translate.instant('ERROR.TITLE'),
+      detail: customMessage || this.translate.instant('COMMON.ERROR')
     });
   }
 }

@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -19,6 +20,7 @@ export class ForgotPasswordComponent {
   private readonly fb = inject(FormBuilder);
   private readonly messageService = inject(MessageService, { optional: true });
   private readonly translate = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly forgotForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]]
@@ -37,15 +39,15 @@ export class ForgotPasswordComponent {
 
     const email = this.forgotForm.getRawValue().email.trim().toLowerCase();
 
-    this.auth.forgotPassword(email).subscribe({
+    this.auth.forgotPassword(email).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isSuccess.set(true);
       },
       error: (err: ApiError) => {
         this.messageService?.add({
           severity: 'error',
-          summary: this.translate.instant('error.title'),
-          detail: err.message || this.translate.instant('common.error')
+          summary: this.translate.instant('ERROR.TITLE'),
+          detail: err.message || this.translate.instant('COMMON.ERROR')
         });
       }
     });

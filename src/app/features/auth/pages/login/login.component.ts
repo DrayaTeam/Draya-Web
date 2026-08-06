@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -20,6 +21,7 @@ export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly messageService = inject(MessageService, { optional: true });
   private readonly translate = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -44,7 +46,7 @@ export class LoginComponent {
 
     const { email, password, rememberMe } = this.loginForm.getRawValue();
 
-    this.auth.login({ email, password, rememberMe }).subscribe({
+    this.auth.login({ email, password, rememberMe }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
         const role = res.user.role;
         const dashboards: Record<string, string> = {
@@ -67,8 +69,8 @@ export class LoginComponent {
           // Unexpected or network error
           this.messageService?.add({
             severity: 'error',
-            summary: this.translate.instant('error.title'),
-            detail: this.translate.instant('common.error')
+            summary: this.translate.instant('ERROR.TITLE'),
+            detail: this.translate.instant('COMMON.ERROR')
           });
         }
       }
