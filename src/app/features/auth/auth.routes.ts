@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { AuthShellComponent } from './layout/auth-shell/auth-shell.component';
+
 
 export const authRoutes: Routes = [
   {
     path: '',
-    component: AuthShellComponent,
+    loadComponent: () => import('./layout/auth-shell/auth-shell.component').then(m => m.AuthShellComponent),
     children: [
       {
         path: 'login',
