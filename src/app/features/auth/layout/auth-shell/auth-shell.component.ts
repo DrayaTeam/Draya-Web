@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -94,15 +95,16 @@ export class AuthShellComponent {
 
   constructor() {
     this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: NavigationEnd) => {
-      this.isLogin.set(event.urlAfterRedirects.includes('/login'));
+      filter(event => event instanceof NavigationEnd),
+      takeUntilDestroyed()
+    ).subscribe((event) => {
+      this.isLogin.set((event as NavigationEnd).urlAfterRedirects.includes('/login'));
     });
     
     this.isLogin.set(this.router.url.includes('/login'));
   }
 
-  getRouteAnimationData(outlet: any) {
+  getRouteAnimationData(outlet: RouterOutlet): string {
     return outlet?.activatedRouteData?.['animation'] || this.router.url;
   }
 }
