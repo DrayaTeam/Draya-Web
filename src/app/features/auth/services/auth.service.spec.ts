@@ -63,7 +63,7 @@ describe('AuthService', () => {
           expect(res).toEqual(mockAuthResponse);
           expect(service.currentUser()).toEqual(mockUser);
           expect(service.authError()).toBeNull();
-          expect(localStorage.getItem('access_token')).toBe('access-token');
+          expect(localStorage.getItem('draya_access_token')).toBe('access-token');
           done();
         }
       });
@@ -94,7 +94,7 @@ describe('AuthService', () => {
         next: (res) => {
           expect(res).toEqual(mockAuthResponse);
           expect(service.currentUser()).toEqual(mockUser);
-          expect(localStorage.getItem('access_token')).toBe('access-token');
+          expect(localStorage.getItem('draya_access_token')).toBe('access-token');
           done();
         }
       });

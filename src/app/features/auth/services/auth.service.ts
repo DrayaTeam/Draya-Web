@@ -30,7 +30,7 @@ export class AuthService {
 
   private loadUserFromStorage(): void {
     if (isPlatformBrowser(this.platformId)) {
-      const storedUser = localStorage.getItem('user');
+      const storedUser = localStorage.getItem('draya_user');
       if (storedUser) {
         try {
           this._currentUser.set(JSON.parse(storedUser));
@@ -43,9 +43,9 @@ export class AuthService {
 
   private handleAuthSuccess(response: AuthResponse): void {
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('access_token', response.accessToken);
-      localStorage.setItem('refresh_token', response.refreshToken);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem('draya_access_token', response.accessToken);
+      localStorage.setItem('draya_refresh_token', response.refreshToken);
+      localStorage.setItem('draya_user', JSON.stringify(response.user));
     }
     this._currentUser.set(response.user);
     this._authError.set(null);
@@ -53,9 +53,9 @@ export class AuthService {
 
   private clearStorage(): void {
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user');
+      localStorage.removeItem('draya_access_token');
+      localStorage.removeItem('draya_refresh_token');
+      localStorage.removeItem('draya_user');
     }
     this._currentUser.set(null);
   }
@@ -133,7 +133,7 @@ export class AuthService {
     return this.authApi.getProfile().pipe(
       tap((user) => {
         if (isPlatformBrowser(this.platformId)) {
-          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('draya_user', JSON.stringify(user));
         }
         this._currentUser.set(user);
       }),
