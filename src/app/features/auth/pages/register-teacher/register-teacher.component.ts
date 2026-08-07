@@ -90,15 +90,15 @@ export class RegisterTeacherComponent {
         this.router.navigate(['/teacher/dashboard']);
       },
       error: (err: ApiError) => {
-        if (err.code === 'CONFLICT' || err.code === '409') {
+        if (err.code === 'EMAIL_ALREADY_EXISTS') {
           this.registerForm.controls.email.setErrors({ emailTaken: true });
           this.scrollToFirstInvalidControl();
-        } else if (err.code === 'BAD_REQUEST' || err.code === '400') {
+        } else if (err.code === 'VALIDATION_FAILED') {
           if (err.details && err.details.length > 0) {
             err.details.forEach(detail => {
               const control = this.registerForm.get(detail.field);
               if (control) {
-                control.setErrors({ serverError: detail.message });
+                control.setErrors({ serverError: detail.issue });
               }
             });
             this.scrollToFirstInvalidControl();

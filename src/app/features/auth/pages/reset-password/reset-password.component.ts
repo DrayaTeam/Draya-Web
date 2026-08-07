@@ -83,21 +83,17 @@ export class ResetPasswordComponent implements OnInit {
         this.isSuccess.set(true);
       },
       error: (err: ApiError) => {
-        if (err.code === 'BAD_REQUEST' || err.code === '400') {
+        if (err.code === 'INVALID_PASSWORD_RESET_TOKEN') {
+          // Recon confirmed: invalid/expired token returns 401 with this code (NOT 400 as Swagger suggested)
+          this.isInvalidToken.set(true);
+        } else if (err.code === 'VALIDATION_FAILED') {
           if (err.details && err.details.length > 0) {
-            let hasTokenError = false;
             err.details.forEach(detail => {
-              if (detail.field === 'token') {
-                hasTokenError = true;
-              }
               const control = this.resetForm.get(detail.field === 'newPassword' ? 'password' : detail.field);
               if (control) {
-                control.setErrors({ serverError: detail.message });
+                control.setErrors({ serverError: detail.issue });
               }
             });
-            if (hasTokenError) {
-              this.isInvalidToken.set(true);
-            }
           } else {
             this.showGenericError(err.message);
           }

@@ -57,7 +57,7 @@ export class LoginComponent {
         this.router.navigate([dashboards[role] || '/']);
       },
       error: (err: ApiError) => {
-        if (err.code === 'UNAUTHORIZED') {
+        if (err.code === 'INVALID_CREDENTIALS') {
           // Show inline error for incorrect credentials
           this.inlineError.set(err.message);
           // Mark form as untouched so it doesn't immediately lock out resubmit, but wait!

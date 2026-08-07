@@ -12,9 +12,9 @@ describe('AuthService', () => {
 
   const mockUser: User = {
     userId: '1',
-    email: 'test@example.com',
     fullName: 'Test User',
     role: 'teacher'
+    // email intentionally omitted — real API login/register/refresh responses never include it
   };
 
   const mockAuthResponse: AuthResponse = {
@@ -119,9 +119,9 @@ describe('AuthService', () => {
 
     it('should handle registration field errors (400)', (done) => {
       const apiError: ApiError = {
-        code: 'BAD_REQUEST',
-        message: 'Invalid data',
-        details: [{ field: 'email', message: 'Invalid format' }]
+        code: 'VALIDATION_FAILED',
+        message: 'One or more fields are invalid.',
+        details: [{ field: 'email', issue: 'A valid email address is required.' }]
       };
       authApiSpy.registerTeacher.and.returnValue(throwError(() => apiError));
 

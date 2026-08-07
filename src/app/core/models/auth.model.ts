@@ -1,4 +1,4 @@
-import { User } from './user.model';
+import { User, UserProfile } from './user.model';
 
 export interface LoginRequest {
   email: string;
@@ -28,10 +28,5 @@ export interface AuthResponse {
   user: User;
 }
 
-export interface TokenRefreshResponse {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
-}
-
-export type UserProfile = User;
+// Re-export UserProfile so callers can import from auth.model as before
+export type { UserProfile };

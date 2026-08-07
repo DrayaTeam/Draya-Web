@@ -1,8 +1,8 @@
 import { Injectable, inject, signal, computed, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { catchError, tap, finalize, Observable, throwError } from 'rxjs';
+import { catchError, finalize, Observable, throwError, tap } from 'rxjs';
 import { AUTH_API } from './auth-api.token';
-import { User } from '../../../core/models/user.model';
+import { User, UserProfile } from '../../../core/models/user.model';
 import { ApiError } from '../../../core/models/api-error.model';
 import { LoginRequest, RegisterTeacherRequest, RegisterStudentRequest, AuthResponse } from '../../../core/models/auth.model';
 
@@ -102,11 +102,15 @@ export class AuthService {
   logout(): Observable<void> {
     this._isLoading.set(true);
     this._authError.set(null);
+    // Clear local tokens immediately — do NOT wait for the server response.
+    // Recon confirmed the access token is not server-side blacklisted, so the
+    // real security boundary is removing it from storage at once. The server call
+    // revokes the refresh token; its success/failure doesn't affect local cleanup.
+    this.clearStorage();
     return this.authApi.logout().pipe(
-      tap(() => this.clearStorage()),
       catchError((error: ApiError) => {
-        this._authError.set(error);
-        this.clearStorage();
+        // Local storage already cleared above — this is just propagating the error
+        // for any caller that wants to show a notification.
         return throwError(() => error);
       }),
       finalize(() => this._isLoading.set(false))
@@ -127,7 +131,7 @@ export class AuthService {
     );
   }
 
-  getProfile(): Observable<User> {
+  getProfile(): Observable<UserProfile> {
     this._isLoading.set(true);
     this._authError.set(null);
     return this.authApi.getProfile().pipe(

@@ -1,13 +1,16 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError, throwError, of } from 'rxjs';
 import { IAuthApi } from './auth-api.token';
 import { RegisterTeacherRequest, RegisterStudentRequest, LoginRequest, AuthResponse, UserProfile } from '../../../core/models/auth.model';
 import { environment } from '../../../../environments/environment';
+import { decodeToken } from '../../../core/auth/jwt.util';
 
 @Injectable({ providedIn: 'root' })
 export class AuthApiService implements IAuthApi {
   private readonly http = inject(HttpClient);
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly baseUrl = `${environment.apiBaseUrl}/auth`;
 
   registerTeacher(payload: RegisterTeacherRequest): Observable<AuthResponse> {
@@ -30,16 +33,46 @@ export class AuthApiService implements IAuthApi {
     return this.http.post<void>(`${this.baseUrl}/logout`, {});
   }
 
+  /**
+   * Fetches the current user's full profile from the server.
+   *
+   * TEMPORARY WORKAROUND: GET /auth/me returns 404 "Active subscription not found" for Teacher
+   * accounts due to a backend bug (reported — see docs/api-recon-findings.md § View Profile).
+   * When that specific error occurs, we fall back to decoding the stored JWT access token, which
+   * contains email, fullName, and role claims, to reconstruct a minimal UserProfile.
+   * Remove this fallback once the backend team fixes the /auth/me endpoint for Teachers.
+   */
   getProfile(): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${this.baseUrl}/me`);
+    return this.http.get<UserProfile>(`${this.baseUrl}/me`).pipe(
+      catchError((err) => {
+        // TEMPORARY WORKAROUND (see JSDoc above)
+        if (err?.code === 'NOT_FOUND' && err?.message === 'Active subscription not found.') {
+          const token = isPlatformBrowser(this.platformId)
+            ? localStorage.getItem('draya_access_token')
+            : null;
+          if (token) {
+            const claims = decodeToken(token);
+            if (claims) {
+              const fallbackProfile: UserProfile = {
+                userId: claims.sub,
+                email: claims.email,
+                fullName: claims.fullName,
+                role: claims.role,
+              };
+              return of(fallbackProfile);
+            }
+          }
+        }
+        return throwError(() => err);
+      })
+    );
   }
 
-  // PROVISIONAL: contract not yet confirmed by backend — revisit endpoint shape once delivered
   forgotPassword(email: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.baseUrl}/forgot-password`, { email });
+    return this.http.post<{ message: string }>(`${this.baseUrl}/password-reset/request`, { email });
   }
 
   resetPassword(payload: { token: string; newPassword: string }): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.baseUrl}/reset-password`, payload);
+    return this.http.post<{ message: string }>(`${this.baseUrl}/password-reset/confirm`, payload);
   }
 }

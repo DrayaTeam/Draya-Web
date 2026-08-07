@@ -37,7 +37,7 @@ export class AuthMockApiService implements IAuthApi {
       const error: ApiError = {
         code: 'BAD_REQUEST',
         message: 'Invalid data',
-        details: [{ field: 'general', message: 'البيانات غير مكتملة' }]
+        details: [{ field: 'general', issue: 'البيانات غير مكتملة' }]
       };
       return throwError(() => error).pipe(delay(this.delayMs));
     }
@@ -70,7 +70,7 @@ export class AuthMockApiService implements IAuthApi {
        const error: ApiError = {
         code: 'BAD_REQUEST',
         message: 'Invalid data',
-        details: [{ field: 'general', message: 'البيانات غير مكتملة' }]
+        details: [{ field: 'general', issue: 'البيانات غير مكتملة' }]
       };
       return throwError(() => error).pipe(delay(this.delayMs));
     }
@@ -135,7 +135,7 @@ export class AuthMockApiService implements IAuthApi {
       const error: ApiError = { code: 'UNAUTHORIZED', message: 'غير مصرح لك بالوصول، يرجى تسجيل الدخول' };
       return throwError(() => error).pipe(delay(this.delayMs));
     }
-    return of(this.users[0]).pipe(delay(this.delayMs));
+    return of(this.users[0] as UserProfile).pipe(delay(this.delayMs));
   }
 
   // PROVISIONAL: contract not yet confirmed by backend — revisit endpoint shape once delivered
@@ -153,7 +153,7 @@ export class AuthMockApiService implements IAuthApi {
       const error: ApiError = {
         code: 'BAD_REQUEST',
         message: 'Invalid or expired token',
-        details: [{ field: 'token', message: 'The reset link is invalid or has expired.' }]
+        details: [{ field: 'token', issue: 'The reset link is invalid or has expired.' }]
       };
       return throwError(() => error).pipe(delay(this.delayMs));
     }
@@ -170,7 +170,7 @@ export class AuthMockApiService implements IAuthApi {
       const error: ApiError = {
         code: 'BAD_REQUEST',
         message: 'Password does not meet complexity requirements',
-        details: [{ field: 'newPassword', message: 'كلمة المرور ضعيفة' }]
+        details: [{ field: 'newPassword', issue: 'كلمة المرور ضعيفة' }]
       };
       return throwError(() => error).pipe(delay(this.delayMs));
     }
