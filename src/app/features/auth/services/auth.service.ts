@@ -2,7 +2,7 @@ import { Injectable, inject, signal, computed, PLATFORM_ID } from '@angular/core
 import { isPlatformBrowser } from '@angular/common';
 import { catchError, finalize, Observable, throwError, tap } from 'rxjs';
 import { AUTH_API } from './auth-api.token';
-import { User, UserProfile } from '../../../core/models/user.model';
+import { User, UserProfile, UserRole } from '../../../core/models/user.model';
 import { ApiError } from '../../../core/models/api-error.model';
 import { LoginRequest, RegisterTeacherRequest, RegisterStudentRequest, AuthResponse } from '../../../core/models/auth.model';
 
@@ -42,6 +42,9 @@ export class AuthService {
   }
 
   private handleAuthSuccess(response: AuthResponse): void {
+    if (response.user && response.user.role) {
+      response.user.role = response.user.role.toLowerCase() as UserRole;
+    }
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('draya_access_token', response.accessToken);
       localStorage.setItem('draya_refresh_token', response.refreshToken);
@@ -136,6 +139,9 @@ export class AuthService {
     this._authError.set(null);
     return this.authApi.getProfile().pipe(
       tap((user) => {
+        if (user && user.role) {
+          user.role = user.role.toLowerCase() as UserRole;
+        }
         if (isPlatformBrowser(this.platformId)) {
           localStorage.setItem('draya_user', JSON.stringify(user));
         }

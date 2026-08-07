@@ -54,7 +54,16 @@ export class LoginComponent {
           student: '/student/dashboard',
           parent: '/parent/dashboard',
         };
-        this.router.navigate([dashboards[role] || '/']);
+        const targetUrl = dashboards[role];
+        if (targetUrl) {
+          this.router.navigate([targetUrl]);
+        } else {
+          this.messageService?.add({
+            severity: 'error',
+            summary: this.translate.instant('ERROR.TITLE'),
+            detail: `Unrecognized role: ${role}`
+          });
+        }
       },
       error: (err: ApiError) => {
         if (err.code === 'INVALID_CREDENTIALS') {
