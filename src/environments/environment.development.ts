@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiBaseUrl: 'http://draya-api.runasp.net/api/v1',
+  apiBaseUrl: '/api/v1',
   signalrHubUrl: 'https://localhost:7001/hubs/qa',
   useMockAuthApi: false,
 };
