@@ -1,0 +1,101 @@
+<section id="features" class="features-section">
+  <div class="features-container">
+    <!-- Header -->
+    <div class="features-header">
+      <span class="features-badge">
+        {{ 'LANDING.FEATURES.BADGE' | translate }}
+      </span>
+      <h2 class="features-heading">
+        {{ 'LANDING.FEATURES.HEADING' | translate }}
+      </h2>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="features-grid">
+      @for (f of features; track f.titleKey) {
+        <div class="feature-card">
+          <!-- Image with Overlay & Badge -->
+          <div class="feature-img-wrapper">
+            <img
+              [src]="f.photo"
+              [alt]="f.titleKey | translate"
+              class="feature-img"
+              loading="lazy" />
+            <div class="feature-overlay"></div>
+            <div class="feature-tag-wrapper">
+              <span class="feature-tag" [class.tag-ai]="f.isAi" [class.tag-primary]="!f.isAi">
+                @if (f.isAi) {
+                  <svg
+                    width="10"
+                    height="10"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path
+                      d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+                  </svg>
+                }
+                {{ f.tagKey | translate }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="feature-body">
+            <h3 class="feature-title">
+              {{ f.titleKey | translate }}
+            </h3>
+            <p class="feature-desc">
+              {{ f.descKey | translate }}
+            </p>
+
+            <!-- Checklist -->
+            <div class="feature-checklist">
+              @for (itemKey of f.items; track itemKey) {
+                <div class="check-item">
+                  <div class="check-icon-circle">
+                    <svg
+                      width="10"
+                      height="10"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#1B6D63"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </div>
+                  <span class="check-text">{{ itemKey | translate }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Explore Button -->
+    <div class="features-action">
+      <a routerLink="/auth/register" class="btn-explore">
+        {{ 'LANDING.FEATURES.EXPLORE' | translate }}
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="explore-icon">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
