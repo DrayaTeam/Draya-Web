@@ -18,27 +18,27 @@ export interface Column<T = Record<string, unknown>> {
     @if (data.length === 0) {
       <app-empty-state [title]="emptyTitle" [description]="emptyDescription"></app-empty-state>
     } @else {
-      <div class="flex flex-col gap-4 w-full">
-        <div class="w-full overflow-x-auto rounded-xl border border-border bg-card">
+      <div class="flex w-full flex-col gap-4">
+        <div class="border-border bg-card w-full overflow-x-auto rounded-xl border">
           <table class="w-full border-collapse text-right">
             <thead>
-              <tr class="border-b border-border bg-secondary">
+              <tr class="border-border bg-secondary border-b">
                 @for (col of columns; track col.header) {
-                  <th class="p-3.5 text-xs font-bold text-muted-foreground select-none">
+                  <th class="text-muted-foreground p-3.5 text-xs font-bold select-none">
                     @if (col.sortable) {
                       <button
                         (click)="handleSort(col.accessorKey)"
-                        class="inline-flex items-center gap-1.5 bg-transparent border-none cursor-pointer p-0 text-inherit font-inherit"
-                      >
+                        class="font-inherit inline-flex cursor-pointer items-center gap-1.5 border-none bg-transparent p-0 text-inherit">
                         {{ col.header }}
                         <span
                           [ngClass]="[
                             'pi text-[10px]',
                             sortKey === col.accessorKey
-                              ? (sortOrder === 'asc' ? 'pi-sort-amount-up' : 'pi-sort-amount-down')
-                              : 'pi-sort-alt text-muted-foreground/50'
-                          ]"
-                        ></span>
+                              ? sortOrder === 'asc'
+                                ? 'pi-sort-amount-up'
+                                : 'pi-sort-amount-down'
+                              : 'pi-sort-alt text-muted-foreground/50',
+                          ]"></span>
                       </button>
                     } @else {
                       {{ col.header }}
@@ -52,12 +52,11 @@ export interface Column<T = Record<string, unknown>> {
                 <tr
                   (click)="onRowClick(item)"
                   [ngClass]="[
-                    'border-b border-border transition-colors duration-150',
-                    rowClick.observed ? 'cursor-pointer hover:bg-muted' : ''
-                  ]"
-                >
+                    'border-border border-b transition-colors duration-150',
+                    rowClick.observed ? 'hover:bg-muted cursor-pointer' : '',
+                  ]">
                   @for (col of columns; track col.header) {
-                    <td class="p-4 text-sm text-foreground">
+                    <td class="text-foreground p-4 text-sm">
                       @if (col.cell) {
                         {{ col.cell(item) }}
                       } @else {
@@ -74,7 +73,7 @@ export interface Column<T = Record<string, unknown>> {
         <!-- Pagination controls -->
         @if (totalPages > 1) {
           <div class="flex items-center justify-between px-2">
-            <span class="text-xs text-muted-foreground">
+            <span class="text-muted-foreground text-xs">
               الصفحة {{ currentPage }} من {{ totalPages }} ({{ data.length }} عناصر إجمالاً)
             </span>
             <div class="flex gap-1.5">
@@ -82,8 +81,7 @@ export interface Column<T = Record<string, unknown>> {
                 variant="secondary"
                 size="sm"
                 [disabled]="currentPage === 1"
-                (btnClick)="prevPage()"
-              >
+                (btnClick)="prevPage()">
                 السابق
                 <span class="pi pi-chevron-left" style="font-size: 0.75rem;"></span>
               </app-button>
@@ -91,8 +89,7 @@ export interface Column<T = Record<string, unknown>> {
                 variant="secondary"
                 size="sm"
                 [disabled]="currentPage === totalPages"
-                (btnClick)="nextPage()"
-              >
+                (btnClick)="nextPage()">
                 التالي
                 <span class="pi pi-chevron-right" style="font-size: 0.75rem;"></span>
               </app-button>
@@ -101,7 +98,7 @@ export interface Column<T = Record<string, unknown>> {
         }
       </div>
     }
-  `
+  `,
 })
 export class DataTableComponent<T extends Record<string, unknown>> implements OnChanges {
   @Input() columns: Column<T>[] = [];

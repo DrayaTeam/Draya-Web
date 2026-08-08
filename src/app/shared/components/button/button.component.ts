@@ -11,19 +11,18 @@ import { CommonModule } from '@angular/common';
       [disabled]="disabled || loading"
       (click)="onClick($event)"
       [ngClass]="[
-        'inline-flex items-center justify-center gap-2 rounded-full font-semibold transition duration-150 ease-out outline-none whitespace-nowrap active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-offset-2',
+        'inline-flex items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap transition duration-150 ease-out outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98]',
         sizeClasses[size],
         variantClasses[variant],
         disabled || loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
-        className
-      ]"
-    >
+        className,
+      ]">
       @if (loading) {
         <span class="pi pi-spinner pi-spin" style="font-size: 1rem;"></span>
       }
       <ng-content></ng-content>
     </button>
-  `
+  `,
 })
 export class ButtonComponent {
   @Input() variant: 'primary' | 'secondary' | 'tertiary' | 'destructive' = 'primary';

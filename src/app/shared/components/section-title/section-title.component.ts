@@ -8,18 +8,18 @@ import { CommonModule } from '@angular/common';
   template: `
     <div [ngClass]="['mb-5 flex items-center justify-between gap-4', className]">
       <div>
-        <h2 class="text-xl font-bold text-foreground">
+        <h2 class="text-foreground text-xl font-bold">
           <ng-content></ng-content>
         </h2>
         @if (sub) {
-          <p class="text-sm text-muted-foreground mt-1">{{ sub }}</p>
+          <p class="text-muted-foreground mt-1 text-sm">{{ sub }}</p>
         }
       </div>
       <div class="flex items-center gap-2">
         <ng-content select="[action]"></ng-content>
       </div>
     </div>
-  `
+  `,
 })
 export class SectionTitleComponent {
   @Input() sub?: string;

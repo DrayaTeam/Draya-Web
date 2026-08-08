@@ -9,10 +9,9 @@ describe('LoadingSpinnerComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [LoadingSpinnerComponent],
-      providers: [provideTranslateService()]
-    })
-    .compileComponents();
-    
+      providers: [provideTranslateService()],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(LoadingSpinnerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

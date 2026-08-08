@@ -9,9 +9,7 @@ export const studentRoutes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () =>
-      import('./dashboard/student-dashboard.component').then(
-        (m) => m.StudentDashboardComponent,
-      ),
+      import('./dashboard/student-dashboard.component').then((m) => m.StudentDashboardComponent),
     canActivate: [authGuard, roleGuard],
     data: { roles: ['student'] },
     title: 'Dashboard — Draya',
@@ -19,9 +17,7 @@ export const studentRoutes: Routes = [
   {
     path: 'exam/:id',
     loadComponent: () =>
-      import('./exam-taking/exam-taking.component').then(
-        (m) => m.ExamTakingComponent,
-      ),
+      import('./exam-taking/exam-taking.component').then((m) => m.ExamTakingComponent),
     canActivate: [authGuard, roleGuard],
     data: { roles: ['student'] },
     title: 'Exam — Draya',

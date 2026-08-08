@@ -24,7 +24,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           catchError((refreshErr) => {
             auth.logout();
             return throwError(() => refreshErr);
-          })
+          }),
         );
       }
 
@@ -49,6 +49,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       };
 
       return throwError(() => drayaError);
-    })
+    }),
   );
 };

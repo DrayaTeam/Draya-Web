@@ -1,0 +1,47 @@
+<section id="faq" class="faq-section">
+  <div class="faq-container">
+    <!-- Header -->
+    <div class="faq-header">
+      <div class="faq-badge">
+        {{ 'LANDING.FAQ.BADGE' | translate }}
+      </div>
+      <h2 class="faq-heading">
+        {{ 'LANDING.FAQ.HEADING' | translate }}
+      </h2>
+    </div>
+
+    <!-- Accordion List -->
+    <div class="faq-list">
+      @for (item of faqItems; track item.qKey; let idx = $index) {
+        <div class="faq-item">
+          <button type="button" class="faq-question-btn" (click)="toggleFaq(idx)">
+            <span class="faq-question-text">
+              {{ item.qKey | translate }}
+            </span>
+            <div class="faq-chevron-circle" [class.open]="openFaq() === idx">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="faq-chevron-svg"
+                [class.rotated]="openFaq() === idx">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+          </button>
+
+          @if (openFaq() === idx) {
+            <div class="faq-answer">
+              {{ item.aKey | translate }}
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -9,8 +9,7 @@ import { authGuard } from '../core/auth/auth.guard';
 export const layoutRoutes: Routes = [
   {
     path: '',
-    loadComponent: () =>
-      import('./shell/shell.component').then((m) => m.ShellComponent),
+    loadComponent: () => import('./shell/shell.component').then((m) => m.ShellComponent),
     canActivate: [authGuard],
     children: [
       // Feature routes are lazy-loaded and registered in app.routes.ts as children.

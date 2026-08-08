@@ -6,9 +6,19 @@ import { Routes } from '@angular/router';
 export const authRoutes: Routes = [
   {
     path: 'login',
+    loadComponent: () => import('./login/login.component').then((m) => m.LoginComponent),
+    title: 'تسجيل الدخول — درايَة',
+  },
+  {
+    path: 'register',
+    loadComponent: () => import('./register/register.component').then((m) => m.RegisterComponent),
+    title: 'إنشاء حساب جديد — درايَة',
+  },
+  {
+    path: 'forgot-password',
     loadComponent: () =>
-      import('./login/login.component').then((m) => m.LoginComponent),
-    title: 'Sign In — Draya',
+      import('./forgot-password/forgot-password.component').then((m) => m.ForgotPasswordComponent),
+    title: 'استعادة كلمة المرور — درايَة',
   },
   {
     path: '',

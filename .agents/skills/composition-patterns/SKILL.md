@@ -1,9 +1,9 @@
 ---
 name: composition-patterns
-description: "Use when working with composition-patterns tasks or workflows"
+description: 'Use when working with composition-patterns tasks or workflows'
 risk: safe
-source: "https://github.com/vercel-labs/agent-skills"
-date_added: "2026-06-02"
+source: 'https://github.com/vercel-labs/agent-skills'
+date_added: '2026-06-02'
 ---
 
 # React Composition Patterns
@@ -14,6 +14,7 @@ composing internals. These patterns make codebases easier for both humans and AI
 agents to work with as they scale.
 
 ## When to Use
+
 Reference these guidelines when:
 
 - Refactoring components with many boolean props
@@ -82,6 +83,7 @@ Each rule file contains:
 For the complete guide with all rules expanded: `AGENTS.md`
 
 ## Limitations
+
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

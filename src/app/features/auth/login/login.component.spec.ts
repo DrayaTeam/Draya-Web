@@ -31,9 +31,7 @@ describe('LoginComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        LoginComponent,
-      ],
+      imports: [LoginComponent],
       providers: [
         provideTranslateService(),
         { provide: AuthService, useValue: mockAuthService },

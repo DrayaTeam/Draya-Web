@@ -9,9 +9,7 @@ export const parentRoutes: Routes = [
   {
     path: 'reports',
     loadComponent: () =>
-      import('./reports/parent-reports.component').then(
-        (m) => m.ParentReportsComponent,
-      ),
+      import('./reports/parent-reports.component').then((m) => m.ParentReportsComponent),
     canActivate: [authGuard, roleGuard],
     data: { roles: ['parent'] },
     title: 'Reports — Draya',

@@ -10,9 +10,7 @@ export const teacherRoutes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () =>
-      import('./dashboard/teacher-dashboard.component').then(
-        (m) => m.TeacherDashboardComponent,
-      ),
+      import('./dashboard/teacher-dashboard.component').then((m) => m.TeacherDashboardComponent),
     canActivate: [authGuard, roleGuard],
     data: { roles: ['teacher'] },
     title: 'Dashboard — Draya',
@@ -20,9 +18,7 @@ export const teacherRoutes: Routes = [
   {
     path: 'exam-builder',
     loadComponent: () =>
-      import('./exam-builder/exam-builder.component').then(
-        (m) => m.ExamBuilderComponent,
-      ),
+      import('./exam-builder/exam-builder.component').then((m) => m.ExamBuilderComponent),
     canActivate: [authGuard, roleGuard],
     data: { roles: ['teacher'] },
     title: 'Exam Builder — Draya',
