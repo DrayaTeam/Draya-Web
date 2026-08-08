@@ -6,6 +6,7 @@ import { User, UserProfile, UserRole } from '../../../core/models/user.model';
 import { ApiError } from '../../../core/models/api-error.model';
 import { LoginRequest, RegisterTeacherRequest, RegisterStudentRequest, AuthResponse } from '../../../core/models/auth.model';
 import { AuthService as CoreAuthService } from '../../../core/auth/auth.service';
+import { isTokenExpired } from '../../../core/auth/jwt.util';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -32,6 +33,15 @@ export class AuthService {
 
   private loadUserFromStorage(): void {
     if (isPlatformBrowser(this.platformId)) {
+      const storedToken = localStorage.getItem('draya_access_token');
+      if (storedToken && isTokenExpired(storedToken)) {
+        // NOTE: This duplicates expiration-check timing with core/auth/auth.service.ts because
+        // the two AuthService singletons aren't merged. Both now share the same isTokenExpired()
+        // utility so they can't desync, but a future cleanup should merge these into one service.
+        this.clearStorage();
+        return;
+      }
+
       const storedUser = localStorage.getItem('draya_user');
       if (storedUser) {
         try {
@@ -159,7 +169,6 @@ export class AuthService {
     );
   }
 
-  // PROVISIONAL: contract not yet confirmed by backend — revisit endpoint shape once delivered
   forgotPassword(email: string): Observable<{ message: string }> {
     this._isLoading.set(true);
     this._authError.set(null);
