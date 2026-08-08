@@ -6,16 +6,17 @@ import { TranslatePipe } from '@ngx-translate/core';
   standalone: true,
   imports: [TranslatePipe],
   template: `
-    <div class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card p-12 text-center">
-      <div class="flex h-12 w-12 items-center justify-center rounded-full bg-accent mb-4">
-        <span [class]="iconClass + ' h-6 w-6 text-muted-foreground'"></span>
+    <div
+      class="border-border bg-card flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
+      <div class="bg-accent mb-4 flex h-12 w-12 items-center justify-center rounded-full">
+        <span [class]="iconClass + ' text-muted-foreground h-6 w-6'"></span>
       </div>
-      <h3 class="text-lg font-semibold text-foreground">{{ title | translate }}</h3>
-      <p class="mt-2 max-w-sm text-sm text-muted-foreground">{{ description | translate }}</p>
-      
+      <h3 class="text-foreground text-lg font-semibold">{{ title | translate }}</h3>
+      <p class="text-muted-foreground mt-2 max-w-sm text-sm">{{ description | translate }}</p>
+
       <ng-content></ng-content>
     </div>
-  `
+  `,
 })
 export class EmptyStateComponent {
   @Input() title = 'common.noData';

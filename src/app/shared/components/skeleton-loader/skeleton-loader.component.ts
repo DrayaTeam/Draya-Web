@@ -9,16 +9,17 @@ import { CommonModule } from '@angular/common';
     <div
       [ngClass]="classes"
       [ngStyle]="customStyle"
-      class="relative overflow-hidden bg-gray-200 dark:bg-gray-800 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.5s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent">
-    </div>
+      class="relative overflow-hidden bg-gray-200 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.5s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent dark:bg-gray-800"></div>
   `,
-  styles: [`
-    @keyframes shimmer {
-      100% {
-        transform: translateX(100%);
+  styles: [
+    `
+      @keyframes shimmer {
+        100% {
+          transform: translateX(100%);
+        }
       }
-    }
-  `]
+    `,
+  ],
 })
 export class SkeletonLoaderComponent implements OnInit {
   @Input() width?: string | number;
@@ -35,9 +36,19 @@ export class SkeletonLoaderComponent implements OnInit {
 
     this.customStyle = {
       display: 'block',
-      width: this.width ? (typeof this.width === 'number' ? `${this.width}px` : this.width) : '100%',
-      height: this.height ? (typeof this.height === 'number' ? `${this.height}px` : this.height) : (this.variant === 'text' ? '14px' : '100px'),
-      borderRadius
+      width: this.width
+        ? typeof this.width === 'number'
+          ? `${this.width}px`
+          : this.width
+        : '100%',
+      height: this.height
+        ? typeof this.height === 'number'
+          ? `${this.height}px`
+          : this.height
+        : this.variant === 'text'
+          ? '14px'
+          : '100px',
+      borderRadius,
     };
 
     this.classes = this.className;

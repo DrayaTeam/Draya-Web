@@ -4,4 +4,3 @@ describe('HasRoleDirective', () => {
     expect(true).toBeTruthy();
   });
 });
-

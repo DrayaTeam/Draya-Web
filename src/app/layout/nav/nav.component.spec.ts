@@ -28,10 +28,7 @@ describe('NavComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        NavComponent,
-        RouterTestingModule,
-      ],
+      imports: [NavComponent, RouterTestingModule],
       providers: [
         provideTranslateService(),
         { provide: AuthService, useValue: mockAuthService },

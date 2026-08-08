@@ -16,21 +16,21 @@ import { Dialog } from 'primeng/dialog';
       [resizable]="false"
       [closable]="true"
       (onHide)="onClose()"
-      styleClass="draya-modal"
-    >
-      <div class="py-4 text-[15px] leading-relaxed text-foreground">
+      styleClass="draya-modal">
+      <div class="text-foreground py-4 text-[15px] leading-relaxed">
         <ng-content></ng-content>
       </div>
 
       @if (footerTemplate) {
         <ng-template pTemplate="footer">
-          <div class="flex justify-end gap-3 pt-3 border-t border-border bg-secondary/50 rounded-b-xl">
+          <div
+            class="border-border bg-secondary/50 flex justify-end gap-3 rounded-b-xl border-t pt-3">
             <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
           </div>
         </ng-template>
       }
     </p-dialog>
-  `
+  `,
 })
 export class ModalComponent {
   @Input() isOpen = false;

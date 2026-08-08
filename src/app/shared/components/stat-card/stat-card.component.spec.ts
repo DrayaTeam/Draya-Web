@@ -9,9 +9,9 @@ describe('StatCardComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StatCardComponent],
-      providers: [provideTranslateService()]
+      providers: [provideTranslateService()],
     }).compileComponents();
-    
+
     fixture = TestBed.createComponent(StatCardComponent);
     component = fixture.componentInstance;
     component.title = 'Test Title';

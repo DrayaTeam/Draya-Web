@@ -15,10 +15,7 @@ import {
   ErrorHandler,
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import {
-  provideHttpClient,
-  withInterceptors,
-} from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
@@ -34,7 +31,6 @@ import { DirectionService } from './core/services/direction.service';
 import { GlobalErrorHandler } from './core/errors/global-error-handler';
 
 /** Factory for ngx-translate's HttpLoader — loads JSON files from /assets/i18n/. */
-
 
 export const appConfig: ApplicationConfig = {
   providers: [

@@ -1,9 +1,9 @@
---- 
+---
 name: design-spells
 description: Curated micro-interactions and design details that add "magic" and personality to websites and apps.
 risk: safe
 source: community
-date_added: "2026-03-07"
+date_added: '2026-03-07'
 ---
 
 # Design Spells Skill
@@ -15,6 +15,7 @@ date_added: "2026-03-07"
 Use this skill specifically to elevate a UI from merely "functional" or "common" into something genuinely "magical." It focuses on the minute details that surprise and delight users, establishing a strong, premium brand personality.
 
 ## When to Use
+
 Trigger this skill when:
 
 - Polishing a finished feature to actively add a "wow" factor.
@@ -36,6 +37,7 @@ Trigger this skill when:
 - **Quality Execution**: A broken or janky "spell" is worse than none. Ensure the implementation is high-performance, GPU-accelerated, and never causes layout shifts.
 
 ## Limitations
+
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

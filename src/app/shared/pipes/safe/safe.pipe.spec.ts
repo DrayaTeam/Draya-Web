@@ -4,4 +4,3 @@ describe('SafePipe', () => {
     expect(true).toBeTruthy();
   });
 });
-

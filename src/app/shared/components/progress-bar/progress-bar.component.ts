@@ -11,17 +11,15 @@ import { CommonModule } from '@angular/common';
       [attr.aria-valuenow]="pct"
       aria-valuemin="0"
       aria-valuemax="100"
-      [ngClass]="['w-full h-1.5 rounded-full bg-secondary', className]"
-    >
+      [ngClass]="['bg-secondary h-1.5 w-full rounded-full', className]">
       <div
         [ngStyle]="{
           'width.%': pct,
-          'background-color': color || 'var(--primary)'
+          'background-color': color || 'var(--primary)',
         }"
-        class="h-full rounded-full transition-[width] duration-300 ease-out"
-      ></div>
+        class="h-full rounded-full transition-[width] duration-300 ease-out"></div>
     </div>
-  `
+  `,
 })
 export class ProgressBarComponent implements OnChanges {
   @Input({ required: true }) value!: number;

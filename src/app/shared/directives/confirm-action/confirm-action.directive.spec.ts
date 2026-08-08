@@ -4,4 +4,3 @@ describe('ConfirmActionDirective', () => {
     expect(true).toBeTruthy();
   });
 });
-

@@ -1,9 +1,9 @@
 ---
 name: angular-best-practices
-description: "Angular performance optimization and best practices guide. Use when writing, reviewing, or refactoring Angular code for optimal performance, bundle size, and rendering efficiency."
+description: 'Angular performance optimization and best practices guide. Use when writing, reviewing, or refactoring Angular code for optimal performance, bundle size, and rendering efficiency.'
 risk: safe
 source: self
-date_added: "2026-02-27"
+date_added: '2026-02-27'
 ---
 
 # Angular Best Practices
@@ -11,6 +11,7 @@ date_added: "2026-02-27"
 Comprehensive performance optimization guide for Angular applications. Contains prioritized rules for eliminating performance bottlenecks, optimizing bundles, and improving rendering.
 
 ## When to Use
+
 Reference these guidelines when:
 
 - Writing new Angular components or pages
@@ -45,7 +46,9 @@ Reference these guidelines when:
 // CORRECT - OnPush with Signals
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div>{{ count() }}</div>`,
+  template: `
+    <div>{{ count() }}</div>
+  `,
 })
 export class CounterComponent {
   count = signal(0);
@@ -53,7 +56,9 @@ export class CounterComponent {
 
 // WRONG - Default change detection
 @Component({
-  template: `<div>{{ count }}</div>`, // Checked every cycle
+  template: `
+    <div>{{ count }}</div>
+  `, // Checked every cycle
 })
 export class CounterComponent {
   count = 0;
@@ -71,7 +76,7 @@ export class CounterComponent {
   `,
 })
 export class DashboardComponent {
-  title = signal("Dashboard");
+  title = signal('Dashboard');
   count = signal(0);
 }
 
@@ -83,7 +88,7 @@ export class DashboardComponent {
   `,
 })
 export class DashboardComponent {
-  title = "Dashboard";
+  title = 'Dashboard';
   count = 0;
 }
 ```
@@ -144,7 +149,7 @@ this.route.params
 ```typescript
 // CORRECT - Use resolvers or blocking hydration for critical data
 export const route: Route = {
-  path: "profile/:id",
+  path: 'profile/:id',
   resolve: { data: profileResolver }, // Fetched on server before navigation
   component: ProfileComponent,
 };
@@ -153,7 +158,7 @@ export const route: Route = {
 class ProfileComponent implements OnInit {
   ngOnInit() {
     // Starts ONLY after JS loads and component renders
-    this.http.get("/api/profile").subscribe();
+    this.http.get('/api/profile').subscribe();
   }
 }
 ```
@@ -168,23 +173,20 @@ class ProfileComponent implements OnInit {
 // CORRECT - Lazy load feature routes
 export const routes: Routes = [
   {
-    path: "admin",
-    loadChildren: () =>
-      import("./admin/admin.routes").then((m) => m.ADMIN_ROUTES),
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.routes').then((m) => m.ADMIN_ROUTES),
   },
   {
-    path: "dashboard",
+    path: 'dashboard',
     loadComponent: () =>
-      import("./dashboard/dashboard.component").then(
-        (m) => m.DashboardComponent,
-      ),
+      import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
   },
 ];
 
 // WRONG - Eager loading everything
-import { AdminModule } from "./admin/admin.module";
+import { AdminModule } from './admin/admin.module';
 export const routes: Routes = [
-  { path: "admin", component: AdminComponent }, // In main bundle
+  { path: 'admin', component: AdminComponent }, // In main bundle
 ];
 ```
 
@@ -206,11 +208,11 @@ export const routes: Routes = [
 
 ```typescript
 // WRONG - Imports entire barrel, breaks tree-shaking
-import { Button, Modal, Table } from "@shared/components";
+import { Button, Modal, Table } from '@shared/components';
 
 // CORRECT - Direct imports
-import { Button } from "@shared/components/button/button.component";
-import { Modal } from "@shared/components/modal/modal.component";
+import { Button } from '@shared/components/button/button.component';
+import { Modal } from '@shared/components/modal/modal.component';
 ```
 
 ### Dynamic Import Third-Party Libraries
@@ -311,15 +313,10 @@ get filteredProducts() {
 
 ```typescript
 // app.config.ts
-import {
-  provideClientHydration,
-  withIncrementalHydration,
-} from "@angular/platform-browser";
+import { provideClientHydration, withIncrementalHydration } from '@angular/platform-browser';
 
 export const appConfig: ApplicationConfig = {
-  providers: [
-    provideClientHydration(withIncrementalHydration(), withEventReplay()),
-  ],
+  providers: [provideClientHydration(withIncrementalHydration(), withEventReplay())],
 };
 ```
 
@@ -341,7 +338,7 @@ export const appConfig: ApplicationConfig = {
 ### Use TransferState for SSR Data
 
 ```typescript
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class DataService {
   private http = inject(HttpClient);
   private transferState = inject(TransferState);
@@ -419,7 +416,9 @@ class Component {
 ```typescript
 // CORRECT - Selective subscription
 @Component({
-  template: `<span>{{ userName() }}</span>`,
+  template: `
+    <span>{{ userName() }}</span>
+  `,
 })
 class HeaderComponent {
   private store = inject(Store);
@@ -429,7 +428,9 @@ class HeaderComponent {
 
 // WRONG - Subscribing to entire state
 @Component({
-  template: `<span>{{ state().user.name }}</span>`,
+  template: `
+    <span>{{ state().user.name }}</span>
+  `,
 })
 class HeaderComponent {
   private store = inject(Store);
@@ -498,7 +499,9 @@ export class DataComponent implements OnDestroy {
 ```typescript
 // CORRECT - No subscription needed
 @Component({
-  template: `<div>{{ data().name }}</div>`,
+  template: `
+    <div>{{ data().name }}</div>
+  `,
 })
 export class Component {
   data = toSignal(this.service.data$, { initialValue: null });
@@ -506,7 +509,9 @@ export class Component {
 
 // WRONG - Manual subscription
 @Component({
-  template: `<div>{{ data?.name }}</div>`,
+  template: `
+    <div>{{ data?.name }}</div>
+  `,
 })
 export class Component implements OnInit, OnDestroy {
   data: Data | null = null;
@@ -557,7 +562,9 @@ export class Component implements OnInit, OnDestroy {
 - [Zoneless Angular](https://angular.dev/guide/experimental/zoneless)
 - [Angular SSR Guide](https://angular.dev/guide/ssr)
 - [Change Detection Deep Dive](https://angular.dev/guide/change-detection)
+
 ## Limitations
+
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
