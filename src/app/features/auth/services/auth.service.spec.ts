@@ -5,6 +5,8 @@ import { of, throwError } from 'rxjs';
 import { ApiError } from '../../../core/models/api-error.model';
 import { AuthResponse, LoginRequest, RegisterTeacherRequest } from '../../../core/models/auth.model';
 import { User } from '../../../core/models/user.model';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -17,8 +19,9 @@ describe('AuthService', () => {
     // email intentionally omitted — real API login/register/refresh responses never include it
   };
 
+  const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVGVhY2hlciIsImZ1bGxOYW1lIjoiVGVzdCBVc2VyIiwiZXhwIjo5OTk5OTk5OTk5fQ.signature';
   const mockAuthResponse: AuthResponse = {
-    accessToken: 'access-token',
+    accessToken: mockToken,
     refreshToken: 'refresh-token',
     expiresIn: 3600,
     user: mockUser
@@ -39,7 +42,9 @@ describe('AuthService', () => {
     TestBed.configureTestingModule({
       providers: [
         AuthService,
-        { provide: AUTH_API, useValue: authApiSpy }
+        { provide: AUTH_API, useValue: authApiSpy },
+        provideHttpClient(),
+        provideHttpClientTesting()
       ]
     });
     
@@ -63,7 +68,7 @@ describe('AuthService', () => {
           expect(res).toEqual(mockAuthResponse);
           expect(service.currentUser()).toEqual(mockUser);
           expect(service.authError()).toBeNull();
-          expect(localStorage.getItem('draya_access_token')).toBe('access-token');
+          expect(localStorage.getItem('draya_access_token')).toBe(mockToken);
           done();
         }
       });
@@ -94,7 +99,7 @@ describe('AuthService', () => {
         next: (res) => {
           expect(res).toEqual(mockAuthResponse);
           expect(service.currentUser()).toEqual(mockUser);
-          expect(localStorage.getItem('draya_access_token')).toBe('access-token');
+          expect(localStorage.getItem('draya_access_token')).toBe(mockToken);
           done();
         }
       });
