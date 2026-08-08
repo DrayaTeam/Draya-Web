@@ -2,10 +2,12 @@ import { Component, ChangeDetectionStrategy, signal, OnInit, OnDestroy } from '@
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { LogoComponent } from '../../../../shared/components/logo/logo.component';
+
 @Component({
   selector: 'draya-landing-navbar',
   standalone: true,
-  imports: [RouterLink, TranslatePipe],
+  imports: [RouterLink, TranslatePipe, LogoComponent],
   templateUrl: './landing-navbar.component.html',
   styleUrl: './landing-navbar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

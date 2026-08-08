@@ -29,6 +29,64 @@
       "SUBTITLE": "Join Draya and start your smart educational journey"
     }
   },
+  "SUBSCRIPTION": {
+    "STATUS": {
+      "ACTIVE": "Active Plan",
+      "ACTIVE_DESC": "Active & Auto-renewal Enabled",
+      "CANCELLED": "Cancelled",
+      "PAST_DUE": "Past Due",
+      "TRIALING": "Trial Period"
+    },
+    "STATUS_LABEL": "Subscription Status",
+    "PAYMENT_METHOD": "Payment Method",
+    "DEFAULT_PAYMENT": "Registered Bank Card",
+    "RENEW_NOTICE": "Renews automatically on {{date}} for {{price}} EGP",
+    "QUOTAS": {
+      "HEADING": "Usage Quotas & Limits",
+      "STUDENTS": "Active Students",
+      "STORAGE": "Cloud Storage",
+      "EXAM_GENERATIONS": "AI Exam Generations",
+      "CLASSROOMS": "Classrooms & Groups"
+    },
+    "UNITS": {
+      "STUDENTS": "students",
+      "GB": "GB",
+      "EXAMS": "exams",
+      "GROUPS": "groups",
+      "UNLIMITED": "Unlimited",
+      "CUSTOM": "Custom Capacity",
+      "MONTH": "month"
+    },
+    "ALERTS": {
+      "NEAR_LIMIT": "Near Quota Limit",
+      "ALMOST_FULL": "Almost Full",
+      "LIMIT_REACHED": "Quota Exceeded"
+    },
+    "ACTIONS": {
+      "UPGRADE": "Upgrade Subscription Plan",
+      "UPDATE_PAYMENT": "Update Payment Method",
+      "CANCEL_RENEW": "Cancel Auto-Renewal"
+    },
+    "MODAL": {
+      "TITLE": "Compare Teacher Subscription Plans",
+      "SUBTITLE": "Choose the right plan to grow your educational center. Upgrades take effect immediately.",
+      "COL_FEATURE": "Feature",
+      "ROW_STUDENTS": "Maximum Students",
+      "ROW_STORAGE": "Cloud Storage Capacity",
+      "ROW_AI_EXAMS": "AI Smart Exam Builder",
+      "ROW_REPORTS": "Parent Reports & Dashboards",
+      "ROW_PRICE": "Monthly Price",
+      "BASIC_REPORTS": "Basic",
+      "AI_REPORTS": "AI-Powered Interactive",
+      "FULL_REPORTS": "Interactive + WhatsApp",
+      "VIEW_ALL_PLANS": "Explore All Plans in Detail →"
+    },
+    "ERRORS": {
+      "LOAD_FAILED": "Failed to load subscription details.",
+      "QUOTA_EXCEEDED_TITLE": "Subscription Quota Limit Exceeded",
+      "QUOTA_EXCEEDED_DESC": "You have reached your current plan quota. Please upgrade your subscription to continue."
+    }
+  },
   "roles": {
     "teacher": "Teacher",
     "student": "Student",
@@ -36,7 +94,7 @@
   },
   "common": {
     "loading": "Loading...",
-    "error": "Something went wrong.",
+    "error": "An error occurred.",
     "save": "Save",
     "cancel": "Cancel",
     "confirm": "Confirm",
@@ -44,9 +102,20 @@
     "edit": "Edit",
     "back": "Back",
     "noData": "No data available",
-    "noDataDescription": "There is currently no information to display here.",
+    "noDataDescription": "There is no information to display here at the moment.",
     "confirmActionTitle": "Confirm Action",
     "confirmActionMessage": "Are you sure you want to perform this action?"
+  },
+  "COMMON": {
+    "LOADING": "Loading...",
+    "ERROR": "An error occurred.",
+    "SAVE": "Save",
+    "CANCEL": "Cancel",
+    "CONFIRM": "Confirm",
+    "DELETE": "Delete",
+    "EDIT": "Edit",
+    "BACK": "Back",
+    "CLOSE": "Close"
   },
   "error": {
     "title": "An unexpected error occurred",

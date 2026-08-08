@@ -1,0 +1,125 @@
+<!-- Features Breakdown Matrix Section -->
+<section class="features-matrix-section">
+  <!-- Section Heading -->
+  <div class="matrix-header-box">
+    <h2 class="matrix-title">
+      <span>مميزات</span>
+      <span class="highlight-name">{{ planName() }}</span>
+      <span>بالتفصيل</span>
+    </h2>
+    <p class="matrix-subtitle">
+      جميع المميزات والخصائص التقنية التي توفرها لك هذه الباقة لتطوير مجموعتك التعليمية.
+    </p>
+  </div>
+
+  <!-- 2 Cards Side-by-Side Grid -->
+  <div class="matrix-cards-grid">
+    <!-- Right Card: Included Features -->
+    <div class="matrix-card included-card">
+      <div class="card-title-row">
+        <div class="title-icon-circle check-circle">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#00BC7D"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+        </div>
+        <h3 class="card-heading-text">المميزات المضمنة في هذه الباقة</h3>
+      </div>
+
+      <div class="features-list-rows">
+        @for (feat of features(); track feat) {
+          <div class="feat-item-row">
+            <div class="pill-check-icon">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#007A55"
+                stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+            <span class="feat-item-text">{{ feat }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Left Card: Unavailable / Higher Tier Features OR Enterprise Perks -->
+    @if (unavailable().length === 0) {
+      <div class="matrix-card enterprise-vip-card">
+        <div class="card-title-row">
+          <span class="vip-crown">👑</span>
+          <h3 class="card-heading-text text-amber-300">مزايا حصرية للمؤسسات الكبرى</h3>
+        </div>
+
+        <div class="features-list-rows">
+          <div class="feat-item-row">
+            <span class="vip-bullet">🌐</span>
+            <span class="feat-item-text text-slate-100">
+              نطاق ويب خاص ومستقل بالكامل باسم الأكاديمية (Custom Domain)
+            </span>
+          </div>
+          <div class="feat-item-row">
+            <span class="vip-bullet">🎨</span>
+            <span class="feat-item-text text-slate-100">
+              تخصيص الهوية والشعار والألوان الكاملة لمركزك (White-Label)
+            </span>
+          </div>
+          <div class="feat-item-row">
+            <span class="vip-bullet">🤖</span>
+            <span class="feat-item-text text-slate-100">
+              تدريب نماذج الذكاء الاصطناعي على مناهجك ومذكراتك الخاصة
+            </span>
+          </div>
+          <div class="feat-item-row">
+            <span class="vip-bullet">👥</span>
+            <span class="feat-item-text text-slate-100">
+              صلاحيات إدارية متعددة للمشرفين والمعلمين والمحاسبين
+            </span>
+          </div>
+          <div class="feat-item-row">
+            <span class="vip-bullet">💳</span>
+            <span class="feat-item-text text-slate-100">
+              ربط مباشر مع بوابات الدفع الإلكترونية الخاصة بحسابك البنكي
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="matrix-card unavailable-card">
+        <div class="card-title-row">
+          <div class="title-icon-circle shield-circle">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#90A1B9"
+              stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
+          <h3 class="card-heading-text text-muted">مميزات تتطلب الباقات الأعلى</h3>
+        </div>
+
+        <div class="features-list-rows">
+          @for (feat of unavailable(); track feat) {
+            <div class="feat-item-row unavailable-row">
+              <div class="pill-cross-icon">✕</div>
+              <span class="feat-item-text text-disabled">{{ feat }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</section>

@@ -1,6 +1,79 @@
-<div class="space-y-6 p-6">
-  <h1 class="text-foreground text-2xl font-bold">
-    {{ 'nav.dashboard' | translate }}
-  </h1>
-  <p class="text-muted-foreground">Teacher dashboard — analytics widgets coming soon.</p>
+<div class="teacher-dashboard-page">
+  <div class="dashboard-max-container">
+    <!-- Top Hero Section Grid: Banner + Daily Streak Incentive -->
+    <section class="grid-section grid-top-hero">
+      <div class="hero-banner-col">
+        <draya-teacher-hero-banner
+          [teacherName]="'أحمد'"
+          [scheduledExamsCount]="2"
+          (resumeClick)="handleResumeWatch()"
+          (browseClick)="handleBrowseCourses()" />
+      </div>
+
+      <div class="streak-card-col">
+        <draya-teacher-streak-card [streakDays]="5" [averageGpa]="87" [completedLectures]="37" />
+      </div>
+    </section>
+
+    <!-- Middle Stats Row Grid: Subscribed Packages + Performance Overview + Urgent Alerts -->
+    <section class="grid-section grid-middle-stats">
+      <div class="stat-col">
+        <draya-teacher-active-plan-card
+          [activePackagesCount]="3"
+          statusText="سارية حتى نهاية الترم" />
+      </div>
+
+      <div class="stat-col">
+        <draya-teacher-performance-overview
+          [averageScore]="87"
+          monthlyGrowth="+4% هذا الشهر"
+          percentileText="أعلى من 92% من الطلاب 👏" />
+      </div>
+
+      <div class="alerts-col">
+        <draya-teacher-urgent-alerts />
+      </div>
+    </section>
+
+    <!-- Subscription Plan Quota & Usage Widget Section (US-010, US-011, US-012) -->
+    <section class="grid-section subscription-quota-section">
+      <div class="section-title-bar">
+        <div>
+          <h2 class="sub-section-heading">اشتراكك وحصة الاستهلاك الشهرية</h2>
+          <p class="sub-section-desc">
+            متابعة دقيقة لحدود العدادات، استهلاك الذكاء الاصطناعي، ومساحة السيرفرات
+          </p>
+        </div>
+
+        <button
+          type="button"
+          (click)="handleSimulateQuotaExceeded()"
+          class="btn-simulate-quota-error">
+          <span>اختبار تنبيه تجاوز الحد (422)</span>
+        </button>
+      </div>
+
+      <draya-subscription-widget
+        [plan]="plan()"
+        [quotas]="quotas()"
+        [loading]="loading()"
+        (manageBilling)="handleManageBilling()"
+        (cancelSub)="handleCancelSub()" />
+    </section>
+
+    <!-- Main Content Section: Daily Courses List + Exams Schedule & Improvement Points -->
+    <section class="grid-section grid-main-courses">
+      <!-- Start Side: Daily Courses List -->
+      <div class="courses-list-col">
+        <draya-teacher-daily-courses (resumeCourse)="handleResumeWatch()" />
+      </div>
+
+      <!-- End Side: Exams Schedule + Improvement Points Stack -->
+      <div class="side-widgets-col">
+        <draya-teacher-exams-schedule />
+
+        <draya-teacher-improvement-points />
+      </div>
+    </section>
+  </div>
 </div>

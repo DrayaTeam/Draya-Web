@@ -1,0 +1,113 @@
+:host {
+  display: inline-block;
+}
+
+.draya-logo-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-family: 'Cairo', system-ui, sans-serif;
+  direction: rtl;
+  cursor: pointer;
+
+  &.static-logo {
+    cursor: default;
+  }
+}
+
+.logo-icon-box {
+  background: var(--draya-primary-700, #1b6d63);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 200ms ease-out;
+}
+
+.draya-logo-wrap:hover:not(.static-logo) .logo-icon-box {
+  transform: scale(1.05);
+}
+
+.logo-title-text {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+/* ── Size Variants ── */
+.size-sm {
+  gap: 8px;
+
+  .logo-icon-box {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+  }
+
+  .logo-svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .logo-title-text {
+    font-size: 1rem;
+  }
+}
+
+.size-md {
+  gap: 10px;
+
+  .logo-icon-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+
+  .logo-svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .logo-title-text {
+    font-size: 1.1875rem;
+  }
+}
+
+.size-lg {
+  gap: 12px;
+
+  .logo-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+  }
+
+  .logo-svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .logo-title-text {
+    font-size: 1.5rem;
+  }
+}
+
+/* ── Color Variants ── */
+.text-dark {
+  .logo-title-text {
+    color: var(--draya-text-primary, #151b19);
+  }
+}
+
+.text-white {
+  .logo-title-text {
+    color: #ffffff;
+  }
+}
+
+.text-primary {
+  .logo-title-text {
+    color: var(--draya-primary-700, #1b6d63);
+  }
+}

@@ -110,11 +110,14 @@
 
           <!-- Buttons -->
           <div class="plan-actions">
-            <a routerLink="/auth/register" class="btn-plan-cta">
+            <a
+              [routerLink]="['/checkout']"
+              [queryParams]="{ plan: plan.slug }"
+              class="btn-plan-cta">
               {{ plan.ctaKey | translate }}
             </a>
 
-            <a routerLink="/auth/register" class="btn-plan-link">
+            <a [routerLink]="['/plans', plan.slug]" class="btn-plan-link">
               {{ 'LANDING.PRICING.DETAILS_CTA' | translate }}
             </a>
           </div>

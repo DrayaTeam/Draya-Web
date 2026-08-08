@@ -12,6 +12,7 @@ export * from './components/card/card.component';
 export * from './components/input/input.component';
 export * from './components/modal/modal.component';
 export * from './components/data-table/data-table.component';
+export * from './components/logo/logo.component';
 
 // UI components
 export * from './ui/empty-state/empty-state.component';
@@ -27,3 +28,4 @@ export * from './pipes/safe/safe.pipe';
 // Directives
 export * from './directives/confirm-action/confirm-action.directive';
 export * from './directives/has-role/has-role.directive';
+export * from './directives/scroll-reveal/scroll-reveal.directive';

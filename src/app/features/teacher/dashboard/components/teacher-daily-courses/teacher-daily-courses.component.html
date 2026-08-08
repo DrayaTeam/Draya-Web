@@ -1,0 +1,74 @@
+<div class="daily-courses-root">
+  <!-- Section Header -->
+  <div class="section-header-row">
+    <h2 class="section-title">متابعة دروسك اليومية</h2>
+    <a href="#" (click)="$event.preventDefault()" class="btn-all-courses">
+      <span>عرض كل المواد</span>
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5">
+        <polyline points="9 18 15 12 9 6" />
+      </svg>
+    </a>
+  </div>
+
+  <!-- Courses Cards Stack -->
+  <div class="courses-stack">
+    @for (course of courses; track course.id) {
+      <div class="course-card-box">
+        <!-- Thumbnail Media -->
+        <div class="thumbnail-wrapper">
+          <img [src]="course.imgUrl" [alt]="course.title" class="thumb-img" />
+          <div class="thumb-overlay"></div>
+          <span class="subject-tag">{{ course.subject }}</span>
+        </div>
+
+        <!-- Details Column -->
+        <div class="course-details-col">
+          <div class="details-top-row">
+            <div class="title-meta-col">
+              <h3 class="c-title">{{ course.title }}</h3>
+              <span class="c-teacher">{{ course.teacher }}</span>
+            </div>
+
+            <div class="lectures-count-badge">
+              <span>{{ course.completedLectures }}/{{ course.totalLectures }}</span>
+              <span class="muted-unit">محاضرة</span>
+            </div>
+          </div>
+
+          <!-- Progress Bar Row -->
+          <div class="progress-bar-container">
+            <div class="progress-track">
+              <div
+                class="progress-fill"
+                [class]="course.gradientClass"
+                [style.width.%]="course.progressPercent"></div>
+            </div>
+
+            <div class="progress-meta-row">
+              <span class="pct-text">{{ course.progressPercent }}% إنجاز الكورس</span>
+
+              <button type="button" (click)="resumeCourse.emit(course.id)" class="btn-resume-watch">
+                <span>استئناف المشاهدة</span>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5">
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,3 +1,161 @@
 @import 'tailwindcss';
 @import '../theme.css';
 @import 'primeicons/primeicons.css';
+
+/* Global SVG & Scroll Constraints */
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+svg {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* ── Global Keyframes & Animations ── */
+@keyframes drayaFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes drayaFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes drayaScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes drayaFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes drayaPulseGlow {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes drayaShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ── Animation Utility Classes ── */
+.animate-fade-in-up {
+  animation: drayaFadeInUp 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: drayaFadeIn 400ms ease-out forwards;
+}
+
+.animate-scale-up {
+  animation: drayaScaleUp 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-float {
+  animation: drayaFloat 4s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: drayaPulseGlow 3s ease-in-out infinite;
+}
+
+/* Stagger Delays */
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+.delay-400 {
+  animation-delay: 400ms;
+}
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+/* ── Skeleton Shimmer Effect ── */
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #eef2f1 0%, #f8fbfa 50%, #eef2f1 100%);
+  background-size: 200% 100%;
+  animation: drayaShimmer 1.6s infinite ease-in-out;
+  border-radius: 8px;
+}
+
+/* ── Smooth Micro-Interactions ── */
+.interactive-hover-card {
+  transition:
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 220ms ease-out;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px -4px rgba(21, 27, 25, 0.12);
+  }
+}
+
+/* ── Scroll Reveal Section Animations ── */
+.scroll-reveal-init {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal-init {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

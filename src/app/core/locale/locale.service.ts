@@ -1,6 +1,7 @@
-import { Injectable, signal, effect, inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
 
 export type SupportedLocale = 'ar' | 'en';
 
@@ -17,14 +18,19 @@ export class LocaleService {
   constructor() {
     this.translate.addLangs(['ar', 'en']);
     this.translate.setFallbackLang(DEFAULT_LOCALE);
+    this.translate.use(this.locale());
+  }
 
-    // Apply the initial locale
-    this.applyLocale(this.locale());
+  async init(): Promise<void> {
+    this.translate.addLangs(['ar', 'en']);
+    this.translate.setFallbackLang(DEFAULT_LOCALE);
 
-    // Reactively apply locale changes
-    effect(() => {
-      this.applyLocale(this.locale());
-    });
+    const initialLang = this.locale();
+    try {
+      await firstValueFrom(this.translate.use(initialLang));
+    } catch {
+      // Fallback in case of offline/test mode
+    }
   }
 
   toggle(): void {
@@ -36,14 +42,11 @@ export class LocaleService {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem(LOCALE_KEY, locale);
     }
+    this.translate.use(locale);
   }
 
   get isRtl(): boolean {
     return this.locale() === 'ar';
-  }
-
-  private applyLocale(locale: SupportedLocale): void {
-    this.translate.use(locale);
   }
 
   private loadPersistedLocale(): SupportedLocale {

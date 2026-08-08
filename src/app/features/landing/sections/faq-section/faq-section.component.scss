@@ -91,9 +91,10 @@
 
 .faq-answer {
   margin-top: 16px;
-  padding-left: 60px;
+  padding-inline-start: 12px;
   color: var(--draya-text-secondary, #525e5a);
   font-size: 0.9375rem;
   line-height: 1.8;
-  text-align: right;
+  text-align: start;
+  animation: drayaFadeInUp 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
