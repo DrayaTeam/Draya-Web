@@ -48,6 +48,11 @@ export class AuthService {
   });
 
   constructor() {
+    this.loadTokens();
+  }
+
+  /** Reloads tokens from storage to sync state if another service updated them. */
+  loadTokens(): void {
     if (isPlatformBrowser(this.platformId)) {
       const stored = localStorage.getItem(TOKEN_KEY);
       if (stored) {
@@ -56,6 +61,8 @@ export class AuthService {
         } else {
           this.accessToken.set(stored);
         }
+      } else {
+        this.clearTokens();
       }
     }
   }

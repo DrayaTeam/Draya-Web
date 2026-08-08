@@ -5,11 +5,13 @@ import { AUTH_API } from './auth-api.token';
 import { User, UserProfile, UserRole } from '../../../core/models/user.model';
 import { ApiError } from '../../../core/models/api-error.model';
 import { LoginRequest, RegisterTeacherRequest, RegisterStudentRequest, AuthResponse } from '../../../core/models/auth.model';
+import { AuthService as CoreAuthService } from '../../../core/auth/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly authApi = inject(AUTH_API);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly coreAuth = inject(CoreAuthService);
   
   // State
   private readonly _currentUser = signal<User | null>(null);
@@ -52,6 +54,7 @@ export class AuthService {
     }
     this._currentUser.set(response.user);
     this._authError.set(null);
+    this.coreAuth.loadTokens();
   }
 
   private clearStorage(): void {
@@ -61,6 +64,7 @@ export class AuthService {
       localStorage.removeItem('draya_user');
     }
     this._currentUser.set(null);
+    this.coreAuth.loadTokens();
   }
 
   login(payload: LoginRequest): Observable<AuthResponse> {

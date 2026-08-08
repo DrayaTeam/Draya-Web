@@ -55,6 +55,7 @@ export class LoginComponent {
           parent: '/parent/dashboard',
         };
         const targetUrl = dashboards[role];
+        console.warn('DEBUG: Role before redirect check:', role);
         if (targetUrl) {
           this.router.navigate([targetUrl]);
         } else {
