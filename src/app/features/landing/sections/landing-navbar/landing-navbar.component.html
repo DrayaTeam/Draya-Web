@@ -1,0 +1,183 @@
+<header class="landing-navbar" [class.scrolled]="scrolled() || mobileMenuOpen()">
+  <!-- Logo -->
+  <button
+    type="button"
+    class="navbar-brand"
+    (click)="scrollToTop()"
+    aria-label="درايَة - الصفحة الرئيسية">
+    <div class="brand-icon-box">
+      <svg
+        width="19"
+        height="19"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#fff"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+      </svg>
+    </div>
+    <span class="brand-title">
+      {{ 'LANDING.BRAND' | translate }}
+    </span>
+  </button>
+
+  <!-- Desktop navigation links -->
+  <nav class="navbar-links desktop-only" aria-label="روابط التنقل الرئيسية">
+    @for (link of navLinks; track link.labelKey) {
+      <a
+        [href]="link.href"
+        class="nav-link"
+        (click)="onNavLinkClick(link.href); $event.preventDefault()">
+        {{ link.labelKey | translate }}
+      </a>
+    }
+  </nav>
+
+  <!-- Desktop CTA Buttons -->
+  <div class="navbar-actions desktop-only">
+    <a routerLink="/auth/login" class="btn-secondary">
+      {{ 'LANDING.NAVBAR.LOGIN' | translate }}
+    </a>
+    <a routerLink="/auth/register" class="btn-primary">
+      {{ 'LANDING.NAVBAR.REGISTER' | translate }}
+    </a>
+  </div>
+
+  <!-- Mobile Right Controls (Quick CTA + Burger Toggle) -->
+  <div class="mobile-actions mobile-only">
+    <a routerLink="/auth/register" class="btn-primary btn-mobile-quick">
+      {{ 'LANDING.NAVBAR.REGISTER' | translate }}
+    </a>
+
+    <button
+      type="button"
+      class="burger-btn"
+      (click)="toggleMobileMenu()"
+      [attr.aria-label]="mobileMenuOpen() ? 'إغلاق القائمة' : 'فتح القائمة'"
+      [attr.aria-expanded]="mobileMenuOpen()">
+      @if (mobileMenuOpen()) {
+        <!-- Close X Icon -->
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      } @else {
+        <!-- Hamburger 3-Line Icon -->
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="4" y1="12" x2="20" y2="12" />
+          <line x1="4" y1="6" x2="20" y2="6" />
+          <line x1="4" y1="18" x2="20" y2="18" />
+        </svg>
+      }
+    </button>
+  </div>
+</header>
+
+<!-- Mobile Navigation Drawer Overlay Backdrop -->
+<div
+  class="drawer-backdrop"
+  [class.active]="mobileMenuOpen()"
+  (click)="closeMobileMenu()"
+  (keydown.escape)="closeMobileMenu()"
+  tabindex="-1"
+  role="presentation"
+  aria-hidden="true"></div>
+
+<!-- Mobile Navigation Slide-in Drawer -->
+<aside class="mobile-drawer" [class.open]="mobileMenuOpen()" aria-label="القائمة المتنقلة">
+  <div class="drawer-header">
+    <button
+      type="button"
+      class="navbar-brand"
+      (click)="scrollToTop()"
+      aria-label="درايَة - الصفحة الرئيسية">
+      <div class="brand-icon-box">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#fff"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+          <path d="M6 12v5c3 3 9 3 12 0v-5" />
+        </svg>
+      </div>
+      <span class="brand-title">{{ 'LANDING.BRAND' | translate }}</span>
+    </button>
+
+    <button
+      type="button"
+      class="drawer-close-btn"
+      (click)="closeMobileMenu()"
+      aria-label="إغلاق القائمة">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Drawer Links List -->
+  <nav class="drawer-nav" aria-label="روابط القائمة المتنقلة">
+    @for (link of navLinks; track link.labelKey) {
+      <a
+        [href]="link.href"
+        class="drawer-link"
+        (click)="onNavLinkClick(link.href); $event.preventDefault()">
+        <span class="drawer-link-text">{{ link.labelKey | translate }}</span>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="drawer-chevron">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </a>
+    }
+  </nav>
+
+  <!-- Drawer Bottom Actions -->
+  <div class="drawer-footer">
+    <a routerLink="/auth/register" class="btn-primary btn-drawer-full" (click)="closeMobileMenu()">
+      {{ 'LANDING.NAVBAR.REGISTER' | translate }}
+    </a>
+    <a routerLink="/auth/login" class="btn-secondary btn-drawer-full" (click)="closeMobileMenu()">
+      {{ 'LANDING.NAVBAR.LOGIN' | translate }}
+    </a>
+  </div>
+</aside>
