@@ -1,0 +1,45 @@
+<div class="streak-card-root">
+  <!-- Card Header -->
+  <div class="streak-card-header">
+    <span class="card-title">حافز التعلم اليومي</span>
+    <span class="active-now-pill">نشط الآن 🔥</span>
+  </div>
+
+  <!-- Flame Streak Box -->
+  <div class="flame-streak-box">
+    <div class="flame-icon-circle">
+      <svg
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="#FEE685"
+        stroke="#FFFFFF"
+        stroke-width="1.5">
+        <path
+          d="M8.5 14.5A2.5 2.5 0 0 0 11 17c1.38 0 2.5-1.12 2.5-2.5 0-1.67-1.33-2.67-2-4-.67 1.33-2 2.33-2 4Z" />
+        <path
+          d="M12 2C6.5 2 4 6.5 4 12c0 4.42 3.58 8 8 8s8-3.58 8-8c0-5.5-2.5-10-8-10Zm0 16c-3.31 0-6-2.69-6-6 0-3.31 2.69-6 6-6s6 2.69 6 6c0 3.31-2.69 6-6 6Z" />
+      </svg>
+    </div>
+
+    <div class="streak-text-col">
+      <h3 class="streak-count">{{ streakDays() }} أياـم متتالية</h3>
+      <span class="streak-sub">سلسلة المذاكرة الحالية 🚀</span>
+    </div>
+  </div>
+
+  <!-- 2 Stat Cards Row -->
+  <div class="stats-pills-row">
+    <!-- Stat 1: GPA -->
+    <div class="stat-pill-box gpa-theme">
+      <span class="stat-label">المتوسط التراكمي</span>
+      <span class="stat-val">{{ averageGpa() }}%</span>
+    </div>
+
+    <!-- Stat 2: Lectures -->
+    <div class="stat-pill-box lectures-theme">
+      <span class="stat-label">المحاضرات المكتملة</span>
+      <span class="stat-val">{{ completedLectures() }} درس</span>
+    </div>
+  </div>
+</div>

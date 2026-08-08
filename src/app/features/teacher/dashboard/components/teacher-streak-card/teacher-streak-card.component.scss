@@ -1,0 +1,138 @@
+:host {
+  display: block;
+  font-family: 'Cairo', system-ui, sans-serif;
+  direction: rtl;
+  height: 100%;
+}
+
+.streak-card-root {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0px 20px 40px -15px rgba(15, 79, 73, 0.07),
+    inset 0px 1px 0px 1px rgba(255, 255, 255, 0.8);
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.streak-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #62748e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.active-now-pill {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #ffedd4;
+  border: 1px solid rgba(255, 184, 106, 0.5);
+  color: #ca3500;
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.flame-streak-box {
+  background: linear-gradient(90deg, #fe9a00 0%, #ff6900 100%);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #ffffff;
+  box-shadow: 0px 10px 15px -3px rgba(254, 154, 0, 0.25);
+  margin-bottom: 20px;
+}
+
+.flame-icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.streak-text-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.streak-count {
+  font-size: 1.35rem;
+  font-weight: 900;
+  line-height: 1.2;
+  margin: 0;
+  color: #ffffff;
+}
+
+.streak-sub {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #fef3c6;
+}
+
+.stats-pills-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat-pill-box {
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &.gpa-theme {
+    background: rgba(240, 249, 255, 0.8);
+    border: 1px solid #dff2fe;
+
+    .stat-label {
+      color: #0069a8;
+    }
+    .stat-val {
+      color: #024a70;
+    }
+  }
+
+  &.lectures-theme {
+    background: rgba(250, 245, 255, 0.8);
+    border: 1px solid #f3e8ff;
+
+    .stat-label {
+      color: #8200db;
+    }
+    .stat-val {
+      color: #59168b;
+    }
+  }
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.stat-val {
+  font-size: 1.25rem;
+  font-weight: 800;
+}

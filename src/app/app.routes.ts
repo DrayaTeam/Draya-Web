@@ -3,7 +3,6 @@
 // Landing page and auth pages are public. Authenticated shell wraps teacher/student/parent.
 
 import { Routes } from '@angular/router';
-import { authGuard } from './core/auth/auth.guard';
 
 export const appRoutes: Routes = [
   // Public landing page
@@ -24,8 +23,7 @@ export const appRoutes: Routes = [
   // Public: Plans & Pricing
   {
     path: 'plans',
-    loadComponent: () => import('./features/plans/plans.component').then((m) => m.PlansComponent),
-    title: 'خطط الأسعار والاشتراكات — درايَة',
+    loadChildren: () => import('./features/plans/plans.routes').then((m) => m.plansRoutes),
   },
   {
     path: 'pricing',
@@ -34,6 +32,8 @@ export const appRoutes: Routes = [
   },
 
   // Checkout / Subscription
+  // TODO: Add canActivate: [authGuard] here to require login before checkout.
+  // Example: canActivate: [authGuard]
   {
     path: 'checkout',
     loadComponent: () =>
@@ -41,30 +41,33 @@ export const appRoutes: Routes = [
     title: 'إتمام الاشتراك — درايَة',
   },
 
-  // Authenticated shell — protected routes render inside ShellComponent
+  // Teacher Portal Layout (Uses TeacherLayoutComponent with standalone TeacherHeader Navbar)
+  {
+    path: 'teacher',
+    loadChildren: () => import('./features/teacher/teacher.routes').then((m) => m.teacherRoutes),
+  },
+
+  // Shell — authenticated portal layout for student & parent
+  // TODO: Add authGuard to protect all child routes.
   {
     path: '',
     loadComponent: () => import('./layout/shell/shell.component').then((m) => m.ShellComponent),
-    canActivate: [authGuard],
     children: [
       {
-        path: 'teacher',
-        loadChildren: () =>
-          import('./features/teacher/teacher.routes').then((m) => m.teacherRoutes),
-      },
-      {
         path: 'student',
+        // TODO: Add roleGuard for student role: canActivate: [roleGuard('STUDENT')]
         loadChildren: () =>
           import('./features/student/student.routes').then((m) => m.studentRoutes),
       },
       {
         path: 'parent',
+        // TODO: Add roleGuard for parent role: canActivate: [roleGuard('PARENT')]
         loadChildren: () => import('./features/parent/parent.routes').then((m) => m.parentRoutes),
       },
     ],
   },
 
-  // Global error fallback
+  // Global Error fallback route
   {
     path: 'error',
     loadComponent: () =>
@@ -74,7 +77,7 @@ export const appRoutes: Routes = [
     title: 'حدث خطأ — درايَة',
   },
 
-  // Wildcard fallback
+  // Fallback: unmatched routes redirect to landing page
   {
     path: '**',
     redirectTo: '',

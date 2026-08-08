@@ -1,0 +1,109 @@
+:host {
+  display: block;
+  font-family: 'Cairo', system-ui, sans-serif;
+  direction: rtl;
+}
+
+.teacher-dashboard-page {
+  background: transparent;
+  width: 100%;
+}
+
+.dashboard-max-container {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.grid-section {
+  width: 100%;
+}
+
+/* Top Hero Grid: 8fr 4fr */
+.grid-top-hero {
+  display: grid;
+  grid-template-columns: 8fr 4fr;
+  gap: 24px;
+  align-items: stretch;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Middle Stats Grid: 3 columns */
+.grid-middle-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.3fr;
+  gap: 24px;
+  align-items: stretch;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Subscription Quota Section */
+.subscription-quota-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sub-section-heading {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #151b19;
+  margin: 0 0 2px;
+}
+
+.sub-section-desc {
+  font-size: 0.8125rem;
+  color: #62748e;
+  margin: 0;
+}
+
+.btn-simulate-quota-error {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #e11d48;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 150ms ease-out;
+
+  &:hover {
+    background: #ffe4e6;
+  }
+}
+
+/* Main Courses & Widgets Grid: 8fr 4fr */
+.grid-main-courses {
+  display: grid;
+  grid-template-columns: 8fr 4fr;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.side-widgets-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
