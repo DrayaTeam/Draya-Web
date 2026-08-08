@@ -1,0 +1,265 @@
+<!-- Enterprise Contact Page Template -->
+<div class="enterprise-contact-page">
+  <!-- Sticky Header -->
+  <header class="enterprise-sticky-header">
+    <div class="header-inner">
+      <draya-logo size="sm" />
+
+      <div class="header-actions">
+        <a routerLink="/plans" class="btn-back-plans">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+          <span>العودة لمقارنة الخطط</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section Banner -->
+  <section class="enterprise-hero-section">
+    <div class="hero-content">
+      <div class="badge-pill">
+        <span class="sparkle-icon">✨</span>
+        <span>مخصص للمؤسسات وسلاسل الأكاديميات</span>
+      </div>
+
+      <h1 class="hero-title">تواصل مع فريق مبيعات المؤسسات الكبرى</h1>
+
+      <p class="hero-subtitle">
+        احصل على منصة تعليمية متكاملة بهوية مركزك الشاملة وشعارك الخاص، مع سيرفرات فائقة السرعة،
+        بوابة دفع خاصة، ومدير حسابات مخصص لمتابعة نشاطك.
+      </p>
+
+      <div class="hero-tags-row">
+        <span class="tag-item">White-label (نطاق وشعار خاص)</span>
+        <span class="tag-item">مدير حساب متفرغ 24/7</span>
+        <span class="tag-item">طلاب وباقات بلا حدود</span>
+        <span class="tag-item">ربط بوابات دفع مخصصة</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Layout (Form + Enterprise Info Grid) -->
+  <main class="enterprise-main-container">
+    <div class="main-grid">
+      <!-- Right Column: Contact Inquiry Form -->
+      <div class="form-card-col">
+        <div class="form-card-inner">
+          <h2 class="form-card-title">طلب استشارة وتسطير عرض أسعار مخصص</h2>
+          <p class="form-card-sub">
+            يرجى تعبئة البيانات التالية وسيتواصل معك مستشار المبيعات لمناقشة الخطة الهندسية
+            والمالية.
+          </p>
+
+          @if (submitSuccess()) {
+            <div class="alert-success-banner">
+              <div class="check-circle-icon">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#16A34A"
+                  stroke-width="2.5">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+              </div>
+              <div class="alert-text-col">
+                <h4 class="alert-title">تم استلام طلبكم بنجاح!</h4>
+                <p class="alert-desc">
+                  شكراً لتواصلك معنا. تم تحويل طلبك لمدير حسابات المؤسسات وسيتواصل معك هاتفياً أو
+                  عبر الواتساب خلال أقل من 24 ساعة.
+                </p>
+              </div>
+            </div>
+          } @else {
+            <form (ngSubmit)="onSubmit()" class="contact-form-box">
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="institutionName" class="form-label">
+                    اسم الأكاديمية / المركز التعليمي *
+                  </label>
+                  <input
+                    id="institutionName"
+                    type="text"
+                    [ngModel]="institutionName()"
+                    (ngModelChange)="institutionName.set($event)"
+                    name="institutionName"
+                    required
+                    placeholder="مثال: سنتر التفوق التعليمي"
+                    class="form-input" />
+                </div>
+
+                <div class="form-group">
+                  <label for="contactPerson" class="form-label">اسم المسؤول والصفة *</label>
+                  <input
+                    id="contactPerson"
+                    type="text"
+                    [ngModel]="contactPerson()"
+                    (ngModelChange)="contactPerson.set($event)"
+                    name="contactPerson"
+                    required
+                    placeholder="مثال: د. أحمد المحمدي - المدير التنفيذي"
+                    class="form-input" />
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="phone" class="form-label">رقم الهاتف / الواتساب *</label>
+                  <input
+                    id="phone"
+                    type="tel"
+                    [ngModel]="phone()"
+                    (ngModelChange)="phone.set($event)"
+                    name="phone"
+                    required
+                    dir="ltr"
+                    placeholder="010XXXXXXXX"
+                    class="form-input text-end" />
+                </div>
+
+                <div class="form-group">
+                  <label for="email" class="form-label">البريد الإلكتروني الرسمي</label>
+                  <input
+                    id="email"
+                    type="email"
+                    [ngModel]="email()"
+                    (ngModelChange)="email.set($event)"
+                    name="email"
+                    dir="ltr"
+                    placeholder="info@academy.com"
+                    class="form-input text-end" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <span class="form-label">عدد الطلاب المستهدفين</span>
+                <div class="student-count-pills">
+                  @for (opt of studentCountOptions; track opt.val) {
+                    <button
+                      type="button"
+                      (click)="studentCount.set(opt.val)"
+                      class="pill-opt-btn"
+                      [class.active-pill]="studentCount() === opt.val">
+                      {{ opt.label }}
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="notes" class="form-label">ملاحظات أو متطلبات خاصة (اختياري)</label>
+                <textarea
+                  id="notes"
+                  [ngModel]="notes()"
+                  (ngModelChange)="notes.set($event)"
+                  name="notes"
+                  rows="3"
+                  placeholder="اكتب أي استفسارات تخص الربط البرمجي، بوابات الدفع، أو السيرفرات..."
+                  class="form-textarea"></textarea>
+              </div>
+
+              <button
+                type="submit"
+                [disabled]="isSubmitting() || !institutionName() || !phone()"
+                class="btn-submit-enterprise">
+                @if (isSubmitting()) {
+                  <span>جارٍ إرسال الطلب...</span>
+                } @else {
+                  <span>إرسال طلب التواصل والتسعير المخصص</span>
+                }
+              </button>
+            </form>
+          }
+        </div>
+      </div>
+
+      <!-- Left Column: Enterprise Benefits & Direct Contact Box -->
+      <div class="info-card-col">
+        <!-- Benefits Grid -->
+        <div class="benefits-card-box">
+          <h3 class="box-heading">مميزات الخطة الخاصة بالمؤسسات</h3>
+
+          <div class="benefits-stack">
+            <div class="benefit-item-row">
+              <div class="icon-circle icon-purple">🌐</div>
+              <div class="benefit-texts">
+                <h4 class="b-title">White-Label & Domain خاص</h4>
+                <p class="b-desc">
+                  نطاق مستقل باسم أكاديميتك (academy.com) مع تخصيص الشعار، الألوان، وشاشة الدخول.
+                </p>
+              </div>
+            </div>
+
+            <div class="benefit-item-row">
+              <div class="icon-circle icon-teal">⚡</div>
+              <div class="benefit-texts">
+                <h4 class="b-title">سيرفرات فائقة السرعة ومساحة بلا حدود</h4>
+                <p class="b-desc">
+                  تخزين سحابي غير محدود للمحاضرات والفيديوهات مع تشفير وحماية ضد تسجيل الشاشة.
+                </p>
+              </div>
+            </div>
+
+            <div class="benefit-item-row">
+              <div class="icon-circle icon-emerald">👨‍💼</div>
+              <div class="benefit-texts">
+                <h4 class="b-title">مدير حساب مخصص ومساعد تقني 24/7</h4>
+                <p class="b-desc">
+                  مستشار تقني مخصص لمركزك لمتابعة التشغيل، رفع المناهج، وحل أي مشاكل فوراً.
+                </p>
+              </div>
+            </div>
+
+            <div class="benefit-item-row">
+              <div class="icon-circle icon-amber">💳</div>
+              <div class="benefit-texts">
+                <h4 class="b-title">ربط بوابات الدفع الخاصة بالسنتر</h4>
+                <p class="b-desc">
+                  ربط مباشر مع حساباتكم في فوري، ميزة، أو المحافظ الإلكترونية لتحصيل الاشتراكات
+                  مباشرة.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Contact Box -->
+        <div class="quick-contact-box">
+          <h4 class="quick-title">تريد تواصل فوري؟</h4>
+          <p class="quick-desc">
+            فريق المبيعات متواجد على مدار الساعة للرد على استفسارات الأكاديميات.
+          </p>
+
+          <a
+            href="https://wa.me/201000000000"
+            target="_blank"
+            rel="noopener"
+            class="btn-whatsapp-direct">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.761.459 3.479 1.331 4.992l-1.413 5.161 5.286-1.385c1.458.795 3.104 1.215 4.782 1.216h.004c5.505 0 9.987-4.479 9.988-9.987 0-2.668-1.038-5.176-2.925-7.062a9.923 9.923 0 0 0-7.053-2.919z" />
+            </svg>
+            <span>تواصل فوري عبر الواتساب</span>
+          </a>
+
+          <div class="contact-email-row">
+            <span>البريد الإلكتروني:</span>
+            <strong dir="ltr">enterprise&#64;draya.eg</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

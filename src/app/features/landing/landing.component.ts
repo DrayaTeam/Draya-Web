@@ -9,6 +9,7 @@ import { TestimonialsSectionComponent } from './sections/testimonials-section/te
 import { FaqSectionComponent } from './sections/faq-section/faq-section.component';
 import { CtaSectionComponent } from './sections/cta-section/cta-section.component';
 import { LandingFooterComponent } from './sections/landing-footer/landing-footer.component';
+import { ScrollRevealDirective } from '../../shared/directives/scroll-reveal/scroll-reveal.directive';
 
 @Component({
   selector: 'draya-landing',
@@ -24,6 +25,7 @@ import { LandingFooterComponent } from './sections/landing-footer/landing-footer
     FaqSectionComponent,
     CtaSectionComponent,
     LandingFooterComponent,
+    ScrollRevealDirective,
   ],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.scss',

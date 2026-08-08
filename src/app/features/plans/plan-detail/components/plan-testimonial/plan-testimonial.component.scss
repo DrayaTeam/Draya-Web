@@ -1,0 +1,84 @@
+:host {
+  display: block;
+}
+
+.testimonial-banner-card {
+  max-width: 1280px;
+  margin: 64px auto 0;
+  padding: 40px 48px;
+  border-radius: 24px;
+  background: linear-gradient(90deg, #0f4f49 0%, #005f5a 100%);
+  box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  direction: rtl;
+  font-family: 'Cairo', system-ui, sans-serif;
+  color: #ffffff;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 32px 24px;
+  }
+}
+
+.quote-content-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 750px;
+}
+
+.star-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #ffba00;
+  font-size: 1.125rem;
+}
+
+.quote-body-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.6;
+  color: #ffffff;
+}
+
+.quote-author-meta {
+  margin-top: 8px;
+}
+
+.author-name-text {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: #ffd230;
+}
+
+.author-role-text {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #cad5e2;
+}
+
+.btn-testimonial-cta {
+  height: 40px;
+  padding: 0 28px;
+  border-radius: 999px;
+  background: #1b6d63;
+  color: #ffffff;
+  border: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0px 20px 25px -5px rgba(0, 0, 0, 0.1);
+  transition: background 150ms;
+  flex-shrink: 0;
+
+  &:hover {
+    background: #145a53;
+  }
+}

@@ -1,28 +1,6 @@
 <header class="landing-navbar" [class.scrolled]="scrolled() || mobileMenuOpen()">
   <!-- Logo -->
-  <button
-    type="button"
-    class="navbar-brand"
-    (click)="scrollToTop()"
-    aria-label="درايَة - الصفحة الرئيسية">
-    <div class="brand-icon-box">
-      <svg
-        width="19"
-        height="19"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="#fff"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round">
-        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-        <path d="M6 12v5c3 3 9 3 12 0v-5" />
-      </svg>
-    </div>
-    <span class="brand-title">
-      {{ 'LANDING.BRAND' | translate }}
-    </span>
-  </button>
+  <draya-logo (logoClick)="scrollToTop()" />
 
   <!-- Desktop navigation links -->
   <nav class="navbar-links desktop-only" aria-label="روابط التنقل الرئيسية">
@@ -105,27 +83,7 @@
 <!-- Mobile Navigation Slide-in Drawer -->
 <aside class="mobile-drawer" [class.open]="mobileMenuOpen()" aria-label="القائمة المتنقلة">
   <div class="drawer-header">
-    <button
-      type="button"
-      class="navbar-brand"
-      (click)="scrollToTop()"
-      aria-label="درايَة - الصفحة الرئيسية">
-      <div class="brand-icon-box">
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#fff"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round">
-          <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-          <path d="M6 12v5c3 3 9 3 12 0v-5" />
-        </svg>
-      </div>
-      <span class="brand-title">{{ 'LANDING.BRAND' | translate }}</span>
-    </button>
+    <draya-logo (logoClick)="scrollToTop()" />
 
     <button
       type="button"

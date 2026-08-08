@@ -15,8 +15,10 @@
 
     <!-- Grid -->
     <div class="benefit-grid">
-      @for (b of benefits; track b.num) {
-        <div class="benefit-card">
+      @for (b of benefits; track b.num; let idx = $index) {
+        <div
+          class="benefit-card interactive-hover-card animate-fade-in-up"
+          [class]="'delay-' + ((idx % 3) + 1) * 100">
           <!-- Card Header -->
           <div class="benefit-card-header" [class]="'bg-type-' + b.type">
             <!-- Watermark -->
