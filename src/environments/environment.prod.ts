@@ -1,5 +1,8 @@
+// src/environments/environment.prod.ts
+// Production build environment configuration.
+
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://api.draya.app/api/v1',
-  signalrHubUrl: 'https://api.draya.app/hubs/notifications',
+  apiBaseUrl: 'http://draya-api.runasp.net/api',
+  signalrHubUrl: 'http://draya-api.runasp.net/hubs/notifications',
 };
