@@ -1,12 +1,12 @@
 <!-- Full-height centered login layout — logical padding (ps-/pe-) -->
-<div class="flex min-h-screen items-center justify-center bg-background px-4">
-  <div class="w-full max-w-sm space-y-6 rounded-xl border border-border bg-card p-8 shadow-sm">
+<div class="bg-background flex min-h-screen items-center justify-center px-4">
+  <div class="border-border bg-card w-full max-w-sm space-y-6 rounded-xl border p-8 shadow-sm">
     <!-- Header -->
     <div class="space-y-1">
-      <h1 class="text-2xl font-bold text-foreground">
+      <h1 class="text-foreground text-2xl font-bold">
         {{ 'app.name' | translate }}
       </h1>
-      <p class="text-sm text-muted-foreground">
+      <p class="text-muted-foreground text-sm">
         {{ 'auth.login' | translate }}
       </p>
     </div>
@@ -14,7 +14,7 @@
     <!-- Form -->
     <form (ngSubmit)="onSubmit()" class="space-y-4">
       <div class="space-y-1">
-        <label class="block text-sm font-medium text-foreground" for="login-email">
+        <label class="text-foreground block text-sm font-medium" for="login-email">
           {{ 'auth.email' | translate }}
         </label>
         <input
@@ -23,13 +23,11 @@
           name="email"
           [(ngModel)]="email"
           required
-          class="w-full rounded-md border border-border bg-input-background px-3 py-2
-                 text-sm text-foreground placeholder:text-muted-foreground
-                 focus:outline-none focus:ring-2 focus:ring-ring" />
+          class="border-border bg-input-background text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none" />
       </div>
 
       <div class="space-y-1">
-        <label class="block text-sm font-medium text-foreground" for="login-password">
+        <label class="text-foreground block text-sm font-medium" for="login-password">
           {{ 'auth.password' | translate }}
         </label>
         <input
@@ -38,21 +36,17 @@
           name="password"
           [(ngModel)]="password"
           required
-          class="w-full rounded-md border border-border bg-input-background px-3 py-2
-                 text-sm text-foreground placeholder:text-muted-foreground
-                 focus:outline-none focus:ring-2 focus:ring-ring" />
+          class="border-border bg-input-background text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none" />
       </div>
 
       @if (errorMessage()) {
-        <p class="text-sm text-destructive">{{ errorMessage() }}</p>
+        <p class="text-destructive text-sm">{{ errorMessage() }}</p>
       }
 
       <button
         type="submit"
         [disabled]="loading()"
-        class="w-full rounded-md bg-primary px-4 py-2 text-sm font-semibold
-               text-primary-foreground transition-opacity hover:opacity-90
-               disabled:cursor-not-allowed disabled:opacity-50">
+        class="bg-primary text-primary-foreground w-full rounded-md px-4 py-2 text-sm font-semibold transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50">
         @if (loading()) {
           {{ 'common.loading' | translate }}
         } @else {

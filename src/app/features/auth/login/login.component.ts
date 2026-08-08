@@ -1,10 +1,8 @@
 // src/app/features/auth/login/login.component.ts
 // Purpose: Login page for the Draya platform.
-// Placeholder form wired to AuthService.login(). No real validation yet.
-// Eventually: will use ReactiveForms with validation, error display, and returnUrl redirect.
 
-import { Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -12,8 +10,10 @@ import { AuthService } from '../../../core/auth/auth.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, TranslatePipe],
+  imports: [FormsModule, RouterLink, TranslatePipe],
   templateUrl: './login.component.html',
+  styleUrl: './login.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent {
   private readonly auth = inject(AuthService);
