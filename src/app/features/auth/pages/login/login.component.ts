@@ -61,7 +61,7 @@ export class LoginComponent {
           this.messageService?.add({
             severity: 'error',
             summary: this.translate.instant('ERROR.TITLE'),
-            detail: `Unrecognized role: ${role}`
+            detail: this.translate.instant('AUTH.LOGIN.UNRECOGNIZED_ROLE', { role })
           });
         }
       },

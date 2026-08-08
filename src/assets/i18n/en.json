@@ -45,7 +45,8 @@
       "SESSION_EXPIRED": "Your session has expired. Please sign in again.",
       "WELCOME_BACK": "Welcome back! Please enter your email and password to continue.",
       "REMEMBER_ME": "Remember me",
-      "NO_ACCOUNT": "Don't have an account?"
+      "NO_ACCOUNT": "Don't have an account?",
+      "UNRECOGNIZED_ROLE": "Unrecognized user role: {{role}}"
     },
     "REGISTER_TEACHER": {
       "TITLE": "Create a new account",
