@@ -138,7 +138,6 @@ export class AuthMockApiService implements IAuthApi {
     return of(this.users[0] as UserProfile).pipe(delay(this.delayMs));
   }
 
-  // PROVISIONAL: contract not yet confirmed by backend — revisit endpoint shape once delivered
   forgotPassword(email: string): Observable<{ message: string }> {
     // In a real app we'd send an email. For now, just ensure it's provided.
     if (!email) {

@@ -13,7 +13,6 @@ export interface IAuthApi {
   logout(): Observable<void>;
   getProfile(): Observable<UserProfile>;
 
-  // PROVISIONAL: contract not yet confirmed by backend — revisit endpoint shape once delivered
   forgotPassword(email: string): Observable<{ message: string }>;
   resetPassword(payload: { token: string; newPassword: string }): Observable<{ message: string }>;
 }
