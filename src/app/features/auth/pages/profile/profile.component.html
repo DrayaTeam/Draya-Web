@@ -44,7 +44,7 @@
             <div class="mt-1 flex items-center gap-2">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
                     [ngClass]="user()?.role === 'teacher' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'">
-                {{ 'role.' + user()?.role | translate }}
+                {{ getRoleKey(user()?.role) | translate }}
               </span>
             </div>
           </div>

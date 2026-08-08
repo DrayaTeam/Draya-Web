@@ -21,12 +21,16 @@ export class ProfileComponent implements OnInit {
   readonly user = this.auth.currentUser;
 
   ngOnInit(): void {
-    if (!this.user()) {
-      this.auth.getProfile().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
-    }
+    // Always fetch latest profile data on init to get fields missing from minimal login payload (email, etc.)
+    this.auth.getProfile().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   retry(): void {
     this.auth.getProfile().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+  }
+
+  getRoleKey(role?: string): string {
+    if (!role) return '';
+    return `ROLES.${role.toUpperCase()}`;
   }
 }

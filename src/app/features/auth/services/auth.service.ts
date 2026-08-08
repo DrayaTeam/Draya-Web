@@ -153,13 +153,18 @@ export class AuthService {
     this._authError.set(null);
     return this.authApi.getProfile().pipe(
       tap((user) => {
-        if (user && user.role) {
-          user.role = user.role.toLowerCase() as UserRole;
+        // The /auth/me endpoint may omit some fields (like 'role' for students).
+        // Merge with existing currentUser (from login payload) to preserve them.
+        const current = this._currentUser() || {};
+        const mergedUser = { ...current, ...user } as UserProfile;
+
+        if (mergedUser.role) {
+          mergedUser.role = mergedUser.role.toLowerCase() as UserRole;
         }
         if (isPlatformBrowser(this.platformId)) {
-          localStorage.setItem('draya_user', JSON.stringify(user));
+          localStorage.setItem('draya_user', JSON.stringify(mergedUser));
         }
-        this._currentUser.set(user);
+        this._currentUser.set(mergedUser);
       }),
       catchError((error: ApiError) => {
         this._authError.set(error);
