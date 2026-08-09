@@ -134,9 +134,9 @@ export class CheckoutComponent {
       this.isSubmitting.set(false);
       this.isSuccess.set(true);
 
-      // Auto redirect to teacher dashboard after brief celebratory feedback
+      // Auto redirect to student dashboard after brief celebratory feedback
       setTimeout(() => {
-        this.router.navigate(['/teacher/dashboard']);
+        this.router.navigate(['/student/dashboard']);
       }, 2500);
     }, 1500);
   }

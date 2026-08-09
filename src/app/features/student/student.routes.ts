@@ -2,29 +2,57 @@
 // Purpose: Lazy-loaded routes for the student feature area.
 
 import { Routes } from '@angular/router';
-import { authGuard } from '../../core/auth/auth.guard';
-import { roleGuard } from '../../core/auth/role.guard';
 
 export const studentRoutes: Routes = [
   {
-    path: 'dashboard',
-    loadComponent: () =>
-      import('./dashboard/student-dashboard.component').then((m) => m.StudentDashboardComponent),
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['student'] },
-    title: 'Dashboard — Draya',
-  },
-  {
-    path: 'exam/:id',
-    loadComponent: () =>
-      import('./exam-taking/exam-taking.component').then((m) => m.ExamTakingComponent),
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['student'] },
-    title: 'Exam — Draya',
-  },
-  {
     path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full',
+    loadComponent: () => import('./student-layout.component').then((m) => m.StudentLayoutComponent),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('../teacher/dashboard/teacher-dashboard.component').then(
+            (m) => m.TeacherDashboardComponent,
+          ),
+        title: 'الرئيسية — درايَة',
+      },
+      {
+        path: 'courses',
+        loadComponent: () =>
+          import('./placeholder/student-placeholder.component').then(
+            (m) => m.StudentPlaceholderComponent,
+          ),
+        title: 'كورساتي — درايَة',
+      },
+      {
+        path: 'exams',
+        loadComponent: () =>
+          import('./placeholder/student-placeholder.component').then(
+            (m) => m.StudentPlaceholderComponent,
+          ),
+        title: 'الامتحانات — درايَة',
+      },
+      {
+        path: 'reports',
+        loadComponent: () =>
+          import('./placeholder/student-placeholder.component').then(
+            (m) => m.StudentPlaceholderComponent,
+          ),
+        title: 'تقاريري ودرجاتي — درايَة',
+      },
+      {
+        path: 'library',
+        loadComponent: () =>
+          import('./placeholder/student-placeholder.component').then(
+            (m) => m.StudentPlaceholderComponent,
+          ),
+        title: 'المكتبة — درايَة',
+      },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
+    ],
   },
 ];

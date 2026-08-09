@@ -1,6 +1,6 @@
 // src/app/app.routes.ts
 // Purpose: Top-level application routes. All feature areas are lazy-loaded.
-// Landing page and auth pages are public. Authenticated shell wraps teacher/student/parent.
+// Landing page and auth pages are public. Authenticated student/teacher/parent routes.
 
 import { Routes } from '@angular/router';
 
@@ -32,8 +32,6 @@ export const appRoutes: Routes = [
   },
 
   // Checkout / Subscription
-  // TODO: Add canActivate: [authGuard] here to require login before checkout.
-  // Example: canActivate: [authGuard]
   {
     path: 'checkout',
     loadComponent: () =>
@@ -41,27 +39,25 @@ export const appRoutes: Routes = [
     title: 'إتمام الاشتراك — درايَة',
   },
 
-  // Teacher Portal Layout (Uses TeacherLayoutComponent with standalone TeacherHeader Navbar)
+  // Student Portal Layout
+  {
+    path: 'student',
+    loadChildren: () => import('./features/student/student.routes').then((m) => m.studentRoutes),
+  },
+
+  // Teacher Portal Layout (subscription only)
   {
     path: 'teacher',
     loadChildren: () => import('./features/teacher/teacher.routes').then((m) => m.teacherRoutes),
   },
 
-  // Shell — authenticated portal layout for student & parent
-  // TODO: Add authGuard to protect all child routes.
+  // Shell — authenticated portal layout for parent
   {
     path: '',
     loadComponent: () => import('./layout/shell/shell.component').then((m) => m.ShellComponent),
     children: [
       {
-        path: 'student',
-        // TODO: Add roleGuard for student role: canActivate: [roleGuard('STUDENT')]
-        loadChildren: () =>
-          import('./features/student/student.routes').then((m) => m.studentRoutes),
-      },
-      {
         path: 'parent',
-        // TODO: Add roleGuard for parent role: canActivate: [roleGuard('PARENT')]
         loadChildren: () => import('./features/parent/parent.routes').then((m) => m.parentRoutes),
       },
     ],

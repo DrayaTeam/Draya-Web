@@ -1,15 +1,19 @@
-// src/app/features/teacher/teacher-layout.component.ts
+// src/app/features/student/student-layout.component.ts
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { StudentHeaderComponent } from './components/student-header/student-header.component';
 
 @Component({
-  selector: 'draya-teacher-layout',
+  selector: 'draya-student-layout',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, StudentHeaderComponent],
   template: `
-    <div class="teacher-layout-root">
-      <!-- Main page content container -->
-      <main class="teacher-layout-content">
+    <div class="student-layout-root">
+      <!-- Student Responsive Header Navbar (Full Width 100%) -->
+      <draya-student-header />
+
+      <!-- Main content constrained to 80% on desktop -->
+      <main class="student-layout-content">
         <router-outlet />
       </main>
     </div>
@@ -23,7 +27,7 @@ import { RouterOutlet } from '@angular/router';
         background-color: #fafaf8;
       }
 
-      .teacher-layout-root {
+      .student-layout-root {
         display: flex;
         flex-direction: column;
         min-height: 100vh;
@@ -31,7 +35,7 @@ import { RouterOutlet } from '@angular/router';
         background-color: #fafaf8;
       }
 
-      .teacher-layout-content {
+      .student-layout-content {
         flex: 1;
         width: 80%;
         max-width: 80%;
@@ -49,4 +53,4 @@ import { RouterOutlet } from '@angular/router';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TeacherLayoutComponent {}
+export class StudentLayoutComponent {}

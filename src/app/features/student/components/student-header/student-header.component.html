@@ -1,0 +1,199 @@
+<header class="student-navbar-root">
+  <div class="navbar-container">
+    <!-- Start Side (RTL): Hamburger + Logo -->
+    <div class="nav-start-group">
+      <button
+        type="button"
+        (click)="toggleMobileMenu()"
+        aria-label="فتح القائمة الرئيسية"
+        class="burger-btn">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          @if (isMobileMenuOpen()) {
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          } @else {
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          }
+        </svg>
+      </button>
+      <draya-logo size="sm" />
+    </div>
+
+    <!-- Center Nav Links (Desktop) -->
+    <nav aria-label="تنقل الطالب" class="desktop-nav-links">
+      <a
+        routerLink="/student/dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-item">
+        الرئيسية
+      </a>
+      <a routerLink="/student/courses" routerLinkActive="active" class="nav-item">كورساتي</a>
+      <a routerLink="/student/exams" routerLinkActive="active" class="nav-item">الامتحانات</a>
+      <a routerLink="/student/reports" routerLinkActive="active" class="nav-item">
+        تقاريري ودرجاتي
+      </a>
+      <a routerLink="/student/library" routerLinkActive="active" class="nav-item">المكتبة</a>
+    </nav>
+
+    <!-- End Side (RTL): Notifications + User + Logout -->
+    <div class="nav-end-group">
+      <!-- Notifications -->
+      <div class="notifications-wrapper">
+        <button
+          type="button"
+          (click)="toggleNotifications()"
+          aria-label="الإشعارات"
+          class="icon-btn notification-btn">
+          <svg
+            width="19"
+            height="19"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+          <span class="unread-dot"></span>
+        </button>
+
+        @if (isNotificationsOpen()) {
+          <div class="notifications-dropdown animate-scale-up">
+            <div class="dropdown-header">
+              <span class="dropdown-title">التنبيهات والإشعارات</span>
+              <span class="badge-count">2 جديد</span>
+            </div>
+            <div class="dropdown-list">
+              <div class="notif-item">
+                <div class="notif-dot bg-red-500"></div>
+                <div class="notif-content">
+                  <p class="notif-title">امتحان الجبر التراكمي</p>
+                  <span class="notif-time">غداً 10:00 صباحاً</span>
+                </div>
+              </div>
+              <div class="notif-item">
+                <div class="notif-dot bg-amber-500"></div>
+                <div class="notif-content">
+                  <p class="notif-title">نتيجة امتحان الفيزياء</p>
+                  <span class="notif-time">تم رفع نتيجتك للاطلاع</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- User Profile -->
+      <div class="user-profile-box">
+        <div class="avatar-circle">
+          <span>ط</span>
+        </div>
+        <span class="user-name">الطالب</span>
+      </div>
+
+      <!-- Logout -->
+      <button
+        type="button"
+        (click)="auth.logout()"
+        title="تسجيل الخروج"
+        aria-label="تسجيل الخروج"
+        class="icon-btn logout-btn">
+        <svg
+          width="17"
+          height="17"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <polyline points="16 17 21 12 16 7" />
+          <line x1="21" y1="12" x2="9" y2="12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer -->
+  @if (isMobileMenuOpen()) {
+    <div
+      class="mobile-backdrop animate-fade-in"
+      (click)="closeMobileMenu()"
+      aria-hidden="true"></div>
+
+    <div class="mobile-drawer animate-scale-up">
+      <div class="drawer-header">
+        <draya-logo size="sm" />
+        <button type="button" (click)="closeMobileMenu()" class="drawer-close-btn">✕</button>
+      </div>
+
+      <div class="drawer-profile-banner">
+        <div class="avatar-circle">
+          <span>ط</span>
+        </div>
+        <div class="drawer-user-text">
+          <p class="d-name">الطالب</p>
+          <span class="d-role">طالب في منصة درايَة</span>
+        </div>
+      </div>
+
+      <nav class="drawer-nav-links">
+        <a
+          routerLink="/student/dashboard"
+          routerLinkActive="active-drawer"
+          (click)="closeMobileMenu()"
+          class="drawer-link">
+          🏠 الرئيسية
+        </a>
+        <a
+          routerLink="/student/courses"
+          routerLinkActive="active-drawer"
+          (click)="closeMobileMenu()"
+          class="drawer-link">
+          📚 كورساتي
+        </a>
+        <a
+          routerLink="/student/exams"
+          routerLinkActive="active-drawer"
+          (click)="closeMobileMenu()"
+          class="drawer-link">
+          📝 الامتحانات
+        </a>
+        <a
+          routerLink="/student/reports"
+          routerLinkActive="active-drawer"
+          (click)="closeMobileMenu()"
+          class="drawer-link">
+          📊 تقاريري ودرجاتي
+        </a>
+        <a
+          routerLink="/student/library"
+          routerLinkActive="active-drawer"
+          (click)="closeMobileMenu()"
+          class="drawer-link">
+          📂 المكتبة
+        </a>
+      </nav>
+
+      <div class="drawer-footer">
+        <button type="button" (click)="auth.logout(); closeMobileMenu()" class="btn-drawer-logout">
+          تسجيل الخروج
+        </button>
+      </div>
+    </div>
+  }
+</header>
