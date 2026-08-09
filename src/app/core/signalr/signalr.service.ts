@@ -1,11 +1,11 @@
 // src/app/core/signalr/signalr.service.ts
 // Purpose: Manages the @microsoft/signalr HubConnection lifecycle for the Draya notification hub.
-// - Provides startConnection(), stopConnection() for auth lifecycle wiring.
+// - Watches auth.isLoggedIn via effect() to start/stop automatically — NO circular dep.
 // - Exposes typed event signals for each real-time event (US-115, CONTEXT.md §Real-Time Events).
 // - Implements exponential backoff on top of withAutomaticReconnect().
 // - Status signal is read-only to prevent external mutation.
 
-import { Injectable, inject, signal, computed, DestroyRef } from '@angular/core';
+import { Injectable, inject, signal, computed, effect, DestroyRef } from '@angular/core';
 import {
   HubConnection,
   HubConnectionBuilder,
@@ -22,24 +22,29 @@ import type {
 } from '../models/signalr-events.model';
 
 export type ConnectionStatus =
-  'Disconnected' | 'Connecting' | 'Reconnecting' | 'Connected' | 'Error';
+  | 'Disconnected'
+  | 'Connecting'
+  | 'Reconnecting'
+  | 'Connected'
+  | 'Error';
 
 /** Exponential backoff intervals (ms) for the automatic-reconnect policy. */
 const RECONNECT_DELAYS_MS: number[] = [0, 2000, 5000, 10000, 30000];
 
 @Injectable({ providedIn: 'root' })
 export class SignalRService {
+  // AuthService injects NO SignalRService → one-way dep, no cycle.
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
 
   private connection: HubConnection | null = null;
 
-  // ─── Connection status ───────────────────────────────────────────────────────
+  // ─── Connection status ────────────────────────────────────────────────────
   private readonly _status = signal<ConnectionStatus>('Disconnected');
   /** Reactive connection status. Read-only to prevent external mutation. */
   readonly status = this._status.asReadonly();
 
-  /** True when the connection is in a degraded state that the user should see. */
+  /** True when the connection is degraded and the user should be notified. */
   readonly showBanner = computed<boolean>(
     () =>
       this._status() === 'Disconnected' ||
@@ -47,25 +52,35 @@ export class SignalRService {
       this._status() === 'Error',
   );
 
-  // ─── Typed event signals ─────────────────────────────────────────────────────
-  /** Last received MaterialParsed event payload, or null if none yet. */
+  // ─── Typed event signals ──────────────────────────────────────────────────
   private readonly _materialParsed = signal<MaterialParsedEvent | null>(null);
   readonly materialParsed = this._materialParsed.asReadonly();
 
-  /** Last received ExamGenerationCompleted event payload, or null if none yet. */
-  private readonly _examGenerationCompleted = signal<ExamGenerationCompletedEvent | null>(null);
+  private readonly _examGenerationCompleted =
+    signal<ExamGenerationCompletedEvent | null>(null);
   readonly examGenerationCompleted = this._examGenerationCompleted.asReadonly();
 
-  /** Last received GradingCompleted event payload, or null if none yet. */
   private readonly _gradingCompleted = signal<GradingCompletedEvent | null>(null);
   readonly gradingCompleted = this._gradingCompleted.asReadonly();
 
-  /** Last received NewChatMessage event payload, or null if none yet. */
   private readonly _newChatMessage = signal<NewChatMessageEvent | null>(null);
   readonly newChatMessage = this._newChatMessage.asReadonly();
 
   constructor() {
-    // Ensure clean stop when the service is destroyed (app teardown / tests).
+    // ── Reactive lifecycle wiring ─────────────────────────────────────────
+    // Watch auth.isLoggedIn() and start/stop the hub automatically.
+    // This is the correct place (not AuthService) to avoid circular deps.
+    effect(() => {
+      if (this.auth.isLoggedIn()) {
+        void this.startConnection().catch((err: unknown) => {
+          console.warn('[SignalR] Auto-connect on login state failed:', err);
+        });
+      } else {
+        void this.stopConnection();
+      }
+    });
+
+    // Clean up on service destroy (app teardown / tests).
     this.destroyRef.onDestroy(() => {
       void this.stopConnection();
     });
@@ -84,22 +99,23 @@ export class SignalRService {
       .withUrl(environment.signalrHubUrl, {
         accessTokenFactory: () => this.auth.accessToken() ?? '',
       })
-      // Use our custom exponential-backoff delays as the reconnect policy.
       .withAutomaticReconnect(RECONNECT_DELAYS_MS)
       .configureLogging(LogLevel.Warning)
       .build();
 
-    // ── Lifecycle hooks ──────────────────────────────────────────────────────
+    // ── Lifecycle hooks ───────────────────────────────────────────────────
     this.connection.onreconnecting(() => this._status.set('Reconnecting'));
     this.connection.onreconnected(() => this._status.set('Connected'));
     this.connection.onclose(() => this._status.set('Disconnected'));
 
-    // ── Register typed server-to-client event handlers ───────────────────────
+    // ── Typed server-to-client event handlers ─────────────────────────────
     this.connection.on('MaterialParsed', (payload: MaterialParsedEvent) =>
       this._materialParsed.set(payload),
     );
-    this.connection.on('ExamGenerationCompleted', (payload: ExamGenerationCompletedEvent) =>
-      this._examGenerationCompleted.set(payload),
+    this.connection.on(
+      'ExamGenerationCompleted',
+      (payload: ExamGenerationCompletedEvent) =>
+        this._examGenerationCompleted.set(payload),
     );
     this.connection.on('GradingCompleted', (payload: GradingCompletedEvent) =>
       this._gradingCompleted.set(payload),
