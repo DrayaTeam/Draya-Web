@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { DrayaClaims, decodeToken, isTokenExpired } from './jwt.util';
+import { SignalRService } from '../signalr/signalr.service';
 
 const TOKEN_KEY = 'draya_access_token';
 const REFRESH_KEY = 'draya_refresh_token';
@@ -23,6 +24,7 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly signalR = inject(SignalRService);
 
   /** Raw JWT access token string, or null if not authenticated. */
   readonly accessToken = signal<string | null>(null);
@@ -55,6 +57,10 @@ export class AuthService {
           this.clearTokens();
         } else {
           this.accessToken.set(stored);
+          // Restore real-time connection when a valid token exists on app boot.
+          void this.signalR.startConnection().catch((err: unknown) => {
+            console.warn('[AuthService] SignalR auto-connect on boot failed:', err);
+          });
         }
       }
     }
@@ -64,7 +70,15 @@ export class AuthService {
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http
       .post<AuthResponse>(`${environment.apiBaseUrl}/auth/login`, credentials)
-      .pipe(tap((res) => this.storeTokens(res)));
+      .pipe(
+        tap((res) => {
+          this.storeTokens(res);
+          // Start real-time hub after successful login.
+          void this.signalR.startConnection().catch((err: unknown) => {
+            console.warn('[AuthService] SignalR connect after login failed:', err);
+          });
+        }),
+      );
   }
 
   /** Exchanges the stored refresh token for a new access token. */
@@ -80,8 +94,10 @@ export class AuthService {
       .pipe(tap((res) => this.storeTokens(res)));
   }
 
-  /** Clears all auth state and redirects to the login page. */
+  /** Clears all auth state, disconnects from SignalR, and redirects to the login page. */
   logout(): void {
+    // Disconnect from hub before clearing tokens so the stop request can still be authorized.
+    void this.signalR.stopConnection();
     this.clearTokens();
     this.router.navigate(['/auth/login']);
   }

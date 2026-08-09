@@ -2,13 +2,17 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TeacherHeaderComponent } from './components/teacher-header/teacher-header.component';
+import { ConnectionStatusBannerComponent } from '../../shared/components/connection-status-banner/connection-status-banner.component';
 
 @Component({
   selector: 'draya-teacher-layout',
   standalone: true,
-  imports: [RouterOutlet, TeacherHeaderComponent],
+  imports: [RouterOutlet, TeacherHeaderComponent, ConnectionStatusBannerComponent],
   template: `
     <div class="teacher-layout-root">
+      <!-- Real-time connection status banner (US-115) — slides in from top when disconnected -->
+      <draya-connection-status-banner />
+
       <!-- Shared Teacher Responsive Header Navbar (Full Width 100%) -->
       <draya-teacher-header />
 
