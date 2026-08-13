@@ -1,0 +1,44 @@
+<div class="teacher-portal-layout">
+  <!-- Mobile Backdrop Overlay -->
+  @if (isMobileSidebarOpen()) {
+    <div class="mobile-backdrop-overlay" (click)="closeMobileSidebar()" aria-hidden="true"></div>
+  }
+
+  <!-- Sidebar Component (224px width on desktop) -->
+  <draya-teacher-sidebar
+    [isOpenMobile]="isMobileSidebarOpen()"
+    (closeMobile)="closeMobileSidebar()" />
+
+  <!-- Main Content Container -->
+  <div class="teacher-main-viewport">
+    <!-- Top Mobile App Bar (visible < 1024px) -->
+    <header class="mobile-top-bar">
+      <button
+        type="button"
+        (click)="toggleMobileSidebar()"
+        aria-label="فتح القائمة"
+        class="mobile-burger-btn">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+
+      <span class="mobile-brand-title">{{ 'TEACHER.SIDEBAR.BRAND_NAME' | translate }}</span>
+    </header>
+
+    <!-- Main Router Outlet Area -->
+    <main class="portal-router-content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

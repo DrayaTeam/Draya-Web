@@ -24,6 +24,7 @@
     "sessionExpired": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مجدداً."
   },
   "AUTH": {
+    "LOGOUT": "تسجيل الخروج",
     "REGISTER": {
       "TITLE": "إنشاء حساب جديد",
       "SUBTITLE": "انضم إلى منصة درايَة وابدأ تجربتك التعليمية الذكية"
@@ -288,6 +289,122 @@
       "COL_DEV": "المطورون",
       "COPY": "جميع الحقوق محفوظة لمنصة درايَة.",
       "MADE_WITH": "صنع بحب في مصر"
+    }
+  },
+  "TEACHER": {
+    "SIDEBAR": {
+      "BRAND_NAME": "درايَة",
+      "BRAND_ROLE": "لوحة المعلم",
+      "GROUP_TEACHING": "التدريس",
+      "GROUP_EVALUATION": "التقييم",
+      "GROUP_COMMUNICATION": "التواصل",
+      "GROUP_ANALYTICS": "التحليل",
+      "DASHBOARD": "لوحة التحكم",
+      "PACKAGES": "باقات",
+      "CLASSROOMS": "الفصول",
+      "STUDENTS": "الطلبة",
+      "EXAMS": "الامتحانات",
+      "CHANNEL": "القناة",
+      "FEEDBACK": "Feedback",
+      "ANALYTICS": "التحليلات",
+      "REPORTS": "التقارير",
+      "SUBSCRIPTION": "الاشتراك والاستهلاك",
+      "ACCOUNT": "عن حسابي"
+    },
+    "DASHBOARD": {
+      "CURRENT_DATE": "الأحد، 20 يوليو 2026",
+      "GREETING": "مساء الخير، أ. محمد",
+      "GREETING_SUBTITLE": "إليك ملخص نشاط أكاديميتك اليوم",
+      "REVIEW_AI_BTN": "مراجعة تقارير AI",
+      "AI_BANNER": {
+        "TITLE": "3 تقارير AI جاهزة للمراجعة",
+        "SUBTITLE": "مُولَّدة من محتوى محاضراتك، تنتظر موافقتك قبل إرسالها للأولياء",
+        "CTA": "راجع الآن"
+      },
+      "KPI": {
+        "ACTIVE_STUDENTS": "طلاب نشطون",
+        "STUDENTS_CHANGE": "+8 هذا الأسبوع",
+        "CLASS_AVERAGE": "متوسط الفصل",
+        "AVERAGE_CHANGE": "+3% عن الأسبوع الماضي",
+        "INCREASE": "ارتفاع",
+        "PENDING_EXAMS": "امتحانات بانتظار مراجعة",
+        "EXAMS_CHANGE": "18 تسليم هذا الأسبوع",
+        "NEW_MESSAGES": "رسائل جديدة",
+        "MESSAGES_CHANGE": "من طلاب وأولياء"
+      },
+      "CHART": {
+        "TITLE": "نشاط التسليمات",
+        "SUBTITLE": "تسليمات الطلاب ومتوسط الأداء",
+        "RANGE_WEEK": "أسبوع",
+        "RANGE_MONTH": "شهر",
+        "RANGE_QUARTER": "ربع سنة",
+        "TOTAL_SUBMISSIONS": "إجمالي التسليمات",
+        "AVG_PERFORMANCE": "متوسط الأداء",
+        "PEAK_DAY": "أعلى يوم",
+        "LEGEND_SUBMISSIONS": "تسليمات",
+        "LEGEND_AVERAGE": "متوسط الأداء"
+      },
+      "ACTIONS": {
+        "TITLE": "إجراءات سريعة",
+        "CREATE_AI_EXAM": "إنشاء امتحان بـ AI",
+        "NEW_LECTURE": "محاضرة جديدة",
+        "FOLLOWUP_STUDENTS": "متابعة الطلبة",
+        "REPORTS": "التقارير"
+      },
+      "ATTENTION": {
+        "TITLE": "يحتاج انتباهك",
+        "STUDENTS_AT_RISK": "4 طلاب في خطر أكاديمي",
+        "WARNING_TAG": "تنبيه",
+        "EXAM_ALGEBRA": "امتحان الجبر — 18 تسليم",
+        "WAITING_TAG": "انتظار",
+        "VIEW_ALL_ALERTS": "عرض كل التنبيهات"
+      },
+      "FOLLOWUP_TABLE": {
+        "TITLE": "طلاب يحتاجون متابعة",
+        "SUBTITLE": "أداء دون 55% في آخر امتحان"
+      },
+      "RECENT_SUBMISSIONS": {
+        "TITLE": "آخر التسليمات",
+        "SUBTITLE": "أحدث نتائج الامتحانات المُسلَّمة"
+      },
+      "COMMON": {
+        "VIEW_ALL": "عرض الكل"
+      },
+      "TABLE_HEADER": {
+        "STUDENT": "الطالب",
+        "COURSE": "الكورس",
+        "EXAM": "الامتحان",
+        "AVERAGE": "المتوسط",
+        "SCORE": "الدرجة"
+      },
+      "TIME_AGO": {
+        "14_MIN": "منذ 14 دقيقة",
+        "32_MIN": "منذ 32 دقيقة",
+        "55_MIN": "منذ 55 دقيقة",
+        "1_HOUR": "منذ ساعة"
+      }
+    },
+    "DAYS": {
+      "SATURDAY": "سبت",
+      "SUNDAY": "أحد",
+      "MONDAY": "اثنين",
+      "TUESDAY": "ثلاثاء",
+      "WEDNESDAY": "أربعاء",
+      "THURSDAY": "خميس"
+    }
+  },
+  "STUDENT": {
+    "TEACHERS": {
+      "HEADER_BADGE": "كوكبة المعلمين المتميزين",
+      "HEADER_TITLE": "المعلمون الشركاء",
+      "HEADER_SUBTITLE": "تصفح قائمة نخبة معلمي الثانوية العامة واشترك في باقاتهم التعليمية مع متابعة وااختبارات دورية.",
+      "SEARCH_PLACEHOLDER": "ابحث باسم المعلم أو مادة التخصص...",
+      "FILTER_ALL": "كل المواد",
+      "FILTER_MATH": "الرياضيات",
+      "FILTER_PHYSICS": "الفيزياء",
+      "FILTER_CHEMISTRY": "الكيمياء",
+      "FILTER_BIOLOGY": "الأحياء",
+      "VIEW_PACKAGES": "استعرض باقات المعلم"
     }
   }
 }

@@ -6,6 +6,8 @@ import { SubscriptionService } from './subscription.service';
 import { environment } from '../../../environments/environment';
 import { SubscriptionPlan, SubscriptionUsage } from '../models/subscription.model';
 
+import { MessageService } from 'primeng/api';
+
 describe('SubscriptionService', () => {
   let service: SubscriptionService;
   let httpMock: HttpTestingController;
@@ -39,7 +41,12 @@ describe('SubscriptionService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [SubscriptionService, provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        SubscriptionService,
+        MessageService,
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
     });
 
     service = TestBed.inject(SubscriptionService);

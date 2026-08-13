@@ -26,7 +26,7 @@ export const roleGuard: CanActivateFn = (route) => {
 
   // Authenticated but wrong role — redirect to the user's own dashboard.
   const roleDashboards: Record<string, string> = {
-    teacher: '/teacher/subscription',
+    teacher: '/teacher/dashboard',
     student: '/student/dashboard',
     admin: '/admin/dashboard',
   };

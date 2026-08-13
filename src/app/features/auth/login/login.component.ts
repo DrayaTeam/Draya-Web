@@ -34,7 +34,7 @@ export class LoginComponent {
         const user = this.auth.currentUser();
         // Redirect to the user's role-specific dashboard.
         const dashboards: Record<string, string> = {
-          teacher: '/teacher/subscription',
+          teacher: '/teacher/dashboard',
           student: '/student/dashboard',
           parent: '/parent/reports',
         };

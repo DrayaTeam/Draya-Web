@@ -1,0 +1,78 @@
+<div class="dashboard-card actions-card">
+  <h2 class="card-section-title mb-3">{{ 'TEACHER.DASHBOARD.ACTIONS.TITLE' | translate }}</h2>
+
+  <div class="actions-buttons-stack">
+    <button type="button" (click)="createAiExamClick.emit()" class="btn-action-primary">
+      <div class="btn-icon-square white-trans-bg">
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <polygon
+            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+      </div>
+      <span>{{ 'TEACHER.DASHBOARD.ACTIONS.CREATE_AI_EXAM' | translate }}</span>
+    </button>
+
+    <button type="button" (click)="newLectureClick.emit()" class="btn-action-outline">
+      <div class="btn-icon-square soft-teal-bg">
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#1B6D63"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      </div>
+      <span>{{ 'TEACHER.DASHBOARD.ACTIONS.NEW_LECTURE' | translate }}</span>
+    </button>
+
+    <button type="button" (click)="followupStudentsClick.emit()" class="btn-action-outline">
+      <div class="btn-icon-square soft-teal-bg">
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#1B6D63"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+        </svg>
+      </div>
+      <span>{{ 'TEACHER.DASHBOARD.ACTIONS.FOLLOWUP_STUDENTS' | translate }}</span>
+    </button>
+
+    <button type="button" (click)="openReportsClick.emit()" class="btn-action-outline">
+      <div class="btn-icon-square soft-teal-bg">
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#1B6D63"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10" />
+          <line x1="12" y1="20" x2="12" y2="4" />
+          <line x1="6" y1="20" x2="6" y2="14" />
+        </svg>
+      </div>
+      <span>{{ 'TEACHER.DASHBOARD.ACTIONS.REPORTS' | translate }}</span>
+    </button>
+  </div>
+</div>
