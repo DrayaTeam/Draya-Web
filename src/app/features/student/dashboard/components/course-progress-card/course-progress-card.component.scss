@@ -1,0 +1,183 @@
+// src/app/features/student/dashboard/components/course-progress-card/course-progress-card.component.scss
+
+.course-card-root {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  height: 154px;
+  padding: 21px;
+  background-color: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 24px;
+  box-shadow:
+    0px 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0px 2px 4px -2px rgba(0, 0, 0, 0.03);
+  box-sizing: border-box;
+  transition:
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0px 10px 15px -3px rgba(0, 0, 0, 0.08),
+      0px 4px 6px -4px rgba(0, 0, 0, 0.04);
+  }
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    height: auto;
+  }
+}
+
+.thumbnail-wrapper {
+  position: relative;
+  width: 176px;
+  height: 112px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  overflow: hidden;
+
+  @media (max-width: 640px) {
+    width: 100%;
+    height: 160px;
+  }
+
+  .thumbnail-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .thumbnail-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(15, 23, 43, 0.6) 0%, rgba(15, 23, 43, 0) 100%);
+  }
+
+  .subject-tag-pill {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    padding: 2px 10px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(6px);
+    border-radius: 16px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    line-height: 16px;
+    color: #ffffff;
+  }
+}
+
+.course-info-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  height: 100%;
+
+  .info-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .course-title {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      line-height: 24px;
+      color: #1d293d;
+    }
+
+    .lessons-count {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 16px;
+      color: #90a1b9;
+    }
+  }
+
+  .teacher-name {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    color: #62748e;
+    margin-top: 2px;
+  }
+
+  .progress-bar-track {
+    width: 100%;
+    height: 10px;
+    background-color: #f1f5f9;
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 12px 0 8px;
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 300ms ease-out;
+    }
+  }
+
+  .info-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .progress-label-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      .progress-percent {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 800;
+        font-size: 13px;
+        color: #0f172b;
+      }
+
+      .progress-text {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 600;
+        font-size: 12px;
+        color: #62748e;
+      }
+    }
+
+    .btn-resume {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: none;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      color: #0f4f49;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: all 150ms ease-out;
+
+      &:hover {
+        background-color: #f0fdfa;
+      }
+
+      &:active {
+        transform: scale(0.96);
+      }
+
+      .play-icon {
+        flex-shrink: 0;
+      }
+    }
+  }
+}

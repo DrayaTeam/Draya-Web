@@ -4,13 +4,13 @@ This directory contains **singleton services** that are initialized once at appl
 
 ## What lives here
 
-| Subdirectory | Responsibility |
-|---|---|
-| `auth/` | JWT auth state (AuthService), HTTP interceptors, route guards, JWT utilities |
-| `api/` | Base HttpClient wrapper used by all feature services |
-| `signalr/` | SignalR hub connection lifecycle for real-time Q&A |
-| `interceptors/` | Global HTTP interceptors (error handling) |
-| `locale/` | Language/RTL switching, ngx-translate bootstrap |
+| Subdirectory    | Responsibility                                                               |
+| --------------- | ---------------------------------------------------------------------------- |
+| `auth/`         | JWT auth state (AuthService), HTTP interceptors, route guards, JWT utilities |
+| `api/`          | Base HttpClient wrapper used by all feature services                         |
+| `signalr/`      | SignalR hub connection lifecycle for real-time Q&A                           |
+| `interceptors/` | Global HTTP interceptors (error handling)                                    |
+| `locale/`       | Language/RTL switching, ngx-translate bootstrap                              |
 
 ## Rules
 

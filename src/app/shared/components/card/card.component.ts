@@ -9,17 +9,16 @@ import { CommonModule } from '@angular/common';
     <div
       [attr.tabindex]="interactive ? 0 : null"
       [ngClass]="[
-        'rounded-xl border border-border bg-card p-6 transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-primary',
-        interactive ? 'cursor-pointer hover:border-primary hover:-translate-y-1' : '',
-        className
+        'border-border bg-card focus-visible:ring-primary rounded-xl border p-6 transition-all duration-150 outline-none focus-visible:ring-2',
+        interactive ? 'hover:border-primary cursor-pointer hover:-translate-y-1' : '',
+        className,
       ]"
       (click)="onClick($event)"
       (keydown.enter)="onKeydown($event)"
-      (keydown.space)="onKeydown($event)"
-    >
+      (keydown.space)="onKeydown($event)">
       <ng-content></ng-content>
     </div>
-  `
+  `,
 })
 export class CardComponent {
   @Input() interactive = false;

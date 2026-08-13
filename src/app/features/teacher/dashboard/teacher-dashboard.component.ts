@@ -1,16 +1,77 @@
 // src/app/features/teacher/dashboard/teacher-dashboard.component.ts
-// Purpose: Teacher dashboard placeholder. Will eventually host:
-// - ng-apexcharts widgets (class performance, exam score distribution, completion rates)
-// - Quick-access cards to Exam Builder and active student sessions
-// - Real-time Q&A activity feed via SignalRService
+import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
+import { ToastService } from '../../../core/services/toast.service';
+import { TeacherDashboardService } from '../services/teacher-dashboard.service';
 
-import { Component } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TeacherWelcomeHeaderComponent } from './components/teacher-welcome-header/teacher-welcome-header.component';
+import { TeacherAiReportsBannerComponent } from './components/teacher-ai-reports-banner/teacher-ai-reports-banner.component';
+import { TeacherKpiGridComponent } from './components/teacher-kpi-grid/teacher-kpi-grid.component';
+import { TeacherSubmissionsChartComponent } from './components/teacher-submissions-chart/teacher-submissions-chart.component';
+import { TeacherQuickActionsComponent } from './components/teacher-quick-actions/teacher-quick-actions.component';
+import { TeacherAttentionAlertsComponent } from './components/teacher-attention-alerts/teacher-attention-alerts.component';
+import { TeacherFollowupTableComponent } from './components/teacher-followup-table/teacher-followup-table.component';
+import { TeacherRecentSubmissionsTableComponent } from './components/teacher-recent-submissions-table/teacher-recent-submissions-table.component';
 
 @Component({
-  selector: 'app-teacher-dashboard',
+  selector: 'draya-teacher-dashboard',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [
+    TeacherWelcomeHeaderComponent,
+    TeacherAiReportsBannerComponent,
+    TeacherKpiGridComponent,
+    TeacherSubmissionsChartComponent,
+    TeacherQuickActionsComponent,
+    TeacherAttentionAlertsComponent,
+    TeacherFollowupTableComponent,
+    TeacherRecentSubmissionsTableComponent,
+  ],
   templateUrl: './teacher-dashboard.component.html',
+  styleUrl: './teacher-dashboard.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TeacherDashboardComponent {}
+export class TeacherDashboardComponent implements OnInit {
+  protected readonly dashboardService = inject(TeacherDashboardService);
+  private readonly toast = inject(ToastService);
+
+  readonly aiAlert = this.dashboardService.aiAlert;
+  readonly kpiStats = this.dashboardService.kpiStats;
+  readonly chartMeta = this.dashboardService.chartMeta;
+  readonly timeRange = this.dashboardService.timeRange;
+  readonly studentsNeedingFollowup = this.dashboardService.studentsNeedingFollowup;
+  readonly recentSubmissions = this.dashboardService.recentSubmissions;
+
+  ngOnInit(): void {
+    this.dashboardService.getDashboardData().subscribe();
+  }
+
+  handleTimeRangeChange(range: 'week' | 'month' | 'quarter'): void {
+    this.dashboardService.setTimeRange(range);
+  }
+
+  handleReviewAiReports(): void {
+    this.toast.info(
+      'مراجعة تقارير الذكاء الاصطناعي',
+      'جارٍ فتح شاشة مراجعة واعتماد التقارير قبل إرسالها للأولياء.',
+    );
+  }
+
+  handleCreateAiExam(): void {
+    this.toast.info('إنشاء امتحان ذكي', 'جارٍ فتح معالج توليد الامتحانات الآلي.');
+  }
+
+  handleNewLecture(): void {
+    this.toast.info('محاضرة جديدة', 'جارٍ إعداد شاشة رفع ومشاركة المحاضرة.');
+  }
+
+  handleFollowupStudents(): void {
+    this.toast.info('متابعة الطلاب', 'جارٍ الانتقال لجدول متابعة الطلاب.');
+  }
+
+  handleOpenReports(): void {
+    this.toast.info('التقارير الشاملة', 'جارٍ التوجيه لصفحة التقارير.');
+  }
+
+  handleNotificationClick(): void {
+    this.toast.info('الإشعارات', 'لديك 2 إشعارات جديدة تنتظر الاطلاع.');
+  }
+}

@@ -1,12 +1,15 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { LocaleService } from './core/locale/locale.service';
+import { DirectionService } from './core/services/direction.service';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('draya-web');
+  protected readonly localeService = inject(LocaleService);
+  protected readonly directionService = inject(DirectionService);
 }

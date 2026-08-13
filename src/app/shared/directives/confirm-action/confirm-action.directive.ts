@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 @Directive({
   selector: '[appConfirmAction]',
   standalone: true,
-  providers: [ConfirmationService]
+  providers: [ConfirmationService],
 })
 export class ConfirmActionDirective {
   @Input('appConfirmAction') onConfirm!: () => void;
@@ -28,7 +28,7 @@ export class ConfirmActionDirective {
         if (this.onConfirm) {
           this.onConfirm();
         }
-      }
+      },
     });
   }
 }

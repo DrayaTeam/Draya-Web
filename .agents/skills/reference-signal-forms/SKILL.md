@@ -77,7 +77,7 @@ Defines the behavior.
 
 ```typescript
 // 1. Define Model
-const user = signal({name: '', age: 0});
+const user = signal({ name: '', age: 0 });
 
 // 2. Define Schema
 const userRules = schema((u) => {

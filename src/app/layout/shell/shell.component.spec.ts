@@ -18,11 +18,7 @@ describe('ShellComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        ShellComponent,
-        RouterTestingModule,
-        NavStubComponent,
-      ],
+      imports: [ShellComponent, RouterTestingModule, NavStubComponent],
     })
       .overrideComponent(ShellComponent, {
         remove: { imports: [NavComponent] },

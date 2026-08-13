@@ -24,74 +24,7 @@
     "sessionExpired": "Your session has expired. Please sign in again."
   },
   "AUTH": {
-    "SHARED": {
-      "LOGIN": "Sign In",
-      "LOGOUT": "Sign Out",
-      "EMAIL": "Email Address",
-      "PASSWORD": "Password",
-      "FORGOT_PASSWORD_LINK": "Forgot password?",
-      "CREATE_ACCOUNT": "Create a new account",
-      "FULL_NAME": "Full Name",
-      "PHONE": "Phone Number",
-      "SPECIALIZATION": "Subject Specialization",
-      "DESCRIPTION": "Brief Bio (Optional)",
-      "CONFIRM_PASSWORD": "Confirm Password",
-      "TERMS": "I agree to the Terms of Service and Privacy Policy.",
-      "TEACHER_TAB": "I am a Teacher / Academy",
-      "STUDENT_TAB": "I am a Student",
-      "BACK_TO_LOGIN": "Back to Login",
-      "PASSWORD_STRENGTH": "Password Strength",
-      "STRENGTH_WEAK": "Weak",
-      "STRENGTH_MEDIUM": "Medium",
-      "STRENGTH_STRONG": "Strong",
-      "ALREADY_HAVE_ACCOUNT": "Already have an account?"
-    },
-    "LOGIN": {
-      "SUBMIT_BTN": "Sign In",
-      "ERROR": "Invalid email or password.",
-      "SESSION_EXPIRED": "Your session has expired. Please sign in again.",
-      "WELCOME_BACK": "Welcome back! Please enter your email and password to continue.",
-      "REMEMBER_ME": "Remember me",
-      "NO_ACCOUNT": "Don't have an account?",
-      "UNRECOGNIZED_ROLE": "Unrecognized user role: {{role}}"
-    },
-    "REGISTER_TEACHER": {
-      "TITLE": "Create a new account",
-      "SUBTITLE": "Join the Draya ecosystem and build your AI-powered academy."
-    },
-    "REGISTER_STUDENT": {
-      "TITLE": "Create Student Account",
-      "SUBTITLE": "Start your AI-powered learning journey and track your progress.",
-      "PARENT_EMAIL": "Parent/Guardian Email",
-      "DOB": "Date of Birth"
-    },
-    "FORGOT_PASSWORD": {
-      "TITLE": "Forgot Password?",
-      "SUBTITLE": "Enter your email and we'll send you a link to reset your password.",
-      "SEND_BTN": "Send Reset Link",
-      "SUCCESS_TITLE": "Reset Link Sent",
-      "SUCCESS_DESC": "If this email is registered with us, you will receive a reset link shortly."
-    },
-    "RESET_PASSWORD": {
-      "TITLE": "Reset Password",
-      "SUBTITLE": "Enter your new password and keep it safe.",
-      "SUBMIT_BTN": "Reset Password",
-      "SUCCESS_TITLE": "Password Reset Successful",
-      "SUCCESS_DESC": "Your password has been changed successfully. You can now log in.",
-      "INVALID_TOKEN_TITLE": "Invalid Link",
-      "INVALID_TOKEN_DESC": "The link you are using is invalid or has expired. Please request a new one."
-    },
-    "VALIDATION": {
-      "REQUIRED": "This field is required.",
-      "INVALID_EMAIL": "Please enter a valid email address.",
-      "PASSWORD_WEAK": "Password is too weak. Please use a stronger password.",
-      "PASSWORD_MISMATCH": "Passwords do not match.",
-      "INVALID_PHONE": "Please enter a valid Egyptian phone number.",
-      "MIN_AGE_ERROR": "You must be at least 10 years old to register.",
-      "INVALID_DATE": "Please enter a valid date.",
-      "FUTURE_DATE": "Date of birth cannot be in the future.",
-      "SAME_EMAIL_ERROR": "Parent email cannot be the same as the student email."
-    },
+    "LOGOUT": "Sign Out",
     "REGISTER": {
       "TITLE": "Create New Account",
       "SUBTITLE": "Join Draya and start your smart educational journey"
@@ -174,82 +107,15 @@
     "confirmActionTitle": "Confirm Action",
     "confirmActionMessage": "Are you sure you want to perform this action?"
   },
-  "CLASSROOMS": {
-    "CREATE": {
-      "TITLE": "Create New Classroom",
-      "SUBTITLE": "Add a new classroom to an existing subject or create a completely new one",
-      "SUBJECT_SELECTION": "Subject Selection",
-      "EXISTING_SUBJECT": "Existing Subject",
-      "NEW_SUBJECT": "New Subject",
-      "SELECT_SUBJECT_PLACEHOLDER": "Select Subject",
-      "NEW_SUBJECT_NAME": "New Subject Name",
-      "NEW_SUBJECT_PLACEHOLDER": "e.g., Physics Grade 12",
-      "CLASSROOM_NAME": "Classroom Name",
-      "CLASSROOM_NAME_PLACEHOLDER": "e.g., Group A",
-      "SUBMIT": "Create Classroom",
-      "SUCCESS_TITLE": "Classroom created successfully!",
-      "SUCCESS_CODE": "Student Join Code:",
-      "COPY_CODE": "Copy Code",
-      "COPIED": "Copied!",
-      "BACK_TO_LIST": "Back to Classrooms",
-      "NO_SUBJECTS": "No existing subjects, please create a new one.",
-      "ERRORS": {
-        "SUBJECT_REQUIRED": "Please select a subject",
-        "NEW_SUBJECT_REQUIRED": "Please enter a subject name",
-        "NAME_REQUIRED": "Please enter a classroom name",
-        "NAME_MINLENGTH": "Classroom name must be at least 3 characters",
-        "SUBJECT_NOT_FOUND": "Subject not found",
-        "PERMISSION_DENIED": "Sorry, you do not have permission to create classrooms."
-      }
-    },
-    "LIST": {
-      "TITLE": "Classrooms & Groups",
-      "SUBTITLE": "Manage educational stages, monitor groups, and track total enrolled students per stage.",
-      "TOTAL_STAGES": "Total Stages",
-      "TOTAL_SUBJECTS": "Total Stages",
-      "SEARCH_PLACEHOLDER": "Search by stage name...",
-      "CREATE_NEW": "Create new stage",
-      "TOTAL_STUDENTS": "Total Students",
-      "TOTAL_GROUPS_COUNT": "Groups Count",
-      "STUDENT": "student",
-      "GROUP": "groups",
-      "VIEW_SUBJECT": "View Stage",
-      "SUBJECT_BADGE": "Secondary Stage",
-      "BACK_TO_OVERVIEW": "Back to stages list",
-      "GROUPS_LIST": "Groups List",
-      "GROUPS_SUBTITLE": "List of groups for this stage, manage schedules and related packages.",
-      "SEARCH_GROUPS_PLACEHOLDER": "Search by group name...",
-      "CREATE_NEW_GROUP": "Create new group",
-      "TOTAL_GROUPS": "Total Groups",
-      "VIEW_LIST": "List View",
-      "VIEW_CARDS": "Cards View",
-      "ENROLLED": "Enrolled Students",
-      "CREATED_AT": "Created At",
-      "ENROLLMENT_CODE": "Enrollment Code",
-      "COPY_CODE": "Copy Code",
-      "VIEW_DETAILS": "View Details",
-      "INACTIVE": "Inactive",
-      "EMPTY_TITLE": "No stages found",
-      "EMPTY_DESC": "No stages have been created yet.",
-      "EMPTY_GROUPS_TITLE": "No groups found",
-      "EMPTY_GROUPS_DESC": "No groups have been created for this stage yet.",
-      "FETCH_ERROR": "An error occurred while fetching data",
-      "RETRY": "Retry"
-    }
-  },
   "COMMON": {
     "LOADING": "Loading...",
-    "ERROR": "Something went wrong.",
+    "ERROR": "An error occurred.",
     "SAVE": "Save",
     "CANCEL": "Cancel",
     "CONFIRM": "Confirm",
     "DELETE": "Delete",
     "EDIT": "Edit",
     "BACK": "Back",
-    "NO_DATA": "No data available",
-    "NO_DATA_DESCRIPTION": "There is currently no information to display here.",
-    "CONFIRM_ACTION_TITLE": "Confirm Action",
-    "CONFIRM_ACTION_MESSAGE": "Are you sure you want to perform this action?",
     "CLOSE": "Close"
   },
   "error": {
@@ -425,93 +291,120 @@
       "MADE_WITH": "Made with love in Egypt"
     }
   },
-  "APP": {
-    "NAME": "Draya",
-    "TAGLINE": "Smart Assessment System for the Future"
-  },
-  "NAV": {
-    "DASHBOARD": "Dashboard",
-    "STUDENTS": "Students",
-    "PROFILE": "Profile",
-    "EXAMS": "Exams",
-    "REPORTS": "Reports",
-    "SETTINGS": "Settings",
-    "NOTIFICATIONS": "Notifications",
-    "QA": "Q&A"
-  },
-  "ROLE": {
-    "TEACHER": "Teacher",
-    "STUDENT": "Student",
-    "PARENT": "Parent"
-  },
-  "ROLES": {
-    "TEACHER": "Teacher",
-    "STUDENT": "Student",
-    "PARENT": "Parent"
-  },
-  "ERROR": {
-    "TITLE": "An unexpected error occurred",
-    "DEFAULT_MESSAGE": "The page failed to load or the application encountered an unexpected crash. Please check your connection and try again.",
-    "RETRY_BUTTON": "Try Again & Go Home"
-  },
   "TEACHER": {
+    "SIDEBAR": {
+      "BRAND_NAME": "Draya",
+      "BRAND_ROLE": "Teacher Dashboard",
+      "GROUP_TEACHING": "Teaching",
+      "GROUP_EVALUATION": "Evaluation",
+      "GROUP_COMMUNICATION": "Communication",
+      "GROUP_ANALYTICS": "Analytics",
+      "DASHBOARD": "Dashboard",
+      "PACKAGES": "Packages",
+      "CLASSROOMS": "Classrooms",
+      "STUDENTS": "Students",
+      "EXAMS": "Exams",
+      "CHANNEL": "Channel",
+      "FEEDBACK": "Feedback",
+      "ANALYTICS": "Analytics",
+      "REPORTS": "Reports",
+      "SUBSCRIPTION": "Subscription & Usage",
+      "ACCOUNT": "My Account"
+    },
     "DASHBOARD": {
-      "GREETING": "Good evening, Mr. {{name}}",
-      "GREETING_SUB": "Here is a summary of your academic activity today",
-      "AI_REPORTS": "Review AI Reports",
+      "CURRENT_DATE": "Sunday, 20 July 2026",
+      "GREETING": "Good Evening, Mr. Mohamed",
+      "GREETING_SUBTITLE": "Here is a summary of your academy activity today",
+      "REVIEW_AI_BTN": "Review AI Reports",
       "AI_BANNER": {
-        "TEXT": "{{count}} AI reports ready for review —",
-        "SUB": "Generated from your lecture content, awaiting approval before sending to parents",
-        "ACTION": "Review Now"
+        "TITLE": "3 AI Reports Ready for Review",
+        "SUBTITLE": "Generated from your lecture content, awaiting your approval before sending to parents",
+        "CTA": "Review Now"
       },
-      "STATS": {
+      "KPI": {
+        "ACTIVE_STUDENTS": "Active Students",
+        "STUDENTS_CHANGE": "+8 this week",
+        "CLASS_AVERAGE": "Class Average",
+        "AVERAGE_CHANGE": "+3% vs last week",
+        "INCREASE": "Increase",
+        "PENDING_EXAMS": "Exams Awaiting Review",
+        "EXAMS_CHANGE": "18 submissions this week",
         "NEW_MESSAGES": "New Messages",
-        "PENDING_EXAMS": "Pending Exams",
-        "AVG_SCORE": "Class Average",
-        "TOTAL_STUDENTS": "Active Students"
-      },
-      "QUICK_ACTIONS": {
-        "TITLE": "Quick Actions",
-        "CREATE_EXAM": "Create AI Exam",
-        "NEW_LECTURE": "New Lecture",
-        "FOLLOW_UP": "Student Follow-up",
-        "REPORTS": "Reports"
-      },
-      "ATTENTION": {
-        "TITLE": "Needs Attention",
-        "VIEW_ALL": "View All Alerts"
+        "MESSAGES_CHANGE": "From students and parents"
       },
       "CHART": {
         "TITLE": "Submissions Activity",
-        "SUB": "Student engagement and average performance",
-        "TABS": {
-          "WEEK": "Week",
-          "MONTH": "Month",
-          "QUARTER": "Quarter"
-        },
+        "SUBTITLE": "Student submissions and average performance",
+        "RANGE_WEEK": "Week",
+        "RANGE_MONTH": "Month",
+        "RANGE_QUARTER": "Quarter",
         "TOTAL_SUBMISSIONS": "Total Submissions",
-        "AVG_PERFORMANCE": "Avg Performance"
+        "AVG_PERFORMANCE": "Avg Performance",
+        "PEAK_DAY": "Peak Day",
+        "LEGEND_SUBMISSIONS": "Submissions",
+        "LEGEND_AVERAGE": "Avg Performance"
+      },
+      "ACTIONS": {
+        "TITLE": "Quick Actions",
+        "CREATE_AI_EXAM": "Create AI Exam",
+        "NEW_LECTURE": "New Lecture",
+        "FOLLOWUP_STUDENTS": "Follow up Students",
+        "REPORTS": "Reports"
+      },
+      "ATTENTION": {
+        "TITLE": "Requires Attention",
+        "STUDENTS_AT_RISK": "4 Students at Academic Risk",
+        "WARNING_TAG": "Warning",
+        "EXAM_ALGEBRA": "Algebra Exam — 18 Submissions",
+        "WAITING_TAG": "Pending",
+        "VIEW_ALL_ALERTS": "View All Alerts"
+      },
+      "FOLLOWUP_TABLE": {
+        "TITLE": "Students Needing Follow-up",
+        "SUBTITLE": "Performance under 55% in last exam"
       },
       "RECENT_SUBMISSIONS": {
         "TITLE": "Recent Submissions",
-        "SUB": "Latest submitted exam results",
-        "VIEW_ALL": "View All",
-        "COLS": {
-          "STUDENT": "Student",
-          "EXAM": "Exam",
-          "SCORE": "Score"
-        }
+        "SUBTITLE": "Latest submitted exam results"
       },
-      "FOLLOW_UP": {
-        "TITLE": "Students Needing Follow-up",
-        "SUB": "Performance below 55% in recent exams",
-        "VIEW_ALL": "View All",
-        "COLS": {
-          "STUDENT": "Student",
-          "COURSE": "Course",
-          "AVG": "Average"
-        }
+      "COMMON": {
+        "VIEW_ALL": "View All"
+      },
+      "TABLE_HEADER": {
+        "STUDENT": "Student",
+        "COURSE": "Course",
+        "EXAM": "Exam",
+        "AVERAGE": "Average",
+        "SCORE": "Score"
+      },
+      "TIME_AGO": {
+        "14_MIN": "14 min ago",
+        "32_MIN": "32 min ago",
+        "55_MIN": "55 min ago",
+        "1_HOUR": "1 hour ago"
       }
+    },
+    "DAYS": {
+      "SATURDAY": "Sat",
+      "SUNDAY": "Sun",
+      "MONDAY": "Mon",
+      "TUESDAY": "Tue",
+      "WEDNESDAY": "Wed",
+      "THURSDAY": "Thu"
+    }
+  },
+  "STUDENT": {
+    "TEACHERS": {
+      "HEADER_BADGE": "Featured Teachers Constellation",
+      "HEADER_TITLE": "Partner Teachers",
+      "HEADER_SUBTITLE": "Browse top high school teachers and subscribe to their courses with regular tests & tracking.",
+      "SEARCH_PLACEHOLDER": "Search by teacher name or subject...",
+      "FILTER_ALL": "All Subjects",
+      "FILTER_MATH": "Mathematics",
+      "FILTER_PHYSICS": "Physics",
+      "FILTER_CHEMISTRY": "Chemistry",
+      "FILTER_BIOLOGY": "Biology",
+      "VIEW_PACKAGES": "View Teacher Packages"
     }
   }
 }

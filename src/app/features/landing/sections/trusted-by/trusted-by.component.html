@@ -1,0 +1,15 @@
+<div class="trust-strip">
+  <div class="trust-container">
+    <span class="trust-label">
+      {{ 'LANDING.TRUST.LABEL' | translate }}
+    </span>
+    <div class="trust-divider"></div>
+    <div class="academies-row">
+      @for (nameKey of academyKeys; track nameKey) {
+        <span class="academy-name">
+          {{ nameKey | translate }}
+        </span>
+      }
+    </div>
+  </div>
+</div>

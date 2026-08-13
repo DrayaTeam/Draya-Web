@@ -1,9 +1,9 @@
 ---
 name: angular-migration
-description: "Master AngularJS to Angular migration, including hybrid apps, component conversion, dependency injection changes, and routing migration."
+description: 'Master AngularJS to Angular migration, including hybrid apps, component conversion, dependency injection changes, and routing migration.'
 risk: unknown
 source: community
-date_added: "2026-02-27"
+date_added: '2026-02-27'
 ---
 
 # Angular Migration
@@ -41,18 +41,21 @@ Master AngularJS to Angular migration, including hybrid apps, component conversi
 ## Migration Strategies
 
 ### 1. Big Bang (Complete Rewrite)
+
 - Rewrite entire app in Angular
 - Parallel development
 - Switch over at once
 - **Best for:** Small apps, green field projects
 
 ### 2. Incremental (Hybrid Approach)
+
 - Run AngularJS and Angular side-by-side
 - Migrate feature by feature
 - ngUpgrade for interop
 - **Best for:** Large apps, continuous delivery
 
 ### 3. Vertical Slice
+
 - Migrate one feature completely
 - New features in Angular, maintain old in AngularJS
 - Gradually replace
@@ -68,7 +71,7 @@ import { AppModule } from './app/app.module';
 
 platformBrowserDynamic()
   .bootstrapModule(AppModule)
-  .then(platformRef => {
+  .then((platformRef) => {
     const upgrade = platformRef.injector.get(UpgradeModule);
     // Bootstrap AngularJS
     upgrade.bootstrap(document.body, ['myAngularJSApp'], { strictDi: true });
@@ -82,10 +85,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { UpgradeModule } from '@angular/upgrade/static';
 
 @NgModule({
-  imports: [
-    BrowserModule,
-    UpgradeModule
-  ]
+  imports: [BrowserModule, UpgradeModule],
 })
 export class AppModule {
   constructor(private upgrade: UpgradeModule) {}
@@ -99,18 +99,19 @@ export class AppModule {
 ## Component Migration
 
 ### AngularJS Controller → Angular Component
+
 ```javascript
 // Before: AngularJS controller
-angular.module('myApp').controller('UserController', function($scope, UserService) {
+angular.module('myApp').controller('UserController', function ($scope, UserService) {
   $scope.user = {};
 
-  $scope.loadUser = function(id) {
-    UserService.getUser(id).then(function(user) {
+  $scope.loadUser = function (id) {
+    UserService.getUser(id).then(function (user) {
       $scope.user = user;
     });
   };
 
-  $scope.saveUser = function() {
+  $scope.saveUser = function () {
     UserService.saveUser($scope.user);
   };
 });
@@ -128,7 +129,7 @@ import { UserService } from './user.service';
       <h2>{{ user.name }}</h2>
       <button (click)="saveUser()">Save</button>
     </div>
-  `
+  `,
 })
 export class UserComponent implements OnInit {
   user: any = {};
@@ -140,7 +141,7 @@ export class UserComponent implements OnInit {
   }
 
   loadUser(id: number) {
-    this.userService.getUser(id).subscribe(user => {
+    this.userService.getUser(id).subscribe((user) => {
       this.user = user;
     });
   }
@@ -152,21 +153,22 @@ export class UserComponent implements OnInit {
 ```
 
 ### AngularJS Directive → Angular Component
+
 ```javascript
 // Before: AngularJS directive
-angular.module('myApp').directive('userCard', function() {
+angular.module('myApp').directive('userCard', function () {
   return {
     restrict: 'E',
     scope: {
       user: '=',
-      onDelete: '&'
+      onDelete: '&',
     },
     template: `
       <div class="card">
         <h3>{{ user.name }}</h3>
         <button ng-click="onDelete()">Delete</button>
       </div>
-    `
+    `,
   };
 });
 ```
@@ -182,7 +184,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       <h3>{{ user.name }}</h3>
       <button (click)="delete.emit()">Delete</button>
     </div>
-  `
+  `,
 })
 export class UserCardComponent {
   @Input() user: any;
@@ -196,14 +198,14 @@ export class UserCardComponent {
 
 ```javascript
 // Before: AngularJS service
-angular.module('myApp').factory('UserService', function($http) {
+angular.module('myApp').factory('UserService', function ($http) {
   return {
-    getUser: function(id) {
+    getUser: function (id) {
       return $http.get('/api/users/' + id);
     },
-    saveUser: function(user) {
+    saveUser: function (user) {
       return $http.post('/api/users', user);
-    }
+    },
   };
 });
 ```
@@ -215,7 +217,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
   constructor(private http: HttpClient) {}
@@ -233,6 +235,7 @@ export class UserService {
 ## Dependency Injection Changes
 
 ### Downgrading Angular → AngularJS
+
 ```typescript
 // Angular service
 import { Injectable } from '@angular/core';
@@ -247,16 +250,16 @@ export class NewService {
 // Make available to AngularJS
 import { downgradeInjectable } from '@angular/upgrade/static';
 
-angular.module('myApp')
-  .factory('newService', downgradeInjectable(NewService));
+angular.module('myApp').factory('newService', downgradeInjectable(NewService));
 
 // Use in AngularJS
-angular.module('myApp').controller('OldController', function(newService) {
+angular.module('myApp').controller('OldController', function (newService) {
   console.log(newService.getData());
 });
 ```
 
 ### Upgrading AngularJS → Angular
+
 ```typescript
 // AngularJS service
 angular.module('myApp').factory('oldService', function() {
@@ -295,13 +298,13 @@ export class NewComponent {
 
 ```javascript
 // Before: AngularJS routing
-angular.module('myApp').config(function($routeProvider) {
+angular.module('myApp').config(function ($routeProvider) {
   $routeProvider
     .when('/users', {
-      template: '<user-list></user-list>'
+      template: '<user-list></user-list>',
     })
     .when('/users/:id', {
-      template: '<user-detail></user-detail>'
+      template: '<user-detail></user-detail>',
     });
 });
 ```
@@ -313,12 +316,12 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   { path: 'users', component: UserListComponent },
-  { path: 'users/:id', component: UserDetailComponent }
+  { path: 'users/:id', component: UserDetailComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class AppRoutingModule {}
 ```
@@ -328,8 +331,8 @@ export class AppRoutingModule {}
 ```html
 <!-- Before: AngularJS -->
 <form name="userForm" ng-submit="saveUser()">
-  <input type="text" ng-model="user.name" required>
-  <input type="email" ng-model="user.email" required>
+  <input type="text" ng-model="user.name" required />
+  <input type="email" ng-model="user.email" required />
   <button ng-disabled="userForm.$invalid">Save</button>
 </form>
 ```
@@ -431,6 +434,7 @@ Phase 4: Cleanup (1-2 weeks)
 - Inadequate testing
 
 ## Limitations
+
 - Use this skill only when the task clearly matches the scope described above.
 - Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
 - Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -11,24 +11,22 @@ import { CommonModule } from '@angular/common';
         [src]="src"
         [alt]="name"
         [ngStyle]="{ 'width.px': size, 'height.px': size }"
-        [ngClass]="['rounded-full object-cover shrink-0', className]"
-      />
+        [ngClass]="['shrink-0 rounded-full object-cover', className]" />
     } @else {
       <div
         [ngStyle]="{
           'width.px': size,
           'height.px': size,
-          'font-size': size > 44 ? '17px' : '12px'
+          'font-size': size > 44 ? '17px' : '12px',
         }"
         [ngClass]="[
-          'flex items-center justify-center rounded-full font-bold shrink-0 bg-primary/10 text-primary',
-          className
-        ]"
-      >
+          'bg-primary/10 text-primary flex shrink-0 items-center justify-center rounded-full font-bold',
+          className,
+        ]">
         {{ initials }}
       </div>
     }
-  `
+  `,
 })
 export class AvatarComponent implements OnChanges {
   @Input({ required: true }) name!: string;
@@ -49,8 +47,8 @@ export class AvatarComponent implements OnChanges {
     }
     this.initials = this.name
       .split(' ')
-      .filter(w => w.length > 0)
-      .map(w => w[0])
+      .filter((w) => w.length > 0)
+      .map((w) => w[0])
       .slice(0, 2)
       .join('')
       .toUpperCase();

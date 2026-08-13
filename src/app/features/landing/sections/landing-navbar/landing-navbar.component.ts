@@ -1,0 +1,59 @@
+import { Component, ChangeDetectionStrategy, signal, OnInit, OnDestroy } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
+
+import { LogoComponent } from '../../../../shared/components/logo/logo.component';
+
+@Component({
+  selector: 'draya-landing-navbar',
+  standalone: true,
+  imports: [RouterLink, TranslatePipe, LogoComponent],
+  templateUrl: './landing-navbar.component.html',
+  styleUrl: './landing-navbar.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class LandingNavbarComponent implements OnInit, OnDestroy {
+  readonly scrolled = signal(false);
+  readonly mobileMenuOpen = signal(false);
+
+  readonly navLinks = [
+    { labelKey: 'LANDING.NAVBAR.HOME', href: '#hero' },
+    { labelKey: 'LANDING.NAVBAR.FEATURES', href: '#features' },
+    { labelKey: 'LANDING.NAVBAR.PRICING', href: '#pricing' },
+    { labelKey: 'LANDING.NAVBAR.FAQ', href: '#faq' },
+  ];
+
+  private readonly scrollHandler = (): void => {
+    this.scrolled.set(window.scrollY > 80);
+  };
+
+  ngOnInit(): void {
+    window.addEventListener('scroll', this.scrollHandler, { passive: true });
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('scroll', this.scrollHandler);
+  }
+
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen.update((open) => !open);
+  }
+
+  closeMobileMenu(): void {
+    this.mobileMenuOpen.set(false);
+  }
+
+  scrollToTop(): void {
+    this.closeMobileMenu();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  onNavLinkClick(href: string): void {
+    this.closeMobileMenu();
+    const id = href.replace('#', '');
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+}

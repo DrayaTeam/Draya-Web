@@ -1,0 +1,32 @@
+.blob-bg-wrapper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob-svg {
+  position: absolute;
+}
+
+.blob-top-start {
+  top: -8%;
+  left: -4%;
+  width: 54%;
+  opacity: 0.13;
+}
+
+.blob-bottom-end {
+  bottom: -12%;
+  right: -6%;
+  width: 42%;
+  opacity: 0.091;
+}
+
+.blob-accent {
+  top: 35%;
+  right: 28%;
+  width: 22%;
+  opacity: 0.065;
+}

@@ -1,0 +1,379 @@
+<!-- src/app/features/teacher/subscription/subscription-page.component.html -->
+<div class="sub-page-container">
+  <!-- Notification Banner if action performed -->
+  @if (actionNotification()) {
+    <div class="action-alert-banner animate-scale-up">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        class="shrink-0">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+        <polyline points="22 4 12 14.01 9 11.01" />
+      </svg>
+      <span>{{ actionNotification() }}</span>
+    </div>
+  }
+
+  <!-- Page Header -->
+  <div class="sub-page-header">
+    <div class="header-texts">
+      <h1 class="page-title">الاشتراك والعدادات الحالية</h1>
+      <p class="page-subtitle">
+        إدارة خطة اشتراك المعلم الحالية، التحقق من الحصص المستهلكة، ومتابعة العدادات.
+      </p>
+    </div>
+
+    <button type="button" (click)="handleSimulate422Error()" class="btn-simulate-422-error">
+      <span>اختبار خطأ تجاوز الحد (422 Toast)</span>
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <!-- Skeleton Loading Grid -->
+    <div class="animate-pulse space-y-6">
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <app-skeleton-loader
+          variant="rect"
+          width="100%"
+          height="220px"
+          className="lg:col-span-8 rounded-2xl" />
+        <app-skeleton-loader
+          variant="rect"
+          width="100%"
+          height="220px"
+          className="lg:col-span-4 rounded-2xl" />
+      </div>
+      <app-skeleton-loader variant="rect" width="100%" height="180px" className="rounded-2xl" />
+    </div>
+  } @else {
+    <!-- Top 2-Cards Grid -->
+    <div class="animate-fade-in-up grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+      <!-- Active Plan Card (Span 8 on desktop) -->
+      @if (plan(); as p) {
+        <div class="active-plan-card lg:col-span-8">
+          <div class="plan-card-top">
+            <div class="plan-info-col">
+              <div class="badge-row">
+                <span class="active-pill">الخطة النشطة</span>
+                <span class="auto-renew-pill">تجديد تلقائي</span>
+                @if (isAtLimit()) {
+                  <span class="badge-limit-pill danger-pill">تجاوزت حد العدادات!</span>
+                } @else if (isNearLimit()) {
+                  <span class="badge-limit-pill warning-pill">اقتربت من نفاد الرصيد ⚠️</span>
+                }
+              </div>
+
+              <h2 class="active-plan-title">{{ p.planName }}</h2>
+              <p class="renew-notice">
+                تتجدد تلقائياً في {{ p.renewDate }} بقيمة {{ p.price }} جنيه مصري
+              </p>
+            </div>
+
+            <button type="button" (click)="openCompareModal()" class="btn-upgrade-plan">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7" />
+                <polyline points="7 7 17 7 17 17" />
+              </svg>
+              <span>ترقية خطة الاشتراك</span>
+            </button>
+          </div>
+
+          <!-- Payment & Security Info Bar -->
+          <div class="payment-security-bar">
+            <div class="sec-cell">
+              <div class="cell-icon-wrap">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2">
+                  <rect width="20" height="14" x="2" y="5" rx="2" />
+                  <line x1="2" y1="10" x2="22" y2="10" />
+                </svg>
+              </div>
+              <div class="cell-texts">
+                <span class="cell-label">وسيلة الدفع</span>
+                <span class="cell-val">{{ p.paymentMethod }}</span>
+              </div>
+            </div>
+
+            <div class="sec-cell">
+              <div class="cell-icon-wrap icon-green">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#16A34A"
+                  stroke-width="2.2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  <path d="m9 12 2 2 4-4" />
+                </svg>
+              </div>
+              <div class="cell-texts">
+                <span class="cell-label">حالة الاشتراك</span>
+                <span class="cell-val text-green">نشط ومتصل بالدفع الآلي</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Action Buttons -->
+          <div class="plan-card-actions">
+            <button type="button" (click)="handleUpdatePayment()" class="btn-action-sec">
+              تحديث بيانات بطاقة الدفع
+            </button>
+            <button
+              type="button"
+              (click)="handleCancelSub()"
+              [disabled]="isCancelling()"
+              class="btn-action-danger">
+              @if (isCancelling()) {
+                <span>جارٍ الإلغاء...</span>
+              } @else {
+                <span>إلغاء التجديد التلقائي</span>
+              }
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- General Quotas Card (Span 4 on desktop) -->
+      <div class="quotas-summary-card lg:col-span-4">
+        <h3 class="quotas-card-title">العدادات والاستهلاك الشهري</h3>
+
+        <div class="quotas-list">
+          @for (q of quotas(); track q.type) {
+            <div class="quota-row-item">
+              <div class="quota-row-header">
+                <span class="q-label">{{ q.labelKey | translate }}</span>
+                <span class="q-numbers">
+                  <span class="q-used">{{ q.used }}</span>
+                  / {{ q.max }} {{ q.unitKey | translate }}
+                </span>
+              </div>
+
+              <!-- Progress Bar -->
+              <div class="progress-track">
+                <div
+                  class="progress-bar-fill"
+                  [style.width.%]="q.percentage"
+                  [class.bg-teal-600]="q.percentage < 80"
+                  [class.bg-amber-500]="q.percentage >= 80 && q.percentage < 100"
+                  [class.bg-red-500]="q.percentage >= 100"></div>
+              </div>
+
+              <div class="quota-row-footer">
+                <span class="pct-text">{{ q.percentage }}% مستهلك</span>
+                @if (q.isDanger) {
+                  <span class="tag-status tag-danger">تجاوزت الحد!</span>
+                } @else if (q.isWarning) {
+                  <span class="tag-status tag-warning">اقتربت من الحد ⚠️</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Usage History & Growth Section (Redesigned UI/UX) -->
+    <div class="history-growth-card animate-fade-in-up delay-200">
+      <div class="history-card-header">
+        <div class="history-title-group">
+          <h3 class="history-title">نمو أعداد الطلاب واستهلاك السيرفرات عبر الأشهر</h3>
+          <p class="history-subtitle">تحليل مقارن لمعدل زيادة المشتركين وحجم الملفات المخزنة</p>
+        </div>
+
+        <div class="history-header-badges">
+          <span class="growth-chip positive-chip">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+              <polyline points="17 6 23 6 23 12" />
+            </svg>
+            +42% نمو هذا الترم
+          </span>
+          <span class="history-pill">آخر 4 أشهر</span>
+        </div>
+      </div>
+
+      <div class="history-grid">
+        @for (h of usageHistory(); track h.month) {
+          <div class="history-col-item group">
+            <!-- Floating Top Value Badge (No clipping, crystal clear text) -->
+            <div class="bar-value-tooltip">
+              <span class="val-num">{{ h.students }}</span>
+              <span class="val-unit">طالب</span>
+            </div>
+
+            <!-- Bar Track & Fill -->
+            <div class="history-bar-track">
+              <div class="history-bar-fill" [style.height.%]="h.percentage">
+                <div class="bar-top-glow"></div>
+              </div>
+            </div>
+
+            <!-- Axis Month & Storage Labels -->
+            <div class="axis-labels">
+              <span class="month-label" [class.current-month]="h.month.includes('الحالي')">
+                {{ h.month }}
+              </span>
+              <span class="storage-pill">
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2">
+                  <path
+                    d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                </svg>
+                {{ h.storage }} GB
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Plan Comparison Modal -->
+  @if (showCompareModal()) {
+    <div
+      class="modal-backdrop"
+      (click)="closeCompareModal()"
+      (keydown.escape)="closeCompareModal()"
+      tabindex="-1"
+      role="presentation"
+      aria-hidden="true"></div>
+
+    <div class="compare-modal" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+      <div class="modal-header">
+        <div>
+          <h2 id="modal-heading" class="modal-title">مقارنة خطط اشتراكات المعلمين</h2>
+          <p class="modal-subtitle">
+            اختر الخطة المناسبة لنمو مركزك التعليمي. الترقية تطبق فوراً مع تسوية فرق السعر المالي.
+          </p>
+        </div>
+        <button
+          type="button"
+          (click)="closeCompareModal()"
+          class="btn-close-modal"
+          aria-label="إغلاق">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="table-container">
+          <table class="modal-compare-table">
+            <thead>
+              <tr>
+                <th>الميزة</th>
+                <th>الأساسي (Basic)</th>
+                <th class="th-highlight">الاحترافي (Pro) ⭐</th>
+                <th>المؤسسات (Enterprise)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-feat-name">الطلاب النشطون</td>
+                <td>حتى 50 طالب</td>
+                <td class="td-highlight font-bold">غير محدود (500 طالب)</td>
+                <td>غير محدود بالكامل</td>
+              </tr>
+              <tr>
+                <td class="td-feat-name">سعة التخزين السحابي</td>
+                <td>2 جيجابايت</td>
+                <td class="td-highlight font-bold">10 جيجابايت</td>
+                <td>مخصصة بلا حدود</td>
+              </tr>
+              <tr>
+                <td class="td-feat-name">بناء الامتحانات بالـ AI</td>
+                <td>—</td>
+                <td class="td-highlight font-bold">20 امتحان / شهر</td>
+                <td>غير محدود</td>
+              </tr>
+              <tr>
+                <td class="td-feat-name">تقارير الذكاء الاصطناعي</td>
+                <td>تقارير مبسطة</td>
+                <td class="td-highlight font-bold">تفاعلية متقدمة</td>
+                <td>تفاعلية + ربط واتساب</td>
+              </tr>
+              <tr>
+                <td class="td-feat-name">بوابة الدفع الإلكتروني</td>
+                <td>نسبة قياسية</td>
+                <td class="td-highlight font-bold">شروط تفضيلية</td>
+                <td>بوابة خاصة بالسنتر</td>
+              </tr>
+              <tr>
+                <td class="td-feat-name">السعر الشهري (دفع سنوي)</td>
+                <td>119 ج.م</td>
+                <td class="td-highlight td-price">399 ج.م</td>
+                <td>999 ج.م</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="modal-actions-grid">
+          <button
+            type="button"
+            (click)="navigateToPlan('basic')"
+            class="btn-plan-card-link border-slate-200">
+            تفاصيل الخطة الأساسية
+          </button>
+          <button
+            type="button"
+            (click)="navigateToPlan('pro')"
+            class="btn-plan-card-link btn-pro-highlight">
+            تفاصيل خطة المحترف
+          </button>
+          <button
+            type="button"
+            (click)="navigateToPlan('enterprise')"
+            class="btn-plan-card-link border-purple-300 text-purple-800">
+            تفاصيل المؤسسات
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" (click)="closeCompareModal()" class="btn-modal-cancel">
+          إغلاق المقارنة
+        </button>
+      </div>
+    </div>
+  }
+</div>

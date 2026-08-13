@@ -29,10 +29,7 @@ describe('NavComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        NavComponent,
-        RouterTestingModule,
-      ],
+      imports: [NavComponent, RouterTestingModule],
       providers: [
         provideHttpClient(),
         provideTranslateService(),

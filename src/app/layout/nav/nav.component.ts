@@ -10,10 +10,12 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../features/auth/services/auth.service';
 import { LocaleService } from '../../core/locale/locale.service';
 
+import { LogoComponent } from '../../shared/components/logo/logo.component';
+
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, TranslatePipe],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, LogoComponent],
   templateUrl: './nav.component.html',
 })
 export class NavComponent {

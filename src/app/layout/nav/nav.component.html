@@ -1,54 +1,42 @@
 <!-- Sidebar: border-e (logical end border) renders on the correct side in RTL/LTR -->
-<nav class="flex h-full flex-col border-e border-border bg-sidebar">
+<nav class="border-border bg-sidebar flex h-full flex-col border-e">
   <!-- Logo -->
-  <div class="border-b border-border px-6 py-5">
-    <span class="text-xl font-bold text-primary">
-      {{ 'APP.NAME' | translate }}
-    </span>
+  <div class="border-border border-b px-6 py-4">
+    <draya-logo size="md" />
   </div>
 
   <!-- Nav links — ps-/pe- for logical padding -->
   <ul class="flex-1 space-y-1 p-3">
     <li>
       <a
-        routerLink="/teacher/dashboard"
+        routerLink="/student/dashboard"
         routerLinkActive="bg-accent text-accent-foreground"
-        class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium
-               text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">
+        class="text-muted-foreground hover:bg-accent hover:text-accent-foreground flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors">
         <span class="i-pi-th-large h-4 w-4" aria-hidden="true"></span>
-        {{ 'NAV.DASHBOARD' | translate }}
+        {{ 'nav.dashboard' | translate }}
       </a>
     </li>
     <li>
       <a
         routerLink="/student"
         routerLinkActive="bg-accent text-accent-foreground"
-        class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium
-               text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">
-        {{ 'NAV.STUDENTS' | translate }}
+        class="text-muted-foreground hover:bg-accent hover:text-accent-foreground flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors">
+        {{ 'nav.students' | translate }}
       </a>
     </li>
   </ul>
 
-  <!-- Footer: profile + locale toggle + logout -->
-  <div class="border-t border-border p-4 space-y-2">
-    <a
-      routerLink="/profile"
-      class="w-full flex items-center rounded-md px-3 py-2 text-start text-sm text-muted-foreground
-             hover:bg-accent hover:text-accent-foreground transition-colors">
-      {{ 'NAV.PROFILE' | translate }}
-    </a>
+  <!-- Footer: logout + locale toggle -->
+  <div class="border-border space-y-2 border-t p-4">
     <button
       (click)="localeService.toggle()"
-      class="w-full rounded-md px-3 py-2 text-start text-sm text-muted-foreground
-             hover:bg-accent hover:text-accent-foreground transition-colors">
+      class="text-muted-foreground hover:bg-accent hover:text-accent-foreground w-full rounded-md px-3 py-2 text-start text-sm">
       {{ localeService.locale() === 'ar' ? 'English' : 'عربي' }}
     </button>
     <button
-      (click)="onLogout()"
-      class="w-full rounded-md px-3 py-2 text-start text-sm text-muted-foreground
-             hover:bg-accent hover:text-accent-foreground transition-colors">
-      {{ 'AUTH.SHARED.LOGOUT' | translate }}
+      (click)="auth.logout()"
+      class="text-muted-foreground hover:bg-accent hover:text-accent-foreground w-full rounded-md px-3 py-2 text-start text-sm">
+      {{ 'auth.logout' | translate }}
     </button>
   </div>
 </nav>

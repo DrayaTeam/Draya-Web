@@ -9,10 +9,9 @@ describe('EmptyStateComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [EmptyStateComponent],
-      providers: [provideTranslateService()]
-    })
-    .compileComponents();
-    
+      providers: [provideTranslateService()],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(EmptyStateComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

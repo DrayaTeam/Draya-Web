@@ -24,74 +24,7 @@
     "sessionExpired": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مجدداً."
   },
   "AUTH": {
-    "SHARED": {
-      "LOGIN": "تسجيل الدخول",
-      "LOGOUT": "تسجيل الخروج",
-      "EMAIL": "البريد الإلكتروني / رقم الهاتف",
-      "PASSWORD": "كلمة المرور",
-      "FORGOT_PASSWORD_LINK": "نسيت كلمة المرور؟",
-      "CREATE_ACCOUNT": "أنشئ حساباً جديداً",
-      "FULL_NAME": "الاسم الكامل",
-      "PHONE": "رقم الهاتف",
-      "SPECIALIZATION": "المواد الدراسية",
-      "DESCRIPTION": "نبذة تعريفية (اختياري)",
-      "CONFIRM_PASSWORD": "تأكيد كلمة المرور",
-      "TERMS": "أوافق على شروط الخدمة وسياسة الخصوصية.",
-      "TEACHER_TAB": "أنا معلم / أكاديمية",
-      "STUDENT_TAB": "أنا طالب",
-      "BACK_TO_LOGIN": "العودة لتسجيل الدخول",
-      "PASSWORD_STRENGTH": "قوة كلمة المرور",
-      "STRENGTH_WEAK": "ضعيفة",
-      "STRENGTH_MEDIUM": "متوسطة",
-      "STRENGTH_STRONG": "قوية",
-      "ALREADY_HAVE_ACCOUNT": "لديك حساب بالفعل؟"
-    },
-    "LOGIN": {
-      "SUBMIT_BTN": "دخول",
-      "ERROR": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
-      "SESSION_EXPIRED": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مجدداً.",
-      "WELCOME_BACK": "أهلاً بك مجدداً! يرجى إدخال البريد الإلكتروني وكلمة المرور للمتابعة.",
-      "REMEMBER_ME": "تذكرني",
-      "NO_ACCOUNT": "ليس لديك حساب؟",
-      "UNRECOGNIZED_ROLE": "دور المستخدم غير معروف: {{role}}"
-    },
-    "REGISTER_TEACHER": {
-      "TITLE": "إنشاء حساب جديد",
-      "SUBTITLE": "انضم لمنظومة دراية وأنشئ أكاديميتك الخاصة بالذكاء الاصطناعي."
-    },
-    "REGISTER_STUDENT": {
-      "TITLE": "إنشاء حساب طالب",
-      "SUBTITLE": "ابدأ رحلتك التعليمية مع الذكاء الاصطناعي وتتبع تقدمك.",
-      "PARENT_EMAIL": "البريد الإلكتروني لولي الأمر",
-      "DOB": "تاريخ الميلاد"
-    },
-    "FORGOT_PASSWORD": {
-      "TITLE": "نسيت كلمة المرور؟",
-      "SUBTITLE": "أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور.",
-      "SEND_BTN": "إرسال رابط إعادة التعيين",
-      "SUCCESS_TITLE": "تم إرسال الرابط بنجاح",
-      "SUCCESS_DESC": "إذا كان هذا البريد الإلكتروني مسجلاً لدينا، فستتلقى رابطاً لإعادة تعيين كلمة المرور قريباً."
-    },
-    "RESET_PASSWORD": {
-      "TITLE": "إعادة تعيين كلمة المرور",
-      "SUBTITLE": "أدخل كلمة المرور الجديدة وتأكد من حفظها في مكان آمن.",
-      "SUBMIT_BTN": "إعادة تعيين",
-      "SUCCESS_TITLE": "تم إعادة التعيين بنجاح",
-      "SUCCESS_DESC": "تم تغيير كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة.",
-      "INVALID_TOKEN_TITLE": "رابط غير صالح",
-      "INVALID_TOKEN_DESC": "الرابط الذي تستخدمه غير صالح أو منتهي الصلاحية. يرجى طلب رابط جديد."
-    },
-    "VALIDATION": {
-      "REQUIRED": "هذا الحقل مطلوب.",
-      "INVALID_EMAIL": "الرجاء إدخال بريد إلكتروني صحيح.",
-      "PASSWORD_WEAK": "كلمة المرور ضعيفة جداً. الرجاء استخدام كلمة مرور أقوى.",
-      "PASSWORD_MISMATCH": "كلمتا المرور غير متطابقتين.",
-      "INVALID_PHONE": "الرجاء إدخال رقم هاتف مصري صحيح.",
-      "MIN_AGE_ERROR": "يجب أن يكون عمرك 10 سنوات على الأقل للتسجيل.",
-      "INVALID_DATE": "الرجاء إدخال تاريخ صحيح.",
-      "FUTURE_DATE": "لا يمكن أن يكون تاريخ الميلاد في المستقبل.",
-      "SAME_EMAIL_ERROR": "لا يمكن أن يكون البريد الإلكتروني لولي الأمر هو نفسه البريد الإلكتروني للطالب."
-    },
+    "LOGOUT": "تسجيل الخروج",
     "REGISTER": {
       "TITLE": "إنشاء حساب جديد",
       "SUBTITLE": "انضم إلى منصة درايَة وابدأ تجربتك التعليمية الذكية"
@@ -174,69 +107,6 @@
     "confirmActionTitle": "تأكيد الإجراء",
     "confirmActionMessage": "هل أنت متأكد أنك تريد تنفيذ هذا الإجراء؟"
   },
-  "CLASSROOMS": {
-    "CREATE": {
-      "TITLE": "إنشاء فصل دراسي جديد",
-      "SUBTITLE": "قم بإضافة فصل دراسي جديد لمادة حالية أو أنشئ مادة جديدة بالكامل",
-      "SUBJECT_SELECTION": "اختيار المادة",
-      "EXISTING_SUBJECT": "مادة حالية",
-      "NEW_SUBJECT": "مادة جديدة",
-      "SELECT_SUBJECT_PLACEHOLDER": "اختر المادة الدراسية",
-      "NEW_SUBJECT_NAME": "اسم المادة الجديدة",
-      "NEW_SUBJECT_PLACEHOLDER": "مثال: فيزياء 3 ثانوي",
-      "CLASSROOM_NAME": "اسم الفصل",
-      "CLASSROOM_NAME_PLACEHOLDER": "مثال: مجموعة أ",
-      "SUBMIT": "إنشاء الفصل",
-      "SUCCESS_TITLE": "تم إنشاء الفصل بنجاح!",
-      "SUCCESS_CODE": "كود الانضمام للطلاب:",
-      "COPY_CODE": "نسخ الكود",
-      "COPIED": "تم النسخ!",
-      "BACK_TO_LIST": "العودة لقائمة الفصول",
-      "NO_SUBJECTS": "لا توجد مواد حالية، قم بإنشاء مادة جديدة.",
-      "ERRORS": {
-        "SUBJECT_REQUIRED": "الرجاء اختيار مادة",
-        "NEW_SUBJECT_REQUIRED": "الرجاء كتابة اسم المادة",
-        "NAME_REQUIRED": "الرجاء كتابة اسم الفصل",
-        "NAME_MINLENGTH": "اسم الفصل يجب أن يكون 3 أحرف على الأقل",
-        "SUBJECT_NOT_FOUND": "المادة غير موجودة",
-        "PERMISSION_DENIED": "عذراً، ليس لديك صلاحية لإنشاء فصول."
-      }
-    },
-    "LIST": {
-      "TITLE": "الفصول والمجموعات",
-      "SUBTITLE": "إدارة المراحل الدراسية ومتابعة المجموعات وإجمالي أعداد الطلبة المنضمين لكل مرحلة.",
-      "TOTAL_STAGES": "إجمالي المراحل",
-      "TOTAL_SUBJECTS": "إجمالي المراحل",
-      "SEARCH_PLACEHOLDER": "بحث باسم المرحلة الدراسية...",
-      "CREATE_NEW": "إنشاء مرحلة دراسية جديدة",
-      "TOTAL_STUDENTS": "إجمالي الطلبة",
-      "TOTAL_GROUPS_COUNT": "عدد المجموعات",
-      "STUDENT": "طالب",
-      "GROUP": "مجموعات",
-      "VIEW_SUBJECT": "عرض المرحلة",
-      "SUBJECT_BADGE": "المرحلة الثانوية",
-      "BACK_TO_OVERVIEW": "الرجوع لقائمة المراحل الدراسية",
-      "GROUPS_LIST": "قائمة المجموعات",
-      "GROUPS_SUBTITLE": "قائمة المجموعات الدراسية التابعة للمرحلة وإدارة الجداول والباقات المرتبطة بها.",
-      "SEARCH_GROUPS_PLACEHOLDER": "بحث باسم المجموعة...",
-      "CREATE_NEW_GROUP": "إنشاء مجموعة جديدة",
-      "TOTAL_GROUPS": "إجمالي المجموعات",
-      "VIEW_LIST": "قائمة شريطية",
-      "VIEW_CARDS": "بطاقات",
-      "ENROLLED": "الطلبة المقيدون",
-      "CREATED_AT": "تاريخ الإنشاء",
-      "ENROLLMENT_CODE": "كود الانضمام",
-      "COPY_CODE": "نسخ الكود",
-      "VIEW_DETAILS": "عرض التفاصيل",
-      "INACTIVE": "غير نشط",
-      "EMPTY_TITLE": "لا توجد مراحل",
-      "EMPTY_DESC": "لم يتم العثور على مراحل دراسية.",
-      "EMPTY_GROUPS_TITLE": "لا توجد مجموعات",
-      "EMPTY_GROUPS_DESC": "لم يتم إنشاء أي مجموعات لهذه المرحلة بعد.",
-      "FETCH_ERROR": "حدث خطأ أثناء تحميل البيانات",
-      "RETRY": "إعادة المحاولة"
-    }
-  },
   "COMMON": {
     "LOADING": "جارٍ التحميل...",
     "ERROR": "حدث خطأ ما.",
@@ -246,10 +116,6 @@
     "DELETE": "حذف",
     "EDIT": "تعديل",
     "BACK": "رجوع",
-    "NO_DATA": "لا توجد بيانات متاحة",
-    "NO_DATA_DESCRIPTION": "لا توجد معلومات لعرضها هنا في الوقت الحالي.",
-    "CONFIRM_ACTION_TITLE": "تأكيد الإجراء",
-    "CONFIRM_ACTION_MESSAGE": "هل أنت متأكد أنك تريد تنفيذ هذا الإجراء؟",
     "CLOSE": "إغلاق"
   },
   "error": {
@@ -425,93 +291,120 @@
       "MADE_WITH": "صنع بحب في مصر"
     }
   },
-  "APP": {
-    "NAME": "دراية",
-    "TAGLINE": "نظام التقييم الذكي للمستقبل"
-  },
-  "NAV": {
-    "DASHBOARD": "لوحة التحكم",
-    "STUDENTS": "الطلاب",
-    "EXAMS": "الاختبارات",
-    "REPORTS": "التقارير",
-    "SETTINGS": "الإعدادات",
-    "PROFILE": "الملف الشخصي",
-    "NOTIFICATIONS": "الإشعارات",
-    "QA": "الأسئلة والأجوبة"
-  },
-  "ROLE": {
-    "TEACHER": "معلم",
-    "STUDENT": "طالب",
-    "PARENT": "ولي أمر"
-  },
-  "ROLES": {
-    "TEACHER": "معلم",
-    "STUDENT": "طالب",
-    "PARENT": "ولي أمر"
-  },
-  "ERROR": {
-    "TITLE": "حدث خطأ غير متوقع",
-    "DEFAULT_MESSAGE": "فشل تحميل الصفحة أو تعرض التطبيق لعطل غير متوقع. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.",
-    "RETRY_BUTTON": "إعادة المحاولة والرجوع للرئيسية"
-  },
   "TEACHER": {
+    "SIDEBAR": {
+      "BRAND_NAME": "درايَة",
+      "BRAND_ROLE": "لوحة المعلم",
+      "GROUP_TEACHING": "التدريس",
+      "GROUP_EVALUATION": "التقييم",
+      "GROUP_COMMUNICATION": "التواصل",
+      "GROUP_ANALYTICS": "التحليل",
+      "DASHBOARD": "لوحة التحكم",
+      "PACKAGES": "باقات",
+      "CLASSROOMS": "الفصول",
+      "STUDENTS": "الطلبة",
+      "EXAMS": "الامتحانات",
+      "CHANNEL": "القناة",
+      "FEEDBACK": "Feedback",
+      "ANALYTICS": "التحليلات",
+      "REPORTS": "التقارير",
+      "SUBSCRIPTION": "الاشتراك والاستهلاك",
+      "ACCOUNT": "عن حسابي"
+    },
     "DASHBOARD": {
-      "GREETING": "مساء الخير، أ. {{name}}",
-      "GREETING_SUB": "إليك ملخص نشاطك الأكاديمي اليوم",
-      "AI_REPORTS": "مراجعة تقارير AI",
+      "CURRENT_DATE": "الأحد، 20 يوليو 2026",
+      "GREETING": "مساء الخير، أ. محمد",
+      "GREETING_SUBTITLE": "إليك ملخص نشاط أكاديميتك اليوم",
+      "REVIEW_AI_BTN": "مراجعة تقارير AI",
       "AI_BANNER": {
-        "TEXT": "{{count}} تقارير AI جاهزة للمراجعة —",
-        "SUB": "تم توليدها من محتوى محاضراتك، تنتظر موافقتك قبل إرسالها للأولياء",
-        "ACTION": "راجع الآن"
+        "TITLE": "3 تقارير AI جاهزة للمراجعة",
+        "SUBTITLE": "مُولَّدة من محتوى محاضراتك، تنتظر موافقتك قبل إرسالها للأولياء",
+        "CTA": "راجع الآن"
       },
-      "STATS": {
-        "NEW_MESSAGES": "رسائل جديدة",
+      "KPI": {
+        "ACTIVE_STUDENTS": "طلاب نشطون",
+        "STUDENTS_CHANGE": "+8 هذا الأسبوع",
+        "CLASS_AVERAGE": "متوسط الفصل",
+        "AVERAGE_CHANGE": "+3% عن الأسبوع الماضي",
+        "INCREASE": "ارتفاع",
         "PENDING_EXAMS": "امتحانات بانتظار مراجعة",
-        "AVG_SCORE": "متوسط الفصل",
-        "TOTAL_STUDENTS": "طالب نشطون"
+        "EXAMS_CHANGE": "18 تسليم هذا الأسبوع",
+        "NEW_MESSAGES": "رسائل جديدة",
+        "MESSAGES_CHANGE": "من طلاب وأولياء"
       },
-      "QUICK_ACTIONS": {
+      "CHART": {
+        "TITLE": "نشاط التسليمات",
+        "SUBTITLE": "تسليمات الطلاب ومتوسط الأداء",
+        "RANGE_WEEK": "أسبوع",
+        "RANGE_MONTH": "شهر",
+        "RANGE_QUARTER": "ربع سنة",
+        "TOTAL_SUBMISSIONS": "إجمالي التسليمات",
+        "AVG_PERFORMANCE": "متوسط الأداء",
+        "PEAK_DAY": "أعلى يوم",
+        "LEGEND_SUBMISSIONS": "تسليمات",
+        "LEGEND_AVERAGE": "متوسط الأداء"
+      },
+      "ACTIONS": {
         "TITLE": "إجراءات سريعة",
-        "CREATE_EXAM": "إنشاء امتحان بـ AI",
+        "CREATE_AI_EXAM": "إنشاء امتحان بـ AI",
         "NEW_LECTURE": "محاضرة جديدة",
-        "FOLLOW_UP": "متابعة الطلبة",
+        "FOLLOWUP_STUDENTS": "متابعة الطلبة",
         "REPORTS": "التقارير"
       },
       "ATTENTION": {
         "TITLE": "يحتاج انتباهك",
-        "VIEW_ALL": "عرض كل التنبيهات"
+        "STUDENTS_AT_RISK": "4 طلاب في خطر أكاديمي",
+        "WARNING_TAG": "تنبيه",
+        "EXAM_ALGEBRA": "امتحان الجبر — 18 تسليم",
+        "WAITING_TAG": "انتظار",
+        "VIEW_ALL_ALERTS": "عرض كل التنبيهات"
       },
-      "CHART": {
-        "TITLE": "نشاط التسليمات",
-        "SUB": "استيعاب الطلاب ومتوسط الأداء",
-        "TABS": {
-          "WEEK": "أسبوع",
-          "MONTH": "شهر",
-          "QUARTER": "ربع سنة"
-        },
-        "TOTAL_SUBMISSIONS": "إجمالي التسليمات",
-        "AVG_PERFORMANCE": "متوسط الأداء"
+      "FOLLOWUP_TABLE": {
+        "TITLE": "طلاب يحتاجون متابعة",
+        "SUBTITLE": "أداء دون 55% في آخر امتحان"
       },
       "RECENT_SUBMISSIONS": {
         "TITLE": "آخر التسليمات",
-        "SUB": "أحدث نتائج الامتحانات المُسلمة",
-        "VIEW_ALL": "عرض الكل",
-        "COLS": {
-          "STUDENT": "الطالب",
-          "EXAM": "الامتحان",
-          "SCORE": "الدرجة"
-        }
+        "SUBTITLE": "أحدث نتائج الامتحانات المُسلَّمة"
       },
-      "FOLLOW_UP": {
-        "TITLE": "طلاب يحتاجون متابعة",
-        "SUB": "أداء دون 55% في آخر امتحان",
-        "VIEW_ALL": "عرض الكل",
-        "COLS": {
-          "STUDENT": "الطالب",
-          "COURSE": "الكورس",
-          "AVG": "المتوسط"
-        }
+      "COMMON": {
+        "VIEW_ALL": "عرض الكل"
+      },
+      "TABLE_HEADER": {
+        "STUDENT": "الطالب",
+        "COURSE": "الكورس",
+        "EXAM": "الامتحان",
+        "AVERAGE": "المتوسط",
+        "SCORE": "الدرجة"
+      },
+      "TIME_AGO": {
+        "14_MIN": "منذ 14 دقيقة",
+        "32_MIN": "منذ 32 دقيقة",
+        "55_MIN": "منذ 55 دقيقة",
+        "1_HOUR": "منذ ساعة"
       }
+    },
+    "DAYS": {
+      "SATURDAY": "سبت",
+      "SUNDAY": "أحد",
+      "MONDAY": "اثنين",
+      "TUESDAY": "ثلاثاء",
+      "WEDNESDAY": "أربعاء",
+      "THURSDAY": "خميس"
+    }
+  },
+  "STUDENT": {
+    "TEACHERS": {
+      "HEADER_BADGE": "كوكبة المعلمين المتميزين",
+      "HEADER_TITLE": "المعلمون الشركاء",
+      "HEADER_SUBTITLE": "تصفح قائمة نخبة معلمي الثانوية العامة واشترك في باقاتهم التعليمية مع متابعة وااختبارات دورية.",
+      "SEARCH_PLACEHOLDER": "ابحث باسم المعلم أو مادة التخصص...",
+      "FILTER_ALL": "كل المواد",
+      "FILTER_MATH": "الرياضيات",
+      "FILTER_PHYSICS": "الفيزياء",
+      "FILTER_CHEMISTRY": "الكيمياء",
+      "FILTER_BIOLOGY": "الأحياء",
+      "VIEW_PACKAGES": "استعرض باقات المعلم"
     }
   }
 }

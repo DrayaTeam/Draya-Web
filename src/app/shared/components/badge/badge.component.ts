@@ -11,15 +11,14 @@ import { CommonModule } from '@angular/common';
         'inline-flex items-center gap-1 rounded-full font-medium whitespace-nowrap',
         sizeClasses[size],
         variantClasses[variant],
-        className
-      ]"
-    >
+        className,
+      ]">
       @if (variant === 'ai') {
         <span class="pi pi-sparkles" style="font-size: 0.65rem;"></span>
       }
       <ng-content></ng-content>
     </span>
-  `
+  `,
 })
 export class BadgeComponent {
   @Input() variant: 'success' | 'warning' | 'error' | 'info' | 'ai' | 'draft' | 'primary' = 'info';

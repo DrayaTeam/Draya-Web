@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 const INPUT_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => InputComponent),
-  multi: true
+  multi: true,
 };
 
 @Component({
@@ -14,9 +14,9 @@ const INPUT_VALUE_ACCESSOR: Provider = {
   imports: [CommonModule],
   providers: [INPUT_VALUE_ACCESSOR],
   template: `
-    <div class="flex flex-col gap-1 w-full" [ngClass]="className">
+    <div class="flex w-full flex-col gap-1" [ngClass]="className">
       @if (label) {
-        <label [attr.for]="id" class="text-xs font-semibold text-foreground tracking-wide">
+        <label [attr.for]="id" class="text-foreground text-xs font-semibold tracking-wide">
           {{ label }}
           @if (required) {
             <span class="text-primary mr-0.5">*</span>
@@ -25,10 +25,14 @@ const INPUT_VALUE_ACCESSOR: Provider = {
       }
       <div class="relative">
         @if (icon) {
-          <span class="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground pointer-events-none" [class]="icon"></span>
+          <span
+            class="text-muted-foreground pointer-events-none absolute top-1/2 right-3 -translate-y-1/2"
+            [class]="icon"></span>
         }
         @if (endIcon) {
-          <span class="absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground z-[2]" [class]="endIcon"></span>
+          <span
+            class="text-muted-foreground absolute top-1/2 left-3 z-[2] -translate-y-1/2"
+            [class]="endIcon"></span>
         }
         <input
           [id]="id"
@@ -39,21 +43,20 @@ const INPUT_VALUE_ACCESSOR: Provider = {
           (input)="onInput($event)"
           (blur)="onBlur()"
           [ngClass]="[
-            'w-full h-[42px] rounded-lg border bg-card text-foreground text-[15px] outline-none transition duration-150 box-border focus:border-draya-500 focus:ring-3 focus:ring-primary/15',
+            'bg-card text-foreground focus:border-draya-500 focus:ring-primary/15 box-border h-[42px] w-full rounded-lg border text-[15px] transition duration-150 outline-none focus:ring-3',
             error ? 'border-destructive' : 'border-border',
-            icon ? (endIcon ? 'pr-10 pl-10' : 'pr-10 pl-3.5') : (endIcon ? 'pr-3.5 pl-10' : 'px-3.5'),
-            disabled ? 'cursor-not-allowed opacity-50' : ''
-          ]"
-        />
+            icon ? (endIcon ? 'pr-10 pl-10' : 'pr-10 pl-3.5') : endIcon ? 'pr-3.5 pl-10' : 'px-3.5',
+            disabled ? 'cursor-not-allowed opacity-50' : '',
+          ]" />
       </div>
       @if (error) {
-        <span class="text-xs text-destructive flex items-center gap-1 mt-0.5">
+        <span class="text-destructive mt-0.5 flex items-center gap-1 text-xs">
           <span class="pi pi-exclamation-triangle" style="font-size: 0.7rem;"></span>
           {{ error }}
         </span>
       }
     </div>
-  `
+  `,
 })
 export class InputComponent implements ControlValueAccessor {
   private static nextId = 0;

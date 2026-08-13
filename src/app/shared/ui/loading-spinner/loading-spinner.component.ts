@@ -6,13 +6,13 @@ import { TranslatePipe } from '@ngx-translate/core';
   standalone: true,
   imports: [TranslatePipe],
   template: `
-    <div class="flex flex-col items-center justify-center p-8 space-y-4">
-      <span class="i-pi-spinner h-8 w-8 animate-spin text-primary"></span>
+    <div class="flex flex-col items-center justify-center space-y-4 p-8">
+      <span class="i-pi-spinner text-primary h-8 w-8 animate-spin"></span>
       @if (message) {
-        <p class="text-sm text-muted-foreground">{{ message | translate }}</p>
+        <p class="text-muted-foreground text-sm">{{ message | translate }}</p>
       }
     </div>
-  `
+  `,
 })
 export class LoadingSpinnerComponent {
   @Input() message?: string = 'COMMON.LOADING';

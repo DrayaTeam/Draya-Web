@@ -1,0 +1,38 @@
+<section class="testimonials-section">
+  <div class="testimonials-container">
+    <!-- Header -->
+    <div class="testimonials-header">
+      <span class="testimonials-badge">
+        {{ 'LANDING.TESTIMONIALS.BADGE' | translate }}
+      </span>
+      <h2 class="testimonials-heading">
+        {{ 'LANDING.TESTIMONIALS.HEADING' | translate }}
+      </h2>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="testimonials-grid">
+      @for (tm of testimonials; track tm.nameKey) {
+        <div class="testimonial-card">
+          <p class="testimonial-quote">"{{ tm.quoteKey | translate }}"</p>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar">
+              <img
+                [src]="tm.avatarUrl"
+                [alt]="tm.nameKey | translate"
+                class="avatar-img"
+                loading="lazy"
+                (error)="onAvatarError($event, tm.initials)" />
+            </div>
+            <div>
+              <div class="author-name">{{ tm.nameKey | translate }}</div>
+              <div class="author-meta">
+                {{ tm.roleKey | translate }} · {{ tm.centerKey | translate }}
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
