@@ -11,40 +11,77 @@ export const studentRoutes: Routes = [
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('../teacher/dashboard/teacher-dashboard.component').then(
-            (m) => m.TeacherDashboardComponent,
+          import('./dashboard/student-dashboard.component').then(
+            (m) => m.StudentDashboardComponent,
           ),
         title: 'الرئيسية — درايَة',
       },
       {
+        path: 'teachers',
+        loadComponent: () =>
+          import('./teachers/teachers-directory.component').then(
+            (m) => m.TeachersDirectoryComponent,
+          ),
+        title: 'تصفح المعلمين — درايَة',
+      },
+      {
         path: 'courses',
         loadComponent: () =>
-          import('./placeholder/student-placeholder.component').then(
-            (m) => m.StudentPlaceholderComponent,
+          import('./courses/student-courses.component').then(
+            (m) => m.StudentCoursesComponent,
           ),
-        title: 'كورساتي — درايَة',
+        title: 'باقاتي الدراسية — درايَة',
       },
       {
         path: 'exams',
-        loadComponent: () =>
-          import('./placeholder/student-placeholder.component').then(
-            (m) => m.StudentPlaceholderComponent,
-          ),
-        title: 'الامتحانات — درايَة',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./exams/student-exams.component').then(
+                (m) => m.StudentExamsComponent,
+              ),
+            title: 'الامتحانات والواجبات — درايَة',
+          },
+          {
+            path: 'take',
+            loadComponent: () =>
+              import('./exams/active/student-active-exam.component').then(
+                (m) => m.StudentActiveExamComponent,
+              ),
+            title: 'أداء الامتحان — درايَة',
+          },
+          {
+            path: ':id/take',
+            loadComponent: () =>
+              import('./exams/active/student-active-exam.component').then(
+                (m) => m.StudentActiveExamComponent,
+              ),
+            title: 'أداء الامتحان — درايَة',
+          },
+          {
+            path: ':id/result',
+            loadComponent: () =>
+              import('./exams/result/student-exam-result.component').then(
+                (m) => m.StudentExamResultComponent,
+              ),
+            title: 'نتيجة الامتحان والتحليل — درايَة',
+          },
+        ],
       },
       {
         path: 'reports',
         loadComponent: () =>
-          import('./placeholder/student-placeholder.component').then(
-            (m) => m.StudentPlaceholderComponent,
+          import('./reports/student-reports.component').then(
+            (m) => m.StudentReportsComponent,
           ),
         title: 'تقاريري ودرجاتي — درايَة',
       },
       {
         path: 'library',
         loadComponent: () =>
-          import('./placeholder/student-placeholder.component').then(
-            (m) => m.StudentPlaceholderComponent,
+          import('./library/student-library.component').then(
+            (m) => m.StudentLibraryComponent,
           ),
         title: 'المكتبة — درايَة',
       },

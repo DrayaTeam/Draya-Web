@@ -38,7 +38,12 @@
         class="nav-item">
         الرئيسية
       </a>
-      <a routerLink="/student/courses" routerLinkActive="active" class="nav-item">كورساتي</a>
+      <a routerLink="/student/teachers" routerLinkActive="active" class="nav-item">
+        تصفح المعلمين
+      </a>
+      <a routerLink="/student/courses" routerLinkActive="active" class="nav-item">
+        باقاتي الدراسية
+      </a>
       <a routerLink="/student/exams" routerLinkActive="active" class="nav-item">الامتحانات</a>
       <a routerLink="/student/reports" routerLinkActive="active" class="nav-item">
         تقاريري ودرجاتي
@@ -158,6 +163,13 @@
           (click)="closeMobileMenu()"
           class="drawer-link">
           🏠 الرئيسية
+        </a>
+        <a
+          routerLink="/student/teachers"
+          routerLinkActive="active-drawer"
+          (click)="closeMobileMenu()"
+          class="drawer-link">
+          👨‍🏫 تصفح المعلمين
         </a>
         <a
           routerLink="/student/courses"

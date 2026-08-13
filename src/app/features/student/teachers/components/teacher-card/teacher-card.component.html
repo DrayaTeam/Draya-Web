@@ -1,0 +1,136 @@
+<article
+  class="teacher-card-root"
+  [style.background]="teacher().cardGradient">
+  <!-- Top Blurred Color Blob -->
+  <div
+    class="top-blur-blob"
+    [style.background-color]="teacher().blurBlobColor"></div>
+
+  <!-- Header Info: Avatar + Details -->
+  <div class="card-header">
+    <!-- Avatar Section with Verified Badge -->
+    <div class="avatar-wrapper">
+      <img
+        [src]="teacher().avatarUrl"
+        [alt]="teacher().name"
+        class="teacher-avatar-img"
+        loading="lazy" />
+      @if (teacher().isVerified) {
+        <span class="verified-badge" title="معلم موثوق">
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </span>
+      }
+    </div>
+
+    <!-- Meta Details: Name, Subject Badge & Rating -->
+    <div class="header-details">
+      <h3 class="teacher-name">{{ teacher().name }}</h3>
+
+      <div class="meta-row">
+        <!-- Subject Badge -->
+        <span
+          class="subject-badge"
+          [style.background-color]="teacher().badgeBgColor"
+          [style.border-color]="teacher().badgeBorderColor"
+          [style.color]="teacher().badgeTextColor">
+          {{ teacher().subjectName }}
+        </span>
+
+        <!-- Rating Pill -->
+        <div class="rating-pill">
+          <svg
+            class="star-icon"
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="#F59E0B"
+            stroke="#FD9A00"
+            stroke-width="1.5">
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+          <span class="rating-score">{{ teacher().rating }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Teacher Bio -->
+  <p class="teacher-bio">
+    {{ teacher().bio }}
+  </p>
+
+  <!-- Divider -->
+  <div class="card-divider"></div>
+
+  <!-- Stats Row: Packages & Students -->
+  <div class="stats-grid">
+    <!-- Packages Count -->
+    <div class="stat-pill">
+      <svg
+        class="stat-icon"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#90A1B9"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+      </svg>
+      <span class="stat-value">{{ teacher().packagesCount }}</span>
+      <span class="stat-label">باقات دراسية</span>
+    </div>
+
+    <!-- Students Count -->
+    <div class="stat-pill">
+      <svg
+        class="stat-icon"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#90A1B9"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+      <span class="stat-value">{{ teacher().studentsCount }}</span>
+      <span class="stat-label">طالب</span>
+    </div>
+  </div>
+
+  <!-- Action Button -->
+  <button type="button" class="btn-view-packages" (click)="onViewPackages()">
+    <span>{{ 'STUDENT.TEACHERS.VIEW_PACKAGES' | translate }}</span>
+    <svg
+      class="arrow-icon"
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round">
+      <path d="M19 12H5" />
+      <polyline points="12 19 5 12 12 5" />
+    </svg>
+  </button>
+</article>

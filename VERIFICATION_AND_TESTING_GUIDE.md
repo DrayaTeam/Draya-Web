@@ -7,12 +7,16 @@
 ## 📋 الترتيب المتبع في التطبيق (Implementation & Verification Order)
 
 1. **التحليل وتصميم الهيكلية (Component & Signals Architecture):**
-   - إنشاء الموديلات `student-dashboard.model.ts`, `student-courses.model.ts`, `student-exam.model.ts`.
-   - إنشاء الخدمات والـ State Management باستخدام Angular Signals (`StudentDashboardService`, `StudentCoursesService`, `StudentExamsService`).
+   - إنشاء الموديلات `student-dashboard.model.ts`, `student-courses.model.ts`, `student-exam.model.ts`, `student-reports.model.ts`, `student-library.model.ts`, `student-exam-taking.model.ts`.
+   - إنشاء الخدمات والـ State Management باستخدام Angular Signals (`StudentDashboardService`, `StudentCoursesService`, `StudentExamsService`, `StudentReportsService`, `StudentLibraryService`, `StudentExamTakingService`).
 2. **تقسيم الواجهات إلى مكونات صغيرة جداً (Modular Sub-components):**
    - **لوحة التحكم (`/student/dashboard`):** `CourseProgressCardComponent`, `UpcomingExamCardComponent`, `WeaknessTopicCardComponent`.
    - **باقاتي الدراسية (`/student/courses`):** `SubscribedPackageCardComponent`.
    - **الامتحانات والواجبات (`/student/exams`):** `ExamCardComponent`.
+   - **أداء الامتحان النشط (`/student/exams/take`):** `ExamQuestionCardComponent`, `ExamQuestionMapComponent`, `ExamSecurityWarningComponent`.
+   - **نتيجة الامتحان والتحليل (`/student/exams/:id/result`):** `ExamResultCardComponent`, `ExamQuestionReviewCardComponent`.
+   - **تقاريري ودرجاتي (`/student/reports`):** `ReportKpiCardComponent`, `ReportWeaknessTopicComponent`.
+   - **المكتبة الرقمية (`/student/library`):** `BookCardComponent`.
 3. **فحص التنسيق والـ Linting:**
    ```bash
    npm run lint
@@ -22,7 +26,7 @@
    ```bash
    npx ng test --watch=false
    ```
-   - **النتيجة:** ✅ `TOTAL: 81 SUCCESS` (نجاح جميع الاختبارات الـ 81 بالكامل).
+   - **النتيجة:** ✅ `TOTAL: 130 SUCCESS` (نجاح جميع الاختبارات الـ 130 بالكامل).
 5. **البناء الإنتاجي (Production Build):**
    ```bash
    npx ng build
@@ -33,37 +37,34 @@
 
 ## 🔍 دليل الاختبار اليدوي للمستخدم (Manual Testing Checklist)
 
-### 1. شاشة "الامتحانات والواجبات المجدولة" (`/student/exams`):
-افتح المتصفح على الرابط [http://localhost:4200/student/exams](http://localhost:4200/student/exams):
-- [ ] **الشارة العلوية والعنوان:** شارة `مركز التقويم والاختبارات التفاعلية` باللون الفيروزي وعنوان `الامتحانات والواجبات المجدولة`.
-- [ ] **فلاتر التصفية (Filter Pills):** تجربة الفلترة حسب (الكل، متاح للحل الآن، مجدول لاحقاً، مكتمل وحاصل على درجة).
-- [ ] **بطاقة امتحان متاح للحل (الجبر والتباديل والتوافيق):**
-  - [ ] شارة `الرياضيات` وشارة `متاح للحل الآن 🔥` الصفراء والـ Tint السائل في الزاوية العلوية (`#0EA5E9`).
-  - [ ] مدة الامتحان `45 دقيقة` وحالة `جاهز للبدء`.
-  - [ ] زر `بدء الامتحان الآن ▶` الداكن الخضر وتفعيل إشعار Toast عند الضغط عليه.
-- [ ] **بطاقة امتحان مجدول لاحقاً (قوانين نيوتن والكهربية):**
-  - [ ] شارة `الفيزياء` وشارة `مجدول لاحقاً` والـ Tint البنفسجي الزاوي (`#8B5CF6`).
-  - [ ] موعد الامتحان `الخميس القادم 11:00 ص` ومدة `60 دقيقة`.
-  - [ ] زر `غير متاح بعد` مضلل/معطل ومغلق التفاعل.
-- [ ] **بطاقة امتحان مكتمل وحاصل على درجة (الفصل الدراسي الأول التراكمي):**
-  - [ ] شارة `الرياضيات` وشارة `مكتمل وحاصل على درجة` الخضراء والـ Tint الأخضر الزاوي (`#10B981`).
-  - [ ] عرض الدرجة الحاصل عليها `الدرجة: 85%` ومدة `90 دقيقة`.
-  - [ ] زر `عرض تحليل النتيجة والتصحيح ↗` وتفعيل إشعار الـ Toast.
+### 1. شاشة "أداء الامتحان النشط" (`/student/exams/take`):
+افتح الرابط [http://localhost:4200/student/exams/take](http://localhost:4200/student/exams/take) أو اضغط على **"بدء الامتحان"** من قائمة الامتحانات:
+- [ ] **البار العلوي للاختبار:**
+  - [ ] عنوان الامتحان `امتحان الجبر والتباديل والتوافيق — 2026` والمستوى.
+  - [ ] العداد التنازلي المتبقي (`الوقت المتبقي: 44:59`).
+- [ ] **بطاقة السؤال النشط (يمين Screen):**
+  - [ ] عنوان السؤال وشارة المادة `الجبر`.
+  - [ ] خيارات الإجابة التفاعلية (MCQ) مع تحديد الخيار المحدد.
+  - [ ] زر `تعليم السؤال` للمراجعة وتغير لونه إلى الأصفر.
+  - [ ] الأزرار السفلية: `السؤال السابق` و `السؤال التالي` أو `إنهاء وتسليم الامتحان`.
+- [ ] **خريطة الأسئلة (يسار Screen):**
+  - [ ] أزرار الأرقام (1, 2, 3...) مع التأثيرات البصرية للـ Current (داكن + هالة)، Answered (أخضر)، Flagged (أصفر).
+  - [ ] شريط التوضيح (Legend) في الأسفل.
+- [ ] **كارت المراقبة الأمنية:**
+  - [ ] كارت أمني أحمر يحذر من مغادرة التبويب.
 
 ---
 
-### 2. شاشة "باقاتي الدراسية" (`/student/courses`):
-افتح المتصفح على الرابط [http://localhost:4200/student/courses](http://localhost:4200/student/courses):
-- [ ] مراجعة بطاقة **باقة الجبر وحساب المثلثات** وبطاقة **باقة الكيمياء العضوية المتقدمة**.
+### 2. شاشة "نتيجة الامتحان والتحليل بالـ AI" (`/student/exams/exam-1/result`):
+افتح الرابط [http://localhost:4200/student/exams/exam-1/result](http://localhost:4200/student/exams/exam-1/result) أو اضغط **"إنهاء وتسليم الامتحان"**:
+- [ ] **بطاقة النتيجة التقديرية:** النسبة التقديرية الكبيرة وشارة التقدير وتاريخ التسليم.
+- [ ] **بطاقة تحليل الذكاء الاصطناعي:** مهارات التباديل والتوافيق مع دقة الحل ورابط المحاضرة التأسيسية.
+- [ ] **مراجعة الأسئلة والإجابات التفصيلية:**
+  - [ ] السؤال 1: الإجابة الخاطئة، مربع إجابتك باللون الأحمر، ومربع الإجابة الصحيحة باللون الأخضر.
+  - [ ] السؤال 2 و 3: الإجابات الصحيحة باللون الأخضر.
 
 ---
 
-### 3. شاشة "لوحة تحكم الطالب" (`/student/dashboard`):
-افتح الرابط [http://localhost:4200/student/dashboard](http://localhost:4200/student/dashboard):
-- [ ] مراجعة بطاقة الترحيب، Streak، أداء المواد، والدروس اليومية.
-
----
-
-### 4. شاشة "تصفح المعلمين" (`/student/teachers`):
-افتح الرابط [http://localhost:4200/student/teachers](http://localhost:4200/student/teachers):
-- [ ] مراجعة فلاتر المعلمين والمواد ومجالات التخصص.
+### 3. شاشة "المكتبة الرقمية" (`/student/library`):
+افتح الرابط [http://localhost:4200/student/library](http://localhost:4200/student/library):
+- [ ] مراجعة البحث التفاعلي وتصفية الكتب وجميع كروت الكتب الـ 4.

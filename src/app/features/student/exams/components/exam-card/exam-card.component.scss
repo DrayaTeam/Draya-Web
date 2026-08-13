@@ -1,0 +1,262 @@
+// src/app/features/student/exams/components/exam-card/exam-card.component.scss
+
+.exam-card-root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 248px;
+  padding: 24px;
+  background-color: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 24px;
+  box-shadow:
+    0px 20px 25px -5px rgba(0, 0, 0, 0.08),
+    0px 8px 10px -6px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+  overflow: hidden;
+  transition:
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0px 25px 30px -5px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.06);
+  }
+
+  @media (max-width: 640px) {
+    height: auto;
+    gap: 16px;
+  }
+}
+
+// Quarter-Circle Tint Overlay at Top-Right (in RTL: Top Left / Top Right depending on corner)
+.corner-tint-overlay {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 128px;
+  height: 128px;
+  opacity: 0.15;
+  border-radius: 0px 0px 0px 999px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+// Top Badges Row
+.top-badges-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .subject-tag-pill {
+    padding: 3px 14px;
+    background-color: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    line-height: 16px;
+    color: #1d293d;
+  }
+
+  .status-pill-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 14px;
+    border-radius: 999px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    line-height: 16px;
+
+    &.available {
+      background-color: #fef3c6;
+      border: 1px solid #ffd230;
+      color: #973c00;
+    }
+
+    &.scheduled {
+      background-color: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #314158;
+    }
+
+    &.completed {
+      background-color: #d0fae5;
+      border: 1px solid #5ee9b5;
+      color: #006045;
+    }
+  }
+}
+
+// Header Title & Teacher Info
+.exam-header-info {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .exam-card-title {
+    margin: 0;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    line-height: 22px;
+    color: #0f172b;
+  }
+
+  .teacher-name-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 12px;
+    line-height: 16px;
+    color: #62748e;
+
+    .t-label {
+      font-weight: 500;
+    }
+
+    .t-value {
+      font-weight: 700;
+    }
+  }
+}
+
+// Details Bar Grid
+.details-bar-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  height: 46px;
+  padding: 0 16px;
+  background-color: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    height: auto;
+    padding: 10px 16px;
+    gap: 8px;
+  }
+
+  .detail-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    &.duration-cell {
+      font-family: 'Cairo', sans-serif;
+      font-size: 12px;
+
+      .detail-label {
+        font-weight: 700;
+        color: #314158;
+      }
+
+      .detail-value {
+        font-weight: 700;
+        color: #314158;
+      }
+    }
+
+    &.secondary-cell {
+      justify-content: flex-end;
+
+      @media (max-width: 640px) {
+        justify-content: flex-start;
+      }
+
+      .detail-highlight {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 800;
+        font-size: 12px;
+
+        &.orange-text {
+          color: #e17100;
+        }
+
+        &.purple-text {
+          color: #4f39f6;
+        }
+
+        &.green-text {
+          color: #009966;
+        }
+      }
+    }
+  }
+}
+
+// Action Button
+.btn-exam-action {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 36px;
+  border-radius: 999px;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 150ms ease-out;
+
+  &.available {
+    background-color: #1b6d63;
+    color: #ffffff;
+    border: none;
+    box-shadow:
+      0px 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0px 2px 4px -2px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      background-color: #0f4f49;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  &.scheduled {
+    background-color: transparent;
+    border: 1px solid #1b6d63;
+    color: #1b6d63;
+    opacity: 0.48;
+    cursor: not-allowed;
+  }
+
+  &.completed {
+    background-color: transparent;
+    border: 1px solid #1b6d63;
+    color: #1b6d63;
+
+    &:hover {
+      background-color: #f0fdfa;
+      border-color: #0f4f49;
+      color: #0f4f49;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}

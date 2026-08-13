@@ -1,0 +1,39 @@
+.security-card {
+  background: rgba(255, 32, 86, 0.05);
+  border: 1px solid #ffccd3;
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  direction: rtl;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.warning-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.warning-title {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  line-height: 20px;
+  color: #8b0836;
+  margin: 0;
+}
+
+.warning-body {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 20px;
+  color: #8b0836;
+  margin: 0;
+}

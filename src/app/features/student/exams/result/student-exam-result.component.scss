@@ -1,0 +1,88 @@
+.result-page-container {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  direction: rtl;
+  min-height: 100vh;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.main-title {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 30px;
+  color: #151b19;
+  margin: 0 0 4px 0;
+}
+
+.subtitle {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 21px;
+  color: #525e5a;
+  margin: 0;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 18px;
+  border: 1px solid #1b6d63;
+  border-radius: 999px;
+  background: transparent;
+  color: #1b6d63;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #1b6d63;
+    color: #ffffff;
+  }
+}
+
+.back-arrow {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+.review-section {
+  margin-top: 40px;
+}
+
+.section-title {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  color: #151b19;
+  margin: 0 0 20px 0;
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 640px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}

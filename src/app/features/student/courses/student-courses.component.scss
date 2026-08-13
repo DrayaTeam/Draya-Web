@@ -1,0 +1,105 @@
+// src/app/features/student/courses/student-courses.component.scss
+
+.student-courses-root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+// Ambient Background Blobs matching Figma CSS coordinates & colors
+.ambient-blob {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(32px);
+  pointer-events: none;
+  z-index: 0;
+
+  &.blob-top-right {
+    width: 384px;
+    height: 384px;
+    top: -40px;
+    right: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(0, 213, 190, 0.2) 0%,
+      rgba(116, 212, 255, 0.15) 100%
+    );
+  }
+
+  &.blob-middle-left {
+    width: 320px;
+    height: 320px;
+    top: 200px;
+    left: 0;
+    background: linear-gradient(
+      45deg,
+      rgba(194, 122, 255, 0.15) 0%,
+      rgba(253, 165, 213, 0.15) 100%
+    );
+  }
+}
+
+// Page Header
+.courses-page-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+
+  .challenge-pill-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 14px;
+    background-color: #f0fdfa;
+    border: 1px solid rgba(150, 247, 228, 0.6);
+    border-radius: 999px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    line-height: 16px;
+    color: #0f4f49;
+    margin-bottom: 4px;
+
+    .badge-icon {
+      flex-shrink: 0;
+    }
+  }
+
+  .page-heading {
+    margin: 0;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 27px;
+    color: #151b19;
+  }
+
+  .page-subtitle {
+    margin: 0;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 21px;
+    color: #525e5a;
+  }
+}
+
+// Subscribed Packages Grid
+.packages-cards-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  width: 100%;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
