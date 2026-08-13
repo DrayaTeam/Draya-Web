@@ -39,6 +39,8 @@ export class RegisterTeacherComponent {
     fullName: ['', [Validators.required, Validators.minLength(3), noPureNumericValidator]],
     email: ['', [Validators.required, Validators.email]],
     phone: ['', [Validators.required, egyptianPhoneValidator()]],
+    specialization: ['', [Validators.required]],
+    description: [''],
     password: ['', [Validators.required, passwordStrengthValidator()]],
     confirmPassword: ['', [Validators.required, matchFieldValidator('password')]],
     termsAccepted: [false, Validators.requiredTrue]
@@ -82,12 +84,15 @@ export class RegisterTeacherComponent {
       fullName: formValue.fullName.trim(),
       email: formValue.email.trim().toLowerCase(),
       phone: formValue.phone,
-      password: formValue.password
+      specialization: formValue.specialization.trim(),
+      description: formValue.description?.trim() || '',
+      password: formValue.password,
+      confirmPassword: formValue.confirmPassword
     };
 
     this.auth.registerTeacher(payload).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.router.navigate(['/teacher/dashboard']);
+        this.router.navigate(['/teacher/classrooms']);
       },
       error: (err: ApiError) => {
         if (err.code === 'EMAIL_ALREADY_EXISTS') {

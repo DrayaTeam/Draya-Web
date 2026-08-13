@@ -1,12 +1,10 @@
 // src/environments/environment.ts
-// Production environment configuration for the Draya platform.
-// IMPORTANT: Fill in actual values before deploying to production.
-// Do NOT commit real credentials or secrets — use environment injection at CI/CD time.
+// src/environments/environment.ts
+// Production / Default environment configuration for the Draya platform.
 
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://api.draya.app/api/v1',
-  signalrHubUrl: 'https://api.draya.app/hubs/notifications',
-  useMockAuthApi: true,
+  apiBaseUrl: 'http://draya-api.runasp.net/api/v1',
+  signalrHubUrl: 'http://draya-api.runasp.net/hubs/notifications',
+  useMockTeacherDashboardApi: true,
 };
-

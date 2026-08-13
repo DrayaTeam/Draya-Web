@@ -30,7 +30,7 @@ export class AuthApiService implements IAuthApi {
   }
 
   logout(): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/logout`, {});
+    return this.http.post<void>(`${this.baseUrl}/logout`, null);
   }
 
   /**
@@ -68,8 +68,8 @@ export class AuthApiService implements IAuthApi {
     );
   }
 
-  forgotPassword(email: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.baseUrl}/password-reset/request`, { email });
+  forgotPassword(email: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/password-reset/request`, { email });
   }
 
   resetPassword(payload: { token: string; newPassword: string }): Observable<{ message: string }> {

@@ -84,7 +84,8 @@ export class RegisterStudentComponent {
       email: formValue.email.trim().toLowerCase(),
       parentGuardianEmail: formValue.parentGuardianEmail.trim().toLowerCase(),
       dateOfBirth: formValue.dateOfBirth,
-      password: formValue.password
+      password: formValue.password,
+      confirmPassword: formValue.confirmPassword
     };
 
     this.auth.registerStudent(payload).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({

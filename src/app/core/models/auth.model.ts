@@ -9,13 +9,17 @@ export interface LoginRequest {
 export interface RegisterTeacherRequest {
   email: string;
   password: string;
+  confirmPassword?: string;
   fullName: string;
   phone: string;
+  specialization?: string;
+  description?: string;
 }
 
 export interface RegisterStudentRequest {
   email: string;
   password: string;
+  confirmPassword?: string;
   fullName: string;
   parentGuardianEmail: string;
   dateOfBirth: string;

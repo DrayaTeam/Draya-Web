@@ -174,7 +174,7 @@ export class AuthService {
     );
   }
 
-  forgotPassword(email: string): Observable<{ message: string }> {
+  forgotPassword(email: string): Observable<void> {
     this._isLoading.set(true);
     this._authError.set(null);
     return this.authApi.forgotPassword(email).pipe(

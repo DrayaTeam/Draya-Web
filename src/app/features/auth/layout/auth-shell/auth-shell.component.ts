@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
 import { trigger, transition, style, query, animate, group } from '@angular/animations';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'draya-auth-shell',
   standalone: true,
   imports: [RouterOutlet, CommonModule],

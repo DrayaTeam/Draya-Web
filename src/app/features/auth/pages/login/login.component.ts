@@ -50,9 +50,9 @@ export class LoginComponent {
       next: (res) => {
         const role = res.user.role;
         const dashboards: Record<string, string> = {
-          teacher: '/teacher/dashboard',
+          teacher: '/teacher/classrooms',
           student: '/student/dashboard',
-          parent: '/parent/dashboard',
+          parent: '/parent/reports',
         };
         const targetUrl = dashboards[role];
         if (targetUrl) {
@@ -66,13 +66,10 @@ export class LoginComponent {
         }
       },
       error: (err: ApiError) => {
-        if (err.code === 'INVALID_CREDENTIALS') {
+        if (err.code === 'INVALID_CREDENTIALS' || err.code === 'HTTP_401' || err.code === 'SESSION_EXPIRED' || err.code === 'HTTP_403') {
           // Show inline error for incorrect credentials
-          this.inlineError.set(err.message);
-          // Mark form as untouched so it doesn't immediately lock out resubmit, but wait!
-          // We want them to modify and resubmit. If untouched is checked for submit, we must mark touched or leave it touched.
-          // Actually if we just errored, they can just edit and submit again. If it's valid it will submit.
-          // We don't need to mark untouched, but wait, `[disabled]="... || loginForm.untouched"` means if they just clicked submit, it's already touched. So they can submit again.
+          this.inlineError.set(this.translate.instant('AUTH.LOGIN.ERROR'));
+          // Mark form as touched so it doesn't immediately lock out resubmit
           this.loginForm.markAsTouched(); 
         } else {
           // Unexpected or network error
