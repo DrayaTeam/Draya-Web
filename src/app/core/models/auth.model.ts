@@ -12,8 +12,8 @@ export interface RegisterTeacherRequest {
   confirmPassword?: string;
   fullName: string;
   phone: string;
-  specialization?: string;
-  description?: string;
+  specialization: string;
+  description: string;
 }
 
 export interface RegisterStudentRequest {

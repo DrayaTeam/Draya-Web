@@ -174,7 +174,7 @@ export class AuthService {
     );
   }
 
-  forgotPassword(email: string): Observable<void> {
+  forgotPassword(email: string): Observable<{ message: string }> {
     this._isLoading.set(true);
     this._authError.set(null);
     return this.authApi.forgotPassword(email).pipe(
@@ -186,7 +186,7 @@ export class AuthService {
     );
   }
 
-  resetPassword(payload: { token: string; newPassword: string }): Observable<{ message: string }> {
+  resetPassword(payload: { token: string; newPassword: string }): Observable<void> {
     this._isLoading.set(true);
     this._authError.set(null);
     return this.authApi.resetPassword(payload).pipe(

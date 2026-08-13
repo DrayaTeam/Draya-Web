@@ -10,6 +10,7 @@ import { LocaleService } from '../../core/locale/locale.service';
 import { signal } from '@angular/core';
 import { provideTranslateService } from '@ngx-translate/core';
 import { RouterTestingModule } from '@angular/router/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 const mockAuthService = {
   currentUser: signal(null),
@@ -33,6 +34,7 @@ describe('NavComponent', () => {
         RouterTestingModule,
       ],
       providers: [
+        provideHttpClient(),
         provideTranslateService(),
         { provide: AuthService, useValue: mockAuthService },
         { provide: LocaleService, useValue: mockLocaleService },

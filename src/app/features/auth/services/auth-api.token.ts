@@ -11,11 +11,13 @@ export interface IAuthApi {
   logout(): Observable<void>;
   getProfile(): Observable<UserProfile>;
 
-  forgotPassword(email: string): Observable<void>;
-  resetPassword(payload: { token: string; newPassword: string }): Observable<{ message: string }>;
+  forgotPassword(email: string): Observable<{ message: string }>;
+  resetPassword(payload: { token: string; newPassword: string }): Observable<void>;
 }
 
 export const AUTH_API = new InjectionToken<IAuthApi>('AUTH_API', {
   providedIn: 'root',
-  factory: () => inject(AuthApiService)
+  factory: () => {
+    return inject(AuthApiService);
+  }
 });

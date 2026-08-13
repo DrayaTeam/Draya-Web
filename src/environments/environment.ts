@@ -1,10 +1,9 @@
 // src/environments/environment.ts
-// src/environments/environment.ts
 // Production / Default environment configuration for the Draya platform.
 
 export const environment = {
   production: true,
   apiBaseUrl: 'http://draya-api.runasp.net/api/v1',
   signalrHubUrl: 'http://draya-api.runasp.net/hubs/notifications',
-  useMockTeacherDashboardApi: true,
+  useMockTeacherDashboardApi: false
 };
