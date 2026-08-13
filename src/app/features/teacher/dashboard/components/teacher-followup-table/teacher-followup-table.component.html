@@ -1,0 +1,64 @@
+<div class="dashboard-card table-card">
+  <div class="card-header-flex mb-4">
+    <div class="title-meta-col">
+      <h2 class="card-section-title">{{ 'TEACHER.DASHBOARD.FOLLOWUP_TABLE.TITLE' | translate }}</h2>
+      <span class="card-section-subtitle">
+        {{ 'TEACHER.DASHBOARD.FOLLOWUP_TABLE.SUBTITLE' | translate }}
+      </span>
+    </div>
+
+    <a routerLink="/teacher/students" class="view-all-table-link">
+      <span>{{ 'TEACHER.DASHBOARD.COMMON.VIEW_ALL' | translate }}</span>
+      <svg
+        width="12"
+        height="12"
+        class="rtl:rotate-180"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12" />
+        <polyline points="12 5 19 12 12 19" />
+      </svg>
+    </a>
+  </div>
+
+  <div class="table-responsive-wrapper">
+    <table class="draya-data-table">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'TEACHER.DASHBOARD.TABLE_HEADER.STUDENT' | translate }}</th>
+          <th scope="col">{{ 'TEACHER.DASHBOARD.TABLE_HEADER.COURSE' | translate }}</th>
+          <th scope="col" class="text-end">
+            {{ 'TEACHER.DASHBOARD.TABLE_HEADER.AVERAGE' | translate }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (st of students(); track st.id) {
+          <tr>
+            <td>
+              <div class="student-user-cell">
+                <div class="avatar-circle-sm">
+                  <span>{{ st.initials }}</span>
+                </div>
+                <span class="student-name">{{ st.studentName }}</span>
+              </div>
+            </td>
+            <td class="course-name-cell">{{ st.courseName }}</td>
+            <td class="text-end">
+              <span
+                class="score-pill"
+                [class.score-red]="st.riskLevel === 'high'"
+                [class.score-amber]="st.riskLevel === 'medium'">
+                {{ st.averageScore }}%
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

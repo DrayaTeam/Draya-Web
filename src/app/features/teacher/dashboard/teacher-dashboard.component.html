@@ -1,79 +1,39 @@
-<div class="teacher-dashboard-page">
-  <div class="dashboard-max-container">
-    <!-- Top Hero Section Grid: Banner + Daily Streak Incentive -->
-    <section class="grid-section grid-top-hero">
-      <div class="hero-banner-col">
-        <draya-teacher-hero-banner
-          [teacherName]="'أحمد'"
-          [scheduledExamsCount]="2"
-          (resumeClick)="handleResumeWatch()"
-          (browseClick)="handleBrowseCourses()" />
-      </div>
+<div class="teacher-dashboard-page animate-fade-in">
+  <!-- Top Welcome Header Bar -->
+  <draya-teacher-welcome-header
+    (reviewAiClick)="handleReviewAiReports()"
+    (notificationsClick)="handleNotificationClick()" />
 
-      <div class="streak-card-col">
-        <draya-teacher-streak-card [streakDays]="5" [averageGpa]="87" [completedLectures]="37" />
-      </div>
-    </section>
+  <!-- AI Action Banner Card -->
+  <draya-teacher-ai-reports-banner [aiAlert]="aiAlert()" (reviewClick)="handleReviewAiReports()" />
 
-    <!-- Middle Stats Row Grid: Subscribed Packages + Performance Overview + Urgent Alerts -->
-    <section class="grid-section grid-middle-stats">
-      <div class="stat-col">
-        <draya-teacher-active-plan-card
-          [activePackagesCount]="3"
-          statusText="سارية حتى نهاية الترم" />
-      </div>
+  <!-- 4 KPI Stat Cards Grid -->
+  <draya-teacher-kpi-grid [stats]="kpiStats()" />
 
-      <div class="stat-col">
-        <draya-teacher-performance-overview
-          [averageScore]="87"
-          monthlyGrowth="+4% هذا الشهر"
-          percentileText="أعلى من 92% من الطلاب 👏" />
-      </div>
+  <!-- Row 1: Submissions Chart + Quick Actions & Alerts -->
+  <section class="dashboard-row-grid grid-row-primary">
+    <!-- Submissions Chart Component -->
+    <draya-teacher-submissions-chart
+      [chartMeta]="chartMeta()"
+      [timeRange]="timeRange()"
+      (rangeChange)="handleTimeRangeChange($event)" />
 
-      <div class="alerts-col">
-        <draya-teacher-urgent-alerts />
-      </div>
-    </section>
+    <!-- Quick Actions & Attention Alerts Column -->
+    <div class="dashboard-side-col">
+      <draya-teacher-quick-actions
+        (createAiExamClick)="handleCreateAiExam()"
+        (newLectureClick)="handleNewLecture()"
+        (followupStudentsClick)="handleFollowupStudents()"
+        (openReportsClick)="handleOpenReports()" />
 
-    <!-- Subscription Plan Quota & Usage Widget Section (US-010, US-011, US-012) -->
-    <section class="grid-section subscription-quota-section">
-      <div class="section-title-bar">
-        <div>
-          <h2 class="sub-section-heading">اشتراكك وحصة الاستهلاك الشهرية</h2>
-          <p class="sub-section-desc">
-            متابعة دقيقة لحدود العدادات، استهلاك الذكاء الاصطناعي، ومساحة السيرفرات
-          </p>
-        </div>
+      <draya-teacher-attention-alerts />
+    </div>
+  </section>
 
-        <button
-          type="button"
-          (click)="handleSimulateQuotaExceeded()"
-          class="btn-simulate-quota-error">
-          <span>اختبار تنبيه تجاوز الحد (422)</span>
-        </button>
-      </div>
+  <!-- Row 2: Tables -->
+  <section class="dashboard-row-grid grid-row-tables">
+    <draya-teacher-followup-table [students]="studentsNeedingFollowup()" />
 
-      <draya-subscription-widget
-        [plan]="plan()"
-        [quotas]="quotas()"
-        [loading]="loading()"
-        (manageBilling)="handleManageBilling()"
-        (cancelSub)="handleCancelSub()" />
-    </section>
-
-    <!-- Main Content Section: Daily Courses List + Exams Schedule & Improvement Points -->
-    <section class="grid-section grid-main-courses">
-      <!-- Start Side: Daily Courses List -->
-      <div class="courses-list-col">
-        <draya-teacher-daily-courses (resumeCourse)="handleResumeWatch()" />
-      </div>
-
-      <!-- End Side: Exams Schedule + Improvement Points Stack -->
-      <div class="side-widgets-col">
-        <draya-teacher-exams-schedule />
-
-        <draya-teacher-improvement-points />
-      </div>
-    </section>
-  </div>
+    <draya-teacher-recent-submissions-table [submissions]="recentSubmissions()" />
+  </section>
 </div>

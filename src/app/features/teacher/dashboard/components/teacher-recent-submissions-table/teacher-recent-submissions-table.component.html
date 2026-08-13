@@ -1,0 +1,70 @@
+<div class="dashboard-card table-card">
+  <div class="card-header-flex mb-4">
+    <div class="title-meta-col">
+      <h2 class="card-section-title">
+        {{ 'TEACHER.DASHBOARD.RECENT_SUBMISSIONS.TITLE' | translate }}
+      </h2>
+      <span class="card-section-subtitle">
+        {{ 'TEACHER.DASHBOARD.RECENT_SUBMISSIONS.SUBTITLE' | translate }}
+      </span>
+    </div>
+
+    <a routerLink="/teacher/exams" class="view-all-table-link">
+      <span>{{ 'TEACHER.DASHBOARD.COMMON.VIEW_ALL' | translate }}</span>
+      <svg
+        width="12"
+        height="12"
+        class="rtl:rotate-180"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12" />
+        <polyline points="12 5 19 12 12 19" />
+      </svg>
+    </a>
+  </div>
+
+  <div class="table-responsive-wrapper">
+    <table class="draya-data-table">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'TEACHER.DASHBOARD.TABLE_HEADER.STUDENT' | translate }}</th>
+          <th scope="col">{{ 'TEACHER.DASHBOARD.TABLE_HEADER.EXAM' | translate }}</th>
+          <th scope="col" class="text-end">
+            {{ 'TEACHER.DASHBOARD.TABLE_HEADER.SCORE' | translate }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (sub of submissions(); track sub.id) {
+          <tr>
+            <td>
+              <div class="student-user-cell">
+                <div class="avatar-circle-sm">
+                  <span>{{ sub.initials }}</span>
+                </div>
+                <div class="student-meta-col">
+                  <span class="student-name">{{ sub.studentName }}</span>
+                  <span class="time-ago">{{ sub.timeAgoKey | translate }}</span>
+                </div>
+              </div>
+            </td>
+            <td class="course-name-cell">{{ sub.examTitle }}</td>
+            <td class="text-end">
+              <span
+                class="score-pill"
+                [class.score-green]="sub.gradeType === 'excellent'"
+                [class.score-blue]="sub.gradeType === 'good'"
+                [class.score-amber]="sub.gradeType === 'average'">
+                {{ sub.score }}%
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,77 @@
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #fafaf8;
+  font-family: 'Cairo', system-ui, sans-serif;
+  direction: rtl;
+}
+
+.teacher-portal-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #fafaf8;
+  position: relative;
+}
+
+.mobile-backdrop-overlay {
+  display: none;
+
+  @media (max-width: 1024px) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 95;
+  }
+}
+
+.teacher-main-viewport {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.mobile-top-bar {
+  display: none;
+  height: 56px;
+  background: #ffffff;
+  border-bottom: 1px solid #ebefef;
+  padding: 0 16px;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+
+  @media (max-width: 1024px) {
+    display: flex;
+  }
+}
+
+.mobile-burger-btn {
+  background: transparent;
+  border: none;
+  color: #525e5a;
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-brand-title {
+  font-size: 1.0625rem;
+  font-weight: 800;
+  color: #151b19;
+}
+
+.portal-router-content {
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+}

@@ -1,1 +1,16 @@
-{"projectId":"prj_qU2nVLHnwWPHMS7YCVwD3R7lyt59","orgId":"team_PEPSx1BBrXaiufUQOy32jlte","projectName":"draya-lms"}
+{
+  "projectId": "prj_qU2nVLHnwWPHMS7YCVwD3R7lyt59",
+  "orgId": "team_PEPSx1BBrXaiufUQOy32jlte",
+  "projectName": "draya-lms",
+  "settings": {
+    "createdAt": 1786207539410,
+    "framework": "angular",
+    "devCommand": null,
+    "installCommand": null,
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist/draya-web/browser",
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "24.x"
+  }
+}
