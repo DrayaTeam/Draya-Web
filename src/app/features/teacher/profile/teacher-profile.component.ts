@@ -9,6 +9,7 @@ import { ThemeService } from '../../../core/services/theme.service';
 import { AuthService } from '../../auth/services/auth.service';
 import { TeacherProfile } from '../../../core/models/teacher.model';
 import { finalize } from 'rxjs';
+import { decodeToken } from '../../../core/auth/jwt.util';
 
 @Component({
   selector: 'draya-teacher-profile',
@@ -55,6 +56,33 @@ export class TeacherProfileComponent implements OnInit {
       next: (data) => {
         this._profile.set(data);
         this.resetForm(data);
+      },
+      error: (err) => {
+        // Even if the service doesn't catch it, we shouldn't crash the app
+        console.warn('Could not load teacher profile:', err);
+        
+        let realEmail = user.email || '';
+        let realFullName = user.fullName || '';
+        const token = this.auth.accessToken();
+        if (token) {
+           const claims = decodeToken(token);
+           if (claims) {
+             realEmail = claims.email || realEmail;
+             realFullName = claims.fullName || realFullName;
+           }
+        }
+
+        // We can set a fallback empty profile so the form can still be used
+        const fallback: TeacherProfile = {
+          userId: user.userId,
+          email: realEmail,
+          fullName: realFullName,
+          phone: '',
+          specialization: '',
+          description: ''
+        };
+        this._profile.set(fallback);
+        this.resetForm(fallback);
       }
     });
   }

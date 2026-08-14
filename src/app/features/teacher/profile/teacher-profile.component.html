@@ -11,23 +11,6 @@
     </div>
   } @else if (profile()) {
     <div class="profile-grid">
-      <!-- Settings Card (Dark Mode) -->
-      <div class="settings-card card-panel">
-        <h2 class="card-title">{{ 'TEACHER.PROFILE.APPEARANCE_TITLE' | translate }}</h2>
-        
-        <div class="setting-item">
-          <div class="setting-text">
-            <h3 class="setting-label">{{ 'TEACHER.PROFILE.DARK_MODE' | translate }}</h3>
-            <p class="setting-desc">{{ 'TEACHER.PROFILE.DARK_MODE_DESC' | translate }}</p>
-          </div>
-          <!-- Toggle Switch -->
-          <label class="toggle-switch">
-            <input type="checkbox" [checked]="themeService.isDarkMode()" (change)="themeService.toggleTheme()">
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
-
       <!-- Profile Card -->
       <div class="profile-card card-panel">
         <h2 class="card-title">{{ 'TEACHER.PROFILE.PERSONAL_INFO_TITLE' | translate }}</h2>
@@ -93,6 +76,23 @@
             </button>
           </div>
         </form>
+      </div>
+
+      <!-- Settings Card (Dark Mode) -->
+      <div class="settings-card card-panel">
+        <h2 class="card-title">{{ 'TEACHER.PROFILE.APPEARANCE_TITLE' | translate }}</h2>
+        
+        <div class="setting-item">
+          <div class="setting-text">
+            <h3 class="setting-label">{{ 'TEACHER.PROFILE.DARK_MODE' | translate }}</h3>
+            <p class="setting-desc">{{ 'TEACHER.PROFILE.DARK_MODE_DESC' | translate }}</p>
+          </div>
+          <!-- Toggle Switch -->
+          <label class="toggle-switch">
+            <input type="checkbox" [checked]="themeService.isDarkMode()" (change)="themeService.toggleTheme()">
+            <span class="slider round"></span>
+          </label>
+        </div>
       </div>
     </div>
   }

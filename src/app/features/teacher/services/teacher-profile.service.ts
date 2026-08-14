@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, map, catchError, of, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { TeacherProfile } from '../../../core/models/teacher.model';
 import { AuthService } from '../../auth/services/auth.service';
@@ -22,6 +22,32 @@ export class TeacherProfileService {
    */
   getProfile(userId: string): Observable<TeacherProfile> {
     return this.http.get<TeacherProfile>(`${this.baseUrl}/${userId}`).pipe(
+      catchError((err) => {
+        // If the teacher profile does not exist yet (404), return a default 
+        // profile populated with data from the JWT token.
+        const errorCode = err?.code || `HTTP_${err?.status}`;
+        if (errorCode === 'HTTP_404' || errorCode === 'NOT_FOUND' || err?.status === 404) {
+          let email = '';
+          let fullName = '';
+          const token = this.auth.accessToken();
+          if (token) {
+            const claims = decodeToken(token);
+            if (claims) {
+              email = claims.email || '';
+              fullName = claims.fullName || '';
+            }
+          }
+          return of({
+            userId,
+            email,
+            fullName,
+            phone: '',
+            specialization: '',
+            description: ''
+          } as TeacherProfile);
+        }
+        return throwError(() => err);
+      }),
       map(profile => {
         let realEmail = profile.email;
         const token = this.auth.accessToken();
