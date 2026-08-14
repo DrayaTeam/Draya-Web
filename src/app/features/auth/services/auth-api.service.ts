@@ -3,7 +3,8 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, throwError, of } from 'rxjs';
 import { IAuthApi } from './auth-api.token';
-import { RegisterTeacherRequest, RegisterStudentRequest, LoginRequest, AuthResponse, UserProfile } from '../../../core/models/auth.model';
+import { RegisterTeacherRequest, RegisterStudentRequest, LoginRequest, AuthResponse } from '../../../core/models/auth.model';
+import { UserProfile } from '../../../core/models/user.model';
 import { environment } from '../../../../environments/environment';
 import { decodeToken } from '../../../core/auth/jwt.util';
 

@@ -7,6 +7,14 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
 
 export const appRoutes: Routes = [
+  // Public Landing Page (Root)
+  {
+    path: '',
+    loadComponent: () =>
+      import('./features/landing/landing.component').then((m) => m.LandingComponent),
+    pathMatch: 'full',
+  },
+
   // Unauthenticated: authentication feature (login page)
   {
     path: 'auth',
@@ -44,12 +52,7 @@ export const appRoutes: Routes = [
         path: 'profile',
         loadComponent: () =>
           import('./features/auth/pages/profile/profile.component').then((m) => m.ProfileComponent),
-      },
-      {
-        path: '',
-        redirectTo: 'auth/login',
-        pathMatch: 'full',
-      },
+      }
     ],
   },
   {
@@ -63,6 +66,6 @@ export const appRoutes: Routes = [
   // Wildcard fallback
   {
     path: '**',
-    redirectTo: 'auth/login',
+    redirectTo: '',
   },
 ];

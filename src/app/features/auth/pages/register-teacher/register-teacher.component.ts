@@ -52,6 +52,24 @@ export class RegisterTeacherComponent {
 
   readonly passwordStrength = signal<PasswordStrength>('weak');
 
+  readonly specializations = [
+    'اللغة العربية',
+    'اللغة الإنجليزية',
+    'اللغة الفرنسية',
+    'اللغة الألمانية',
+    'الرياضيات (جبر وهندسة فراغية)',
+    'الرياضيات (تفاضل وتكامل)',
+    'الرياضيات (استاتيكا وديناميكا)',
+    'الفيزياء',
+    'الكيمياء',
+    'الأحياء',
+    'الجيولوجيا وعلوم البيئة',
+    'التاريخ',
+    'الجغرافيا',
+    'الفلسفة والمنطق',
+    'علم النفس والاجتماع'
+  ];
+
   constructor() {
     this.registerForm.controls.password.valueChanges.pipe(takeUntilDestroyed()).subscribe(val => {
       this.passwordStrength.set(calculatePasswordStrength(val));
