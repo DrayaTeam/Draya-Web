@@ -5,24 +5,27 @@ import { AUTH_API } from './auth-api.token';
 import { User, UserProfile, UserRole } from '../../../core/models/user.model';
 import { ApiError } from '../../../core/models/api-error.model';
 import { LoginRequest, RegisterTeacherRequest, RegisterStudentRequest, AuthResponse } from '../../../core/models/auth.model';
-import { AuthService as CoreAuthService } from '../../../core/auth/auth.service';
 import { isTokenExpired } from '../../../core/auth/jwt.util';
+
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly authApi = inject(AUTH_API);
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly coreAuth = inject(CoreAuthService);
+  private readonly router = inject(Router);
   
   // State
   private readonly _currentUser = signal<User | null>(null);
   private readonly _isLoading = signal<boolean>(false);
   private readonly _authError = signal<ApiError | null>(null);
+  private readonly _accessToken = signal<string | null>(null);
 
   // Expose read-only signals
   readonly currentUser = this._currentUser.asReadonly();
   readonly isLoading = this._isLoading.asReadonly();
   readonly authError = this._authError.asReadonly();
+  readonly accessToken = this._accessToken.asReadonly();
 
   // Computed
   readonly isAuthenticated = computed(() => this._currentUser() !== null);
@@ -35,11 +38,11 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       const storedToken = localStorage.getItem('draya_access_token');
       if (storedToken && isTokenExpired(storedToken)) {
-        // NOTE: This duplicates expiration-check timing with core/auth/auth.service.ts because
-        // the two AuthService singletons aren't merged. Both now share the same isTokenExpired()
-        // utility so they can't desync, but a future cleanup should merge these into one service.
         this.clearStorage();
         return;
+      }
+      if (storedToken) {
+        this._accessToken.set(storedToken);
       }
 
       const storedUser = localStorage.getItem('draya_user');
@@ -62,9 +65,9 @@ export class AuthService {
       localStorage.setItem('draya_refresh_token', response.refreshToken);
       localStorage.setItem('draya_user', JSON.stringify(response.user));
     }
+    this._accessToken.set(response.accessToken);
     this._currentUser.set(response.user);
     this._authError.set(null);
-    this.coreAuth.loadTokens();
   }
 
   private clearStorage(): void {
@@ -73,8 +76,8 @@ export class AuthService {
       localStorage.removeItem('draya_refresh_token');
       localStorage.removeItem('draya_user');
     }
+    this._accessToken.set(null);
     this._currentUser.set(null);
-    this.coreAuth.loadTokens();
   }
 
   login(payload: LoginRequest): Observable<AuthResponse> {
@@ -116,22 +119,18 @@ export class AuthService {
     );
   }
 
-  logout(): Observable<void> {
+  logout(): void {
     this._isLoading.set(true);
     this._authError.set(null);
-    // Clear local tokens immediately — do NOT wait for the server response.
-    // Recon confirmed the access token is not server-side blacklisted, so the
-    // real security boundary is removing it from storage at once. The server call
-    // revokes the refresh token; its success/failure doesn't affect local cleanup.
-    this.clearStorage();
-    return this.authApi.logout().pipe(
-      catchError((error: ApiError) => {
-        // Local storage already cleared above — this is just propagating the error
-        // for any caller that wants to show a notification.
-        return throwError(() => error);
-      }),
-      finalize(() => this._isLoading.set(false))
-    );
+    
+    // Call backend revocation while token is still in localStorage
+    this.authApi.logout().pipe(
+      finalize(() => {
+        this.clearStorage();
+        this._isLoading.set(false);
+        this.router.navigate(['/auth/login']);
+      })
+    ).subscribe();
   }
 
   refreshToken(token: string): Observable<AuthResponse> {
@@ -146,6 +145,11 @@ export class AuthService {
       }),
       finalize(() => this._isLoading.set(false))
     );
+  }
+
+  refresh(): Observable<AuthResponse> {
+    const refreshToken = isPlatformBrowser(this.platformId) ? localStorage.getItem('draya_refresh_token') : null;
+    return this.refreshToken(refreshToken ?? '');
   }
 
   getProfile(): Observable<UserProfile> {

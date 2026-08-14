@@ -50,7 +50,7 @@ export class LoginComponent {
       next: (res) => {
         const role = res.user.role;
         const dashboards: Record<string, string> = {
-          teacher: '/teacher/classrooms',
+          teacher: '/teacher/dashboard',
           student: '/student/dashboard',
           parent: '/parent/reports',
         };

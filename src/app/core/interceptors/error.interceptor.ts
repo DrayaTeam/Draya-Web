@@ -1,7 +1,7 @@
 import { HttpInterceptorFn, HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, Injector } from '@angular/core';
 import { catchError, throwError, switchMap } from 'rxjs';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../features/auth/services/auth.service';
 import { MessageService } from 'primeng/api';
 import { ApiError, ValidationError } from '../models/api-error.model';
 
@@ -70,13 +70,14 @@ function parseApiError(err: HttpErrorResponse): ApiError {
 }
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const auth = inject(AuthService);
+  const injector = inject(Injector);
   const messageService = inject(MessageService);
 
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
-      // Avoid intercepting auth requests or infinite loops
-      const isAuthRequest = req.url.includes('/auth/refresh') || req.url.includes('/auth/login');
+      const auth = injector.get(AuthService);
+      // Avoid intercepting auth requests (login, logout, refresh) to prevent infinite loops
+      const isAuthRequest = req.url.includes('/auth/refresh') || req.url.includes('/auth/login') || req.url.includes('/auth/logout');
 
       if (err.status === HttpStatusCode.Unauthorized && !isAuthRequest) {
         return auth.refresh().pipe(

@@ -108,10 +108,17 @@
         <div class="absolute inset-y-0 start-0 ps-3 flex items-center pointer-events-none text-gray-400">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
         </div>
-        <input id="specialization" type="text" formControlName="specialization"
-               class="w-full ps-10 pe-4 py-2 border rounded-lg focus:ring-2 focus:ring-[var(--draya-primary-700,#1B6D63)] focus:border-[var(--draya-primary-700,#1B6D63)] outline-none transition-all"
-               [ngClass]="{'border-red-500': registerForm.controls.specialization.touched && registerForm.controls.specialization.invalid, 'border-gray-300': !(registerForm.controls.specialization.touched && registerForm.controls.specialization.invalid)}"
-               placeholder="مثال: رياضيات ثانوي">
+        <select id="specialization" formControlName="specialization"
+               class="w-full ps-10 pe-10 py-2 border rounded-lg focus:ring-2 focus:ring-[var(--draya-primary-700,#1B6D63)] focus:border-[var(--draya-primary-700,#1B6D63)] outline-none transition-all appearance-none bg-white"
+               [ngClass]="{'border-red-500': registerForm.controls.specialization.touched && registerForm.controls.specialization.invalid, 'border-gray-300': !(registerForm.controls.specialization.touched && registerForm.controls.specialization.invalid)}">
+          <option value="" disabled selected>اختر التخصص...</option>
+          @for (spec of specializations; track spec) {
+            <option [value]="spec">{{ spec }}</option>
+          }
+        </select>
+        <div class="absolute inset-y-0 end-0 pe-3 flex items-center pointer-events-none text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </div>
       </div>
       @if (registerForm.controls.specialization.touched && registerForm.controls.specialization.invalid) {
         <div class="text-xs text-red-500 mt-1">

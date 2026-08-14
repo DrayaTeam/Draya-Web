@@ -14,9 +14,9 @@ describe('AuthService', () => {
 
   const mockUser: User = {
     userId: '1',
+    email: 'test@example.com',
     fullName: 'Test User',
     role: 'teacher'
-    // email intentionally omitted — real API login/register/refresh responses never include it
   };
 
   const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVGVhY2hlciIsImZ1bGxOYW1lIjoiVGVzdCBVc2VyIiwiZXhwIjo5OTk5OTk5OTk5fQ.signature';
@@ -111,7 +111,7 @@ describe('AuthService', () => {
       const apiError: ApiError = { code: 'CONFLICT', message: 'Email already exists' };
       authApiSpy.registerTeacher.and.returnValue(throwError(() => apiError));
 
-      const payload: RegisterTeacherRequest = { email: 'test@example.com', password: 'pass', fullName: 'test', phone: '0100' };
+      const payload: RegisterTeacherRequest = { email: 'test@example.com', password: 'pass', fullName: 'test', phone: '0100', specialization: 'Math', description: 'Test' };
 
       service.registerTeacher(payload).subscribe({
         error: (err) => {
@@ -130,7 +130,7 @@ describe('AuthService', () => {
       };
       authApiSpy.registerTeacher.and.returnValue(throwError(() => apiError));
 
-      const payload: RegisterTeacherRequest = { email: 'test', password: 'pass', fullName: 'test', phone: '0100' };
+      const payload: RegisterTeacherRequest = { email: 'test', password: 'pass', fullName: 'test', phone: '0100', specialization: 'Math', description: 'Test' };
 
       service.registerTeacher(payload).subscribe({
         error: (err) => {
