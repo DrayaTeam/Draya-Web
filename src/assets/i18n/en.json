@@ -23,11 +23,64 @@
     "loginError": "Invalid email or password.",
     "sessionExpired": "Your session has expired. Please sign in again."
   },
+  "APP": {
+    "NAME": "Draya",
+    "TAGLINE": "Smart Assessment System for the Future"
+  },
+  "COMMON": {
+    "LOADING": "Loading...",
+    "ERROR": "An error occurred.",
+    "SAVE": "Save",
+    "CANCEL": "Cancel",
+    "CONFIRM": "Confirm",
+    "DELETE": "Delete",
+    "EDIT": "Edit",
+    "BACK": "Back",
+    "CLOSE": "Close"
+  },
   "AUTH": {
     "LOGOUT": "Sign Out",
-    "REGISTER": {
-      "TITLE": "Create New Account",
+    "SHARED": {
+      "LOGIN": "Sign In",
+      "EMAIL": "Email",
+      "PASSWORD": "Password",
+      "FORGOT_PASSWORD_LINK": "Forgot Password?",
+      "CREATE_ACCOUNT": "Create Account",
+      "TEACHER_TAB": "Teacher Account",
+      "STUDENT_TAB": "Student Account",
+      "FULL_NAME": "Full Name",
+      "PHONE": "Phone Number",
+      "SPECIALIZATION": "Specialization",
+      "DESCRIPTION": "Short Description",
+      "STRENGTH_WEAK": "Weak",
+      "STRENGTH_MEDIUM": "Medium",
+      "STRENGTH_STRONG": "Strong",
+      "CONFIRM_PASSWORD": "Confirm Password",
+      "TERMS": "I agree to the Terms and Conditions",
+      "ALREADY_HAVE_ACCOUNT": "Already have an account?"
+    },
+    "LOGIN": {
+      "WELCOME_BACK": "Welcome back! Please enter your details.",
+      "REMEMBER_ME": "Remember me",
+      "NO_ACCOUNT": "Don't have an account?",
+      "UNRECOGNIZED_ROLE": "Unauthorized role",
+      "ERROR": "Invalid email or password",
+      "SUBMIT_BTN": "Sign In"
+    },
+    "REGISTER_TEACHER": {
+      "TITLE": "Create Teacher Account",
       "SUBTITLE": "Join Draya and start your smart educational journey"
+    },
+    "REGISTER_STUDENT": {
+      "TITLE": "Create Student Account",
+      "SUBTITLE": "Join Draya and start your smart educational journey",
+      "PARENT_EMAIL": "Parent/Guardian Email",
+      "DOB": "Date of Birth"
+    },
+    "VALIDATION": {
+      "INVALID_DATE": "Invalid date",
+      "FUTURE_DATE": "Date cannot be in the future",
+      "MIN_AGE_ERROR": "Age must be at least 10 years"
     }
   },
   "SUBSCRIPTION": {
@@ -391,6 +444,25 @@
       "TUESDAY": "Tue",
       "WEDNESDAY": "Wed",
       "THURSDAY": "Thu"
+    },
+    "PROFILE": {
+      "PAGE_TITLE": "Profile",
+      "PAGE_SUBTITLE": "Manage your account preferences and personal information.",
+      "APPEARANCE_TITLE": "Appearance & Notifications",
+      "DARK_MODE": "Dark Mode",
+      "DARK_MODE_DESC": "Toggle the platform's overall appearance between light and dark",
+      "PERSONAL_INFO_TITLE": "Teacher Profile",
+      "TEACHER_ROLE": "Teacher",
+      "FULL_NAME": "Full Name",
+      "EMAIL": "Academy Email",
+      "PHONE": "Phone Number",
+      "NO_PHONE": "Not provided",
+      "SPECIALIZATION": "Specialization",
+      "NO_SPECIALIZATION": "Not specified",
+      "DESCRIPTION": "Short Bio",
+      "REQUIRED_FIELD": "This field is required.",
+      "CANCEL": "Cancel",
+      "SAVE_CHANGES": "Save Changes"
     }
   },
   "STUDENT": {

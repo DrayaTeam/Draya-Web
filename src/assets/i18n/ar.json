@@ -23,11 +23,64 @@
     "loginError": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
     "sessionExpired": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مجدداً."
   },
+  "APP": {
+    "NAME": "درايَة",
+    "TAGLINE": "نظام التقييم الذكي للمستقبل"
+  },
+  "COMMON": {
+    "LOADING": "جارٍ التحميل...",
+    "ERROR": "حدث خطأ ما.",
+    "SAVE": "حفظ",
+    "CANCEL": "إلغاء",
+    "CONFIRM": "تأكيد",
+    "DELETE": "حذف",
+    "EDIT": "تعديل",
+    "BACK": "رجوع",
+    "CLOSE": "إغلاق"
+  },
   "AUTH": {
     "LOGOUT": "تسجيل الخروج",
-    "REGISTER": {
-      "TITLE": "إنشاء حساب جديد",
+    "SHARED": {
+      "LOGIN": "تسجيل الدخول",
+      "EMAIL": "البريد الإلكتروني",
+      "PASSWORD": "كلمة المرور",
+      "FORGOT_PASSWORD_LINK": "نسيت كلمة المرور؟",
+      "CREATE_ACCOUNT": "إنشاء حساب",
+      "TEACHER_TAB": "حساب معلم",
+      "STUDENT_TAB": "حساب طالب",
+      "FULL_NAME": "الاسم الرباعي",
+      "PHONE": "رقم الهاتف",
+      "SPECIALIZATION": "التخصص",
+      "DESCRIPTION": "وصف قصير",
+      "STRENGTH_WEAK": "ضعيفة",
+      "STRENGTH_MEDIUM": "متوسطة",
+      "STRENGTH_STRONG": "قوية",
+      "CONFIRM_PASSWORD": "تأكيد كلمة المرور",
+      "TERMS": "أوافق على الشروط والأحكام",
+      "ALREADY_HAVE_ACCOUNT": "لديك حساب بالفعل؟"
+    },
+    "LOGIN": {
+      "WELCOME_BACK": "مرحباً بعودتك! يرجى إدخال بياناتك.",
+      "REMEMBER_ME": "تذكرني",
+      "NO_ACCOUNT": "ليس لديك حساب؟",
+      "UNRECOGNIZED_ROLE": "غير مصرح لك بالدخول",
+      "ERROR": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+      "SUBMIT_BTN": "دخول"
+    },
+    "REGISTER_TEACHER": {
+      "TITLE": "إنشاء حساب معلم",
       "SUBTITLE": "انضم إلى منصة درايَة وابدأ تجربتك التعليمية الذكية"
+    },
+    "REGISTER_STUDENT": {
+      "TITLE": "إنشاء حساب طالب",
+      "SUBTITLE": "انضم إلى منصة درايَة وابدأ تجربتك التعليمية الذكية",
+      "PARENT_EMAIL": "البريد الإلكتروني لولي الأمر",
+      "DOB": "تاريخ الميلاد"
+    },
+    "VALIDATION": {
+      "INVALID_DATE": "تاريخ غير صحيح",
+      "FUTURE_DATE": "لا يمكن أن يكون التاريخ في المستقبل",
+      "MIN_AGE_ERROR": "يجب أن يكون العمر 10 سنوات على الأقل"
     }
   },
   "SUBSCRIPTION": {
@@ -391,6 +444,25 @@
       "TUESDAY": "ثلاثاء",
       "WEDNESDAY": "أربعاء",
       "THURSDAY": "خميس"
+    },
+    "PROFILE": {
+      "PAGE_TITLE": "الملف الشخصي",
+      "PAGE_SUBTITLE": "إدارة تفضيلات الحساب والمعلومات الشخصية.",
+      "APPEARANCE_TITLE": "المظهر والإشعارات",
+      "DARK_MODE": "الوضع الليلي",
+      "DARK_MODE_DESC": "تبديل المظهر العام للمنصة بين الفاتح والداكن",
+      "PERSONAL_INFO_TITLE": "الملف الشخصي للمعلم",
+      "TEACHER_ROLE": "معلم",
+      "FULL_NAME": "الاسم الكامل",
+      "EMAIL": "البريد الإلكتروني للأكاديمية",
+      "PHONE": "رقم الهاتف",
+      "NO_PHONE": "غير متوفر",
+      "SPECIALIZATION": "التخصص",
+      "NO_SPECIALIZATION": "غير محدد",
+      "DESCRIPTION": "وصف قصير",
+      "REQUIRED_FIELD": "هذا الحقل مطلوب.",
+      "CANCEL": "إلغاء",
+      "SAVE_CHANGES": "حفظ التغييرات"
     }
   },
   "STUDENT": {

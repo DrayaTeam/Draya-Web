@@ -27,7 +27,7 @@
 
       <!-- Hero Greeting & Description -->
       <h1 class="hero-title">
-        أهلاً بعودتك، {{ auth.currentUser()?.name || summary().studentName }}! 👋
+        أهلاً بعودتك، {{ auth.currentUser()?.fullName || summary().studentName }}!
       </h1>
       <p class="hero-subtext">
         لديك {{ summary().scheduledExamsCount }} اختباران مجدولان قريباً هذا الأسبوع. واصل الدراسة يومياً وحافظ على لهيب حماسك!
@@ -251,73 +251,5 @@
         }
       </div>
     </section>
-
-    <!-- Right Sidebar Column (RTL): Upcoming Exams + Weakness Points -->
-    <aside class="sidebar-column" aria-label="مساعد التعلم والامتحانات">
-      <!-- Widget 1: Upcoming Exams Schedule -->
-      <div class="sidebar-widget-card">
-        <div class="widget-header">
-          <div class="widget-icon-bg yellow-bg">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#E17100"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-              <line x1="16" y1="2" x2="16" y2="6" />
-              <line x1="8" y1="2" x2="8" y2="6" />
-              <line x1="3" y1="10" x2="21" y2="10" />
-            </svg>
-          </div>
-          <h3 class="widget-title">جدول الامتحانات القادمة</h3>
-        </div>
-
-        <div class="exams-list-group">
-          @for (exam of upcomingExams(); track exam.id) {
-            <draya-upcoming-exam-card [exam]="exam" />
-          }
-        </div>
-
-        <a routerLink="/student/exams" class="widget-action-link">
-          <span>عرض كل الامتحانات</span>
-        </a>
-      </div>
-
-      <!-- Widget 2: Weakness Topic Points -->
-      <div class="sidebar-widget-card">
-        <div class="widget-header">
-          <div class="widget-icon-bg purple-bg">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#9810FA"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <circle cx="12" cy="12" r="6" />
-              <circle cx="12" cy="12" r="2" />
-            </svg>
-          </div>
-          <h3 class="widget-title">نقاط تحسين تحتاج تركيزك</h3>
-        </div>
-
-        <div class="topics-list-group">
-          @for (topic of weaknessTopics(); track topic.id) {
-            <draya-weakness-topic-card [topic]="topic" />
-          }
-        </div>
-
-        <a routerLink="/student/reports" class="widget-action-link">
-          <span>فتح تقارير التحليل المتقدمة</span>
-        </a>
-      </div>
-    </aside>
   </div>
 </div>

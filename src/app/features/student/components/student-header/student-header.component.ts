@@ -1,7 +1,7 @@
 // src/app/features/student/components/student-header/student-header.component.ts
 import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../../features/auth/services/auth.service';
 import { LogoComponent } from '../../../../shared/components/logo/logo.component';
 
 @Component({

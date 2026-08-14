@@ -1,3 +1,7 @@
+:host {
+  display: block;
+}
+
 .profile-container {
   max-width: 1280px;
   margin: 0 auto;
@@ -34,7 +38,7 @@
 
   @media (min-width: 1024px) {
     grid-template-columns: 1fr 350px;
-    align-items: flex-start;
+    align-items: flex-start; /* Restored to prevent the Settings Card from stretching */
   }
 }
 
@@ -276,10 +280,19 @@
       border: 1px solid #d1d5db;
       border-radius: 8px;
       font-size: 14px;
+      line-height: 1.5;
       color: #111827;
       background-color: #ffffff;
       outline: none;
       transition: all 150ms ease-out;
+
+      /* Ensure inputs don't clip Arabic descenders */
+      &:not(textarea) {
+        min-height: 44px;
+      }
+      &[multiple], textarea {
+        min-height: 80px;
+      }
 
       :global(.dark) & {
         background-color: #374151;
@@ -316,6 +329,7 @@
 
   .form-actions {
     margin-top: 24px;
+    padding-bottom: 24px; /* Ensure space at bottom of form */
 
     .btn-submit {
       width: 100%;

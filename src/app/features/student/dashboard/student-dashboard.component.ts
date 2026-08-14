@@ -1,11 +1,10 @@
 // src/app/features/student/dashboard/student-dashboard.component.ts
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../features/auth/services/auth.service';
 import { StudentDashboardService } from '../../../core/services/student-dashboard.service';
 import { CourseProgressCardComponent } from './components/course-progress-card/course-progress-card.component';
-import { UpcomingExamCardComponent } from './components/upcoming-exam-card/upcoming-exam-card.component';
-import { WeaknessTopicCardComponent } from './components/weakness-topic-card/weakness-topic-card.component';
+
 import { EnrolledCourseItem } from '../../../core/models/student-dashboard.model';
 import { ToastService } from '../../../core/services/toast.service';
 
@@ -15,8 +14,6 @@ import { ToastService } from '../../../core/services/toast.service';
   imports: [
     RouterLink,
     CourseProgressCardComponent,
-    UpcomingExamCardComponent,
-    WeaknessTopicCardComponent,
   ],
   templateUrl: './student-dashboard.component.html',
   styleUrl: './student-dashboard.component.scss',

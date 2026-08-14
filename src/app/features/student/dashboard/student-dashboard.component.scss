@@ -613,18 +613,12 @@
   }
 }
 
-// Lower Main Content Grid (Courses List + Sidebar)
+// Lower Main Content Grid (Courses List)
 .lower-content-grid {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr 350px;
-  gap: 24px;
+  display: block; // Changed from grid to block since sidebar is removed
   width: 100%;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-  }
 }
 
 // Main Courses Left Column
@@ -671,78 +665,4 @@
   }
 }
 
-// Sidebar Right Column
-.sidebar-column {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
 
-  .sidebar-widget-card {
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    background: #ffffff;
-    border: 1px solid #f1f5f9;
-    box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.06);
-    border-radius: 24px;
-
-    .widget-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-
-      .widget-icon-bg {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 34px;
-        height: 34px;
-        border-radius: 16px;
-
-        &.yellow-bg {
-          background-color: #fffbeb;
-        }
-
-        &.purple-bg {
-          background-color: #faf5ff;
-        }
-      }
-
-      .widget-title {
-        margin: 0;
-        font-family: 'Cairo', sans-serif;
-        font-weight: 800;
-        font-size: 14px;
-        line-height: 20px;
-        color: #1d293d;
-      }
-    }
-
-    .exams-list-group,
-    .topics-list-group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .widget-action-link {
-      margin-top: 16px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Cairo', sans-serif;
-      font-weight: 600;
-      font-size: 13px;
-      line-height: 17px;
-      color: #1b6d63;
-      text-decoration: none;
-      transition: color 150ms ease-out;
-
-      &:hover {
-        color: #0f4f49;
-        text-decoration: underline;
-      }
-    }
-  }
-}

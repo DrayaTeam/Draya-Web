@@ -18,6 +18,7 @@ import { decodeToken } from '../../../core/auth/jwt.util';
   templateUrl: './teacher-profile.component.html',
   styleUrl: './teacher-profile.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'block w-full' }
 })
 export class TeacherProfileComponent implements OnInit {
   private readonly profileService = inject(TeacherProfileService);
