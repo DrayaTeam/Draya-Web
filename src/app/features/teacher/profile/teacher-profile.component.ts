@@ -6,7 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { TeacherProfileService } from '../services/teacher-profile.service';
 import { ThemeService } from '../../../core/services/theme.service';
-import { AuthService } from '../../auth/services/auth.service';
+import { AuthService } from '../../auth';
 import { TeacherProfile } from '../../../core/models/teacher.model';
 import { finalize } from 'rxjs';
 import { decodeToken } from '../../../core/auth/jwt.util';
