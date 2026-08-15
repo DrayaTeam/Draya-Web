@@ -12,7 +12,7 @@ import {
   HubConnectionState,
   LogLevel,
 } from '@microsoft/signalr';
-import { AuthService } from '../../features/auth/services/auth.service';
+import { AuthService } from '../../features/auth';
 import { environment } from '../../../environments/environment';
 import type {
   MaterialParsedEvent,
@@ -71,7 +71,7 @@ export class SignalRService {
     // Watch auth.isLoggedIn() and start/stop the hub automatically.
     // This is the correct place (not AuthService) to avoid circular deps.
     effect(() => {
-      if (this.auth.isLoggedIn()) {
+      if (this.auth.isAuthenticated()) {
         void this.startConnection().catch((err: unknown) => {
           console.warn('[SignalR] Auto-connect on login state failed:', err);
         });
