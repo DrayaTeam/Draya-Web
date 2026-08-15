@@ -1,7 +1,21 @@
 {
+  "APP": {
+    "NAME": "Draya",
+    "TAGLINE": "AI-Powered Learning Platform"
+  },
   "app": {
     "name": "Draya",
     "tagline": "AI-Powered Learning Platform"
+  },
+  "NAV": {
+    "PROFILE": "Profile",
+    "DASHBOARD": "Dashboard",
+    "STUDENTS": "Students",
+    "EXAMS": "Exams",
+    "REPORTS": "Reports",
+    "SETTINGS": "Settings",
+    "NOTIFICATIONS": "Notifications",
+    "QA": "Q&A"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -13,6 +27,68 @@
     "notifications": "Notifications",
     "qa": "Q&A"
   },
+  "AUTH": {
+    "LOGOUT": "Sign Out",
+    "SHARED": {
+      "LOGIN": "Sign In",
+      "STUDENT_TAB": "Student",
+      "TEACHER_TAB": "Teacher",
+      "FULL_NAME": "Full Name",
+      "EMAIL": "Email Address",
+      "PHONE": "Phone Number",
+      "PASSWORD": "Password",
+      "CONFIRM_PASSWORD": "Confirm Password",
+      "FORGOT_PASSWORD_LINK": "Forgot password?",
+      "CREATE_ACCOUNT": "Create Account",
+      "ALREADY_HAVE_ACCOUNT": "Already have an account?",
+      "BACK_TO_LOGIN": "Back to Sign In",
+      "TERMS": "I agree to the Terms of Service and Privacy Policy",
+      "STRENGTH_WEAK": "Weak",
+      "STRENGTH_MEDIUM": "Medium",
+      "STRENGTH_STRONG": "Strong"
+    },
+    "LOGIN": {
+      "WELCOME_BACK": "Welcome back! Please sign in to continue.",
+      "REMEMBER_ME": "Remember me on this device",
+      "SUBMIT_BTN": "Sign In",
+      "NO_ACCOUNT": "Don't have an account?"
+    },
+    "REGISTER": {
+      "TITLE": "Create New Account",
+      "SUBTITLE": "Join Draya and start your smart educational journey"
+    },
+    "REGISTER_STUDENT": {
+      "TITLE": "Create Student Account",
+      "SUBTITLE": "Join Draya and start your smart learning journey",
+      "PARENT_EMAIL": "Parent / Guardian Email",
+      "DOB": "Date of Birth",
+      "SUBMIT_BTN": "Create Student Account"
+    },
+    "REGISTER_TEACHER": {
+      "TITLE": "Create Teacher Account",
+      "SUBTITLE": "Create your teacher account and start managing courses & AI exams",
+      "SUBMIT_BTN": "Create Teacher Account"
+    },
+    "FORGOT_PASSWORD": {
+      "TITLE": "Forgot Password",
+      "SUBTITLE": "Enter your email address and we'll send you a password reset link",
+      "SEND_BTN": "Send Reset Link",
+      "SUCCESS_TITLE": "Reset Link Sent",
+      "SUCCESS_DESC": "Please check your email inbox to complete the password reset process."
+    },
+    "RESET_PASSWORD": {
+      "TITLE": "Set New Password",
+      "SUBTITLE": "Enter a new secure password for your account",
+      "SUBMIT_BTN": "Update Password",
+      "SUCCESS_TITLE": "Password Changed Successfully",
+      "SUCCESS_DESC": "Your password has been updated. You can now sign in with your new credentials.",
+      "INVALID_TOKEN_TITLE": "Invalid or Expired Link",
+      "INVALID_TOKEN_DESC": "This link has expired or has already been used. Please request a new one."
+    },
+    "PROFILE": {
+      "TITLE": "My Profile"
+    }
+  },
   "auth": {
     "login": "Sign In",
     "logout": "Sign Out",
@@ -23,12 +99,55 @@
     "loginError": "Invalid email or password.",
     "sessionExpired": "Your session has expired. Please sign in again."
   },
-  "AUTH": {
-    "LOGOUT": "Sign Out",
-    "REGISTER": {
-      "TITLE": "Create New Account",
-      "SUBTITLE": "Join Draya and start your smart educational journey"
-    }
+  "ROLES": {
+    "TEACHER": "Teacher",
+    "STUDENT": "Student",
+    "PARENT": "Parent",
+    "ADMIN": "Admin"
+  },
+  "roles": {
+    "teacher": "Teacher",
+    "student": "Student",
+    "parent": "Parent",
+    "admin": "Admin"
+  },
+  "COMMON": {
+    "LOADING": "Loading...",
+    "ERROR": "An error occurred.",
+    "SAVE": "Save",
+    "CANCEL": "Cancel",
+    "CONFIRM": "Confirm",
+    "DELETE": "Delete",
+    "EDIT": "Edit",
+    "BACK": "Back",
+    "CLOSE": "Close",
+    "NO_DATA": "No data available"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred.",
+    "retry": "Retry",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "noData": "No data available",
+    "noDataDescription": "There is no information to display here at this time.",
+    "confirmActionTitle": "Confirm Action",
+    "confirmActionMessage": "Are you sure you want to proceed with this action?"
+  },
+  "error": {
+    "title": "An Unexpected Error Occurred",
+    "defaultMessage": "Failed to load page or application encountered an unexpected error. Please check your connection and try again.",
+    "retryButton": "Retry and Return Home"
+  },
+  "CONNECTION": {
+    "DISCONNECTED": "No connection — some live features are temporarily unavailable",
+    "RECONNECTING": "Reconnecting to server…",
+    "ERROR": "Connection failed — please check your internet connection",
+    "RETRY": "Retry"
   },
   "SUBSCRIPTION": {
     "STATUS": {
@@ -88,41 +207,6 @@
       "QUOTA_EXCEEDED_DESC": "You have reached your current plan quota. Please upgrade your subscription to continue."
     }
   },
-  "roles": {
-    "teacher": "Teacher",
-    "student": "Student",
-    "parent": "Parent"
-  },
-  "common": {
-    "loading": "Loading...",
-    "error": "An error occurred.",
-    "save": "Save",
-    "cancel": "Cancel",
-    "confirm": "Confirm",
-    "delete": "Delete",
-    "edit": "Edit",
-    "back": "Back",
-    "noData": "No data available",
-    "noDataDescription": "There is no information to display here at the moment.",
-    "confirmActionTitle": "Confirm Action",
-    "confirmActionMessage": "Are you sure you want to perform this action?"
-  },
-  "COMMON": {
-    "LOADING": "Loading...",
-    "ERROR": "An error occurred.",
-    "SAVE": "Save",
-    "CANCEL": "Cancel",
-    "CONFIRM": "Confirm",
-    "DELETE": "Delete",
-    "EDIT": "Edit",
-    "BACK": "Back",
-    "CLOSE": "Close"
-  },
-  "error": {
-    "title": "An unexpected error occurred",
-    "defaultMessage": "The page failed to load or the application encountered an unexpected crash. Please check your connection and try again.",
-    "retryButton": "Try Again & Go Home"
-  },
   "LANDING": {
     "BRAND": "Draya",
     "NAVBAR": {
@@ -136,85 +220,85 @@
     "HERO": {
       "TITLE": "Draya",
       "TAGLINE": "Smart Academic Learning Platform",
-      "TAGLINE_SUB": "For teachers' students and learning centers",
-      "DESCRIPTION": "AI-powered exam generation, weakness detection, and verified parent reports.",
-      "CTA_PRIMARY": "Register Now",
+      "TAGLINE_SUB": "Designed for Egyptian Private Tutors & Centers",
+      "DESCRIPTION": "Generate exams with AI, detect student knowledge gaps, and share approved parent reports effortlessly.",
+      "CTA_PRIMARY": "Create Your Account",
       "CTA_SECONDARY": "Explore Features",
       "FLOATING_EXAM": "AI Exam Ready",
       "FLOATING_EXAM_SUB": "20 questions awaiting review",
       "FLOATING_REPORT": "Performance Report",
-      "FLOATING_REPORT_SUB": "Approved & sent to parents",
-      "FLOATING_RATE": "Academic success rate",
+      "FLOATING_REPORT_SUB": "Approved and sent to parents",
+      "FLOATING_RATE": "Academic Success Rate",
       "STATS": {
-        "RATE": "Satisfaction rate",
-        "STUDENTS": "Active students",
-        "ACADEMIES": "Partner academies",
-        "LECTURES": "Indexed lectures"
+        "RATE": "Satisfaction Rate",
+        "STUDENTS": "Active Students",
+        "ACADEMIES": "Partner Centers",
+        "LECTURES": "Indexed Lectures"
       }
     },
     "TRUST": {
-      "LABEL": "TRUSTED BY",
-      "A1": "Excellence Academy",
-      "A2": "Success Center",
+      "LABEL": "Trusted By",
+      "A1": "Altamayoz Academy",
+      "A2": "Al-Najah Center",
       "A3": "Al-Rowad Center",
-      "A4": "Al-Fath Academy"
+      "A4": "Al-Fateh Academy"
     },
     "BENEFITS": {
       "BADGE": "Why Draya?",
-      "HEADING": "An Integrated Work System for Teachers",
-      "SUBTITLE": "Designed with leading teachers to simplify academic workloads and learning centers.",
-      "B1_LABEL": "AI That Understands Your Content",
-      "B1_DESC": "Not a generic AI — it reads your videos and files and generates questions from within them, not from a generic database.",
-      "B2_LABEL": "You Approve Everything",
-      "B2_DESC": "Every report and exam generated by AI passes through you first. Nothing reaches anyone without your explicit approval.",
-      "B3_LABEL": "Know Who Struggles Where",
-      "B3_DESC": "The weakness map reveals every student by name — not empty averages, real data you can act on.",
+      "HEADING": "An Integrated Platform for Egyptian Teachers",
+      "SUBTITLE": "Designed with leading educators to simplify tutoring operations and center management.",
+      "B1_LABEL": "AI Tailored to Your Content",
+      "B1_DESC": "Not generic AI — it analyzes your videos and PDFs to generate accurate questions directly from your material.",
+      "B2_LABEL": "You Have Full Control",
+      "B2_DESC": "Every AI-generated exam and report must be approved by you before being sent to students or parents.",
+      "B3_LABEL": "Pinpoint Weaknesses by Name",
+      "B3_DESC": "Weakness maps show exact student-level difficulties with actionable data.",
       "B4_LABEL": "Egyptian by Design",
-      "B4_DESC": "Arabic RTL interface designed for Egyptian teachers and learning centers — not a translation, designed from scratch for our context.",
-      "B5_LABEL": "Two Minutes is Enough",
-      "B5_DESC": "From login to your first published lecture in two minutes. No training course or technical experience needed.",
-      "B6_LABEL": "+31% in Grades",
-      "B6_DESC": "Draya students improve their grades by an average of 31% in the first 3 months — not marketing talk, real data."
+      "B4_DESC": "An RTL-first Arabic interface built from the ground up for Egyptian educators and centers.",
+      "B5_LABEL": "Set Up in 2 Minutes",
+      "B5_DESC": "From sign-in to your first published lecture in two minutes without technical training.",
+      "B6_LABEL": "+31% Grade Improvement",
+      "B6_DESC": "Draya students improve their grades by an average of 31% within the first 3 months."
     },
     "FEATURES": {
       "BADGE": "Features",
-      "HEADING": "Full Control & Transparency",
-      "EXPLORE": "Explore Features Free",
+      "HEADING": "Complete Control and Transparency",
+      "EXPLORE": "Explore All Features Free",
       "F1_TAG": "For Teachers",
-      "F1_TITLE": "Comprehensive Management in One Place",
-      "F1_DESC": "Create your packages, courses, and lectures, and attach video, homework, and exams all from one screen — no tool switching.",
-      "F1_I1": "Create packages and courses in simple steps",
-      "F1_I2": "Upload video and PDF in the same screen",
-      "F1_I3": "Publish or save lectures as drafts instantly",
+      "F1_TITLE": "Complete Management from One Screen",
+      "F1_DESC": "Create packages, courses, and lectures with video, homework, and exams without switching tools.",
+      "F1_I1": "Simple steps to create packages and courses",
+      "F1_I2": "Upload video and PDF from the same screen",
+      "F1_I3": "Publish immediately or save as draft",
       "F2_TAG": "For Students",
-      "F2_TITLE": "All Your Content in Clear Progression",
-      "F2_DESC": "Package → Course → Lecture. Track your progress, review homework and exams, and recall your weak points with one click.",
-      "F2_I1": "Organized learning path for each subject",
-      "F2_I2": "Timed exams with AI feedback",
-      "F2_I3": "My grades + weak points + revision link",
+      "F2_TITLE": "Structured Content Progression",
+      "F2_DESC": "Package → Course → Lecture. Track progress, review assignments, and revisit weaknesses with one click.",
+      "F2_I1": "Organized learning paths per subject",
+      "F2_I2": "Timed exams with AI-powered feedback",
+      "F2_I3": "Grades, weakness maps, and review links",
       "F3_TAG": "Artificial Intelligence",
-      "F3_TITLE": "AI as an Assistant, Not a Controller",
-      "F3_DESC": "Generates questions from your lecture content and composes performance reports — but you're the one who approves and sends.",
+      "F3_TITLE": "AI as an Assistant, Not a Replacement",
+      "F3_DESC": "Generates questions from lecture content and crafts reports — but you approve before delivery.",
       "F3_I1": "Generate 20 questions in 30 seconds from video or PDF",
-      "F3_I2": "Formatted performance reports with charts",
-      "F3_I3": "All AI content clearly labeled — no mixing with teacher content"
+      "F3_I2": "Formatted reports with interactive charts",
+      "F3_I3": "All AI content is clearly labeled — never mixed with teacher content"
     },
     "PRICING": {
       "BADGE": "Plans & Pricing",
-      "HEADING": "Pay for What You Need",
-      "MONTHLY": "Monthly subscription",
-      "ANNUAL": "Annual subscription (save 20%)",
+      "HEADING": "Pay Only for What You Need",
+      "MONTHLY": "Monthly Billing",
+      "ANNUAL": "Annual Billing (Save 20%)",
       "RECOMMENDED": "Recommended 🔥",
-      "DETAILS_CTA": "View full plan details & features →",
+      "DETAILS_CTA": "View full plan details and feature comparison ←",
       "EGP_MONTH": "EGP / month",
       "BASIC": {
         "NAME": "Basic",
         "PRICE_MONTHLY": "Free",
         "PRICE_ANNUAL": "Free",
-        "SUB": "For emerging academies",
+        "SUB": "For emerging educators",
         "CTA": "Start Free",
         "F1": "Up to 50 students",
-        "F2": "Maximum 2 groups",
+        "F2": "2 classrooms max",
         "F3": "2 study packages",
         "F4": "Basic performance reports"
       },
@@ -223,60 +307,60 @@
         "PRICE_MONTHLY": "499",
         "PRICE_ANNUAL": "399",
         "SUB": "EGP / month",
-        "CTA": "Start Now",
+        "CTA": "Get Started",
         "F1": "Unlimited students",
-        "F2": "Unlimited groups",
+        "F2": "Unlimited classrooms",
         "F3": "Unlimited packages",
         "F4": "AI Exam Builder",
-        "F5": "AI analytics & parent reports",
-        "F6": "Priority technical support"
+        "F5": "AI Analytics & Parent Reports",
+        "F6": "Priority support"
       },
       "ENTERPRISE": {
         "NAME": "Enterprise",
         "PRICE_MONTHLY": "Custom",
         "PRICE_ANNUAL": "Custom",
-        "SUB": "Contact us",
+        "SUB": "Contact Sales",
         "CTA": "Contact Us",
         "BADGE": "Custom",
         "F1": "All Professional features",
-        "F2": "Brand customization (White-label)",
+        "F2": "White-label branding",
         "F3": "Custom API integration",
-        "F4": "Dedicated account manager & double performance"
+        "F4": "Dedicated account manager & SLA"
       }
     },
     "TESTIMONIALS": {
-      "BADGE": "Customer Reviews",
-      "HEADING": "Hundreds of Teachers Trust Us",
-      "T1_QUOTE": "Draya saved me hours in exam preparation — and most importantly, the AI suggests but I approve. That's crucial for credibility with parents.",
+      "BADGE": "Testimonials",
+      "HEADING": "Trusted by Hundreds of Teachers",
+      "T1_QUOTE": "Draya saved me hours in preparing exams. The best part is the AI suggests but I approve — crucial for credibility with parents.",
       "T1_NAME": "Ahmed El-Sayed",
-      "T1_ROLE": "Math Teacher",
-      "T1_CENTER": "Excellence Academy, Cairo",
-      "T2_QUOTE": "Students track their own progress — I no longer need to create sheets and update everything manually. Reports reach parents faster and clearer.",
+      "T1_ROLE": "Mathematics Teacher",
+      "T1_CENTER": "Altamayoz Academy, Cairo",
+      "T2_QUOTE": "Students track their own progress without me having to manually edit sheets. Reports reach parents faster and clearer.",
       "T2_NAME": "Sara Mohamed",
       "T2_ROLE": "Science Supervisor",
-      "T2_CENTER": "Al-Nour Center, Alexandria",
-      "T3_QUOTE": "Parent reports used to take me a full day. Now they're done in minutes and I just review, approve, and send. Time that will change my life.",
+      "T2_CENTER": "Al-Noor Center, Alexandria",
+      "T3_QUOTE": "Parent reports used to take an entire day. Now they take minutes to review and approve. A real game changer.",
       "T3_NAME": "Mahmoud Abdullah",
       "T3_ROLE": "Academy Director",
-      "T3_CENTER": "Al-Fath Academy, Giza"
+      "T3_CENTER": "Al-Fateh Academy, Giza"
     },
     "FAQ": {
       "BADGE": "FAQ",
-      "HEADING": "Questions Teachers Always Ask",
+      "HEADING": "Frequently Asked Questions",
       "Q1": "Can I try Draya for free?",
-      "A1": "Yes, you can start with the free Basic plan without a credit card. It supports up to 50 students, 2 courses, and a set of basic features.",
-      "Q2": "Is Draya fully supported in Arabic?",
-      "A2": "Yes, absolutely. The platform is designed RTL-first for Egyptian teachers and students — the interface, reports, and support are all in Arabic.",
+      "A1": "Yes, start with our Free Basic plan without a credit card. It supports up to 50 students and 2 courses.",
+      "Q2": "Is Draya fully available in Arabic?",
+      "A2": "Yes, completely. The platform is designed RTL-first for Egyptian teachers and students.",
       "Q3": "How does AI work in Draya?",
-      "A3": "The AI reads lecture content (video or PDF) and generates questions and performance reports. But the teacher reviews and approves before any delivery to students or parents — no automatic sending.",
+      "A3": "The AI analyzes lecture videos or PDFs and generates questions & reports for teacher approval before sending.",
       "Q4": "Does the platform suit large centers?",
-      "A4": "Yes. The Enterprise plan is tailored for large centers and includes white-label, API integration, and a dedicated account manager. Contact us for pricing.",
+      "A4": "Yes, our Enterprise plan is tailored for large centers with white-labeling, API integrations, and dedicated support.",
       "Q5": "What payment methods are available?",
-      "A5": "We accept Visa and Mastercard credit cards, and Egyptian e-wallets (Vodafone Cash, Orange Cash). Annual payment saves 20%."
+      "A5": "We accept Visa, Mastercard, and Egyptian mobile wallets (Vodafone Cash, Orange Cash)."
     },
     "CTA": {
       "HEADING": "Start Your Smart Learning Journey Today",
-      "SUBTEXT": "Join now for free and save your precious time with Draya's AI-powered system.",
+      "SUBTEXT": "Join now for free and save precious time with Draya's AI-powered system.",
       "PRIMARY": "Start Free",
       "SECONDARY": "Sign In"
     },
@@ -312,8 +396,8 @@
       "ACCOUNT": "My Account"
     },
     "DASHBOARD": {
-      "CURRENT_DATE": "Sunday, 20 July 2026",
-      "GREETING": "Good Evening, Mr. Mohamed",
+      "CURRENT_DATE": "Sunday, July 20, 2026",
+      "GREETING": "Good evening, Mr. Mohamed",
       "GREETING_SUBTITLE": "Here is a summary of your academy activity today",
       "REVIEW_AI_BTN": "Review AI Reports",
       "AI_BANNER": {
@@ -325,12 +409,12 @@
         "ACTIVE_STUDENTS": "Active Students",
         "STUDENTS_CHANGE": "+8 this week",
         "CLASS_AVERAGE": "Class Average",
-        "AVERAGE_CHANGE": "+3% vs last week",
+        "AVERAGE_CHANGE": "+3% from last week",
         "INCREASE": "Increase",
-        "PENDING_EXAMS": "Exams Awaiting Review",
+        "PENDING_EXAMS": "Pending Exams",
         "EXAMS_CHANGE": "18 submissions this week",
         "NEW_MESSAGES": "New Messages",
-        "MESSAGES_CHANGE": "From students and parents"
+        "MESSAGES_CHANGE": "from students & parents"
       },
       "CHART": {
         "TITLE": "Submissions Activity",
@@ -348,12 +432,12 @@
         "TITLE": "Quick Actions",
         "CREATE_AI_EXAM": "Create AI Exam",
         "NEW_LECTURE": "New Lecture",
-        "FOLLOWUP_STUDENTS": "Follow up Students",
+        "FOLLOWUP_STUDENTS": "Follow Up Students",
         "REPORTS": "Reports"
       },
       "ATTENTION": {
-        "TITLE": "Requires Attention",
-        "STUDENTS_AT_RISK": "4 Students at Academic Risk",
+        "TITLE": "Needs Your Attention",
+        "STUDENTS_AT_RISK": "4 students academically at risk",
         "WARNING_TAG": "Warning",
         "EXAM_ALGEBRA": "Algebra Exam — 18 Submissions",
         "WAITING_TAG": "Pending",
@@ -361,7 +445,7 @@
       },
       "FOLLOWUP_TABLE": {
         "TITLE": "Students Needing Follow-up",
-        "SUBTITLE": "Performance under 55% in last exam"
+        "SUBTITLE": "Performance below 55% in last exam"
       },
       "RECENT_SUBMISSIONS": {
         "TITLE": "Recent Submissions",
@@ -381,7 +465,7 @@
         "14_MIN": "14 min ago",
         "32_MIN": "32 min ago",
         "55_MIN": "55 min ago",
-        "1_HOUR": "1 hour ago"
+        "1_HOUR": "1 hr ago"
       }
     },
     "DAYS": {
