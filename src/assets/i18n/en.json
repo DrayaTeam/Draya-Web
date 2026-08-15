@@ -51,7 +51,10 @@
       "WELCOME_BACK": "Welcome back! Please sign in to continue.",
       "REMEMBER_ME": "Remember me on this device",
       "SUBMIT_BTN": "Sign In",
-      "NO_ACCOUNT": "Don't have an account?"
+      "NO_ACCOUNT": "Don't have an account?",
+      "ERROR": "Invalid email or password.",
+      "UNRECOGNIZED_ROLE": "Unrecognized user role ({{role}})",
+      "SESSION_EXPIRED": "Your session has expired. Please sign in again."
     },
     "REGISTER": {
       "TITLE": "Create New Account",
@@ -137,6 +140,11 @@
     "noDataDescription": "There is no information to display here at this time.",
     "confirmActionTitle": "Confirm Action",
     "confirmActionMessage": "Are you sure you want to proceed with this action?"
+  },
+  "ERROR": {
+    "TITLE": "An Error Occurred",
+    "DEFAULT_MESSAGE": "Failed to load page or application encountered an unexpected error. Please check your connection and try again.",
+    "RETRY_BUTTON": "Retry and Return Home"
   },
   "error": {
     "title": "An Unexpected Error Occurred",
