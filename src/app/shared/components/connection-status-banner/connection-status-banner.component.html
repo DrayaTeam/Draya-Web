@@ -1,0 +1,75 @@
+<!-- src/app/shared/components/connection-status-banner/connection-status-banner.component.html -->
+<!-- Slide-in banner per DESIGN.md §5 entrance animations. -->
+<!-- Shown only when showBanner() is true (Disconnected | Reconnecting | Error). -->
+<!-- RTL-first: logical properties (ms-/me-/ps-/pe-) throughout. -->
+@if (showBanner()) {
+  <div
+    class="connection-banner"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+    [ngClass]="{
+      'banner--reconnecting': isReconnecting(),
+      'banner--error': isError(),
+      'banner--disconnected': !isReconnecting() && !isError(),
+    }">
+    <div class="banner-inner">
+      <!-- Icon / Spinner -->
+      <span class="banner-icon" aria-hidden="true">
+        @if (isReconnecting()) {
+          <svg class="spinner" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-dasharray="31.4"
+              stroke-dashoffset="10" />
+          </svg>
+        } @else if (isError()) {
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        } @else {
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-2.39M10.71 5.05A16 16 0 0122.56 9M1.42 9a15.91 15.91 0 014.7-2.88M8.53 16.11a6 6 0 016.95 0M12 20h.01"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        }
+      </span>
+
+      <!-- Message -->
+      <span class="banner-message">
+        @if (isReconnecting()) {
+          {{ 'CONNECTION.RECONNECTING' | translate }}
+        } @else if (isError()) {
+          {{ 'CONNECTION.ERROR' | translate }}
+        } @else {
+          {{ 'CONNECTION.DISCONNECTED' | translate }}
+        }
+      </span>
+
+      <!-- Retry button (only shown in Error or Disconnected state) -->
+      @if (!isReconnecting()) {
+        <button
+          type="button"
+          class="banner-retry"
+          (click)="retryConnection()"
+          [attr.aria-label]="'CONNECTION.RETRY' | translate">
+          {{ 'CONNECTION.RETRY' | translate }}
+        </button>
+      }
+    </div>
+  </div>
+}
