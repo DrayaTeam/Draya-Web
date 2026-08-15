@@ -353,6 +353,16 @@
       "SUBSCRIPTION": "Subscription & Usage",
       "ACCOUNT": "My Account"
     },
+    "CLASSROOMS": {
+      "TITLE": "Classrooms",
+      "SUBTITLE": "Manage your student groups and classrooms",
+      "CREATE_NEW": "Create New Classroom",
+      "FILTER_ALL_GRADES": "All Grades",
+      "FILTER_ALL_SUBJECTS": "All Subjects",
+      "STUDENTS": "Students",
+      "EMPTY_TITLE": "No Classrooms Found",
+      "EMPTY_DESC": "You haven't created any classrooms matching your filters yet. Click the button above to start."
+    },
     "DASHBOARD": {
       "CURRENT_DATE": "Sunday, 20 July 2026",
       "GREETING": "Good Evening, Mr. Mohamed",

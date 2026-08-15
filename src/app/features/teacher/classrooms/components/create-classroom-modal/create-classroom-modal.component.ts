@@ -130,6 +130,8 @@ export class CreateClassroomModalComponent implements OnInit {
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.toastService.warning('تنبيه', 'يرجى التأكد من إكمال جميع الحقول المطلوبة بشكل صحيح');
+      console.warn('Form is invalid. Errors:', this.form.errors, 'Controls:', this.form.controls);
       return;
     }
 

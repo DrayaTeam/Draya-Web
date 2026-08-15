@@ -1,12 +1,14 @@
-import { Injectable, signal, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly _isDarkMode = signal<boolean>(false);
   readonly isDarkMode = this._isDarkMode.asReadonly();
+  
+  private readonly platformId = inject(PLATFORM_ID);
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor() {
     if (isPlatformBrowser(this.platformId)) {
       const savedTheme = localStorage.getItem('draya_theme');
       if (savedTheme === 'dark') {
