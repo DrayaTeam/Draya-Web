@@ -7,7 +7,7 @@
 
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../../features/auth/services/auth.service';
+import { AuthService } from '../../features/auth';
 
 export const roleGuard: CanActivateFn = (route) => {
   const auth = inject(AuthService);
@@ -26,9 +26,10 @@ export const roleGuard: CanActivateFn = (route) => {
 
   // Authenticated but wrong role — redirect to the user's own dashboard.
   const roleDashboards: Record<string, string> = {
-    teacher: '/teacher/subscription',
+    teacher: '/teacher/dashboard',
     student: '/student/dashboard',
-    admin: '/admin/dashboard',
+    admin: '/teacher/dashboard',
+    parent: '/parent/reports',
   };
 
   return router.createUrlTree([roleDashboards[user.role] ?? '/']);
