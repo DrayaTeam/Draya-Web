@@ -1,7 +1,8 @@
 :host {
   display: block;
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   background-color: #fafaf8;
   font-family: 'Cairo', system-ui, sans-serif;
   direction: rtl;
@@ -9,7 +10,7 @@
 
 .teacher-portal-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
   background-color: #fafaf8;
   position: relative;
@@ -30,11 +31,11 @@
 
 .teacher-main-viewport {
   flex: 1;
-  display: flex;
-  flex-direction: column;
+  display: block;
   min-width: 0;
-  height: 100vh;
+  height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .mobile-top-bar {
@@ -71,7 +72,8 @@
 }
 
 .portal-router-content {
-  flex: 1;
+  display: block;
   width: 100%;
   box-sizing: border-box;
+  padding-bottom: 100px; /* Extra padding to guarantee scroll clearance */
 }

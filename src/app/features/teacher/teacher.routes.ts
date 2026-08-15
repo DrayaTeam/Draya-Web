@@ -91,10 +91,10 @@ export const teacherRoutes: Routes = [
       {
         path: 'account',
         loadComponent: () =>
-          import('./placeholder/teacher-placeholder.component').then(
-            (m) => m.TeacherPlaceholderComponent,
+          import('./profile/teacher-profile.component').then(
+            (m) => m.TeacherProfileComponent,
           ),
-        title: 'إعدادات الحساب — درايَة',
+        title: 'الملف الشخصي — درايَة',
       },
       {
         path: '',
