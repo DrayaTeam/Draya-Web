@@ -22,11 +22,9 @@ export const appRoutes: Routes = [
       import('./features/auth/auth.routes').then((m) => m.authRoutes),
   },
 
-  // Authenticated shell — all protected routes render inside ShellComponent
+  // Authenticated routes — protected by authGuard, using each feature area's dedicated layout
   {
     path: '',
-    loadComponent: () =>
-      import('./layout/shell/shell.component').then((m) => m.ShellComponent),
     canActivate: [authGuard],
     children: [
       {
