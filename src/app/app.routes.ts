@@ -5,6 +5,7 @@
 
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
+import { roleGuard } from './core/auth/role.guard';
 
 export const appRoutes: Routes = [
   // Public Landing Page (Root)
@@ -22,13 +23,15 @@ export const appRoutes: Routes = [
       import('./features/auth/auth.routes').then((m) => m.authRoutes),
   },
 
-  // Authenticated routes — protected by authGuard, using each feature area's dedicated layout
+  // Authenticated routes — protected by authGuard & roleGuard, using each feature area's dedicated layout
   {
     path: '',
     canActivate: [authGuard],
     children: [
       {
         path: 'teacher',
+        canActivate: [roleGuard],
+        data: { roles: ['teacher', 'admin'] },
         loadChildren: () =>
           import('./features/teacher/teacher.routes').then(
             (m) => m.teacherRoutes,
@@ -36,6 +39,8 @@ export const appRoutes: Routes = [
       },
       {
         path: 'student',
+        canActivate: [roleGuard],
+        data: { roles: ['student'] },
         loadChildren: () =>
           import('./features/student/student.routes').then(
             (m) => m.studentRoutes,
@@ -43,6 +48,8 @@ export const appRoutes: Routes = [
       },
       {
         path: 'parent',
+        canActivate: [roleGuard],
+        data: { roles: ['parent'] },
         loadChildren: () =>
           import('./features/parent/parent.routes').then((m) => m.parentRoutes),
       },
