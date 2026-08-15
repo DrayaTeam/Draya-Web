@@ -1,16 +1,14 @@
 // src/app/features/teacher/wallet/components/wallet-transactions/wallet-transactions.component.ts
 import { Component, ChangeDetectionStrategy, inject, OnInit, signal, DestroyRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslatePipe } from '@ngx-translate/core';
 import { WalletService } from '../../../services/wallet.service';
 import { WalletTransaction, TransactionType, BalanceType, PaginatedResponse } from '../../../../../core/models/wallet.model';
-import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'draya-wallet-transactions',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, DatePipe],
+  imports: [CommonModule, DatePipe],
   templateUrl: './wallet-transactions.component.html',
   styleUrl: './wallet-transactions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

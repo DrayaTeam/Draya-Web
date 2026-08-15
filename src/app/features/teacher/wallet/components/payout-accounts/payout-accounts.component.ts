@@ -3,14 +3,13 @@ import { Component, ChangeDetectionStrategy, inject, OnInit, signal, DestroyRef,
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslatePipe } from '@ngx-translate/core';
 import { WalletService } from '../../../services/wallet.service';
 import { PayoutAccount, AccountType, CreatePayoutAccountRequest } from '../../../../../core/models/wallet.model';
 
 @Component({
   selector: 'draya-payout-accounts',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule],
   templateUrl: './payout-accounts.component.html',
   styleUrl: './payout-accounts.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

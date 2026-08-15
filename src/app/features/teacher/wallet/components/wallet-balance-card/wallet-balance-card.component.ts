@@ -1,13 +1,12 @@
 // src/app/features/teacher/wallet/components/wallet-balance-card/wallet-balance-card.component.ts
 import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
 import { WalletBalance } from '../../../../../core/models/wallet.model';
 
 @Component({
   selector: 'draya-wallet-balance-card',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule],
   templateUrl: './wallet-balance-card.component.html',
   styleUrl: './wallet-balance-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

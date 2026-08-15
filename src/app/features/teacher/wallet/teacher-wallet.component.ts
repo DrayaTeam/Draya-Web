@@ -2,7 +2,6 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslatePipe } from '@ngx-translate/core';
 import { WalletService } from '../services/wallet.service';
 import { WalletBalance, WalletTransaction, PayoutAccount } from '../../../core/models/wallet.model';
 import { WalletBalanceCardComponent } from './components/wallet-balance-card/wallet-balance-card.component';
@@ -15,7 +14,7 @@ import { WalletTransactionsComponent } from './components/wallet-transactions/wa
 @Component({
   selector: 'draya-teacher-wallet',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, WalletBalanceCardComponent, PayoutAccountsComponent, WithdrawalModalComponent, TopupModalComponent, WalletTransactionsComponent],
+  imports: [CommonModule, WalletBalanceCardComponent, PayoutAccountsComponent, WithdrawalModalComponent, TopupModalComponent, WalletTransactionsComponent],
   templateUrl: './teacher-wallet.component.html',
   styleUrl: './teacher-wallet.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
