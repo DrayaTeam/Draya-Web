@@ -5,9 +5,9 @@
 // Eventually: will render role-specific nav items based on AuthService.currentUser().role.
 
 import { Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthService } from '../../core/auth/auth.service';
+import { AuthService } from '../../features/auth/services/auth.service';
 import { LocaleService } from '../../core/locale/locale.service';
 
 import { LogoComponent } from '../../shared/components/logo/logo.component';
@@ -21,4 +21,12 @@ import { LogoComponent } from '../../shared/components/logo/logo.component';
 export class NavComponent {
   protected readonly auth = inject(AuthService);
   protected readonly localeService = inject(LocaleService);
+  private readonly router = inject(Router);
+
+  onLogout(): void {
+    this.auth.logout().subscribe({
+      next: () => this.router.navigate(['/auth/login']),
+      error: () => this.router.navigate(['/auth/login']) // Fallback just in case
+    });
+  }
 }
