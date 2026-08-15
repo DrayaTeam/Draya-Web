@@ -17,6 +17,8 @@ ng serve
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
+> **Note on API CORS:** During local development, the app uses a dev-server proxy (configured in `src/proxy.conf.json`) to forward `/api` requests to the remote backend. This is a temporary workaround to bypass CORS restrictions until the backend team enables CORS for the frontend origin. Production builds do not use this proxy.
+
 ## Code scaffolding
 
 Angular CLI includes powerful code scaffolding tools. To generate a new component, run:

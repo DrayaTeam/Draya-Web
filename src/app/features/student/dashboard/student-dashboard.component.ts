@@ -1,7 +1,7 @@
 // src/app/features/student/dashboard/student-dashboard.component.ts
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../auth';
 import { StudentDashboardService } from '../../../core/services/student-dashboard.service';
 import { CourseProgressCardComponent } from './components/course-progress-card/course-progress-card.component';
 import { UpcomingExamCardComponent } from './components/upcoming-exam-card/upcoming-exam-card.component';

@@ -27,7 +27,7 @@
 
       <!-- Hero Greeting & Description -->
       <h1 class="hero-title">
-        أهلاً بعودتك، {{ auth.currentUser()?.name || summary().studentName }}! 👋
+        أهلاً بعودتك، {{ auth.currentUser()?.fullName || summary().studentName }}! 👋
       </h1>
       <p class="hero-subtext">
         لديك {{ summary().scheduledExamsCount }} اختباران مجدولان قريباً هذا الأسبوع. واصل الدراسة يومياً وحافظ على لهيب حماسك!

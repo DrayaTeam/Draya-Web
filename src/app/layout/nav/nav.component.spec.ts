@@ -5,11 +5,12 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NavComponent } from './nav.component';
-import { AuthService } from '../../core/auth/auth.service';
+import { AuthService } from '../../features/auth';
 import { LocaleService } from '../../core/locale/locale.service';
 import { signal } from '@angular/core';
 import { provideTranslateService } from '@ngx-translate/core';
 import { RouterTestingModule } from '@angular/router/testing';
+import { provideHttpClient } from '@angular/common/http';
 
 const mockAuthService = {
   currentUser: signal(null),
@@ -30,6 +31,7 @@ describe('NavComponent', () => {
     await TestBed.configureTestingModule({
       imports: [NavComponent, RouterTestingModule],
       providers: [
+        provideHttpClient(),
         provideTranslateService(),
         { provide: AuthService, useValue: mockAuthService },
         { provide: LocaleService, useValue: mockLocaleService },

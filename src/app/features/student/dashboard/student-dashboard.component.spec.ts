@@ -4,7 +4,7 @@ import { provideTranslateService } from '@ngx-translate/core';
 import { provideRouter } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { StudentDashboardComponent } from './student-dashboard.component';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../auth';
 import { ToastService } from '../../../core/services/toast.service';
 
 describe('StudentDashboardComponent', () => {
@@ -22,7 +22,7 @@ describe('StudentDashboardComponent', () => {
         {
           provide: AuthService,
           useValue: {
-            currentUser: () => ({ name: 'أحمد' }),
+            currentUser: () => ({ fullName: 'أحمد' }),
           },
         },
       ],

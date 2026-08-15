@@ -11,7 +11,7 @@ import {
   HubConnectionState,
   LogLevel,
 } from '@microsoft/signalr';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../features/auth/services/auth.service';
 import { environment } from '../../../environments/environment';
 
 export type SignalRStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
