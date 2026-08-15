@@ -92,6 +92,11 @@
     },
     "PROFILE": {
       "TITLE": "الملف الشخصي"
+    },
+    "VALIDATION": {
+      "INVALID_DATE": "تاريخ غير صحيح",
+      "FUTURE_DATE": "لا يمكن أن يكون التاريخ في المستقبل",
+      "MIN_AGE_ERROR": "يجب أن يكون العمر 10 سنوات على الأقل"
     }
   },
   "auth": {
@@ -491,6 +496,25 @@
       "TUESDAY": "ثلاثاء",
       "WEDNESDAY": "أربعاء",
       "THURSDAY": "خميس"
+    },
+    "PROFILE": {
+      "PAGE_TITLE": "الملف الشخصي",
+      "PAGE_SUBTITLE": "إدارة تفضيلات الحساب والمعلومات الشخصية.",
+      "APPEARANCE_TITLE": "المظهر والإشعارات",
+      "DARK_MODE": "الوضع الليلي",
+      "DARK_MODE_DESC": "تبديل المظهر العام للمنصة بين الفاتح والداكن",
+      "PERSONAL_INFO_TITLE": "الملف الشخصي للمعلم",
+      "TEACHER_ROLE": "معلم",
+      "FULL_NAME": "الاسم الكامل",
+      "EMAIL": "البريد الإلكتروني للأكاديمية",
+      "PHONE": "رقم الهاتف",
+      "NO_PHONE": "غير متوفر",
+      "SPECIALIZATION": "التخصص",
+      "NO_SPECIALIZATION": "غير محدد",
+      "DESCRIPTION": "وصف قصير",
+      "REQUIRED_FIELD": "هذا الحقل مطلوب.",
+      "CANCEL": "إلغاء",
+      "SAVE_CHANGES": "حفظ التغييرات"
     }
   },
   "STUDENT": {

@@ -1,5 +1,14 @@
 // src/app/core/models/teacher.model.ts
 
+export interface TeacherProfile {
+  userId: string;
+  email: string;
+  fullName: string;
+  phone: string;
+  specialization: string;
+  description: string;
+}
+
 export type TeacherSubjectCategory = 'all' | 'math' | 'physics' | 'chemistry' | 'biology';
 
 export interface SubjectFilterOption {
