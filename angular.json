@@ -32,7 +32,7 @@
                 "output": "assets"
               }
             ],
-            "styles": ["src/styles.scss"],
+            "styles": ["src/styles.css"],
             "fileReplacements": []
           },
           "configurations": {
@@ -103,7 +103,7 @@
                 "output": "assets"
               }
             ],
-            "styles": ["src/styles.scss"]
+            "styles": ["src/styles.css"]
           }
         },
         "lint": {

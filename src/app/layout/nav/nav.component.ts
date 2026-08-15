@@ -24,9 +24,6 @@ export class NavComponent {
   private readonly router = inject(Router);
 
   onLogout(): void {
-    this.auth.logout().subscribe({
-      next: () => this.router.navigate(['/auth/login']),
-      error: () => this.router.navigate(['/auth/login']) // Fallback just in case
-    });
+    this.auth.logout();
   }
 }
