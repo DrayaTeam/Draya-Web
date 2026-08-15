@@ -15,5 +15,5 @@ import { TranslatePipe } from '@ngx-translate/core';
   `,
 })
 export class LoadingSpinnerComponent {
-  @Input() message?: string = 'common.loading';
+  @Input() message?: string = 'COMMON.LOADING';
 }

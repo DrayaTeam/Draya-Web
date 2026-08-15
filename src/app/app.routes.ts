@@ -1,83 +1,69 @@
 // src/app/app.routes.ts
 // Purpose: Top-level application routes. All feature areas are lazy-loaded.
-// Landing page and auth pages are public. Authenticated shell wraps teacher/student/parent.
+// The shell (authenticated layout) wraps teacher/student/parent routes.
+// The auth route is unprotected — login is accessible without authentication.
 
 import { Routes } from '@angular/router';
+import { authGuard } from './core/auth/auth.guard';
 
 export const appRoutes: Routes = [
-  // Public landing page
+  // Public Landing Page (Root)
   {
     path: '',
     loadComponent: () =>
       import('./features/landing/landing.component').then((m) => m.LandingComponent),
     pathMatch: 'full',
-    title: 'درايَة — منصة التعلم الأكاديمي الذكي',
   },
 
-  // Unauthenticated: auth feature (login, register, forgot-password)
+  // Unauthenticated: authentication feature (login page)
   {
     path: 'auth',
-    loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
+    loadChildren: () =>
+      import('./features/auth/auth.routes').then((m) => m.authRoutes),
   },
 
-  // Public: Plans & Pricing
-  {
-    path: 'plans',
-    loadChildren: () => import('./features/plans/plans.routes').then((m) => m.plansRoutes),
-  },
-  {
-    path: 'pricing',
-    redirectTo: 'plans',
-    pathMatch: 'full',
-  },
-
-  // Checkout / Subscription
-  // TODO: Add canActivate: [authGuard] here to require login before checkout.
-  // Example: canActivate: [authGuard]
-  {
-    path: 'checkout',
-    loadComponent: () =>
-      import('./features/checkout/checkout.component').then((m) => m.CheckoutComponent),
-    title: 'إتمام الاشتراك — درايَة',
-  },
-
-  // Teacher Portal Layout (Uses TeacherLayoutComponent with standalone TeacherHeader Navbar)
-  {
-    path: 'teacher',
-    loadChildren: () => import('./features/teacher/teacher.routes').then((m) => m.teacherRoutes),
-  },
-
-  // Shell — authenticated portal layout for student & parent
-  // TODO: Add authGuard to protect all child routes.
+  // Authenticated shell — all protected routes render inside ShellComponent
   {
     path: '',
-    loadComponent: () => import('./layout/shell/shell.component').then((m) => m.ShellComponent),
+    loadComponent: () =>
+      import('./layout/shell/shell.component').then((m) => m.ShellComponent),
+    canActivate: [authGuard],
     children: [
       {
-        path: 'student',
-        // TODO: Add roleGuard for student role: canActivate: [roleGuard('STUDENT')]
+        path: 'teacher',
         loadChildren: () =>
-          import('./features/student/student.routes').then((m) => m.studentRoutes),
+          import('./features/teacher/teacher.routes').then(
+            (m) => m.teacherRoutes,
+          ),
+      },
+      {
+        path: 'student',
+        loadChildren: () =>
+          import('./features/student/student.routes').then(
+            (m) => m.studentRoutes,
+          ),
       },
       {
         path: 'parent',
-        // TODO: Add roleGuard for parent role: canActivate: [roleGuard('PARENT')]
-        loadChildren: () => import('./features/parent/parent.routes').then((m) => m.parentRoutes),
+        loadChildren: () =>
+          import('./features/parent/parent.routes').then((m) => m.parentRoutes),
       },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/auth/pages/profile/profile.component').then((m) => m.ProfileComponent),
+      }
     ],
   },
-
-  // Global Error fallback route
   {
     path: 'error',
     loadComponent: () =>
       import('./shared/components/global-error-fallback/global-error-fallback.component').then(
-        (m) => m.GlobalErrorFallbackComponent,
+        (m) => m.GlobalErrorFallbackComponent
       ),
-    title: 'حدث خطأ — درايَة',
   },
 
-  // Fallback: unmatched routes redirect to landing page
+  // Wildcard fallback
   {
     path: '**',
     redirectTo: '',

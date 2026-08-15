@@ -10,7 +10,7 @@ export * from './auth/auth.guard';
 export * from './auth/role.guard';
 
 // Services
-export * from './auth/auth.service';
+
 export * from './locale/locale.service';
 export * from './services/direction.service';
 export * from './services/loading.service';

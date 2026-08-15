@@ -1,0 +1,40 @@
+<div class="filter-card-root">
+  <!-- Search Input Wrapper -->
+  <div class="search-field-wrapper">
+    <svg
+      class="search-icon"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#90A1B9"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+    <input
+      type="text"
+      [ngModel]="searchQuery()"
+      (ngModelChange)="onInputSearch($event)"
+      [placeholder]="'STUDENT.TEACHERS.SEARCH_PLACEHOLDER' | translate"
+      class="search-input"
+      aria-label="ابحث باسم المعلم أو مادة التخصص" />
+  </div>
+
+  <!-- Subject Filter Pills -->
+  <div class="filter-pills-list" role="tablist" aria-label="تصفية التخصصات">
+    @for (opt of options(); track opt.id) {
+      <button
+        type="button"
+        role="tab"
+        [attr.aria-selected]="selectedCategory() === opt.id"
+        class="filter-pill-btn"
+        [class.active]="selectedCategory() === opt.id"
+        (click)="onSelectCategory(opt.id)">
+        <span>{{ opt.emoji ? opt.emoji + ' ' : '' }}{{ opt.defaultLabel }}</span>
+      </button>
+    }
+  </div>
+</div>

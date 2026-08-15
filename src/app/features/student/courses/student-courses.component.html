@@ -1,0 +1,38 @@
+<div class="student-courses-root animate-fade-in">
+  <!-- Ambient Background Blobs matching Figma -->
+  <div class="ambient-blob blob-top-right"></div>
+  <div class="ambient-blob blob-middle-left"></div>
+
+  <!-- Top Header Content -->
+  <header class="courses-page-header">
+    <!-- Top Pill Badge -->
+    <div class="challenge-pill-badge">
+      <svg
+        class="badge-icon"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#FD9A00"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+      </svg>
+      <span>{{ headerInfo().badgeText }}</span>
+    </div>
+
+    <!-- Main Title & Subtitle -->
+    <h1 class="page-heading">{{ headerInfo().mainHeading }}</h1>
+    <p class="page-subtitle">{{ headerInfo().subtitleText }}</p>
+  </header>
+
+  <!-- Subscribed Packages Grid (2 Cards Row on 1440w desktop, 1 col on 390w mobile) -->
+  <main class="packages-cards-grid" aria-label="قائمة الباقات الدراسية">
+    @for (pkg of packages(); track pkg.id) {
+      <draya-subscribed-package-card
+        [package]="pkg"
+        (openPackageDetails)="onOpenPackage($event)" />
+    }
+  </main>
+</div>

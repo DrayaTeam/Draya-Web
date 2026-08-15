@@ -1,0 +1,158 @@
+// src/app/features/student/teachers/teachers-directory.component.scss
+
+.teachers-directory-root {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.ambient-blob {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(48px);
+  pointer-events: none;
+  z-index: 0;
+
+  &.blob-top-right {
+    width: 384px;
+    height: 384px;
+    top: 0;
+    right: 0;
+    background: linear-gradient(135deg, rgba(0, 213, 190, 0.2) 0%, rgba(116, 212, 255, 0.15) 100%);
+  }
+
+  &.blob-bottom-left {
+    width: 320px;
+    height: 320px;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(45deg, rgba(194, 122, 255, 0.15) 0%, rgba(253, 165, 213, 0.15) 100%);
+  }
+}
+
+.page-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.directory-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+
+  .featured-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 26px;
+    padding: 0 12px;
+    background-color: #f0fdfa;
+    border: 1px solid rgba(150, 247, 228, 0.6);
+    border-radius: 999px;
+
+    .badge-star-icon {
+      flex-shrink: 0;
+    }
+
+    .badge-text {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 800;
+      font-size: 12px;
+      line-height: 16px;
+      color: #0f4f49;
+    }
+  }
+
+  .main-title {
+    margin: 0;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 32px;
+    color: #151b19;
+    text-align: right;
+  }
+
+  .subtitle {
+    margin: 0;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 21px;
+    color: #525e5a;
+    text-align: right;
+    max-width: 640px;
+  }
+}
+
+.filter-section {
+  width: 100%;
+}
+
+.teachers-grid-section {
+  width: 100%;
+
+  .teachers-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    width: 100%;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .empty-results-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 24px;
+    background: #ffffff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 24px;
+    text-align: center;
+
+    .empty-icon-circle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      background-color: #f8fafc;
+      border-radius: 32px;
+      margin-bottom: 16px;
+    }
+
+    .empty-title {
+      margin: 0 0 8px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 24px;
+      color: #1e293b;
+    }
+
+    .empty-desc {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 20px;
+      color: #64748b;
+    }
+  }
+}

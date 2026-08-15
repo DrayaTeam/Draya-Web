@@ -1,0 +1,748 @@
+// src/app/features/student/dashboard/student-dashboard.component.scss
+
+.student-dashboard-root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+// Ambient Background Blobs
+.ambient-blob {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(48px);
+  pointer-events: none;
+  z-index: 0;
+
+  &.blob-top-right {
+    width: 384px;
+    height: 384px;
+    top: -40px;
+    right: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(0, 213, 190, 0.25) 0%,
+      rgba(94, 233, 181, 0.2) 50%,
+      rgba(0, 188, 255, 0.25) 100%
+    );
+  }
+
+  &.blob-bottom-left {
+    width: 320px;
+    height: 320px;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(
+      315deg,
+      rgba(0, 188, 255, 0.2) 0%,
+      rgba(124, 134, 255, 0.15) 50%,
+      rgba(94, 233, 181, 0.2) 100%
+    );
+  }
+}
+
+// Row 1: Hero Welcome + Daily Streak
+.top-hero-row {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 24px;
+  width: 100%;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Main Hero Card (Dark Teal Gradient)
+.welcome-hero-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 32px;
+  background: linear-gradient(
+    114.25deg,
+    rgba(15, 79, 73, 0.96) 0%,
+    rgba(20, 95, 88, 0.92) 50%,
+    rgba(30, 120, 110, 0.88) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border-radius: 24px;
+  color: #ffffff;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  .hero-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1200&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    mix-blend-mode: overlay;
+    opacity: 0.25;
+    pointer-events: none;
+  }
+
+  .date-badge {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(6px);
+    border-radius: 999px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 16px;
+  }
+
+  .hero-title {
+    position: relative;
+    z-index: 1;
+    margin: 0 0 12px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 42px;
+    color: #ffffff;
+    letter-spacing: -0.9px;
+    text-align: right;
+  }
+
+  .hero-subtext {
+    position: relative;
+    z-index: 1;
+    margin: 0 0 20px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 24px;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 580px;
+    text-align: right;
+  }
+
+  .performance-pill {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px;
+    background: rgba(254, 154, 0, 0.2);
+    border: 1px solid rgba(255, 185, 0, 0.4);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    margin-bottom: 24px;
+
+    .star-sparkle {
+      font-size: 12px;
+    }
+
+    .perf-text {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 16px;
+      color: #fee685;
+    }
+  }
+
+  .hero-buttons-row {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+    }
+
+    .btn-hero-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 44px;
+      padding: 0 24px;
+      background-color: #ffffff;
+      color: #0f4f49;
+      border-radius: 16px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      box-shadow:
+        0px 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0px 8px 10px -6px rgba(0, 0, 0, 0.1);
+      transition: all 150ms ease-out;
+
+      &:hover {
+        background-color: #f8fafc;
+        transform: translateY(-2px);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+
+    .btn-hero-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 44px;
+      padding: 0 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(6px);
+      color: #ffffff;
+      border-radius: 16px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all 150ms ease-out;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+}
+
+// Daily Streak Card
+.streak-card {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0px 20px 40px -15px rgba(15, 79, 73, 0.07),
+    inset 0px 1px 0px 1px rgba(255, 255, 255, 0.8);
+  border-radius: 24px;
+  box-sizing: border-box;
+
+  .card-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+
+    .card-section-label {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 800;
+      font-size: 12px;
+      line-height: 16px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: #62748e;
+    }
+
+    .active-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      background-color: #ffedd4;
+      border: 1px solid rgba(255, 184, 106, 0.5);
+      border-radius: 999px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      line-height: 16px;
+      color: #ca3500;
+    }
+  }
+
+  .streak-banner-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 96px;
+    padding: 0 20px;
+    background: linear-gradient(90deg, #fe9a00 0%, #ff6900 100%);
+    border-radius: 16px;
+    color: #ffffff;
+    box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+
+    .flame-icon-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(6px);
+      border-radius: 16px;
+      flex-shrink: 0;
+    }
+
+    .streak-details {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+
+      .streak-count {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 900;
+        font-size: 22px;
+        line-height: 28px;
+        color: #ffffff;
+      }
+
+      .streak-desc {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 500;
+        font-size: 12px;
+        color: #fef3c6;
+      }
+    }
+  }
+
+  .streak-stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+
+    .stat-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 12px 14px;
+      height: 76px;
+      border-radius: 16px;
+      box-sizing: border-box;
+
+      &.blue-cell {
+        background: rgba(240, 249, 255, 0.8);
+        border: 1px solid #dff2fe;
+
+        .stat-title {
+          color: #0069a8;
+        }
+
+        .stat-number {
+          color: #024a70;
+        }
+      }
+
+      &.purple-cell {
+        background: rgba(250, 245, 255, 0.8);
+        border: 1px solid #f3e8ff;
+
+        .stat-title {
+          color: #8200db;
+        }
+
+        .stat-number {
+          color: #59168b;
+        }
+      }
+
+      .stat-title {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 600;
+        font-size: 12px;
+        line-height: 16px;
+      }
+
+      .stat-number {
+        margin-top: 4px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 800;
+        font-size: 20px;
+        line-height: 28px;
+      }
+    }
+  }
+}
+
+// Row 2: Middle 3 Cards Grid
+.middle-cards-row {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  width: 100%;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 24px;
+  box-shadow:
+    0px 10px 15px -3px rgba(0, 0, 0, 0.08),
+    0px 4px 6px -4px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+  overflow: hidden;
+
+  .card-top-icon-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+
+    .card-label {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 16px;
+      color: #62748e;
+    }
+
+    .icon-circle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 16px;
+
+      &.blue-circle {
+        background-color: #f0f9ff;
+      }
+
+      &.green-circle {
+        background-color: #f0fdfa;
+      }
+
+      &.red-circle {
+        background-color: rgba(255, 32, 86, 0.1);
+      }
+    }
+  }
+
+  .number-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .big-number {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 900;
+      font-size: 30px;
+      line-height: 36px;
+      color: #0f172b;
+    }
+
+    .growth-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      background-color: #d0fae5;
+      border-radius: 999px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      color: #007a55;
+    }
+  }
+
+  .subtext-note,
+  .validity-note {
+    margin-top: 12px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    color: #0084d1;
+  }
+
+  .validity-note {
+    color: #009689;
+  }
+}
+
+// Urgent Alerts Card Styling
+.urgent-alerts-card {
+  background: rgba(255, 32, 86, 0.05);
+  border: 1px solid rgba(255, 204, 211, 0.8);
+
+  .alerts-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+
+    .title-with-icon {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .alerts-title {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 800;
+        font-size: 14px;
+        color: #c70036;
+      }
+    }
+
+    .alert-count-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      background-color: #ffe4e6;
+      border-radius: 999px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      color: #a50036;
+    }
+  }
+
+  .alerts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .alert-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      padding: 0 16px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.05);
+
+      &.red-border {
+        border: 1px solid #ffe4e6;
+      }
+
+      &.yellow-border {
+        border: 1px solid #fef3c6;
+      }
+
+      .alert-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 999px;
+          flex-shrink: 0;
+
+          &.red-dot {
+            background-color: #ff2056;
+          }
+
+          &.orange-dot {
+            background-color: #fe9a00;
+          }
+        }
+
+        .text-group {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          .item-title {
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: #1d293d;
+          }
+
+          .item-date {
+            font-family: 'Cairo', sans-serif;
+            font-weight: 500;
+            font-size: 12px;
+            color: #62748e;
+          }
+        }
+      }
+
+      .badge-urgent-red {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 10px;
+        background: rgba(239, 68, 68, 0.12);
+        border-radius: 999px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 500;
+        font-size: 12px;
+        color: #ef4444;
+      }
+
+      .badge-urgent-orange {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 10px;
+        background: rgba(245, 158, 11, 0.12);
+        border-radius: 999px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 500;
+        font-size: 12px;
+        color: #f59e0b;
+      }
+    }
+  }
+}
+
+// Lower Main Content Grid (Courses List + Sidebar)
+.lower-content-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 24px;
+  width: 100%;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Main Courses Left Column
+.main-courses-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .section-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .column-heading {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 27px;
+      color: #151b19;
+    }
+
+    .link-view-all {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      color: #00786f;
+      text-decoration: none;
+      transition: color 150ms ease-out;
+
+      &:hover {
+        color: #0f4f49;
+      }
+    }
+  }
+
+  .courses-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+// Sidebar Right Column
+.sidebar-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  .sidebar-widget-card {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.06);
+    border-radius: 24px;
+
+    .widget-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+
+      .widget-icon-bg {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 16px;
+
+        &.yellow-bg {
+          background-color: #fffbeb;
+        }
+
+        &.purple-bg {
+          background-color: #faf5ff;
+        }
+      }
+
+      .widget-title {
+        margin: 0;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 800;
+        font-size: 14px;
+        line-height: 20px;
+        color: #1d293d;
+      }
+    }
+
+    .exams-list-group,
+    .topics-list-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .widget-action-link {
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      line-height: 17px;
+      color: #1b6d63;
+      text-decoration: none;
+      transition: color 150ms ease-out;
+
+      &:hover {
+        color: #0f4f49;
+        text-decoration: underline;
+      }
+    }
+  }
+}

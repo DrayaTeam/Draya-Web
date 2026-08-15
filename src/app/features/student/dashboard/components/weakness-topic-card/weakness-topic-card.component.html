@@ -1,0 +1,13 @@
+<div class="topic-item-box">
+  <div class="topic-header-row">
+    <h4 class="topic-title">{{ topic().topicTitle }}</h4>
+    <span class="score-percent" [style.color]="topic().barColor">{{ topic().scorePercent }}%</span>
+  </div>
+
+  <div class="topic-progress-track">
+    <div
+      class="topic-progress-fill"
+      [style.width.%]="topic().scorePercent"
+      [style.background-color]="topic().barColor"></div>
+  </div>
+</div>

@@ -1,0 +1,57 @@
+<div class="dashboard-card alert-card-box">
+  <div class="alert-header-row">
+    <div class="alert-icon-wrap">
+      <svg
+        width="15"
+        height="15"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#F59E0B"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+        <line x1="12" y1="9" x2="12" y2="13" />
+        <line x1="12" y1="17" x2="12.01" y2="17" />
+      </svg>
+    </div>
+    <h3 class="alert-card-title">{{ 'TEACHER.DASHBOARD.ATTENTION.TITLE' | translate }}</h3>
+  </div>
+
+  <div class="alert-items-list">
+    <div class="alert-item-row">
+      <span class="alert-item-text">
+        {{ 'TEACHER.DASHBOARD.ATTENTION.STUDENTS_AT_RISK' | translate }}
+      </span>
+      <span class="alert-pill red-pill">
+        {{ 'TEACHER.DASHBOARD.ATTENTION.WARNING_TAG' | translate }}
+      </span>
+    </div>
+
+    <div class="alert-item-row">
+      <span class="alert-item-text">
+        {{ 'TEACHER.DASHBOARD.ATTENTION.EXAM_ALGEBRA' | translate }}
+      </span>
+      <span class="alert-pill amber-pill">
+        {{ 'TEACHER.DASHBOARD.ATTENTION.WAITING_TAG' | translate }}
+      </span>
+    </div>
+  </div>
+
+  <a routerLink="/teacher/reports" class="alert-view-all-link">
+    <span>{{ 'TEACHER.DASHBOARD.ATTENTION.VIEW_ALL_ALERTS' | translate }}</span>
+    <svg
+      width="12"
+      height="12"
+      class="rtl:rotate-180"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12" />
+      <polyline points="12 5 19 12 12 19" />
+    </svg>
+  </a>
+</div>

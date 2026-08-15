@@ -1,0 +1,113 @@
+<div class="dashboard-card chart-card">
+  <div class="card-header-flex">
+    <div class="title-meta-col">
+      <h2 class="card-section-title">{{ 'TEACHER.DASHBOARD.CHART.TITLE' | translate }}</h2>
+      <span class="card-section-subtitle">
+        {{ 'TEACHER.DASHBOARD.CHART.SUBTITLE' | translate }}
+      </span>
+    </div>
+
+    <!-- Time Range Switcher -->
+    <div class="time-range-switcher">
+      <button
+        type="button"
+        [class.active]="timeRange() === 'week'"
+        (click)="rangeChange.emit('week')"
+        class="range-btn">
+        {{ 'TEACHER.DASHBOARD.CHART.RANGE_WEEK' | translate }}
+      </button>
+      <button
+        type="button"
+        [class.active]="timeRange() === 'month'"
+        (click)="rangeChange.emit('month')"
+        class="range-btn">
+        {{ 'TEACHER.DASHBOARD.CHART.RANGE_MONTH' | translate }}
+      </button>
+      <button
+        type="button"
+        [class.active]="timeRange() === 'quarter'"
+        (click)="rangeChange.emit('quarter')"
+        class="range-btn">
+        {{ 'TEACHER.DASHBOARD.CHART.RANGE_QUARTER' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Chart Metrics Highlights Bar -->
+  <div class="chart-summary-bar">
+    <div class="summary-stat-box">
+      <span class="stat-number teal-text">{{ chartMeta().totalSubmissions }}</span>
+      <span class="stat-lbl">{{ 'TEACHER.DASHBOARD.CHART.TOTAL_SUBMISSIONS' | translate }}</span>
+    </div>
+    <div class="summary-stat-box">
+      <span class="stat-number green-text">{{ chartMeta().averagePerformance }}%</span>
+      <span class="stat-lbl">{{ 'TEACHER.DASHBOARD.CHART.AVG_PERFORMANCE' | translate }}</span>
+    </div>
+    <div class="summary-stat-box">
+      <span class="stat-number amber-text">{{ chartMeta().peakDayKey | translate }}</span>
+      <span class="stat-lbl">{{ 'TEACHER.DASHBOARD.CHART.PEAK_DAY' | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Area Chart (SVG Vector Graphics) -->
+  <div class="chart-drawing-area">
+    <svg viewBox="0 0 700 200" class="svg-chart-element" preserveAspectRatio="none">
+      <line x1="40" y1="20" x2="680" y2="20" class="grid-line" />
+      <line x1="40" y1="60" x2="680" y2="60" class="grid-line" />
+      <line x1="40" y1="100" x2="680" y2="100" class="grid-line" />
+      <line x1="40" y1="140" x2="680" y2="140" class="grid-line" />
+      <line x1="40" y1="180" x2="680" y2="180" class="grid-line" />
+
+      <text x="30" y="24" class="axis-label">100</text>
+      <text x="30" y="64" class="axis-label">75</text>
+      <text x="30" y="104" class="axis-label">50</text>
+      <text x="30" y="144" class="axis-label">25</text>
+      <text x="30" y="184" class="axis-label">0</text>
+
+      <defs>
+        <linearGradient id="subGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1B6D63" stop-opacity="0.25" />
+          <stop offset="100%" stop-color="#1B6D63" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+
+      <polygon
+        points="60,160 160,150 260,165 360,140 460,155 560,130 560,180 60,180"
+        fill="url(#subGrad)" />
+
+      <path
+        d="M 60 160 Q 110 150, 160 150 T 260 165 T 360 140 T 460 155 T 560 130"
+        fill="none"
+        stroke="#1B6D63"
+        stroke-width="3"
+        stroke-linecap="round" />
+
+      <path
+        d="M 60 85 Q 160 80, 260 82 T 360 75 T 460 70 T 560 65"
+        fill="none"
+        stroke="#52B6A8"
+        stroke-width="2.5"
+        stroke-dasharray="6,4"
+        stroke-linecap="round" />
+    </svg>
+
+    <div class="x-axis-labels">
+      @for (pt of chartMeta().chartPoints; track pt.dayNameKey) {
+        <span class="x-label">{{ pt.dayNameKey | translate }}</span>
+      }
+    </div>
+  </div>
+
+  <div class="chart-legend-row">
+    <div class="legend-item">
+      <span class="legend-indicator solid-teal"></span>
+      <span class="legend-text">
+        {{ 'TEACHER.DASHBOARD.CHART.LEGEND_SUBMISSIONS' | translate }}
+      </span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-indicator dashed-teal"></span>
+      <span class="legend-text">{{ 'TEACHER.DASHBOARD.CHART.LEGEND_AVERAGE' | translate }}</span>
+    </div>
+  </div>
+</div>

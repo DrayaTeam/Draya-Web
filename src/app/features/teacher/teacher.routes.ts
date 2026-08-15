@@ -1,10 +1,5 @@
 // src/app/features/teacher/teacher.routes.ts
 // Purpose: Lazy-loaded routes for the teacher feature area.
-// TODO: Attach authGuard & roleGuard('TEACHER') to protect these routes in production.
-// Example:
-// import { authGuard } from '../../core/auth/auth.guard';
-// import { roleGuard } from '../../core/auth/role.guard';
-// canActivate: [authGuard, roleGuard('TEACHER')]
 
 import { Routes } from '@angular/router';
 
@@ -22,12 +17,28 @@ export const teacherRoutes: Routes = [
         title: 'لوحة التحكم — درايَة',
       },
       {
-        path: 'courses',
+        path: 'packages',
         loadComponent: () =>
           import('./placeholder/teacher-placeholder.component').then(
             (m) => m.TeacherPlaceholderComponent,
           ),
-        title: 'باقاتي الدراسية — درايَة',
+        title: 'باقات الكورسات — درايَة',
+      },
+      {
+        path: 'classrooms',
+        loadComponent: () =>
+          import('./placeholder/teacher-placeholder.component').then(
+            (m) => m.TeacherPlaceholderComponent,
+          ),
+        title: 'إدارة الفصول — درايَة',
+      },
+      {
+        path: 'students',
+        loadComponent: () =>
+          import('./placeholder/teacher-placeholder.component').then(
+            (m) => m.TeacherPlaceholderComponent,
+          ),
+        title: 'شؤون الطلاب — درايَة',
       },
       {
         path: 'exams',
@@ -35,13 +46,31 @@ export const teacherRoutes: Routes = [
           import('./placeholder/teacher-placeholder.component').then(
             (m) => m.TeacherPlaceholderComponent,
           ),
-        title: 'الامتحانات والتصحيح — درايَة',
+        title: 'بنك الامتحانات — درايَة',
       },
       {
-        path: 'exam-builder',
+        path: 'channel',
         loadComponent: () =>
-          import('./exam-builder/exam-builder.component').then((m) => m.ExamBuilderComponent),
-        title: 'منشئ الامتحانات الذكي — درايَة',
+          import('./placeholder/teacher-placeholder.component').then(
+            (m) => m.TeacherPlaceholderComponent,
+          ),
+        title: 'قناة الإعلانات — درايَة',
+      },
+      {
+        path: 'feedback',
+        loadComponent: () =>
+          import('./placeholder/teacher-placeholder.component').then(
+            (m) => m.TeacherPlaceholderComponent,
+          ),
+        title: 'آراء وملاحظات — درايَة',
+      },
+      {
+        path: 'analytics',
+        loadComponent: () =>
+          import('./placeholder/teacher-placeholder.component').then(
+            (m) => m.TeacherPlaceholderComponent,
+          ),
+        title: 'التحليلات — درايَة',
       },
       {
         path: 'reports',
@@ -49,15 +78,7 @@ export const teacherRoutes: Routes = [
           import('./placeholder/teacher-placeholder.component').then(
             (m) => m.TeacherPlaceholderComponent,
           ),
-        title: 'درجاتي وتقاريري — درايَة',
-      },
-      {
-        path: 'library',
-        loadComponent: () =>
-          import('./placeholder/teacher-placeholder.component').then(
-            (m) => m.TeacherPlaceholderComponent,
-          ),
-        title: 'المكتبة الشاملة — درايَة',
+        title: 'التقارير — درايَة',
       },
       {
         path: 'subscription',
@@ -66,6 +87,14 @@ export const teacherRoutes: Routes = [
             (m) => m.SubscriptionPageComponent,
           ),
         title: 'الاشتراك والعدادات — درايَة',
+      },
+      {
+        path: 'account',
+        loadComponent: () =>
+          import('./placeholder/teacher-placeholder.component').then(
+            (m) => m.TeacherPlaceholderComponent,
+          ),
+        title: 'إعدادات الحساب — درايَة',
       },
       {
         path: '',

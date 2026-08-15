@@ -2,29 +2,94 @@
 // Purpose: Lazy-loaded routes for the student feature area.
 
 import { Routes } from '@angular/router';
-import { authGuard } from '../../core/auth/auth.guard';
-import { roleGuard } from '../../core/auth/role.guard';
 
 export const studentRoutes: Routes = [
   {
-    path: 'dashboard',
-    loadComponent: () =>
-      import('./dashboard/student-dashboard.component').then((m) => m.StudentDashboardComponent),
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['student'] },
-    title: 'Dashboard — Draya',
-  },
-  {
-    path: 'exam/:id',
-    loadComponent: () =>
-      import('./exam-taking/exam-taking.component').then((m) => m.ExamTakingComponent),
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['student'] },
-    title: 'Exam — Draya',
-  },
-  {
     path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full',
+    loadComponent: () => import('./student-layout.component').then((m) => m.StudentLayoutComponent),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./dashboard/student-dashboard.component').then(
+            (m) => m.StudentDashboardComponent,
+          ),
+        title: 'الرئيسية — درايَة',
+      },
+      {
+        path: 'teachers',
+        loadComponent: () =>
+          import('./teachers/teachers-directory.component').then(
+            (m) => m.TeachersDirectoryComponent,
+          ),
+        title: 'تصفح المعلمين — درايَة',
+      },
+      {
+        path: 'courses',
+        loadComponent: () =>
+          import('./courses/student-courses.component').then(
+            (m) => m.StudentCoursesComponent,
+          ),
+        title: 'باقاتي الدراسية — درايَة',
+      },
+      {
+        path: 'exams',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./exams/student-exams.component').then(
+                (m) => m.StudentExamsComponent,
+              ),
+            title: 'الامتحانات والواجبات — درايَة',
+          },
+          {
+            path: 'take',
+            loadComponent: () =>
+              import('./exams/active/student-active-exam.component').then(
+                (m) => m.StudentActiveExamComponent,
+              ),
+            title: 'أداء الامتحان — درايَة',
+          },
+          {
+            path: ':id/take',
+            loadComponent: () =>
+              import('./exams/active/student-active-exam.component').then(
+                (m) => m.StudentActiveExamComponent,
+              ),
+            title: 'أداء الامتحان — درايَة',
+          },
+          {
+            path: ':id/result',
+            loadComponent: () =>
+              import('./exams/result/student-exam-result.component').then(
+                (m) => m.StudentExamResultComponent,
+              ),
+            title: 'نتيجة الامتحان والتحليل — درايَة',
+          },
+        ],
+      },
+      {
+        path: 'reports',
+        loadComponent: () =>
+          import('./reports/student-reports.component').then(
+            (m) => m.StudentReportsComponent,
+          ),
+        title: 'تقاريري ودرجاتي — درايَة',
+      },
+      {
+        path: 'library',
+        loadComponent: () =>
+          import('./library/student-library.component').then(
+            (m) => m.StudentLibraryComponent,
+          ),
+        title: 'المكتبة — درايَة',
+      },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
+    ],
   },
 ];
