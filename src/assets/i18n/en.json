@@ -390,6 +390,12 @@
       "MADE_WITH": "Made with love in Egypt"
     }
   },
+  "CONNECTION": {
+    "DISCONNECTED": "No connection — some live features are temporarily unavailable",
+    "RECONNECTING": "Reconnecting to server…",
+    "ERROR": "Connection failed — please check your internet connection",
+    "RETRY": "Retry"
+  },
   "TEACHER": {
     "SIDEBAR": {
       "BRAND_NAME": "Draya",

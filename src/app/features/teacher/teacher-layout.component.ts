@@ -3,11 +3,17 @@ import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TeacherSidebarComponent } from './components/teacher-sidebar/teacher-sidebar.component';
+import { ConnectionStatusBannerComponent } from '../../shared/components/connection-status-banner/connection-status-banner.component';
 
 @Component({
   selector: 'draya-teacher-layout',
   standalone: true,
-  imports: [RouterOutlet, TeacherSidebarComponent, TranslatePipe],
+  imports: [
+    RouterOutlet,
+    TeacherSidebarComponent,
+    TranslatePipe,
+    ConnectionStatusBannerComponent,
+  ],
   templateUrl: './teacher-layout.component.html',
   styleUrl: './teacher-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
