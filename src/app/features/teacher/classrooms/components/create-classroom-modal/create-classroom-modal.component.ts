@@ -37,8 +37,8 @@ export class CreateClassroomModalComponent implements OnInit {
   private readonly toastService = inject(ToastService);
 
   readonly isOpen = input<boolean>(false);
-  readonly onClose = output<void>();
-  readonly onSuccess = output<void>();
+  readonly modalClosed = output<void>();
+  readonly created = output<void>();
 
   form!: FormGroup;
   
@@ -154,7 +154,7 @@ export class CreateClassroomModalComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.toastService.success('نجاح', 'تم إنشاء الفصل الدراسي بنجاح!');
-        this.onSuccess.emit();
+        this.created.emit();
         this.close();
       },
       error: (errorRes: HttpErrorResponse) => {
@@ -180,6 +180,6 @@ export class CreateClassroomModalComponent implements OnInit {
     this.quotaError.set(null);
     this.form.reset({ price: 0 });
     this.isCreatingSubject.set(false);
-    this.onClose.emit();
+    this.modalClosed.emit();
   }
 }

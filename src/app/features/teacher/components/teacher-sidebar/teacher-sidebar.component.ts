@@ -23,7 +23,6 @@ export interface NavItem {
     | 'analytics'
     | 'reports'
     | 'subscription'
-    | 'wallet'
     | 'account';
   exact?: boolean;
 }
@@ -112,11 +111,6 @@ export class TeacherSidebarComponent {
   ];
 
   readonly footerNavItems: NavItem[] = [
-    {
-      labelKey: 'المحفظة المالية', // TODO: Add to i18n
-      link: '/teacher/wallet',
-      icon: 'wallet',
-    },
     {
       labelKey: 'TEACHER.SIDEBAR.SUBSCRIPTION',
       link: '/teacher/subscription',

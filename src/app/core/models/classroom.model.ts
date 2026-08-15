@@ -56,5 +56,5 @@ export interface PaginatedResponse<T> {
   hasPreviousPage: boolean;
 }
 
-export interface ClassroomDtoPagedResult extends PaginatedResponse<ClassroomDto> {}
+export type ClassroomDtoPagedResult = PaginatedResponse<ClassroomDto>;
 
