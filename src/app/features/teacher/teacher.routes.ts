@@ -91,9 +91,7 @@ export const teacherRoutes: Routes = [
       {
         path: 'account',
         loadComponent: () =>
-          import('./profile/teacher-profile.component').then(
-            (m) => m.TeacherProfileComponent,
-          ),
+          import('./profile/teacher-profile.component').then((m) => m.TeacherProfileComponent),
         title: 'الملف الشخصي — درايَة',
       },
       {

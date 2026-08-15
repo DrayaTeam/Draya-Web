@@ -6,15 +6,24 @@
   <!-- Header Section -->
   <header class="page-header">
     <div class="ai-badge-pill">
-      <svg class="sparkle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4m6 17v-5m0 0a2 2 0 100-4 2 2 0 000 4zm0 0v1a3 3 0 01-3 3H9m1.5-12a3 3 0 10-6 0 3 3 0 006 0zm-3 0v4m0 0h.01M17 14l-2 5 2 1 2-1-2-5z" />
+      <svg
+        class="sparkle-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M5 3v4M3 5h4m6 17v-5m0 0a2 2 0 100-4 2 2 0 000 4zm0 0v1a3 3 0 01-3 3H9m1.5-12a3 3 0 10-6 0 3 3 0 006 0zm-3 0v4m0 0h.01M17 14l-2 5 2 1 2-1-2-5z" />
       </svg>
       <span>تحليلات الذكاء الاصطناعي الأكاديمية</span>
     </div>
 
     <h1 class="main-title">سجل درجاتي وتحليلات الأداء</h1>
     <p class="subtitle">
-      استعرض كشف درجات الامتحانات والواجبات ونسب الإتقان للمهارات المختلفة المحددة بالذكاء الاصطناعي.
+      استعرض كشف درجات الامتحانات والواجبات ونسب الإتقان للمهارات المختلفة المحددة بالذكاء
+      الاصطناعي.
     </p>
   </header>
 
@@ -24,20 +33,17 @@
       title="المتوسط الكلي"
       [value]="summary().overallAverage + '%'"
       variant="average"
-      [badgeText]="'+' + summary().monthlyGrowthPercent + '%'"
-    ></app-report-kpi-card>
+      [badgeText]="'+' + summary().monthlyGrowthPercent + '%'"></app-report-kpi-card>
 
     <app-report-kpi-card
       title="امتحانات مكتملة"
       [value]="summary().completedExamsCount + ' اختبار'"
-      variant="exams"
-    ></app-report-kpi-card>
+      variant="exams"></app-report-kpi-card>
 
     <app-report-kpi-card
       title="أعلى درجة مسجلة"
       [value]="summary().topScorePercent + '%'"
-      variant="topScore"
-    ></app-report-kpi-card>
+      variant="topScore"></app-report-kpi-card>
   </section>
 
   <!-- Row 2: Analytics Charts Section -->
@@ -54,7 +60,7 @@
 
       <!-- Area Chart SVG Visualization -->
       <div class="chart-body">
-        <svg viewBox="0 0 500 200" class="w-full h-full" preserveAspectRatio="none">
+        <svg viewBox="0 0 500 200" class="h-full w-full" preserveAspectRatio="none">
           <defs>
             <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stop-color="#0F4F49" stop-opacity="0.25" />
@@ -76,8 +82,14 @@
           <text x="30" y="180" fill="#64748B" font-size="10" text-anchor="end">0</text>
 
           <!-- Area Shape & Line -->
-          <path d="M 60 110 Q 180 65 300 55 T 460 50 L 460 170 L 60 170 Z" fill="url(#areaGradient)" />
-          <path d="M 60 110 Q 180 65 300 55 T 460 50" fill="none" stroke="#0F4F49" stroke-width="3" />
+          <path
+            d="M 60 110 Q 180 65 300 55 T 460 50 L 460 170 L 60 170 Z"
+            fill="url(#areaGradient)" />
+          <path
+            d="M 60 110 Q 180 65 300 55 T 460 50"
+            fill="none"
+            stroke="#0F4F49"
+            stroke-width="3" />
 
           <!-- Data Points -->
           <circle cx="60" cy="110" r="4" fill="#0F4F49" />
@@ -103,11 +115,23 @@
 
       <!-- Radar Web Pentagon SVG Visualization -->
       <div class="radar-body">
-        <svg viewBox="0 0 240 220" class="w-full max-w-[240px] h-[190px] mx-auto">
+        <svg viewBox="0 0 240 220" class="mx-auto h-[190px] w-full max-w-[240px]">
           <!-- Pentagon Concentric Rings -->
-          <polygon points="120,20 200,75 170,165 70,165 40,75" fill="none" stroke="#E2E8F0" stroke-width="1" />
-          <polygon points="120,40 180,82 158,150 82,150 60,82" fill="none" stroke="#E2E8F0" stroke-width="1" />
-          <polygon points="120,60 160,88 145,135 95,135 80,88" fill="none" stroke="#E2E8F0" stroke-width="1" />
+          <polygon
+            points="120,20 200,75 170,165 70,165 40,75"
+            fill="none"
+            stroke="#E2E8F0"
+            stroke-width="1" />
+          <polygon
+            points="120,40 180,82 158,150 82,150 60,82"
+            fill="none"
+            stroke="#E2E8F0"
+            stroke-width="1" />
+          <polygon
+            points="120,60 160,88 145,135 95,135 80,88"
+            fill="none"
+            stroke="#E2E8F0"
+            stroke-width="1" />
 
           <!-- Radial Spokes -->
           <line x1="120" y1="100" x2="120" y2="20" stroke="#E2E8F0" stroke-width="1" />
@@ -121,19 +145,48 @@
             points="120,32 188,78 160,155 75,158 52,80"
             fill="rgba(139, 92, 246, 0.3)"
             stroke="#8B5CF6"
-            stroke-width="2.5"
-          />
+            stroke-width="2.5" />
 
           <!-- Subject Labels -->
-          <text x="120" y="14" fill="#334155" font-size="10" font-weight="bold" text-anchor="middle">رياضيات</text>
-          <text x="210" y="78" fill="#334155" font-size="10" font-weight="bold" text-anchor="start">فيزياء</text>
-          <text x="178" y="180" fill="#334155" font-size="10" font-weight="bold" text-anchor="middle">كيمياء</text>
-          <text x="62" y="180" fill="#334155" font-size="10" font-weight="bold" text-anchor="middle">أحياء</text>
-          <text x="30" y="78" fill="#334155" font-size="10" font-weight="bold" text-anchor="end">لغات</text>
+          <text
+            x="120"
+            y="14"
+            fill="#334155"
+            font-size="10"
+            font-weight="bold"
+            text-anchor="middle">
+            رياضيات
+          </text>
+          <text x="210" y="78" fill="#334155" font-size="10" font-weight="bold" text-anchor="start">
+            فيزياء
+          </text>
+          <text
+            x="178"
+            y="180"
+            fill="#334155"
+            font-size="10"
+            font-weight="bold"
+            text-anchor="middle">
+            كيمياء
+          </text>
+          <text
+            x="62"
+            y="180"
+            fill="#334155"
+            font-size="10"
+            font-weight="bold"
+            text-anchor="middle">
+            أحياء
+          </text>
+          <text x="30" y="78" fill="#334155" font-size="10" font-weight="bold" text-anchor="end">
+            لغات
+          </text>
         </svg>
 
         <div class="radar-note-pill">
-          أعلى مادة في المهارات: {{ summary().topSkillSubjectName }} ({{ summary().topSkillScorePercent }}%) 🧪
+          أعلى مادة في المهارات: {{ summary().topSkillSubjectName }} ({{
+            summary().topSkillScorePercent
+          }}%) 🧪
         </div>
       </div>
     </div>
@@ -154,8 +207,7 @@
             <div
               class="progress-bar"
               [style.width.%]="subj.scorePercent"
-              [style.background]="subj.progressGradient"
-            ></div>
+              [style.background]="subj.progressGradient"></div>
           </div>
         </div>
       }
@@ -169,8 +221,7 @@
       @for (topic of weaknessTopics(); track topic.id) {
         <app-report-weakness-topic
           [topic]="topic"
-          (startReview)="onStartReview($event)"
-        ></app-report-weakness-topic>
+          (startReview)="onStartReview($event)"></app-report-weakness-topic>
       }
     </div>
   </section>

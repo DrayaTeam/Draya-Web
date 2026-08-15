@@ -1,49 +1,64 @@
-<div class="max-w-3xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+<div class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
   <div class="mb-8">
     <h1 class="text-3xl font-bold text-gray-900">{{ 'NAV.PROFILE' | translate }}</h1>
   </div>
 
   @if (loading()) {
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-pulse">
+    <div class="animate-pulse overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
       <div class="p-6 sm:p-8">
-        <div class="flex items-center gap-6 mb-8">
-          <div class="w-20 h-20 bg-gray-200 rounded-full"></div>
+        <div class="mb-8 flex items-center gap-6">
+          <div class="h-20 w-20 rounded-full bg-gray-200"></div>
           <div class="flex-1">
-            <div class="h-6 bg-gray-200 rounded w-1/3 mb-2"></div>
-            <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+            <div class="mb-2 h-6 w-1/3 rounded bg-gray-200"></div>
+            <div class="h-4 w-1/4 rounded bg-gray-200"></div>
           </div>
         </div>
         <div class="space-y-4">
-          <div class="h-4 bg-gray-200 rounded w-full"></div>
-          <div class="h-4 bg-gray-200 rounded w-5/6"></div>
-          <div class="h-4 bg-gray-200 rounded w-4/6"></div>
+          <div class="h-4 w-full rounded bg-gray-200"></div>
+          <div class="h-4 w-5/6 rounded bg-gray-200"></div>
+          <div class="h-4 w-4/6 rounded bg-gray-200"></div>
         </div>
       </div>
     </div>
   } @else if (error()) {
-    <div class="bg-red-50 p-6 rounded-xl border border-red-100 text-center">
-      <div class="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+    <div class="rounded-xl border border-red-100 bg-red-50 p-6 text-center">
+      <div
+        class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
       </div>
-      <h3 class="text-lg font-medium text-red-800 mb-2">{{ 'COMMON.ERROR' | translate }}</h3>
-      <p class="text-sm text-red-600 mb-4">{{ error()?.message }}</p>
-      <button (click)="retry()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">
+      <h3 class="mb-2 text-lg font-medium text-red-800">{{ 'COMMON.ERROR' | translate }}</h3>
+      <p class="mb-4 text-sm text-red-600">{{ error()?.message }}</p>
+      <button
+        (click)="retry()"
+        class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700">
         {{ 'common.retry' | translate }}
       </button>
     </div>
   } @else if (user()) {
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
       <!-- Profile Header -->
-      <div class="bg-gray-50 px-6 py-8 sm:p-8 border-b border-gray-100">
+      <div class="border-b border-gray-100 bg-gray-50 px-6 py-8 sm:p-8">
         <div class="flex items-center gap-6">
-          <div class="w-20 h-20 bg-[var(--draya-primary-700,#1B6D63)] text-white rounded-full flex items-center justify-center text-3xl font-bold shadow-inner">
+          <div
+            class="flex h-20 w-20 items-center justify-center rounded-full bg-[var(--draya-primary-700,#1B6D63)] text-3xl font-bold text-white shadow-inner">
             {{ user()?.fullName?.charAt(0) }}
           </div>
           <div>
             <h2 class="text-2xl font-bold text-gray-900">{{ user()?.fullName }}</h2>
             <div class="mt-1 flex items-center gap-2">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                    [ngClass]="user()?.role === 'teacher' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'">
+              <span
+                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                [ngClass]="
+                  user()?.role === 'teacher'
+                    ? 'bg-blue-100 text-blue-800'
+                    : 'bg-green-100 text-green-800'
+                ">
                 {{ getRoleKey(user()?.role) | translate }}
               </span>
             </div>
@@ -54,36 +69,44 @@
       <!-- Profile Details -->
       <div class="px-6 py-6 sm:p-8">
         <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-          
           <div class="sm:col-span-1">
             <dt class="text-sm font-medium text-gray-500">{{ 'AUTH.SHARED.EMAIL' | translate }}</dt>
-            <dd class="mt-1 text-sm text-gray-900 font-medium" dir="ltr">{{ user()?.email }}</dd>
+            <dd class="mt-1 text-sm font-medium text-gray-900" dir="ltr">{{ user()?.email }}</dd>
           </div>
 
           @if (user()?.role === 'teacher') {
             <div class="sm:col-span-1">
-              <dt class="text-sm font-medium text-gray-500">{{ 'AUTH.SHARED.PHONE' | translate }}</dt>
-              <dd class="mt-1 text-sm text-gray-900 font-medium" dir="ltr">{{ user()?.phone }}</dd>
+              <dt class="text-sm font-medium text-gray-500">
+                {{ 'AUTH.SHARED.PHONE' | translate }}
+              </dt>
+              <dd class="mt-1 text-sm font-medium text-gray-900" dir="ltr">{{ user()?.phone }}</dd>
             </div>
           }
 
           @if (user()?.role === 'student') {
             <div class="sm:col-span-1">
-              <dt class="text-sm font-medium text-gray-500">{{ 'AUTH.REGISTER_STUDENT.PARENT_EMAIL' | translate }}</dt>
-              <dd class="mt-1 text-sm text-gray-900 font-medium" dir="ltr">{{ user()?.parentGuardianEmail }}</dd>
+              <dt class="text-sm font-medium text-gray-500">
+                {{ 'AUTH.REGISTER_STUDENT.PARENT_EMAIL' | translate }}
+              </dt>
+              <dd class="mt-1 text-sm font-medium text-gray-900" dir="ltr">
+                {{ user()?.parentGuardianEmail }}
+              </dd>
             </div>
-            
+
             <div class="sm:col-span-1">
-              <dt class="text-sm font-medium text-gray-500">{{ 'AUTH.REGISTER_STUDENT.DOB' | translate }}</dt>
-              <dd class="mt-1 text-sm text-gray-900 font-medium" dir="ltr">{{ user()?.dateOfBirth }}</dd>
+              <dt class="text-sm font-medium text-gray-500">
+                {{ 'AUTH.REGISTER_STUDENT.DOB' | translate }}
+              </dt>
+              <dd class="mt-1 text-sm font-medium text-gray-900" dir="ltr">
+                {{ user()?.dateOfBirth }}
+              </dd>
             </div>
           }
-
         </dl>
       </div>
     </div>
   } @else {
-    <div class="bg-gray-50 p-8 rounded-xl border border-gray-100 text-center">
+    <div class="rounded-xl border border-gray-100 bg-gray-50 p-8 text-center">
       <p class="text-gray-500">{{ 'COMMON.NO_DATA' | translate }}</p>
     </div>
   }

@@ -1,5 +1,6 @@
-// src/app/features/student/courses/student-courses.component.ts
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { StudentCoursesService } from '../../../core/services/student-courses.service';
 import { SubscribedPackageCardComponent } from './components/subscribed-package-card/subscribed-package-card.component';
 import { SubscribedPackage } from '../../../core/models/student-courses.model';
@@ -8,22 +9,25 @@ import { ToastService } from '../../../core/services/toast.service';
 @Component({
   selector: 'draya-student-courses',
   standalone: true,
-  imports: [SubscribedPackageCardComponent],
+  imports: [CommonModule, RouterLink, SubscribedPackageCardComponent],
   templateUrl: './student-courses.component.html',
   styleUrl: './student-courses.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StudentCoursesComponent {
+export class StudentCoursesComponent implements OnInit {
   private readonly coursesService = inject(StudentCoursesService);
   private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
 
   readonly headerInfo = this.coursesService.headerInfo;
   readonly packages = this.coursesService.filteredPackages;
 
+  ngOnInit(): void {
+    this.coursesService.loadCourses();
+  }
+
   onOpenPackage(pkg: SubscribedPackage): void {
-    this.toastService.info(
-      'متابعة الباقة',
-      `جارٍ فتح محتوى ${pkg.title}...`,
-    );
+    this.toastService.info('متابعة الباقة', `جارٍ فتح محتوى وفصول ${pkg.title}...`);
+    this.router.navigate(['/student/packages', pkg.id]);
   }
 }

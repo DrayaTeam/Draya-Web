@@ -11,11 +11,7 @@ import { ReportWeaknessTopic } from '../../../core/models/student-reports.model'
 @Component({
   selector: 'app-student-reports',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReportKpiCardComponent,
-    ReportWeaknessTopicComponent,
-  ],
+  imports: [CommonModule, ReportKpiCardComponent, ReportWeaknessTopicComponent],
   templateUrl: './student-reports.component.html',
   styleUrl: './student-reports.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,7 +28,7 @@ export class StudentReportsComponent {
   onStartReview(topic: ReportWeaknessTopic): void {
     this.toastService.info(
       'بدء المراجعة التفاعلية',
-      `جاري فتح المراجعة التفاعلية لموضوع: ${topic.topicTitle}`
+      `جاري فتح المراجعة التفاعلية لموضوع: ${topic.topicTitle}`,
     );
   }
 }

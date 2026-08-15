@@ -13,7 +13,7 @@ import { ApiError } from '../../../../core/models/api-error.model';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './forgot-password.component.html'
+  templateUrl: './forgot-password.component.html',
 })
 export class ForgotPasswordComponent {
   private readonly auth = inject(AuthService);
@@ -23,7 +23,7 @@ export class ForgotPasswordComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly forgotForm = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]]
+    email: ['', [Validators.required, Validators.email]],
   });
 
   readonly loading = this.auth.isLoading;
@@ -39,17 +39,20 @@ export class ForgotPasswordComponent {
 
     const email = this.forgotForm.getRawValue().email.trim().toLowerCase();
 
-    this.auth.forgotPassword(email).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.isSuccess.set(true);
-      },
-      error: (err: ApiError) => {
-        this.messageService?.add({
-          severity: 'error',
-          summary: this.translate.instant('ERROR.TITLE'),
-          detail: err.message || this.translate.instant('COMMON.ERROR')
-        });
-      }
-    });
+    this.auth
+      .forgotPassword(email)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.isSuccess.set(true);
+        },
+        error: (err: ApiError) => {
+          this.messageService?.add({
+            severity: 'error',
+            summary: this.translate.instant('ERROR.TITLE'),
+            detail: err.message || this.translate.instant('COMMON.ERROR'),
+          });
+        },
+      });
   }
 }

@@ -1,5 +1,4 @@
 // src/app/features/student/library/student-library.component.spec.ts
-
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { StudentLibraryComponent } from './student-library.component';
 import { ToastService } from '../../../core/services/toast.service';
@@ -24,9 +23,11 @@ describe('StudentLibraryComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render main title and search bar', () => {
+  it('should render page title and search bar', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.main-title')?.textContent).toContain('مكتبة المذكرات والكتب الدراسية');
+    expect(compiled.querySelector('.main-title')?.textContent).toContain(
+      'مكتبة المذكرات والكتب الدراسية',
+    );
     expect(compiled.querySelector('.search-input')).toBeTruthy();
   });
 
@@ -38,7 +39,7 @@ describe('StudentLibraryComponent', () => {
 
   it('should trigger toast on download click', () => {
     const toastService = TestBed.inject(ToastService);
-    spyOn(toastService, 'info');
+    spyOn(toastService, 'success');
 
     component.onDownload({
       id: 'b1',
@@ -50,11 +51,12 @@ describe('StudentLibraryComponent', () => {
       fileSizeMb: 5,
       fileFormat: 'PDF',
       downloadUrl: '#',
+      chapters: [],
     });
 
-    expect(toastService.info).toHaveBeenCalledWith(
-      'تحميل الملف',
-      'جاري بدء تحميل كتاب: رياضيات (بحجم 5 MB)'
+    expect(toastService.success).toHaveBeenCalledWith(
+      'بدء تحميل الملف',
+      'جارٍ تحميل ملف PDF الخاص بكتاب [رياضيات] بحجم (5 MB)...',
     );
   });
 });

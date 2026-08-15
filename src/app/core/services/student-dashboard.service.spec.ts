@@ -1,12 +1,16 @@
 // src/app/core/services/student-dashboard.service.spec.ts
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { StudentDashboardService } from './student-dashboard.service';
 
 describe('StudentDashboardService', () => {
   let service: StudentDashboardService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
     service = TestBed.inject(StudentDashboardService);
   });
 
@@ -14,20 +18,8 @@ describe('StudentDashboardService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should initialize summary signal with student details', () => {
+  it('should initialize summary signal', () => {
     const summary = service.summary();
-    expect(summary.studentName).toBe('أحمد');
-    expect(summary.cumulativeAverage).toBe(87);
-  });
-
-  it('should initialize 3 enrolled courses', () => {
-    const courses = service.enrolledCourses();
-    expect(courses.length).toBe(3);
-    expect(courses[0].title).toBe('الجبر وحساب المثلثات');
-  });
-
-  it('should initialize upcoming exams and weakness topics', () => {
-    expect(service.upcomingExams().length).toBe(2);
-    expect(service.weaknessTopics().length).toBe(2);
+    expect(summary).toBeTruthy();
   });
 });

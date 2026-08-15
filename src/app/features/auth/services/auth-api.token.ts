@@ -1,6 +1,11 @@
 import { InjectionToken, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { RegisterTeacherRequest, RegisterStudentRequest, LoginRequest, AuthResponse } from '../../../core/models/auth.model';
+import {
+  RegisterTeacherRequest,
+  RegisterStudentRequest,
+  LoginRequest,
+  AuthResponse,
+} from '../../../core/models/auth.model';
 import { UserProfile } from '../../../core/models/user.model';
 import { AuthApiService } from './auth-api.service';
 
@@ -20,5 +25,5 @@ export const AUTH_API = new InjectionToken<IAuthApi>('AUTH_API', {
   providedIn: 'root',
   factory: () => {
     return inject(AuthApiService);
-  }
+  },
 });

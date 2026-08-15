@@ -1,0 +1,425 @@
+<div class="channel-page-container">
+  <!-- Background Glow Orbs -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
+  <!-- Page Header -->
+  <header class="channel-header">
+    <div class="header-badge-row">
+      <div class="badge-pill">
+        <span class="live-signal-dot"></span>
+        <span>قناة الأسئلة والنقاش المباشرة (SignalR)</span>
+      </div>
+    </div>
+
+    <div class="header-content-row">
+      <div>
+        <h1 class="main-title">منتدى الأسئلة والمناقشة الأكاديمية</h1>
+        <p class="subtitle">
+          اطرح استفساراتك وتناقش مع المعلم والمساعدين وزملائك في الشعبة، واطلع على الإجابات
+          النموذجية.
+        </p>
+      </div>
+
+      <button type="button" class="btn-ask-primary" (click)="openAskModal()">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+        <span>اسأل سؤالاً جديداً</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Classroom Subject Selector Pills -->
+  <section class="classrooms-selector-bar">
+    <span class="selector-label">المجموعة الدراسية:</span>
+    <div class="selector-pills-list">
+      @for (c of classrooms(); track c.id) {
+        <button
+          type="button"
+          class="classroom-pill"
+          [class.active]="selectedClassroomId() === c.id"
+          (click)="onSelectClassroom(c.id)">
+          <span class="subj-indicator"></span>
+          <span>{{ c.title }}</span>
+        </button>
+      }
+    </div>
+  </section>
+
+  <!-- Controls Bar (Search + Filter Chips + Sort) -->
+  <section class="controls-card">
+    <div class="search-input-wrapper">
+      <svg
+        class="search-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        type="text"
+        placeholder="ابحث في نص الأسئلة أو المفاهيم المطروحة..."
+        class="search-input"
+        [value]="qaService.searchQuery()"
+        (input)="onSearch($event)" />
+    </div>
+
+    <div class="filters-and-sort-row">
+      <!-- Filter Chips -->
+      <div class="filter-chips">
+        <button
+          type="button"
+          class="chip"
+          [class.active]="qaService.currentFilterBy() === 'all'"
+          (click)="onFilterChange('all')">
+          جميع الأسئلة
+        </button>
+        <button
+          type="button"
+          class="chip"
+          [class.active]="qaService.currentFilterBy() === 'answered'"
+          (click)="onFilterChange('answered')">
+          إجابة معتمدة 🌟
+        </button>
+        <button
+          type="button"
+          class="chip"
+          [class.active]="qaService.currentFilterBy() === 'unanswered'"
+          (click)="onFilterChange('unanswered')">
+          بانتظار رد المعلم
+        </button>
+        <button
+          type="button"
+          class="chip"
+          [class.active]="qaService.currentFilterBy() === 'myposts'"
+          (click)="onFilterChange('myposts')">
+          أسئلتي الخاصة
+        </button>
+      </div>
+
+      <!-- Sort Options -->
+      <div class="sort-selector">
+        <label for="sortSelect">ترتيب حسب:</label>
+        <select
+          id="sortSelect"
+          class="sort-dropdown"
+          [value]="qaService.currentSortBy()"
+          (change)="onSortChange($any($event.target).value)">
+          <option value="recent">الأحدث نشراً 🕒</option>
+          <option value="mostvoted">الأعلى تصويتاً 👍</option>
+          <option value="mostdiscussed">الأكثر تفاعلاً 💬</option>
+          <option value="trending">الشائع 🔥</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- Questions Feed List -->
+  <section class="questions-feed">
+    @if (qaService.loading()) {
+      <div class="loading-box">
+        <div class="spinner"></div>
+        <p>جارٍ تحميل أحدث الأسئلة والمناقشات...</p>
+      </div>
+    } @else {
+      @for (q of qaService.filteredQuestions(); track q.id) {
+        <article
+          class="question-card"
+          role="button"
+          tabindex="0"
+          (click)="openThread(q)"
+          (keydown.enter)="openThread(q)">
+          <div class="q-card-header">
+            <div class="author-info">
+              <div class="author-avatar">
+                <span>{{ q.authorName?.charAt(0) || 'ط' }}</span>
+              </div>
+              <div>
+                <div class="author-name-row">
+                  <span class="author-name">{{ q.authorName || 'طالب متميز' }}</span>
+                  @if (q.isAuthor) {
+                    <span class="you-badge">أنت</span>
+                  }
+                </div>
+                <span class="q-timestamp">{{ q.createdAt | date: 'medium' }}</span>
+              </div>
+            </div>
+
+            @if (q.hasTeacherAnswer) {
+              <div class="badge-answered">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>تم الرد من المعلم</span>
+              </div>
+            }
+          </div>
+
+          <div class="q-card-content">
+            <p class="q-text">{{ q.content }}</p>
+          </div>
+
+          <div class="q-card-footer">
+            <button
+              type="button"
+              class="btn-vote"
+              [class.voted]="q.hasVoted"
+              (click)="onToggleVote($event, q)"
+              title="تصويت تأييد">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2">
+                <path
+                  d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+              </svg>
+              <span>{{ q.voteCount }}</span>
+              <span class="vote-label">تصويت</span>
+            </button>
+
+            <button type="button" class="btn-replies-count">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2">
+                <path
+                  d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+              </svg>
+              <span>{{ q.replyCount }} {{ q.replyCount === 1 ? 'رد' : 'ردود' }}</span>
+            </button>
+          </div>
+        </article>
+      } @empty {
+        <div class="empty-channel-box">
+          <div class="empty-icon">💬</div>
+          <h3>لا توجد أسئلة حتى الآن في هذه المجموعة</h3>
+          <p>كن أول من يطرح استفساراً على المعلم والزملاء في هذه الشعبة الدراسية!</p>
+          <button type="button" class="btn-ask-secondary" (click)="openAskModal()">
+            طرح أول سؤال الآن
+          </button>
+        </div>
+      }
+    }
+  </section>
+
+  <!-- Modal: Ask New Question -->
+  @if (showAskModal()) {
+    <div
+      class="modal-backdrop animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      (click)="closeAskModal()"
+      (keydown.escape)="closeAskModal()">
+      <div
+        class="modal-card animate-scale-up"
+        role="document"
+        tabindex="0"
+        (click)="$event.stopPropagation()"
+        (keydown)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div>
+            <h3 class="modal-title">طرح سؤال دراسي جديد</h3>
+            <span class="modal-subtitle">
+              سيظهر سؤالك للمعلم وزملائك في {{ selectedClassroom().title }}
+            </span>
+          </div>
+          <button type="button" class="btn-close-x" (click)="closeAskModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <label class="input-label" for="questionInput">نص السؤال أو الاستفسار:</label>
+          <textarea
+            id="questionInput"
+            class="question-textarea"
+            rows="5"
+            placeholder="اكتب استفسارك بوضوح، وحدد رقم المسألة أو المحاضرة لتصلك الإجابة النموذجية أسرع..."
+            [value]="newQuestionText()"
+            (input)="newQuestionText.set($any($event.target).value)"></textarea>
+
+          <div class="ai-hint-box">
+            <strong>💡 نصيحة درايَة:</strong>
+            <p>
+              يمكنك الإشارة لرقم الصفحة أو عنوان الفيديو في الباقة حتى يتمكن المعلم والمساعدون من
+              فهم مسألتك بدقة.
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeAskModal()">إلغاء</button>
+          <button
+            type="button"
+            class="btn-submit"
+            [disabled]="qaService.sendingQuestion() || !newQuestionText().trim()"
+            (click)="submitQuestion()">
+            @if (qaService.sendingQuestion()) {
+              <span>جارٍ النشر...</span>
+            } @else {
+              <span>نشر السؤال</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal: Thread Discussion Detail -->
+  @if (showThreadModal()) {
+    <div
+      class="modal-backdrop animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      (click)="closeThread()"
+      (keydown.escape)="closeThread()">
+      <div
+        class="modal-card thread-modal-card animate-scale-up"
+        role="document"
+        tabindex="0"
+        (click)="$event.stopPropagation()"
+        (keydown)="$event.stopPropagation()">
+        <!-- Header -->
+        <div class="modal-header">
+          <div>
+            <h3 class="modal-title">تفاصيل النقاش والردود</h3>
+            <span class="modal-subtitle">{{ selectedClassroom().title }}</span>
+          </div>
+          <button type="button" class="btn-close-x" (click)="closeThread()">✕</button>
+        </div>
+
+        <!-- Thread Body -->
+        <div class="thread-body">
+          <!-- Main Question Box -->
+          @if (qaService.activeQuestion(); as q) {
+            <div class="thread-main-question">
+              <div class="q-header-row">
+                <div class="author-info">
+                  <div class="author-avatar">
+                    <span>{{ q.authorName?.charAt(0) || 'ط' }}</span>
+                  </div>
+                  <div>
+                    <span class="author-name">{{ q.authorName || 'طالب متميز' }}</span>
+                    <span class="q-timestamp">{{ q.createdAt | date: 'medium' }}</span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  class="btn-vote"
+                  [class.voted]="q.hasVoted"
+                  (click)="onToggleVote($event, q)">
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2">
+                    <path
+                      d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+                  </svg>
+                  <span>{{ q.voteCount }}</span>
+                </button>
+              </div>
+
+              <p class="thread-q-text">{{ q.content }}</p>
+            </div>
+          }
+
+          <!-- Replies List -->
+          <div class="replies-section">
+            <h4 class="replies-heading">
+              الردود والمناقشة ({{ qaService.activeReplies().length }})
+            </h4>
+
+            @if (qaService.loadingReplies()) {
+              <div class="loading-replies">
+                <div class="spinner-sm"></div>
+                <span>جارٍ تحميل الردود...</span>
+              </div>
+            } @else {
+              <div class="replies-list">
+                @for (rep of qaService.activeReplies(); track rep.id) {
+                  <div class="reply-bubble" [class.official-teacher-reply]="rep.isTeacherAnswer">
+                    <div class="reply-header">
+                      <div class="reply-author-group">
+                        <div class="reply-avatar" [class.avatar-teacher]="rep.isTeacherAnswer">
+                          <span>
+                            {{ rep.authorName?.charAt(0) || (rep.isTeacherAnswer ? 'م' : 'ط') }}
+                          </span>
+                        </div>
+                        <div>
+                          <div class="reply-name-row">
+                            <span class="reply-name">{{ rep.authorName || 'عضو' }}</span>
+                            @if (rep.isTeacherAnswer) {
+                              <span class="teacher-official-badge">⭐ إجابة المعلم الرسمية</span>
+                            } @else if (rep.authorRole === 'assistant') {
+                              <span class="assistant-badge">🛡️ مساعد</span>
+                            } @else if (rep.isAuthor) {
+                              <span class="you-badge">أنت</span>
+                            }
+                          </div>
+                          <span class="reply-timestamp">{{ rep.createdAt | date: 'short' }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p class="reply-text">{{ rep.content }}</p>
+                  </div>
+                } @empty {
+                  <div class="no-replies-yet">
+                    <p>لا توجد ردود بعد على هذا السؤال. كن أول من يضيف حلاً أو استفساراً!</p>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Add Reply Footer -->
+        <div class="thread-footer-input">
+          <input
+            type="text"
+            class="reply-input"
+            placeholder="اكتب ردك أو تعقيبك هنا..."
+            [value]="newReplyText()"
+            (input)="newReplyText.set($any($event.target).value)"
+            (keyup.enter)="submitReply()" />
+          <button
+            type="button"
+            class="btn-send-reply"
+            [disabled]="qaService.sendingReply() || !newReplyText().trim()"
+            (click)="submitReply()">
+            @if (qaService.sendingReply()) {
+              <span>...</span>
+            } @else {
+              <span>إرسال الرد</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

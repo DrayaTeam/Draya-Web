@@ -3,7 +3,9 @@
   border: 1px solid #f1f5f9;
   border-radius: 24px;
   padding: 24px;
-  box-shadow: 0px 20px 25px -5px rgba(0, 0, 0, 0.08), 0px 8px 10px -6px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0px 20px 25px -5px rgba(0, 0, 0, 0.08),
+    0px 8px 10px -6px rgba(0, 0, 0, 0.04);
   direction: rtl;
 }
 
@@ -58,7 +60,9 @@
   &.current {
     background: #0f4f49;
     color: #ffffff;
-    box-shadow: 0px 0px 0px 4px rgba(0, 187, 167, 0.2), 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0px 0px 0px 4px rgba(0, 187, 167, 0.2),
+      0px 10px 15px -3px rgba(0, 0, 0, 0.1);
   }
 
   &.answered {

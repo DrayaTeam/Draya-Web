@@ -22,11 +22,7 @@ import type {
 } from '../models/signalr-events.model';
 
 export type ConnectionStatus =
-  | 'Disconnected'
-  | 'Connecting'
-  | 'Reconnecting'
-  | 'Connected'
-  | 'Error';
+  'Disconnected' | 'Connecting' | 'Reconnecting' | 'Connected' | 'Error';
 
 /** Exponential backoff intervals (ms) for the automatic-reconnect policy. */
 const RECONNECT_DELAYS_MS: number[] = [0, 2000, 5000, 10000, 30000];
@@ -56,8 +52,7 @@ export class SignalRService {
   private readonly _materialParsed = signal<MaterialParsedEvent | null>(null);
   readonly materialParsed = this._materialParsed.asReadonly();
 
-  private readonly _examGenerationCompleted =
-    signal<ExamGenerationCompletedEvent | null>(null);
+  private readonly _examGenerationCompleted = signal<ExamGenerationCompletedEvent | null>(null);
   readonly examGenerationCompleted = this._examGenerationCompleted.asReadonly();
 
   private readonly _gradingCompleted = signal<GradingCompletedEvent | null>(null);
@@ -112,10 +107,8 @@ export class SignalRService {
     this.connection.on('MaterialParsed', (payload: MaterialParsedEvent) =>
       this._materialParsed.set(payload),
     );
-    this.connection.on(
-      'ExamGenerationCompleted',
-      (payload: ExamGenerationCompletedEvent) =>
-        this._examGenerationCompleted.set(payload),
+    this.connection.on('ExamGenerationCompleted', (payload: ExamGenerationCompletedEvent) =>
+      this._examGenerationCompleted.set(payload),
     );
     this.connection.on('GradingCompleted', (payload: GradingCompletedEvent) =>
       this._gradingCompleted.set(payload),

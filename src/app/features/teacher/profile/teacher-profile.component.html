@@ -22,24 +22,43 @@
             </div>
             <!-- Edit Icon Badge -->
             <button type="button" class="avatar-edit-badge" aria-label="Edit Avatar">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
                 <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
               </svg>
             </button>
           </div>
-          
+
           <div class="summary-details">
             <h3 class="teacher-name">{{ profile()!.fullName }}</h3>
-            <p class="teacher-role">{{ profile()!.specialization || ('TEACHER.PROFILE.TEACHER_ROLE' | translate) }}</p>
+            <p class="teacher-role">
+              {{ profile()!.specialization || ('TEACHER.PROFILE.TEACHER_ROLE' | translate) }}
+            </p>
           </div>
         </div>
 
         <!-- Edit Form (Always visible as per reference) -->
         <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="edit-form">
-          
           <div class="form-group">
-            <label for="fullName">{{ 'TEACHER.PROFILE.FULL_NAME' | translate }} <span class="text-red">*</span></label>
-            <input type="text" id="fullName" formControlName="fullName" class="form-control" [class.is-invalid]="editForm.controls.fullName.touched && editForm.controls.fullName.invalid">
+            <label for="fullName">
+              {{ 'TEACHER.PROFILE.FULL_NAME' | translate }}
+              <span class="text-red">*</span>
+            </label>
+            <input
+              type="text"
+              id="fullName"
+              formControlName="fullName"
+              class="form-control"
+              [class.is-invalid]="
+                editForm.controls.fullName.touched && editForm.controls.fullName.invalid
+              " />
             @if (editForm.controls.fullName.touched && editForm.controls.fullName.invalid) {
               <div class="error-text">{{ 'TEACHER.PROFILE.REQUIRED_FIELD' | translate }}</div>
             }
@@ -47,27 +66,52 @@
 
           <!-- Email is read-only -->
           <div class="form-group">
-            <label for="academyEmail">{{ 'TEACHER.PROFILE.EMAIL' | translate }} <span class="text-red">*</span></label>
-            <input type="text" id="academyEmail" [value]="profile()!.email" class="form-control disabled-input" disabled>
+            <label for="academyEmail">
+              {{ 'TEACHER.PROFILE.EMAIL' | translate }}
+              <span class="text-red">*</span>
+            </label>
+            <input
+              type="text"
+              id="academyEmail"
+              [value]="profile()!.email"
+              class="form-control disabled-input"
+              disabled />
           </div>
 
           <div class="form-group">
             <label for="phone">{{ 'TEACHER.PROFILE.PHONE' | translate }}</label>
-            <input type="text" id="phone" formControlName="phone" class="form-control" dir="ltr" style="text-align: right">
+            <input
+              type="text"
+              id="phone"
+              formControlName="phone"
+              class="form-control"
+              dir="ltr"
+              style="text-align: right" />
           </div>
 
           <div class="form-group">
             <label for="specialization">{{ 'TEACHER.PROFILE.SPECIALIZATION' | translate }}</label>
-            <input type="text" id="specialization" formControlName="specialization" class="form-control">
+            <input
+              type="text"
+              id="specialization"
+              formControlName="specialization"
+              class="form-control" />
           </div>
 
           <div class="form-group">
             <label for="description">{{ 'TEACHER.PROFILE.DESCRIPTION' | translate }}</label>
-            <textarea id="description" formControlName="description" rows="3" class="form-control"></textarea>
+            <textarea
+              id="description"
+              formControlName="description"
+              rows="3"
+              class="form-control"></textarea>
           </div>
 
           <div class="form-actions">
-            <button type="submit" class="btn-submit btn-block" [disabled]="editForm.invalid || isSaving()">
+            <button
+              type="submit"
+              class="btn-submit btn-block"
+              [disabled]="editForm.invalid || isSaving()">
               @if (isSaving()) {
                 <span class="spinner-small"></span>
               } @else {
@@ -81,7 +125,7 @@
       <!-- Settings Card (Dark Mode) -->
       <div class="settings-card card-panel">
         <h2 class="card-title">{{ 'TEACHER.PROFILE.APPEARANCE_TITLE' | translate }}</h2>
-        
+
         <div class="setting-item">
           <div class="setting-text">
             <h3 class="setting-label">{{ 'TEACHER.PROFILE.DARK_MODE' | translate }}</h3>
@@ -89,7 +133,10 @@
           </div>
           <!-- Toggle Switch -->
           <label class="toggle-switch">
-            <input type="checkbox" [checked]="themeService.isDarkMode()" (change)="themeService.toggleTheme()">
+            <input
+              type="checkbox"
+              [checked]="themeService.isDarkMode()"
+              (change)="themeService.toggleTheme()" />
             <span class="slider round"></span>
           </label>
         </div>

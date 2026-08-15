@@ -1,323 +1,362 @@
 <div class="student-dashboard-root animate-fade-in">
-  <!-- Top Ambient Blobs -->
-  <div class="ambient-blob blob-top-right"></div>
-  <div class="ambient-blob blob-bottom-left"></div>
+  <!-- ── Error Banner ─────────────────────────────────────────────────────── -->
+  @if (error()) {
+    <div class="dashboard-error-banner" role="alert">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+      <span>تعذّر تحميل البيانات — {{ error() }}</span>
+    </div>
+  }
 
-  <!-- Row 1: Hero Welcome Card + Daily Streak Box -->
-  <div class="top-hero-row">
-    <!-- Hero Banner Card -->
-    <div class="welcome-hero-card">
-      <div class="hero-bg-overlay"></div>
-
-      <!-- Date Badge -->
-      <div class="date-badge">
-        <svg
-          class="badge-star-icon"
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="#FFBA00"
-          stroke="#FFBA00"
-          stroke-width="1.2">
-          <polygon
-            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-        </svg>
-        <span>{{ summary().currentDateText }}</span>
+  <!-- ── Loading Skeleton ──────────────────────────────────────────────────── -->
+  @if (loading()) {
+    <div class="dashboard-skeleton">
+      <div class="skeleton-hero shimmer"></div>
+      <div class="skeleton-cards-row">
+        <div class="skeleton-card shimmer"></div>
+        <div class="skeleton-card shimmer"></div>
+        <div class="skeleton-card shimmer"></div>
       </div>
+      <div class="skeleton-course shimmer"></div>
+      <div class="skeleton-course shimmer"></div>
+      <div class="skeleton-course shimmer"></div>
+    </div>
+  }
 
-      <!-- Hero Greeting & Description -->
-      <h1 class="hero-title">
-        أهلاً بعودتك، {{ auth.currentUser()?.fullName || summary().studentName }}! 👋
-      </h1>
-      <p class="hero-subtext">
-        لديك {{ summary().scheduledExamsCount }} اختباران مجدولان قريباً هذا الأسبوع. واصل الدراسة يومياً وحافظ على لهيب حماسك!
-      </p>
+  <!-- ── Dashboard Content ─────────────────────────────────────────────────── -->
+  @if (!loading()) {
+    <div class="ambient-blob blob-top-right"></div>
+    <div class="ambient-blob blob-bottom-left"></div>
 
-      <!-- Rating/Performance Pill -->
-      <div class="performance-pill">
-        <span class="star-sparkle">✨</span>
-        <span class="perf-text">مستوى الأداء: ممتاز</span>
-      </div>
+    <!-- Row 1: Hero Welcome Card + Daily Streak Box -->
+    <div class="top-hero-row">
+      <!-- Hero Banner Card -->
+      <div class="welcome-hero-card">
+        <div class="hero-bg-overlay"></div>
 
-      <!-- Hero Action Buttons -->
-      <div class="hero-buttons-row">
-        <a routerLink="/student/exams" class="btn-hero-primary">
+        <!-- Date Badge -->
+        <div class="date-badge">
           <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round">
-            <polygon points="5 3 19 12 5 21 5 3" />
-          </svg>
-          <span>تابع من حيث توقفت</span>
-        </a>
-
-        <a routerLink="/student/teachers" class="btn-hero-secondary">
-          <span>تصفح المواد الجديدة</span>
-          <svg
+            class="badge-star-icon"
             width="14"
             height="14"
             viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round">
-            <line x1="7" y1="17" x2="17" y2="7" />
-            <polyline points="7 7 17 7 17 17" />
+            fill="#FFBA00"
+            stroke="#FFBA00"
+            stroke-width="1.2">
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
           </svg>
-        </a>
-      </div>
-    </div>
-
-    <!-- Daily Learning Streak Card -->
-    <div class="streak-card">
-      <div class="card-header-row">
-        <span class="card-section-label">حافز التعلم اليومي</span>
-        <span class="active-pill">نشط الآن 🔥</span>
-      </div>
-
-      <!-- Orange Flame Banner -->
-      <div class="streak-banner-box">
-        <div class="flame-icon-box">
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="#FEE685"
-            stroke="#FFFFFF"
-            stroke-width="2">
-            <path
-              d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3.5z" />
-          </svg>
-        </div>
-        <div class="streak-details">
-          <span class="streak-count">{{ summary().streakDays }} أيام متتالية</span>
-          <span class="streak-desc">سلسلة المذاكرة الحالية 🚀</span>
-        </div>
-      </div>
-
-      <!-- Stats Grid (Average & Completed Lessons) -->
-      <div class="streak-stats-row">
-        <div class="stat-cell blue-cell">
-          <span class="stat-title">المتوسط التراكمي</span>
-          <span class="stat-number">{{ summary().cumulativeAverage }}%</span>
+          <span>{{ summary().currentDateText }}</span>
         </div>
 
-        <div class="stat-cell purple-cell">
-          <span class="stat-title">المحاضرات المكتملة</span>
-          <span class="stat-number">{{ summary().completedLessonsCount }} درس</span>
+        <!-- Hero Greeting & Description -->
+        <h1 class="hero-title">
+          أهلاً بعودتك، {{ auth.currentUser()?.fullName || summary().studentName }}! 👋
+        </h1>
+        <p class="hero-subtext">
+          لديك {{ summary().scheduledExamsCount }} اختباران مجدولان قريباً هذا الأسبوع. واصل الدراسة
+          يومياً وحافظ على لهيب حماسك!
+        </p>
+
+        <!-- Rating/Performance Pill -->
+        <div class="performance-pill">
+          <span class="star-sparkle">✨</span>
+          <span class="perf-text">مستوى الأداء: ممتاز</span>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Row 2: 3 Cards Row (Average Performance, Subscribed Packages, Urgent Alerts) -->
-  <div class="middle-cards-row">
-    <!-- Card 1: Average Subject Performance -->
-    <div class="stat-card average-perf-card">
-      <div class="card-top-icon-row">
-        <span class="card-label">أداء المواد المتوسط</span>
-        <div class="icon-circle blue-circle">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#0084D1"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round">
-            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-            <polyline points="17 6 23 6 23 12" />
-          </svg>
-        </div>
-      </div>
-
-      <div class="number-badge-row">
-        <span class="big-number">{{ summary().cumulativeAverage }}%</span>
-        <span class="growth-pill">+{{ summary().monthlyGrowthPercent }}% هذا الشهر</span>
-      </div>
-      <span class="subtext-note">أعلى من {{ summary().percentileRanking }}% من الطلاب 👏</span>
-    </div>
-
-    <!-- Card 2: Subscribed Packages -->
-    <div class="stat-card packages-card">
-      <div class="card-top-icon-row">
-        <span class="card-label">الباقات المشترك بها</span>
-        <div class="icon-circle green-circle">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#00786F"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-          </svg>
-        </div>
-      </div>
-
-      <div class="number-badge-row">
-        <span class="big-number">{{ summary().subscribedPackagesCount }} باقات</span>
-      </div>
-      <span class="validity-note">✓ سارية حتى نهاية الترم</span>
-    </div>
-
-    <!-- Card 3: Urgent Alerts (Soft Red Tint) -->
-    <div class="stat-card urgent-alerts-card">
-      <div class="alerts-header">
-        <div class="title-with-icon">
-          <div class="icon-circle red-circle">
+        <!-- Hero Action Buttons -->
+        <div class="hero-buttons-row">
+          <a routerLink="/student/exams" class="btn-hero-primary">
             <svg
               width="16"
               height="16"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#EC003F"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+            <span>تابع من حيث توقفت</span>
+          </a>
+
+          <a routerLink="/student/teachers" class="btn-hero-secondary">
+            <span>تصفح المواد الجديدة</span>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
+              <line x1="7" y1="17" x2="17" y2="7" />
+              <polyline points="7 7 17 7 17 17" />
             </svg>
-          </div>
-          <span class="alerts-title">تنبيهات ومواعيد عاجلة</span>
+          </a>
         </div>
-        <span class="alert-count-pill">تنبيهان جديدان</span>
       </div>
 
-      <div class="alerts-list">
-        <div class="alert-row red-border">
-          <div class="alert-info">
-            <span class="dot red-dot"></span>
-            <div class="text-group">
-              <span class="item-title">امتحان الجبر التراكمي</span>
-              <span class="item-date">غداً 10:00 ص</span>
-            </div>
-          </div>
-          <span class="badge-urgent-red">عاجل جدًا</span>
+      <!-- Daily Learning Streak Card -->
+      <div class="streak-card">
+        <div class="card-header-row">
+          <span class="card-section-label">حافز التعلم اليومي</span>
+          <span class="active-pill">نشط الآن 🔥</span>
         </div>
 
-        <div class="alert-row yellow-border">
-          <div class="alert-info">
-            <span class="dot orange-dot"></span>
-            <div class="text-group">
-              <span class="item-title">تسليم واجب الفيزياء (الموجات)</span>
-              <span class="item-date">الخميس القادم</span>
-            </div>
+        <!-- Orange Flame Banner -->
+        <div class="streak-banner-box">
+          <div class="flame-icon-box">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="#FEE685"
+              stroke="#FFFFFF"
+              stroke-width="2">
+              <path
+                d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3.5z" />
+            </svg>
           </div>
-          <span class="badge-urgent-orange">قريباً</span>
+          <div class="streak-details">
+            <span class="streak-count">{{ summary().streakDays }} أيام متتالية</span>
+            <span class="streak-desc">سلسلة المذاكرة الحالية 🚀</span>
+          </div>
+        </div>
+
+        <!-- Stats Grid (Average & Completed Lessons) -->
+        <div class="streak-stats-row">
+          <div class="stat-cell blue-cell">
+            <span class="stat-title">المتوسط التراكمي</span>
+            <span class="stat-number">{{ summary().cumulativeAverage }}%</span>
+          </div>
+
+          <div class="stat-cell purple-cell">
+            <span class="stat-title">المحاضرات المكتملة</span>
+            <span class="stat-number">{{ summary().completedLessonsCount }} درس</span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Lower Split Content: Daily Courses List (Left) + Sidebar Cards (Right) -->
-  <div class="lower-content-grid">
-    <!-- Left Main Column (RTL): Daily Courses Progress -->
-    <section class="main-courses-column" aria-label="متابعة دروسك اليومية">
-      <div class="section-title-row">
-        <h2 class="column-heading">متابعة دروسك اليومية</h2>
-        <a routerLink="/student/courses" class="link-view-all">
-          <span>عرض كل المواد</span>
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12" />
-            <polyline points="12 19 5 12 12 5" />
-          </svg>
-        </a>
-      </div>
-
-      <!-- Loop of Course Progress Cards -->
-      <div class="courses-cards-list">
-        @for (course of enrolledCourses(); track course.id) {
-          <draya-course-progress-card
-            [course]="course"
-            (resumeWatching)="onResumeCourse($event)" />
-        }
-      </div>
-    </section>
-
-    <!-- Right Sidebar Column (RTL): Upcoming Exams + Weakness Points -->
-    <aside class="sidebar-column" aria-label="مساعد التعلم والامتحانات">
-      <!-- Widget 1: Upcoming Exams Schedule -->
-      <div class="sidebar-widget-card">
-        <div class="widget-header">
-          <div class="widget-icon-bg yellow-bg">
+    <!-- Row 2: 3 Cards Row (Average Performance, Subscribed Packages, Urgent Alerts) -->
+    <div class="middle-cards-row">
+      <!-- Card 1: Average Subject Performance -->
+      <div class="stat-card average-perf-card">
+        <div class="card-top-icon-row">
+          <span class="card-label">أداء المواد المتوسط</span>
+          <div class="icon-circle blue-circle">
             <svg
               width="18"
               height="18"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#E17100"
+              stroke="#0084D1"
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-              <line x1="16" y1="2" x2="16" y2="6" />
-              <line x1="8" y1="2" x2="8" y2="6" />
-              <line x1="3" y1="10" x2="21" y2="10" />
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+              <polyline points="17 6 23 6 23 12" />
             </svg>
           </div>
-          <h3 class="widget-title">جدول الامتحانات القادمة</h3>
         </div>
 
-        <div class="exams-list-group">
-          @for (exam of upcomingExams(); track exam.id) {
-            <draya-upcoming-exam-card [exam]="exam" />
-          }
+        <div class="number-badge-row">
+          <span class="big-number">{{ summary().cumulativeAverage }}%</span>
+          <span class="growth-pill">+{{ summary().monthlyGrowthPercent }}% هذا الشهر</span>
         </div>
-
-        <a routerLink="/student/exams" class="widget-action-link">
-          <span>عرض كل الامتحانات</span>
-        </a>
+        <span class="subtext-note">أعلى من {{ summary().percentileRanking }}% من الطلاب 👏</span>
       </div>
 
-      <!-- Widget 2: Weakness Topic Points -->
-      <div class="sidebar-widget-card">
-        <div class="widget-header">
-          <div class="widget-icon-bg purple-bg">
+      <!-- Card 2: Subscribed Packages -->
+      <div class="stat-card packages-card">
+        <div class="card-top-icon-row">
+          <span class="card-label">الباقات المشترك بها</span>
+          <div class="icon-circle green-circle">
             <svg
               width="18"
               height="18"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#9810FA"
+              stroke="#00786F"
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <circle cx="12" cy="12" r="6" />
-              <circle cx="12" cy="12" r="2" />
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
             </svg>
           </div>
-          <h3 class="widget-title">نقاط تحسين تحتاج تركيزك</h3>
         </div>
 
-        <div class="topics-list-group">
-          @for (topic of weaknessTopics(); track topic.id) {
-            <draya-weakness-topic-card [topic]="topic" />
+        <div class="number-badge-row">
+          <span class="big-number">{{ summary().subscribedPackagesCount }} باقات</span>
+        </div>
+        <span class="validity-note">✓ سارية حتى نهاية الترم</span>
+      </div>
+
+      <!-- Card 3: Urgent Alerts (Soft Red Tint) -->
+      <div class="stat-card urgent-alerts-card">
+        <div class="alerts-header">
+          <div class="title-with-icon">
+            <div class="icon-circle red-circle">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#EC003F"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+            </div>
+            <span class="alerts-title">تنبيهات ومواعيد عاجلة</span>
+          </div>
+          <span class="alert-count-pill">تنبيهان جديدان</span>
+        </div>
+
+        <div class="alerts-list">
+          <div class="alert-row red-border">
+            <div class="alert-info">
+              <span class="dot red-dot"></span>
+              <div class="text-group">
+                <span class="item-title">امتحان الجبر التراكمي</span>
+                <span class="item-date">غداً 10:00 ص</span>
+              </div>
+            </div>
+            <span class="badge-urgent-red">عاجل جدًا</span>
+          </div>
+
+          <div class="alert-row yellow-border">
+            <div class="alert-info">
+              <span class="dot orange-dot"></span>
+              <div class="text-group">
+                <span class="item-title">تسليم واجب الفيزياء (الموجات)</span>
+                <span class="item-date">الخميس القادم</span>
+              </div>
+            </div>
+            <span class="badge-urgent-orange">قريباً</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lower Split Content: Daily Courses List (Left) + Sidebar Cards (Right) -->
+    <div class="lower-content-grid">
+      <!-- Left Main Column (RTL): Daily Courses Progress -->
+      <section class="main-courses-column" aria-label="متابعة دروسك اليومية">
+        <div class="section-title-row">
+          <h2 class="column-heading">متابعة دروسك اليومية</h2>
+          <a routerLink="/student/courses" class="link-view-all">
+            <span>عرض كل المواد</span>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
+          </a>
+        </div>
+
+        <!-- Loop of Course Progress Cards -->
+        <div class="courses-cards-list">
+          @for (course of enrolledCourses(); track course.id) {
+            <draya-course-progress-card
+              [course]="course"
+              (resumeWatching)="onResumeCourse($event)" />
           }
         </div>
+      </section>
 
-        <a routerLink="/student/reports" class="widget-action-link">
-          <span>فتح تقارير التحليل المتقدمة</span>
-        </a>
-      </div>
-    </aside>
-  </div>
+      <!-- Right Sidebar Column (RTL): Upcoming Exams + Weakness Points -->
+      <aside class="sidebar-column" aria-label="مساعد التعلم والامتحانات">
+        <!-- Widget 1: Upcoming Exams Schedule -->
+        <div class="sidebar-widget-card">
+          <div class="widget-header">
+            <div class="widget-icon-bg yellow-bg">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#E17100"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+            </div>
+            <h3 class="widget-title">جدول الامتحانات القادمة</h3>
+          </div>
+
+          <div class="exams-list-group">
+            @for (exam of upcomingExams(); track exam.id) {
+              <draya-upcoming-exam-card [exam]="exam" />
+            }
+          </div>
+
+          <a routerLink="/student/exams" class="widget-action-link">
+            <span>عرض كل الامتحانات</span>
+          </a>
+        </div>
+
+        <!-- Widget 2: Weakness Topic Points -->
+        <div class="sidebar-widget-card">
+          <div class="widget-header">
+            <div class="widget-icon-bg purple-bg">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#9810FA"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <circle cx="12" cy="12" r="6" />
+                <circle cx="12" cy="12" r="2" />
+              </svg>
+            </div>
+            <h3 class="widget-title">نقاط تحسين تحتاج تركيزك</h3>
+          </div>
+
+          <div class="topics-list-group">
+            @for (topic of weaknessTopics(); track topic.id) {
+              <draya-weakness-topic-card [topic]="topic" />
+            }
+          </div>
+
+          <a routerLink="/student/reports" class="widget-action-link">
+            <span>فتح تقارير التحليل المتقدمة</span>
+          </a>
+        </div>
+      </aside>
+    </div>
+  }
+  <!-- end @if (!loading()) -->
 </div>

@@ -19,8 +19,7 @@ export const appRoutes: Routes = [
   // Unauthenticated: authentication feature (login page)
   {
     path: 'auth',
-    loadChildren: () =>
-      import('./features/auth/auth.routes').then((m) => m.authRoutes),
+    loadChildren: () => import('./features/auth/auth.routes').then((m) => m.authRoutes),
   },
 
   // Authenticated routes — protected by authGuard & roleGuard, using each feature area's dedicated layout
@@ -33,38 +32,41 @@ export const appRoutes: Routes = [
         canActivate: [roleGuard],
         data: { roles: ['teacher', 'admin'] },
         loadChildren: () =>
-          import('./features/teacher/teacher.routes').then(
-            (m) => m.teacherRoutes,
-          ),
+          import('./features/teacher/teacher.routes').then((m) => m.teacherRoutes),
       },
       {
         path: 'student',
         canActivate: [roleGuard],
         data: { roles: ['student'] },
         loadChildren: () =>
-          import('./features/student/student.routes').then(
-            (m) => m.studentRoutes,
-          ),
+          import('./features/student/student.routes').then((m) => m.studentRoutes),
       },
       {
         path: 'parent',
         canActivate: [roleGuard],
         data: { roles: ['parent'] },
-        loadChildren: () =>
-          import('./features/parent/parent.routes').then((m) => m.parentRoutes),
+        loadChildren: () => import('./features/parent/parent.routes').then((m) => m.parentRoutes),
       },
       {
         path: 'profile',
         loadComponent: () =>
           import('./features/auth/pages/profile/profile.component').then((m) => m.ProfileComponent),
-      }
+      },
+      {
+        path: 'payment/callback',
+        redirectTo: 'student/checkout/callback',
+      },
+      {
+        path: 'payments/callback',
+        redirectTo: 'student/checkout/callback',
+      },
     ],
   },
   {
     path: 'error',
     loadComponent: () =>
       import('./shared/components/global-error-fallback/global-error-fallback.component').then(
-        (m) => m.GlobalErrorFallbackComponent
+        (m) => m.GlobalErrorFallbackComponent,
       ),
   },
 

@@ -1,4 +1,7 @@
-// src/app/core/models/student-library.model.ts
+export interface LibraryBookChapter {
+  id: string;
+  title: string;
+}
 
 export interface LibraryBookItem {
   readonly id: string;
@@ -7,7 +10,9 @@ export interface LibraryBookItem {
   readonly subjectTagBgColor: string;
   readonly coverImageUrl: string;
   readonly pagesCount: number;
+  readonly totalPages?: number;
   readonly fileSizeMb: number;
   readonly fileFormat: string;
   readonly downloadUrl: string;
+  readonly chapters: readonly LibraryBookChapter[];
 }

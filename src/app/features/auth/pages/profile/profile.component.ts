@@ -4,13 +4,12 @@ import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
 
-
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [CommonModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './profile.component.html'
+  templateUrl: './profile.component.html',
 })
 export class ProfileComponent implements OnInit {
   private readonly auth = inject(AuthService);

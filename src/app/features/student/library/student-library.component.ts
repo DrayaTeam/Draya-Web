@@ -1,6 +1,6 @@
 // src/app/features/student/library/student-library.component.ts
 
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StudentLibraryService } from '../../../core/services/student-library.service';
@@ -22,22 +22,32 @@ export class StudentLibraryComponent {
 
   readonly books = this.libraryService.filteredBooks;
 
+  // PDF Preview Reader Modal State
+  readonly activePreviewBook = signal<LibraryBookItem | null>(null);
+  readonly activePreviewPage = signal<number>(1);
+
   onSearchChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.libraryService.setSearchQuery(value);
   }
 
   onDownload(book: LibraryBookItem): void {
-    this.toastService.info(
-      'تحميل الملف',
-      `جاري بدء تحميل كتاب: ${book.title} (بحجم ${book.fileSizeMb} MB)`
+    this.toastService.success(
+      'بدء تحميل الملف',
+      `جارٍ تحميل ملف PDF الخاص بكتاب [${book.title}] بحجم (${book.fileSizeMb} MB)...`,
     );
   }
 
   onPreview(book: LibraryBookItem): void {
-    this.toastService.info(
-      'معاينة الكتاب',
-      `جاري فتح المعاينة السريعة لكتاب: ${book.title}`
-    );
+    this.activePreviewBook.set(book);
+    this.activePreviewPage.set(1);
+  }
+
+  closePreview(): void {
+    this.activePreviewBook.set(null);
+  }
+
+  setPreviewPage(page: number): void {
+    this.activePreviewPage.set(page);
   }
 }

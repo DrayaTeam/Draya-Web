@@ -77,7 +77,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((err: HttpErrorResponse) => {
       const auth = injector.get(AuthService);
       // Avoid intercepting auth requests (login, logout, refresh) to prevent infinite loops
-      const isAuthRequest = req.url.includes('/auth/refresh') || req.url.includes('/auth/login') || req.url.includes('/auth/logout');
+      const isAuthRequest =
+        req.url.includes('/auth/refresh') ||
+        req.url.includes('/auth/login') ||
+        req.url.includes('/auth/logout');
 
       if (err.status === HttpStatusCode.Unauthorized && !isAuthRequest) {
         return auth.refresh().pipe(
@@ -89,8 +92,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           }),
           catchError((refreshErr) => {
             auth.logout();
-            return throwError(() => parseApiError(refreshErr instanceof HttpErrorResponse ? refreshErr : err));
-          })
+            return throwError(() =>
+              parseApiError(refreshErr instanceof HttpErrorResponse ? refreshErr : err),
+            );
+          }),
         );
       }
 
@@ -109,6 +114,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       return throwError(() => parseApiError(err));
-    })
+    }),
   );
 };

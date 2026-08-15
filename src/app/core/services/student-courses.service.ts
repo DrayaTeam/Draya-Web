@@ -1,9 +1,28 @@
 // src/app/core/services/student-courses.service.ts
 import { Injectable, signal, computed } from '@angular/core';
-import { SubscribedPackage, StudentCoursesHeaderInfo } from '../models/student-courses.model';
+import { catchError, of, tap } from 'rxjs';
+import { ApiBaseService } from '../api/api-base.service';
+import {
+  SubscribedPackage,
+  StudentCoursesHeaderInfo,
+  ClassroomDtoPagedResult,
+} from '../models/student-courses.model';
+
+const COURSE_GRADIENTS = [
+  'linear-gradient(90deg, #00A6F4 0%, #4F39F6 100%)',
+  'linear-gradient(90deg, #00BC7D 0%, #009689 100%)',
+  'linear-gradient(90deg, #AD46FF 0%, #E60076 100%)',
+  'linear-gradient(90deg, #FF6B35 0%, #F7C59F 100%)',
+];
+
+const COURSE_BANNERS = [
+  'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=800&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=800&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?q=80&w=800&auto=format&fit=crop',
+];
 
 @Injectable({ providedIn: 'root' })
-export class StudentCoursesService {
+export class StudentCoursesService extends ApiBaseService {
   readonly headerInfo = signal<StudentCoursesHeaderInfo>({
     badgeText: 'محتواك المفضل وتحديات التعلم',
     mainHeading: 'باقاتي الدراسية النشطة',
@@ -11,49 +30,57 @@ export class StudentCoursesService {
       'استعرض باقاتك الأكاديمية النشطة، وتابع المحاضرات والامتحانات المرفقة لكل مادة بحماس.',
   });
 
-  readonly searchQuery = signal<string>('');
+  private readonly _loading = signal<boolean>(false);
+  private readonly _subscribedPackages = signal<SubscribedPackage[]>([]);
 
-  readonly subscribedPackages = signal<SubscribedPackage[]>([
-    {
-      id: 'pkg-1',
-      title: 'باقة الجبر وحساب المثلثات للشهادة الثانوية',
-      teacherName: 'أ. أحمد السيد',
-      subjectName: 'الرياضيات',
-      statusText: 'سارية ومفعّلة',
-      isActive: true,
-      completedLessons: 12,
-      totalLessons: 18,
-      progressPercent: 68,
-      studyGroupName: 'مجموعة أ - علمي رياضة',
-      bannerImageUrl:
-        'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=800&auto=format&fit=crop',
-      progressGradient: 'linear-gradient(90deg, #00A6F4 0%, #4F39F6 100%)',
-    },
-    {
-      id: 'pkg-2',
-      title: 'باقة الكيمياء العضوية المتقدمة والمراجعة النهائية',
-      teacherName: 'أ. أحمد سامي',
-      subjectName: 'الكيمياء',
-      statusText: 'سارية ومفعّلة',
-      isActive: true,
-      completedLessons: 17,
-      totalLessons: 20,
-      progressPercent: 85,
-      studyGroupName: 'مجموعة ج - مراجعة عامة',
-      bannerImageUrl:
-        'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=800&auto=format&fit=crop',
-      progressGradient: 'linear-gradient(90deg, #00BC7D 0%, #009689 100%)',
-    },
-  ]);
+  readonly loading = this._loading.asReadonly();
+  readonly searchQuery = signal<string>('');
+  readonly subscribedPackages = this._subscribedPackages.asReadonly();
 
   readonly filteredPackages = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
-    if (!query) return this.subscribedPackages();
-    return this.subscribedPackages().filter(
+    const list = this.subscribedPackages();
+    if (!query) return list;
+    return list.filter(
       (pkg) =>
         pkg.title.toLowerCase().includes(query) ||
         pkg.teacherName.toLowerCase().includes(query) ||
         pkg.subjectName.toLowerCase().includes(query),
     );
   });
+
+  loadCourses(): void {
+    this._loading.set(true);
+    this.get<ClassroomDtoPagedResult>('/classrooms')
+      .pipe(
+        tap((res) => {
+          const items = res?.items || [];
+          this._subscribedPackages.set(
+            items.map((c, idx) => ({
+              id: c.classroomId,
+              title: c.name || 'باقة دراسية',
+              teacherName: c.gradeLevelName ? `أستاذ ${c.subjectName || ''}` : 'معلم دراية',
+              subjectName: c.subjectName || 'المادة الدراسية',
+              statusText: c.isActive ? 'سارية ومفعّلة' : 'غير نشطة',
+              isActive: c.isActive,
+              completedLessons: 0,
+              totalLessons: 10,
+              progressPercent: 0,
+              studyGroupName: c.classroomTypeName
+                ? `${c.classroomTypeName} - ${c.gradeLevelName || ''}`
+                : 'مجموعة دراسية',
+              bannerImageUrl: COURSE_BANNERS[idx % COURSE_BANNERS.length],
+              progressGradient: COURSE_GRADIENTS[idx % COURSE_GRADIENTS.length],
+            })),
+          );
+          this._loading.set(false);
+        }),
+        catchError(() => {
+          this._subscribedPackages.set([]);
+          this._loading.set(false);
+          return of(null);
+        }),
+      )
+      .subscribe();
+  }
 }

@@ -9,7 +9,7 @@ describe('Different Email Validator', () => {
   beforeEach(() => {
     group = new FormGroup({
       email: new FormControl(''),
-      parentGuardianEmail: new FormControl('')
+      parentGuardianEmail: new FormControl(''),
     });
   });
 
@@ -26,7 +26,7 @@ describe('Different Email Validator', () => {
   it('should return null if emails are different', () => {
     group.patchValue({
       email: 'student@test.com',
-      parentGuardianEmail: 'parent@test.com'
+      parentGuardianEmail: 'parent@test.com',
     });
     expect(validator(group)).toBeNull();
   });
@@ -34,7 +34,7 @@ describe('Different Email Validator', () => {
   it('should return error if emails are exactly the same', () => {
     group.patchValue({
       email: 'same@test.com',
-      parentGuardianEmail: 'same@test.com'
+      parentGuardianEmail: 'same@test.com',
     });
     const result = validator(group);
     expect(result).toBeTruthy();
@@ -44,7 +44,7 @@ describe('Different Email Validator', () => {
   it('should return error if emails are same but differ in case', () => {
     group.patchValue({
       email: 'Same@Test.com',
-      parentGuardianEmail: 'same@test.com'
+      parentGuardianEmail: 'same@test.com',
     });
     const result = validator(group);
     expect(result).toBeTruthy();

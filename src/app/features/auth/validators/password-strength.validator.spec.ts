@@ -1,5 +1,8 @@
 import { FormControl } from '@angular/forms';
-import { passwordStrengthValidator, calculatePasswordStrength } from './password-strength.validator';
+import {
+  passwordStrengthValidator,
+  calculatePasswordStrength,
+} from './password-strength.validator';
 import { AUTH_CONSTANTS } from '../constants/auth.constants';
 
 describe('Password Strength Validator', () => {

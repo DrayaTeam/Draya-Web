@@ -40,7 +40,12 @@ describe('roleGuard', () => {
   });
 
   it('should allow access if user role matches allowed roles', () => {
-    currentUserSignal.set({ userId: '1', email: 's@test.com', fullName: 'Student', role: 'student' });
+    currentUserSignal.set({
+      userId: '1',
+      email: 's@test.com',
+      fullName: 'Student',
+      role: 'student',
+    });
     const mockRoute = { data: { roles: ['student'] } } as unknown as ActivatedRouteSnapshot;
     const mockState = {} as RouterStateSnapshot;
 
@@ -50,7 +55,12 @@ describe('roleGuard', () => {
   });
 
   it('should redirect to student dashboard if teacher tries to access student route', () => {
-    currentUserSignal.set({ userId: '2', email: 't@test.com', fullName: 'Teacher', role: 'teacher' });
+    currentUserSignal.set({
+      userId: '2',
+      email: 't@test.com',
+      fullName: 'Teacher',
+      role: 'teacher',
+    });
     const mockRoute = { data: { roles: ['student'] } } as unknown as ActivatedRouteSnapshot;
     const mockState = {} as RouterStateSnapshot;
 
@@ -62,8 +72,15 @@ describe('roleGuard', () => {
   });
 
   it('should redirect to student dashboard if student tries to access teacher route', () => {
-    currentUserSignal.set({ userId: '1', email: 's@test.com', fullName: 'Student', role: 'student' });
-    const mockRoute = { data: { roles: ['teacher', 'admin'] } } as unknown as ActivatedRouteSnapshot;
+    currentUserSignal.set({
+      userId: '1',
+      email: 's@test.com',
+      fullName: 'Student',
+      role: 'student',
+    });
+    const mockRoute = {
+      data: { roles: ['teacher', 'admin'] },
+    } as unknown as ActivatedRouteSnapshot;
     const mockState = {} as RouterStateSnapshot;
 
     TestBed.runInInjectionContext(() => {

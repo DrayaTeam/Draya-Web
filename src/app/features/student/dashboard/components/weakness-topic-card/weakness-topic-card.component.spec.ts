@@ -33,7 +33,9 @@ describe('WeaknessTopicCardComponent', () => {
 
   it('should render topic title and score percentage', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.topic-title')?.textContent).toContain('المشتقات والاتصال الرياضي');
+    expect(compiled.querySelector('.topic-title')?.textContent).toContain(
+      'المشتقات والاتصال الرياضي',
+    );
     expect(compiled.querySelector('.score-percent')?.textContent).toContain('42%');
   });
 });

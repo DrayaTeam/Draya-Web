@@ -8,12 +8,7 @@ import { ConnectionStatusBannerComponent } from '../../shared/components/connect
 @Component({
   selector: 'draya-teacher-layout',
   standalone: true,
-  imports: [
-    RouterOutlet,
-    TeacherSidebarComponent,
-    TranslatePipe,
-    ConnectionStatusBannerComponent,
-  ],
+  imports: [RouterOutlet, TeacherSidebarComponent, TranslatePipe, ConnectionStatusBannerComponent],
   templateUrl: './teacher-layout.component.html',
   styleUrl: './teacher-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

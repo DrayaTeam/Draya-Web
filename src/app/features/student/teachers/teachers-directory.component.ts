@@ -1,5 +1,5 @@
-// src/app/features/student/teachers/teachers-directory.component.ts
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TeacherDirectoryService } from '../../../core/services/teacher-directory.service';
 import { TeacherFilterComponent } from './components/teacher-filter/teacher-filter.component';
@@ -15,14 +15,21 @@ import { ToastService } from '../../../core/services/toast.service';
   styleUrl: './teachers-directory.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TeachersDirectoryComponent {
+export class TeachersDirectoryComponent implements OnInit {
+  private readonly router = inject(Router);
   readonly teacherService = inject(TeacherDirectoryService);
   private readonly toastService = inject(ToastService);
 
+  readonly loading = this.teacherService.loading;
+  readonly skeletonCards = [1, 2, 3, 4, 5, 6];
   readonly searchQuery = this.teacherService.searchQuery;
   readonly selectedCategory = this.teacherService.selectedCategory;
   readonly filteredTeachers = this.teacherService.filteredTeachers;
   readonly subjectOptions = this.teacherService.subjectOptions;
+
+  ngOnInit(): void {
+    this.teacherService.loadTeachers();
+  }
 
   onSearchQueryChange(query: string): void {
     this.teacherService.setSearchQuery(query);
@@ -33,9 +40,6 @@ export class TeachersDirectoryComponent {
   }
 
   onViewPackages(teacher: TeacherDirectoryItem): void {
-    this.toastService.info(
-      'استعراض الباقات',
-      `جارٍ الانتقال لباقات المعلم ${teacher.name}...`,
-    );
+    this.router.navigate(['/student/teachers', teacher.id]);
   }
 }

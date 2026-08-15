@@ -1,0 +1,320 @@
+// src/app/features/student/teachers/teacher-details/teacher-details.component.scss
+
+.teacher-details-root {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.back-nav-row {
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    color: #374151;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+    &:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+      color: #0f4f49;
+    }
+  }
+}
+
+.teacher-hero-card {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  padding: 28px;
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid #f3f4f6;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+
+  .teacher-avatar {
+    width: 84px;
+    height: 84px;
+    border-radius: 20px;
+    object-cover: cover;
+    border: 3px solid #e6f4f2;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .verified-badge {
+    position: absolute;
+    bottom: -4px;
+    left: -4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #00bc7d;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+  }
+}
+
+.hero-info {
+  flex: 1;
+  min-width: 0;
+
+  .name-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    .teacher-name {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #111827;
+      margin: 0;
+    }
+
+    .subject-badge {
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: #e6f4f2;
+      color: #0f4f49;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .rating-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+      color: #b45309;
+      font-size: 0.8125rem;
+      font-weight: 700;
+    }
+  }
+
+  .teacher-bio {
+    font-size: 0.875rem;
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 12px 0 16px;
+  }
+
+  .stats-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-top: 14px;
+    border-top: 1px solid #f3f4f6;
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+
+      .stat-value {
+        font-size: 1.125rem;
+        font-weight: 800;
+        color: #0f4f49;
+      }
+
+      .stat-label {
+        font-size: 0.75rem;
+        color: #6b7280;
+      }
+    }
+
+    .stat-divider {
+      width: 1px;
+      height: 24px;
+      background: #e5e7eb;
+    }
+  }
+}
+
+.packages-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .section-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #111827;
+      margin: 0;
+    }
+
+    .packages-count-tag {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: #6b7280;
+      background: #f3f4f6;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+  }
+
+  .packages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+
+  .package-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+    border-radius: 20px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    transition: all 0.25s ease;
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      border-color: #00bc7d;
+    }
+
+    .pkg-top-info {
+      .pkg-subject-tag {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #0f4f49;
+        background: #e6f4f2;
+        padding: 3px 8px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+      }
+
+      .pkg-name {
+        font-size: 1.0625rem;
+        font-weight: 800;
+        color: #111827;
+        margin: 0 0 12px;
+        line-height: 1.4;
+      }
+
+      .pkg-meta-row {
+        display: flex;
+        gap: 16px;
+
+        .meta-item {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.8125rem;
+          color: #6b7280;
+          font-weight: 600;
+
+          svg {
+            color: #9ca3af;
+          }
+        }
+      }
+    }
+
+    .pkg-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #f3f4f6;
+
+      .price-box {
+        display: flex;
+        flex-direction: column;
+
+        .price-label {
+          font-size: 0.6875rem;
+          color: #9ca3af;
+          font-weight: 600;
+        }
+
+        .price-val {
+          font-size: 1.25rem;
+          font-weight: 900;
+          color: #0f4f49;
+
+          small {
+            font-size: 0.75rem;
+            font-weight: 700;
+          }
+        }
+      }
+
+      .btn-enroll {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 16px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #1d6e63 0%, #15524a 100%);
+        color: white;
+        border: none;
+        font-size: 0.8125rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          opacity: 0.92;
+          transform: scale(1.02);
+        }
+      }
+    }
+  }
+}
+
+.loading-skeleton {
+  height: 240px;
+  border-radius: 24px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e9eaec 50%, #f3f4f6 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+}

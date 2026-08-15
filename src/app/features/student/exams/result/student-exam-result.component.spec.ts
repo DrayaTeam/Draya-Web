@@ -27,8 +27,12 @@ describe('StudentExamResultComponent', () => {
 
   it('should render main title and review section title', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.main-title')?.textContent).toContain('تقرير تحليل نتيجة الامتحان');
-    expect(compiled.querySelector('.section-title')?.textContent).toContain('مراجعة الأسئلة والإجابات');
+    expect(compiled.querySelector('.main-title')?.textContent).toContain(
+      'تقرير تحليل نتيجة الامتحان',
+    );
+    expect(compiled.querySelector('.section-title')?.textContent).toContain(
+      'مراجعة الأسئلة والإجابات',
+    );
   });
 
   it('should render review cards', () => {

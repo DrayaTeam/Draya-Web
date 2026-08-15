@@ -7,7 +7,10 @@
   <header class="page-header">
     <div class="badge-pill">
       <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="#FD9A00" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
       </svg>
       <span>المكتبة الأكاديمية الرقمية</span>
     </div>
@@ -26,10 +29,17 @@
         class="search-input"
         placeholder="بحث باسم الكتاب، المادة، أو الفصل الدراسي..."
         [value]="libraryService.searchQuery()"
-        (input)="onSearchChange($event)"
-      />
-      <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        (input)="onSearchChange($event)" />
+      <svg
+        class="search-icon"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
       </svg>
     </div>
   </section>
@@ -40,15 +50,148 @@
       <app-book-card
         [book]="book"
         (download)="onDownload($event)"
-        (preview)="onPreview($event)"
-      ></app-book-card>
+        (preview)="onPreview($event)"></app-book-card>
     } @empty {
       <div class="empty-state">
-        <svg class="empty-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        <svg
+          class="empty-icon"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="1.5">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
         </svg>
         <p class="empty-text">لم يتم العثور على كتب تطابق البحث الحالي.</p>
       </div>
     }
   </section>
+
+  <!-- PDF Reader Modal Previewer -->
+  @if (activePreviewBook(); as b) {
+    <div
+      class="pdf-modal-backdrop animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      (click)="closePreview()"
+      (keydown.escape)="closePreview()">
+      <div
+        class="pdf-modal-container animate-scale-up"
+        role="document"
+        tabindex="0"
+        (click)="$event.stopPropagation()"
+        (keydown)="$event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <div>
+            <h3 class="modal-book-title">{{ b.title }}</h3>
+            <span class="modal-sub">مكتبة درايَة الرقمية — معاينة سريعة</span>
+          </div>
+          <button type="button" class="btn-close-modal" (click)="closePreview()" title="إغلاق">
+            ✕
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <!-- Chapters Table of Contents -->
+          <div class="chapters-sidebar">
+            <span class="sidebar-title">الفهرس الدراسي:</span>
+            @for (ch of b.chapters; track ch.id; let idx = $index) {
+              <button
+                type="button"
+                class="chapter-btn"
+                [class.active]="activePreviewPage() === idx + 1"
+                (click)="setPreviewPage(idx + 1)">
+                {{ ch.title }}
+              </button>
+            }
+          </div>
+
+          <!-- Page Canvas Simulator -->
+          <div class="page-canvas-simulator">
+            <div class="canvas-header">
+              <span class="curriculum-tag">درايَة التعليمية — المنهج الرسمي</span>
+              <span class="page-count-badge">
+                الصفحة {{ activePreviewPage() }} من {{ b.totalPages }}
+              </span>
+            </div>
+
+            <div class="canvas-content">
+              @if (activePreviewPage() === 1) {
+                <div>
+                  <h2 class="chapter-headline">{{ b.chapters[0]?.title || 'الفصل الأول' }}</h2>
+                  <p class="chapter-body">
+                    تعتبر المصفوفات أداة رياضية فعالة لحل الأنظمة الخطية وتنظيم البيانات الهندسية.
+                    في هذا الجزء، سنتناول جمع وطرح المصفوفات وخصائص الضرب وكيفية استخدام المحددات
+                    لحساب المساحات الفراغية وتعيين معكوس المصفوفات الثنائية والثلاثية.
+                  </p>
+                  <div class="ai-study-tip">
+                    <strong>💡 نصيحة دراسات درايَة الذكية:</strong>
+                    <p>
+                      تذكر دائماً أن ضرب المصفوفات ليس تبديلياً، أي أن AB لا يساوي بالضرورة BA في
+                      الجبر الخطي.
+                    </p>
+                  </div>
+                </div>
+              } @else if (activePreviewPage() === 2) {
+                <div>
+                  <h2 class="chapter-headline">{{ b.chapters[1]?.title || 'الفصل الثاني' }}</h2>
+                  <p class="chapter-body">
+                    تعتمد الهندسة الفراغية على إدراك الأبعاد الثلاثية وتحديد المتجهات في الفراغ.
+                    سنتعرف على طريقة حساب الضرب القياسي والضرب الاتجاهي للمتجهات، والزاوية بين
+                    مستقيمين، وطرق إيجاد معادلة خط مستقيم ومعادلة المستوى في الفراغ بشكل مبسط.
+                  </p>
+                </div>
+              } @else {
+                <div class="preview-limit-box">
+                  <div class="icon-limit">📖</div>
+                  <h4>نهاية صفحات المعاينة المجانية</h4>
+                  <p>
+                    لقد استعرضت الصفحات النموذجية الأولى. يمكنك تحميل الكتاب كاملاً بصيغة PDF
+                    للمذاكرة أوفلاين والطباعة.
+                  </p>
+                  <button type="button" class="btn-download-full" (click)="onDownload(b)">
+                    تحميل الكتاب كاملاً PDF
+                  </button>
+                </div>
+              }
+            </div>
+
+            <!-- Canvas Pagination Controls -->
+            <div class="canvas-footer-controls">
+              <button
+                type="button"
+                class="btn-pager"
+                [disabled]="activePreviewPage() === 1"
+                (click)="setPreviewPage(activePreviewPage() - 1)">
+                الصفحة السابقة
+              </button>
+
+              <button
+                type="button"
+                class="btn-pager"
+                [disabled]="activePreviewPage() >= b.chapters.length + 1"
+                (click)="setPreviewPage(activePreviewPage() + 1)">
+                الصفحة التالية
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn-close-secondary" (click)="closePreview()">
+            إغلاق المعاينة
+          </button>
+          <button type="button" class="btn-download-primary" (click)="onDownload(b)">
+            تحميل PDF كامل
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

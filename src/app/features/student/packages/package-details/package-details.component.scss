@@ -1,0 +1,530 @@
+// src/app/features/student/packages/package-details/package-details.component.scss
+
+.package-details-root {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.back-nav-row {
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    color: #374151;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+      color: #0f4f49;
+    }
+  }
+}
+
+.pkg-hero-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 28px;
+  padding: 32px;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fbfa 100%);
+  border-radius: 24px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hero-content {
+    flex: 1;
+
+    .hero-tags {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+
+      .subject-tag {
+        padding: 4px 12px;
+        border-radius: 999px;
+        background: #e6f4f2;
+        color: #0f4f49;
+        font-size: 0.75rem;
+        font-weight: 800;
+      }
+
+      .enrolled-tag {
+        padding: 4px 12px;
+        border-radius: 999px;
+        background: #d0fae5;
+        color: #006045;
+        font-size: 0.75rem;
+        font-weight: 800;
+      }
+    }
+
+    .pkg-title {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #111827;
+      margin: 0 0 6px;
+      line-height: 1.35;
+    }
+
+    .teacher-subtitle {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin: 0 0 12px;
+
+      strong {
+        color: #0f4f49;
+      }
+    }
+
+    .pkg-desc {
+      font-size: 0.875rem;
+      color: #4b5563;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+
+  .hero-pricing-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 24px;
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    min-width: 220px;
+
+    .price-title {
+      font-size: 0.75rem;
+      color: #6b7280;
+      font-weight: 700;
+    }
+
+    .price-display {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+
+      .amount {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #0f4f49;
+      }
+
+      .currency {
+        font-size: 0.8125rem;
+        font-weight: 700;
+        color: #6b7280;
+      }
+    }
+
+    &.enrolled-box {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+
+    .enrolled-badge-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: #dcfce7;
+      color: #166534;
+      font-size: 0.875rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+
+      .badge-icon-check {
+        font-weight: 900;
+      }
+    }
+
+    .btn-hero-enrolled {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px 20px;
+      border-radius: 14px;
+      background: #16a34a;
+      color: white;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 800;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(22, 163, 74, 0.25);
+
+      &:hover {
+        background: #15803d;
+        transform: translateY(-2px);
+      }
+    }
+
+    .btn-hero-buy {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px 20px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #1d6e63 0%, #15524a 100%);
+      color: white;
+      border: none;
+      font-size: 0.875rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(29, 110, 99, 0.25);
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(29, 110, 99, 0.35);
+      }
+    }
+  }
+}
+
+.active-subscription-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+  border: 1.5px solid #a7f3d0;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08);
+
+  .banner-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  .banner-text {
+    strong {
+      display: block;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #065f46;
+      margin-bottom: 4px;
+    }
+
+    p {
+      font-size: 0.875rem;
+      color: #047857;
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+}
+
+.activation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+
+  .activation-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1.5px solid #e5e7eb;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+
+    .card-icon-header {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+
+      .icon-circle {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        &.teal-circle {
+          background: #e6f4f2;
+          color: #0f4f49;
+        }
+
+        &.blue-circle {
+          background: #e0f2fe;
+          color: #0284c7;
+        }
+      }
+
+      .card-title {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #111827;
+        margin: 0 0 4px;
+      }
+
+      .card-desc {
+        font-size: 0.8125rem;
+        color: #6b7280;
+        margin: 0;
+        line-height: 1.4;
+      }
+    }
+
+    .code-input-form {
+      display: flex;
+      gap: 10px;
+
+      .input-code {
+        flex: 1;
+        padding: 10px 16px;
+        border-radius: 12px;
+        border: 1.5px solid #d1d5db;
+        background: #f9fafb;
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #111827;
+        outline: none;
+        transition: all 0.2s ease;
+
+        &:focus {
+          border-color: #0f4f49;
+          background: #ffffff;
+          box-shadow: 0 0 0 3px rgba(15, 79, 73, 0.1);
+        }
+      }
+
+      .btn-redeem {
+        padding: 10px 20px;
+        border-radius: 12px;
+        background: #0f4f49;
+        color: white;
+        border: none;
+        font-size: 0.875rem;
+        font-weight: 800;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+
+        &:hover:not(:disabled) {
+          background: #145f58;
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    .btn-direct-buy {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      background: #f3f4f6;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+      font-size: 0.875rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #e5e7eb;
+        color: #0f4f49;
+      }
+    }
+  }
+}
+
+.features-card {
+  padding: 24px;
+  background: #f9fbfa;
+  border-radius: 20px;
+  border: 1px solid #e6f4f2;
+
+  .features-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #111827;
+    margin: 0 0 16px;
+  }
+
+  .features-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.875rem;
+      color: #374151;
+      font-weight: 600;
+
+      .check-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #00bc7d;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 900;
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+.syllabus-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .syllabus-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #111827;
+    margin: 0;
+  }
+
+  .chapters-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .chapter-card {
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #f3f4f6;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+
+      .chapter-heading {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #111827;
+        margin: 0 0 14px;
+      }
+
+      .lessons-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        .lesson-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 12px 16px;
+          border-radius: 12px;
+          background: #f9fafb;
+          border: 1px solid #f3f4f6;
+          transition: all 0.2s ease;
+
+          &.enrolled-active {
+            cursor: pointer;
+
+            &:hover {
+              background: #f0fdf4;
+              border-color: #bbf7d0;
+            }
+          }
+
+          .lesson-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            .lesson-icon {
+              width: 28px;
+              height: 28px;
+              border-radius: 8px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              &.video-icon {
+                background: #e0f2fe;
+                color: #0284c7;
+              }
+
+              &.pdf-icon {
+                background: #fee2e2;
+                color: #dc2626;
+              }
+
+              &.exam-icon {
+                background: #fef3c7;
+                color: #d97706;
+              }
+            }
+
+            .lesson-title {
+              font-size: 0.875rem;
+              font-weight: 700;
+              color: #374151;
+            }
+          }
+
+          .lesson-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            .lesson-duration {
+              font-size: 0.75rem;
+              color: #9ca3af;
+              font-weight: 600;
+            }
+
+            .play-hint {
+              font-size: 0.8125rem;
+              font-weight: 800;
+              color: #00bc7d;
+            }
+
+            .lock-icon {
+              font-size: 0.875rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.loading-skeleton {
+  height: 280px;
+  border-radius: 24px;
+}
