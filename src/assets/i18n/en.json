@@ -92,6 +92,11 @@
     },
     "PROFILE": {
       "TITLE": "My Profile"
+    },
+    "VALIDATION": {
+      "INVALID_DATE": "Invalid date",
+      "FUTURE_DATE": "Date cannot be in the future",
+      "MIN_AGE_ERROR": "Age must be at least 10 years"
     }
   },
   "auth": {
@@ -485,6 +490,25 @@
       "TUESDAY": "Tue",
       "WEDNESDAY": "Wed",
       "THURSDAY": "Thu"
+    },
+    "PROFILE": {
+      "PAGE_TITLE": "Profile",
+      "PAGE_SUBTITLE": "Manage your account preferences and personal information.",
+      "APPEARANCE_TITLE": "Appearance & Notifications",
+      "DARK_MODE": "Dark Mode",
+      "DARK_MODE_DESC": "Toggle the platform's overall appearance between light and dark",
+      "PERSONAL_INFO_TITLE": "Teacher Profile",
+      "TEACHER_ROLE": "Teacher",
+      "FULL_NAME": "Full Name",
+      "EMAIL": "Academy Email",
+      "PHONE": "Phone Number",
+      "NO_PHONE": "Not provided",
+      "SPECIALIZATION": "Specialization",
+      "NO_SPECIALIZATION": "Not specified",
+      "DESCRIPTION": "Short Bio",
+      "REQUIRED_FIELD": "This field is required.",
+      "CANCEL": "Cancel",
+      "SAVE_CHANGES": "Save Changes"
     }
   },
   "STUDENT": {
