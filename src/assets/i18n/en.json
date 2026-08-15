@@ -36,6 +36,8 @@
       "FULL_NAME": "Full Name",
       "EMAIL": "Email Address",
       "PHONE": "Phone Number",
+      "SPECIALIZATION": "Specialization",
+      "DESCRIPTION": "Bio / Description",
       "PASSWORD": "Password",
       "CONFIRM_PASSWORD": "Confirm Password",
       "FORGOT_PASSWORD_LINK": "Forgot password?",

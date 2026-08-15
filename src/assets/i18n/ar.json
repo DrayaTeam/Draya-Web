@@ -36,6 +36,8 @@
       "FULL_NAME": "الاسم بالكامل",
       "EMAIL": "البريد الإلكتروني",
       "PHONE": "رقم الهاتف",
+      "SPECIALIZATION": "التخصص",
+      "DESCRIPTION": "نبذة تعريفية",
       "PASSWORD": "كلمة المرور",
       "CONFIRM_PASSWORD": "تأكيد كلمة المرور",
       "FORGOT_PASSWORD_LINK": "نسيت كلمة المرور؟",
