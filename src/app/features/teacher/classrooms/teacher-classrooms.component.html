@@ -1,0 +1,37 @@
+<!-- src/app/features/teacher/classrooms/teacher-classrooms.component.html -->
+<div class="classrooms-container" dir="rtl">
+  <!-- Header Section -->
+  <div class="classrooms-header">
+    <div class="header-titles">
+      <h1 class="page-title">{{ 'TEACHER.CLASSROOMS.TITLE' | translate }}</h1>
+      <p class="page-subtitle">{{ 'TEACHER.CLASSROOMS.SUBTITLE' | translate }}</p>
+    </div>
+    <div class="header-actions">
+      <button class="primary-btn" (click)="openCreateModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        {{ 'TEACHER.CLASSROOMS.CREATE_NEW' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Empty State (Placeholder since we don't fetch real classrooms yet in Step 1) -->
+  <div class="empty-state">
+    <div class="empty-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+      </svg>
+    </div>
+    <h3 class="empty-title">لا توجد فصول دراسية</h3>
+    <p class="empty-description">لم تقم بإنشاء أي فصول دراسية بعد. انقر على الزر أعلاه للبدء.</p>
+  </div>
+
+  <!-- Create Classroom Modal -->
+  <draya-create-classroom-modal 
+    [isOpen]="isCreateModalOpen()" 
+    (onClose)="closeCreateModal()">
+  </draya-create-classroom-modal>
+</div>

@@ -52,6 +52,11 @@ export const appRoutes: Routes = [
         path: 'profile',
         loadComponent: () =>
           import('./features/auth/pages/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: 'payment',
+        loadChildren: () =>
+          import('./features/payment/payment.routes').then((m) => m.paymentRoutes),
       }
     ],
   },

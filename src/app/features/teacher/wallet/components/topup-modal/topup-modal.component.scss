@@ -1,0 +1,277 @@
+/* src/app/features/teacher/wallet/components/topup-modal/topup-modal.component.scss */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 480px;
+  /* Removed box-shadow for flat modern design, using solid border instead */
+  border: 1px solid var(--draya-surface-200);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--draya-surface-200);
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--draya-surface-900);
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--draya-surface-500);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  transition: background-color 150ms;
+  
+  &:hover {
+    background-color: var(--draya-surface-100);
+    color: var(--draya-surface-900);
+  }
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background-color: #faf5ff;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #e9d5ff;
+}
+
+.icon-wrapper {
+  width: 40px;
+  height: 40px;
+  background-color: #f3e8ff;
+  color: #7e22ce;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.info-title {
+  font-weight: 600;
+  color: #6b21a8;
+  margin: 0 0 4px 0;
+}
+
+.info-desc {
+  font-size: 0.875rem;
+  color: #7e22ce;
+  margin: 0;
+}
+
+.presets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  
+  @media (min-width: 480px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.preset-btn {
+  padding: 12px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--draya-surface-200);
+  background-color: white;
+  color: var(--draya-surface-700);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 150ms;
+  
+  &:hover {
+    border-color: var(--draya-primary-400);
+    background-color: var(--draya-surface-50);
+  }
+  
+  &.active {
+    background-color: var(--draya-primary-50);
+    border-color: var(--draya-primary-500);
+    color: var(--draya-primary-700);
+    /* Removed box-shadow for flat design */
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  
+  label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--draya-surface-700);
+  }
+}
+
+.amount-input {
+  font-size: 1.25rem;
+  font-weight: 600;
+  padding: 12px 16px;
+}
+
+.form-control {
+  border: 1px solid var(--draya-surface-300);
+  border-radius: 8px;
+  background-color: white;
+  transition: border-color 150ms;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--draya-primary-500);
+    /* Removed box-shadow for flat design */
+  }
+}
+
+.error-alert {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid var(--draya-surface-200);
+  background-color: var(--draya-surface-50);
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+.btn-secondary {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--draya-surface-300);
+  background-color: white;
+  color: var(--draya-surface-700);
+  font-weight: 600;
+  cursor: pointer;
+  
+  &:hover:not(:disabled) { background-color: var(--draya-surface-100); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.btn-primary {
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--draya-primary-700);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  &:hover:not(:disabled) { background-color: var(--draya-primary-800); transform: translateY(-1px); }
+  &:active:not(:disabled) { transform: scale(0.98); }
+  &:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+}
+
+.spinner-sm {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Animations */
+.animate-fade-in { animation: fadeIn 0.2s ease-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.bounce-in { animation: bounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes bounceIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mt-4 { margin-top: 1rem; }
+
+/* Dark Mode */
+:host-context(.dark) {
+  .modal-content { background-color: var(--draya-surface-800); }
+  .modal-header, .modal-footer { border-color: var(--draya-surface-700); }
+  .modal-footer { background-color: var(--draya-surface-900); }
+  .modal-title { color: var(--draya-surface-50); }
+  
+  .info-box {
+    background-color: rgba(147, 51, 234, 0.1);
+    border-color: rgba(147, 51, 234, 0.2);
+  }
+  .info-title { color: #d8b4fe; }
+  .info-desc { color: #c084fc; }
+  
+  .preset-btn {
+    background-color: var(--draya-surface-900);
+    border-color: var(--draya-surface-600);
+    color: var(--draya-surface-200);
+    &:hover { background-color: var(--draya-surface-800); border-color: var(--draya-surface-500); }
+    &.active {
+      background-color: rgba(27, 109, 99, 0.2);
+      border-color: var(--draya-primary-500);
+      color: var(--draya-primary-300);
+    }
+  }
+  
+  .form-group label { color: var(--draya-surface-300); }
+  .form-control {
+    background-color: var(--draya-surface-900);
+    border-color: var(--draya-surface-600);
+    color: white;
+  }
+  
+  .btn-secondary {
+    background-color: var(--draya-surface-800);
+    border-color: var(--draya-surface-600);
+    color: var(--draya-surface-200);
+  }
+  
+  .error-alert {
+    background-color: rgba(153, 27, 27, 0.2);
+    border-color: rgba(153, 27, 27, 0.4);
+    color: #fca5a5;
+  }
+}

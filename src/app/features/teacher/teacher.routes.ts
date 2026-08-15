@@ -27,8 +27,8 @@ export const teacherRoutes: Routes = [
       {
         path: 'classrooms',
         loadComponent: () =>
-          import('./placeholder/teacher-placeholder.component').then(
-            (m) => m.TeacherPlaceholderComponent,
+          import('./classrooms/teacher-classrooms.component').then(
+            (m) => m.TeacherClassroomsComponent,
           ),
         title: 'إدارة الفصول — درايَة',
       },
@@ -87,6 +87,14 @@ export const teacherRoutes: Routes = [
             (m) => m.SubscriptionPageComponent,
           ),
         title: 'الاشتراك والعدادات — درايَة',
+      },
+      {
+        path: 'wallet',
+        loadComponent: () =>
+          import('./wallet/teacher-wallet.component').then(
+            (m) => m.TeacherWalletComponent,
+          ),
+        title: 'المحفظة المالية — درايَة',
       },
       {
         path: 'account',

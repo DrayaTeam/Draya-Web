@@ -1,0 +1,54 @@
+<!-- src/app/features/teacher/wallet/components/wallet-balance-card/wallet-balance-card.component.html -->
+<div class="stripe-grid animate-fade-in" dir="rtl">
+  
+  <!-- Earned Balance Card -->
+  <div class="stripe-card">
+    <div class="card-top">
+      <div class="card-header">
+        <h3 class="card-label">أرباح الكورسات المتاحة</h3>
+        <span class="status-indicator">متاح للسحب</span>
+      </div>
+      
+      <div class="card-amount-row">
+        <span class="currency">ج.م</span>
+        <span class="amount">{{ balance()?.availableEarnedBalance ?? 0 }}</span>
+      </div>
+    </div>
+    
+    <div class="card-bottom">
+      <button class="stripe-btn-outline" (click)="onWithdraw.emit()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="19 12 12 19 5 12"></polyline>
+          <line x1="12" y1="19" x2="12" y2="5"></line>
+        </svg>
+        سحب إلى Instapay
+      </button>
+    </div>
+  </div>
+
+  <!-- Purchased Balance Card -->
+  <div class="stripe-card">
+    <div class="card-top">
+      <div class="card-header">
+        <h3 class="card-label">رصيد المنصة (الذكاء الاصطناعي)</h3>
+        <span class="status-indicator ai-indicator">مخصص للمنصة</span>
+      </div>
+      
+      <div class="card-amount-row">
+        <span class="currency">ج.م</span>
+        <span class="amount">{{ balance()?.purchasedBalance ?? 0 }}</span>
+      </div>
+    </div>
+    
+    <div class="card-bottom">
+      <button class="stripe-btn-outline" (click)="onTopUp.emit()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        إضافة رصيد
+      </button>
+    </div>
+  </div>
+
+</div>

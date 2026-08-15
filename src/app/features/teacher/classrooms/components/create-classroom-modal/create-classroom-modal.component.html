@@ -1,0 +1,130 @@
+<!-- src/app/features/teacher/classrooms/components/create-classroom-modal/create-classroom-modal.component.html -->
+<div class="modal-backdrop" *ngIf="isOpen()" (click)="close()">
+  <div class="modal-container" (click)="$event.stopPropagation()" dir="rtl">
+    
+    <div class="modal-header">
+      <div class="header-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h2 class="modal-title">إنشاء فصل دراسي جديد</h2>
+        <p class="modal-subtitle">أدخل تفاصيل الفصل الجديد لتمكين الطلاب من الانضمام إليه.</p>
+      </div>
+      <button class="close-btn" (click)="close()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="modal-body">
+      
+      <!-- Name -->
+      <div class="form-group">
+        <label for="name" class="form-label">اسم الفصل <span class="required">*</span></label>
+        <input id="name" type="text" formControlName="name" class="form-input" placeholder="مثال: مجموعة أ - فيزياء للثانوية العامة" />
+      </div>
+
+      <!-- Subject & Grade Row -->
+      <div class="form-row">
+        
+        <!-- Subject -->
+        <div class="form-group flex-1">
+          <div class="flex justify-between items-center mb-1">
+            <label class="form-label !mb-0">المادة <span class="required">*</span></label>
+            <button type="button" class="text-xs text-primary-600 hover:text-primary-800 font-medium" (click)="toggleNewSubjectMode()" *ngIf="!isCreatingSubject()">
+              + إضافة مادة جديدة
+            </button>
+            <button type="button" class="text-xs text-gray-500 hover:text-gray-700 font-medium" (click)="toggleNewSubjectMode()" *ngIf="isCreatingSubject()">
+              إلغاء
+            </button>
+          </div>
+          
+          <ng-container *ngIf="!isCreatingSubject()">
+            <select formControlName="subjectId" class="form-input" [class.error]="form.get('subjectId')?.invalid && form.get('subjectId')?.touched">
+              <option value="" disabled selected>اختر المادة</option>
+              <option *ngFor="let subject of subjects()" [value]="subject.id">{{ subject.name }}</option>
+            </select>
+          </ng-container>
+
+          <ng-container *ngIf="isCreatingSubject()">
+            <div class="flex gap-2">
+              <input type="text" class="form-input flex-1" placeholder="اسم المادة الجديدة" [formControl]="newSubjectControl" />
+              <button type="button" class="add-btn" (click)="createNewSubject()" [disabled]="newSubjectControl.invalid || isCreatingSubjectLoading()">
+                {{ isCreatingSubjectLoading() ? '...' : 'إضافة' }}
+              </button>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- Grade Level -->
+        <div class="form-group flex-1">
+          <label class="form-label">الصف الدراسي <span class="required">*</span></label>
+          <select formControlName="gradeLevelId" class="form-input" [class.error]="form.get('gradeLevelId')?.invalid && form.get('gradeLevelId')?.touched">
+            <option value="" disabled selected>اختر الصف</option>
+            <option *ngFor="let grade of gradeLevels()" [value]="grade.id">{{ grade.name }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Type & Price Row -->
+      <div class="form-row">
+        <!-- Classroom Type -->
+        <div class="form-group flex-1">
+          <label class="form-label">نوع الفصل <span class="required">*</span></label>
+          <select formControlName="classroomTypeId" class="form-input" [class.error]="form.get('classroomTypeId')?.invalid && form.get('classroomTypeId')?.touched">
+            <option value="" disabled selected>اختر النوع</option>
+            <option *ngFor="let type of classroomTypes()" [value]="type.id">{{ type.name }}</option>
+          </select>
+        </div>
+
+        <!-- Price -->
+        <div class="form-group flex-1">
+          <label class="form-label">سعر الاشتراك (ج.م) <span class="required">*</span></label>
+          <input type="number" formControlName="price" class="form-input" placeholder="0 للمجاني" min="0" [class.error]="form.get('price')?.invalid && form.get('price')?.touched" />
+        </div>
+      </div>
+
+      <!-- Dates Row -->
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label class="form-label">تاريخ البداية <span class="required">*</span></label>
+          <input type="date" formControlName="startDate" class="form-input" [class.error]="form.get('startDate')?.invalid && form.get('startDate')?.touched" />
+        </div>
+        <div class="form-group flex-1">
+          <label class="form-label">تاريخ النهاية <span class="required">*</span></label>
+          <input type="date" formControlName="endDate" class="form-input" [class.error]="form.get('endDate')?.invalid && form.get('endDate')?.touched" />
+        </div>
+      </div>
+      
+      <!-- Date Error Message -->
+      <div class="error-text" *ngIf="form.errors?.['dateRangeInvalid'] && (form.get('startDate')?.touched || form.get('endDate')?.touched)">
+        تاريخ النهاية يجب أن يكون بعد تاريخ البداية.
+      </div>
+
+      <!-- Quota Error Alert -->
+      <div class="quota-error-alert" *ngIf="quotaError()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div>
+          <strong>تعذر الإنشاء:</strong> {{ quotaError() }}
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="cancel-btn" (click)="close()">إلغاء</button>
+        <button type="submit" class="submit-btn" [disabled]="form.invalid || isSubmitting()">
+          <span *ngIf="!isSubmitting()">إنشاء الفصل</span>
+          <span *ngIf="isSubmitting()">جاري الإنشاء...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

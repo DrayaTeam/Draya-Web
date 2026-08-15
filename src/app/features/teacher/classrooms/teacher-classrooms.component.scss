@@ -1,0 +1,126 @@
+/* src/app/features/teacher/classrooms/teacher-classrooms.component.scss */
+.classrooms-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.classrooms-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  background-color: var(--draya-surface-0, #ffffff);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid var(--draya-surface-200, #e5e7eb);
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.header-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--draya-text-900, #111827);
+  margin: 0;
+}
+
+.page-subtitle {
+  font-size: 0.875rem;
+  color: var(--draya-text-500, #6b7280);
+  margin: 0;
+}
+
+.primary-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--draya-primary-700, #1B6D63);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 150ms ease-out;
+
+  &:hover {
+    background-color: var(--draya-primary-800, #134e48);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  background-color: var(--draya-surface-0, #ffffff);
+  border: 1px dashed var(--draya-surface-300, #d1d5db);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--draya-surface-100, #f3f4f6);
+  color: var(--draya-surface-400, #9ca3af);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.empty-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--draya-text-800, #1f2937);
+  margin: 0 0 8px 0;
+}
+
+.empty-description {
+  font-size: 0.875rem;
+  color: var(--draya-text-500, #6b7280);
+  max-width: 400px;
+  margin: 0;
+}
+
+:host-context(.dark) {
+  .classrooms-header, .empty-state {
+    background-color: var(--draya-surface-800, #1f2937);
+    border-color: var(--draya-surface-700, #374151);
+  }
+  
+  .page-title, .empty-title {
+    color: var(--draya-text-50, #f9fafb);
+  }
+  
+  .page-subtitle, .empty-description {
+    color: var(--draya-text-400, #9ca3af);
+  }
+  
+  .empty-icon {
+    background-color: var(--draya-surface-700, #374151);
+    color: var(--draya-surface-500, #6b7280);
+  }
+}
