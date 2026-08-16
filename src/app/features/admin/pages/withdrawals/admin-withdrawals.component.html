@@ -73,7 +73,7 @@
         <i class="pi pi-eye"></i>
       </button>
 
-      @if (row.status === WithdrawalStatus.Pending) {
+      @if (isPending(row.status)) {
         <button class="action-btn approve-btn" (click)="promptApprove(row)">
           <i class="pi pi-check"></i>
           <span>{{ 'ADMIN.WITHDRAWALS.ACTION_APPROVE' | translate }}</span>
@@ -84,7 +84,7 @@
         </button>
       }
 
-      @if (row.status === WithdrawalStatus.Approved) {
+      @if (isApproved(row.status)) {
         <button class="action-btn mark-paid-btn" (click)="promptMarkPaid(row)">
           <i class="pi pi-dollar"></i>
           <span>{{ 'ADMIN.WITHDRAWALS.ACTION_MARK_PAID' | translate }}</span>
@@ -139,11 +139,11 @@
               <div class="payout-type-pill">
                 <i
                   class="pi"
-                  [class.pi-building]="acc.accountType === PayoutAccountType.BankAccount"
-                  [class.pi-mobile]="acc.accountType === PayoutAccountType.MobileWallet"></i>
+                  [class.pi-building]="isBankAccount(acc.accountType)"
+                  [class.pi-mobile]="isMobileWallet(acc.accountType)"></i>
                 <span>
                   {{
-                    (acc.accountType === PayoutAccountType.BankAccount
+                    (isBankAccount(acc.accountType)
                       ? 'ADMIN.WITHDRAWALS.PAYOUT_BANK'
                       : 'ADMIN.WITHDRAWALS.PAYOUT_WALLET'
                     ) | translate
@@ -159,33 +159,28 @@
 
             <div class="payout-details">
               <div class="payout-row">
-                <span class="payout-label">
-                  {{ 'ADMIN.WITHDRAWALS.DETAIL_ACCOUNT_NAME' | translate }}:
-                </span>
-                <span class="payout-val">{{ acc.accountName }}</span>
+                <span class="label">{{ 'ADMIN.WITHDRAWALS.DETAIL_ACCOUNT_NAME' | translate }}:</span>
+                <span class="value">{{ acc.accountName }}</span>
               </div>
               <div class="payout-row">
-                <span class="payout-label">
-                  {{ 'ADMIN.WITHDRAWALS.DETAIL_ACCOUNT_ID' | translate }}:
-                </span>
-                <span class="payout-val mono">{{ acc.accountIdentifier }}</span>
+                <span class="label">{{ 'ADMIN.WITHDRAWALS.DETAIL_ACCOUNT_ID' | translate }}:</span>
+                <span class="value ltr font-mono">{{ acc.accountIdentifier }}</span>
               </div>
             </div>
           </div>
         }
 
-        <!-- Rejection Reason if any -->
+        <!-- Rejection / Admin Note if exists -->
         @if (selectedWithdrawal()!.rejectionReason) {
-          <div class="rejection-box">
-            <span class="rejection-title">سبب الرفض:</span>
-            <p class="rejection-text">{{ selectedWithdrawal()!.rejectionReason }}</p>
+          <div class="note-box error-box">
+            <span class="note-title">سبب الرفض:</span>
+            <p class="note-text">{{ selectedWithdrawal()!.rejectionReason }}</p>
           </div>
         }
 
-        <!-- Admin Note if any -->
         @if (selectedWithdrawal()!.adminNote) {
-          <div class="note-box">
-            <span class="note-title">ملاحظة الإدارة:</span>
+          <div class="note-box info-box">
+            <span class="note-title">ملاحظة الدفع:</span>
             <p class="note-text">{{ selectedWithdrawal()!.adminNote }}</p>
           </div>
         }
@@ -193,7 +188,7 @@
 
       <!-- Drawer Footer Actions -->
       <div slot="footer" class="drawer-actions">
-        @if (selectedWithdrawal()!.status === WithdrawalStatus.Pending) {
+        @if (isPending(selectedWithdrawal()!.status)) {
           <button class="btn btn-primary" (click)="promptApprove(selectedWithdrawal()!)">
             <i class="pi pi-check"></i>
             <span>{{ 'ADMIN.WITHDRAWALS.ACTION_APPROVE' | translate }}</span>
@@ -203,7 +198,7 @@
             <span>{{ 'ADMIN.WITHDRAWALS.ACTION_REJECT' | translate }}</span>
           </button>
         }
-        @if (selectedWithdrawal()!.status === WithdrawalStatus.Approved) {
+        @if (isApproved(selectedWithdrawal()!.status)) {
           <button class="btn btn-success" (click)="promptMarkPaid(selectedWithdrawal()!)">
             <i class="pi pi-dollar"></i>
             <span>{{ 'ADMIN.WITHDRAWALS.ACTION_MARK_PAID' | translate }}</span>

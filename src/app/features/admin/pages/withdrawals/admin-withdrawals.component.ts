@@ -63,6 +63,48 @@ export class AdminWithdrawalsComponent implements OnInit {
 
   readonly activeStatusTab = signal<string>('All');
 
+  isPending(status: unknown): boolean {
+    if (status === null || status === undefined) return false;
+    return (
+      status === WithdrawalStatus.Pending ||
+      status === 0 ||
+      status === '0' ||
+      String(status).toLowerCase() === 'pending'
+    );
+  }
+
+  isApproved(status: unknown): boolean {
+    if (status === null || status === undefined) return false;
+    return (
+      status === WithdrawalStatus.Approved ||
+      status === 1 ||
+      status === '1' ||
+      String(status).toLowerCase() === 'approved'
+    );
+  }
+
+  isBankAccount(type: unknown): boolean {
+    if (type === null || type === undefined) return false;
+    return (
+      type === PayoutAccountType.BankAccount ||
+      type === 0 ||
+      type === '0' ||
+      String(type).toLowerCase() === 'bankaccount' ||
+      String(type).toLowerCase() === 'banktransfer'
+    );
+  }
+
+  isMobileWallet(type: unknown): boolean {
+    if (type === null || type === undefined) return false;
+    return (
+      type === PayoutAccountType.MobileWallet ||
+      type === 1 ||
+      type === '1' ||
+      String(type).toLowerCase() === 'mobilewallet' ||
+      String(type).toLowerCase() === 'vodafonecash'
+    );
+  }
+
   // Table State
   readonly withdrawals = signal<WithdrawalDto[]>([]);
   readonly loading = signal<boolean>(false);
