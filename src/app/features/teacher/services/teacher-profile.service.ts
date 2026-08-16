@@ -83,4 +83,51 @@ export class TeacherProfileService {
   }): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/profile`, payload);
   }
+
+  /**
+   * Uploads teacher profile avatar to Cloudinary via POST /api/v1/teachers/profile/picture.
+   */
+  uploadAvatar(
+    file: File,
+  ): Observable<{ success: boolean; profilePictureUrl?: string; message: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http
+      .post<{ profilePictureUrl: string }>(`${this.baseUrl}/profile/picture`, formData)
+      .pipe(
+        map((res) => {
+          if (res && res.profilePictureUrl) {
+            this.auth.updateLocalUser({ profilePictureUrl: res.profilePictureUrl });
+          }
+          return {
+            success: true,
+            profilePictureUrl: res?.profilePictureUrl,
+            message: 'تم تحديث الصورة الشخصية للمعلم بنجاح!',
+          };
+        }),
+        catchError((err) => {
+          console.error('Teacher avatar upload error:', err);
+          return of({
+            success: false,
+            message: 'تعذر رفع الصورة الشخصية. يرجى التأكد من صيغة الملف (.png, .jpg, .webp).',
+          });
+        }),
+      );
+  }
+
+  /**
+   * Updates teacher password via POST /api/v1/auth/change-password.
+   */
+  updatePassword(
+    currentPassword: string,
+    newPassword: string,
+    confirmPassword = newPassword,
+  ): Observable<{ success: boolean; message: string }> {
+    return this.auth.changePassword({
+      currentPassword,
+      newPassword,
+      confirmPassword,
+    });
+  }
 }

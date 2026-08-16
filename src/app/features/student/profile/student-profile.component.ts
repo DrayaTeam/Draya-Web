@@ -30,6 +30,8 @@ export class StudentProfileComponent implements OnInit {
   readonly activeTab = signal<'info' | 'parent' | 'security'>('info');
   readonly loading = signal<boolean>(true);
   readonly saving = signal<boolean>(false);
+  readonly uploadingAvatar = signal<boolean>(false);
+  readonly avatarUrl = signal<string>('');
 
   // Form Models initialized directly from logged-in session
   name = this.auth.currentUser()?.fullName || '';
@@ -42,8 +44,11 @@ export class StudentProfileComponent implements OnInit {
 
   currentPass = '';
   newPass = '';
+  confirmPass = '';
 
   ngOnInit(): void {
+    this.avatarUrl.set(this.auth.currentUser()?.profilePictureUrl || '');
+
     this.profileService.getProfile().subscribe({
       next: (data) => {
         if (data) {
@@ -54,6 +59,9 @@ export class StudentProfileComponent implements OnInit {
           this.parentName = data.parentName || this.parentName;
           this.parentPhone = data.parentPhone || this.parentPhone;
           this.parentEmail = data.parentEmail || this.parentEmail;
+          if (data.profilePictureUrl) {
+            this.avatarUrl.set(data.profilePictureUrl);
+          }
         }
         this.loading.set(false);
         this.cdr.markForCheck();
@@ -113,37 +121,108 @@ export class StudentProfileComponent implements OnInit {
       });
   }
 
-  onUpdatePassword(): void {
-    if (!this.currentPass || !this.newPass) {
-      this.toast.warning('تنبيه', 'يرجى إدخال كلمة المرور الحالية والجديدة.');
+  onAvatarSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+
+    if (!allowedTypes.includes(file.type)) {
+      this.toast.warning('تنبيه', 'يرجى اختيار ملف صورة صالح (.png, .jpg, .jpeg, .webp).');
       return;
     }
 
-    if (this.newPass.length < 6) {
-      this.toast.warning('تنبيه', 'يجب ألا تقل كلمة المرور الجديدة عن 6 أحرف/أرقام.');
+    if (file.size > 5 * 1024 * 1024) {
+      this.toast.warning('تنبيه', 'حجم الصورة يجب ألا يتجاوز 5 ميجابايت.');
+      return;
+    }
+
+    this.uploadingAvatar.set(true);
+    this.cdr.markForCheck();
+
+    this.profileService.uploadAvatar(file).subscribe({
+      next: (res) => {
+        this.uploadingAvatar.set(false);
+        if (res.success && res.profilePictureUrl) {
+          this.avatarUrl.set(res.profilePictureUrl);
+          this.toast.success('نجاح', res.message);
+        } else {
+          this.toast.error('خطأ', res.message);
+        }
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.uploadingAvatar.set(false);
+        this.toast.error('خطأ', 'فشل رفع الصورة إلى السحابة.');
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  onUpdatePassword(): void {
+    if (!this.currentPass || !this.newPass || !this.confirmPass) {
+      this.toast.warning('تنبيه', 'يرجى ملء جميع حقول كلمة المرور.');
+      return;
+    }
+
+    if (this.newPass.length < 8) {
+      this.toast.warning('تنبيه', 'يجب ألا تقل كلمة المرور الجديدة عن 8 أحرف وأرقام.');
+      return;
+    }
+
+    if (!/[A-Z]/.test(this.newPass)) {
+      this.toast.warning('تنبيه', 'يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل (A-Z).');
+      return;
+    }
+
+    if (!/[0-9]/.test(this.newPass)) {
+      this.toast.warning('تنبيه', 'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل (0-9).');
+      return;
+    }
+
+    if (this.newPass !== this.confirmPass) {
+      this.toast.warning('تنبيه', 'كلمة المرور الجديدة غير متطابقة مع تأكيد كلمة المرور.');
       return;
     }
 
     this.saving.set(true);
     this.cdr.markForCheck();
 
-    this.profileService.updatePassword(this.currentPass, this.newPass).subscribe({
+    this.profileService.updatePassword(this.currentPass, this.newPass, this.confirmPass).subscribe({
       next: (res) => {
         this.saving.set(false);
-        this.currentPass = '';
-        this.newPass = '';
+        if (res.success) {
+          this.currentPass = '';
+          this.newPass = '';
+          this.confirmPass = '';
+          this.toast.success('نجاح', res.message);
+        } else {
+          this.toast.error('خطأ', res.message);
+        }
         this.cdr.markForCheck();
-        this.toast.success('نجاح', res.message);
       },
-      error: () => {
+      error: (err) => {
         this.saving.set(false);
         this.cdr.markForCheck();
-        this.toast.error('خطأ', 'فشل تحديث كلمة المرور.');
+        this.toast.error('خطأ', err?.error?.message || err?.message || 'فشل تحديث كلمة المرور.');
       },
     });
   }
 
-  onChangeAvatar(): void {
-    this.toast.info('الصورة الشخصية', 'يمكنك اختيار صورة جديدة قريباً.');
+  get hasMinLength(): boolean {
+    return this.newPass.length >= 8;
+  }
+
+  get hasUppercase(): boolean {
+    return /[A-Z]/.test(this.newPass);
+  }
+
+  get hasNumber(): boolean {
+    return /[0-9]/.test(this.newPass);
+  }
+
+  get isPasswordMatching(): boolean {
+    return !!(this.newPass && this.confirmPass && this.newPass === this.confirmPass);
   }
 }
