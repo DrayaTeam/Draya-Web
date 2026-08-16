@@ -15,9 +15,10 @@
       <span>المكتبة الأكاديمية الرقمية</span>
     </div>
 
-    <h1 class="main-title">مكتبة المذكرات والكتب الدراسية</h1>
+    <h1 class="main-title">مكتبة المذكرات والمحتوى الدراسي</h1>
     <p class="subtitle">
-      استعرض الكتب والمذكرات الأكاديمية والملخصات المرفقة بموادك الدراسية للتحميل والمذاكرة أوفلاين.
+      استعرض الكتب والمذكرات الأكاديمية، الفيديوهات والشروحات المرفقة بموادك المشترك بها للمشاهدة
+      والتحميل المباشر.
     </p>
   </header>
 
@@ -27,7 +28,7 @@
       <input
         type="text"
         class="search-input"
-        placeholder="بحث باسم الكتاب، المادة، أو الفصل الدراسي..."
+        placeholder="بحث باسم المذكرة، الفيديو، أو الفصل الدراسي..."
         [value]="libraryService.searchQuery()"
         (input)="onSearchChange($event)" />
       <svg
@@ -49,21 +50,35 @@
         class="filter-chip"
         [class.active]="libraryService.selectedFilter() === 'ALL'"
         (click)="setFilter('ALL')">
-        جميع المواد الدراسية ({{ libraryService.books().length }})
+        جميع المواد ({{ libraryService.books().length }})
       </button>
       <button
         type="button"
         class="filter-chip"
-        [class.active]="libraryService.selectedFilter() === 'Document'"
-        (click)="setFilter('Document')">
-        📄 مذكرات وملخصات PDF
+        [class.active]="libraryService.selectedFilter() === 'PDF'"
+        (click)="setFilter('PDF')">
+        📄 مذكرات PDF
       </button>
       <button
         type="button"
         class="filter-chip"
         [class.active]="libraryService.selectedFilter() === 'Video'"
         (click)="setFilter('Video')">
-        🎬 فيديوهات تعليمية MP4
+        🎬 فيديوهات تعليمية
+      </button>
+      <button
+        type="button"
+        class="filter-chip"
+        [class.active]="libraryService.selectedFilter() === 'DOCX'"
+        (click)="setFilter('DOCX')">
+        📝 مستندات Word
+      </button>
+      <button
+        type="button"
+        class="filter-chip"
+        [class.active]="libraryService.selectedFilter() === 'PPTX'"
+        (click)="setFilter('PPTX')">
+        📊 عروض تقديمية
       </button>
     </div>
   </section>
@@ -73,7 +88,7 @@
     @if (libraryService.loading()) {
       <div class="loading-state-box">
         <div class="spinner"></div>
-        <p>جارٍ جلب وتحديث المذكرات والمواد المشترك بها...</p>
+        <p>جارٍ جلب وتحديث المحتوى والمذكرات المشترك بها من الخادم...</p>
       </div>
     } @else {
       @for (book of books(); track book.id) {
@@ -94,13 +109,104 @@
               stroke-linejoin="round"
               d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
           </svg>
-          <p class="empty-text">لم يتم العثور على مواد أو كتب تطابق البحث الحالي.</p>
+          <p class="empty-text">لم يتم العثور على مواد أو كتب دراسية حالياً.</p>
         </div>
       }
     }
   </section>
 
-  <!-- PDF Reader Modal Previewer -->
+  <!-- Video Streaming Modal -->
+  @if (activeVideoBook(); as v) {
+    <div
+      class="video-modal-backdrop animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      (click)="closeVideoStream()"
+      (keydown.escape)="closeVideoStream()">
+      <div
+        class="video-modal-container animate-scale-up"
+        role="document"
+        tabindex="0"
+        (click)="$event.stopPropagation()"
+        (keydown)="$event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <div class="header-info">
+            <span class="video-badge">🎬 بث فيديو تعليمي</span>
+            <h2 class="modal-title">{{ v.title }}</h2>
+          </div>
+          <button
+            type="button"
+            class="btn-close-modal"
+            (click)="closeVideoStream()"
+            aria-label="إغلاق مشغل الفيديو">
+            ✕
+          </button>
+        </div>
+
+        <!-- Video Player Frame -->
+        <div class="video-player-wrapper">
+          @if (videoLoading()) {
+            <div class="video-loading-box">
+              <div class="spinner"></div>
+              <span>جارٍ إنشاء وتأمين رابط البث المباشر من السحابة...</span>
+            </div>
+          } @else if (videoError()) {
+            <div class="video-error-box">
+              <span class="error-icon">⚠️</span>
+              <p class="error-text">{{ videoError() }}</p>
+              @if (v.downloadUrl && v.downloadUrl !== '#') {
+                <button type="button" class="btn-retry" (click)="openExternal(v.downloadUrl)">
+                  محاولة فتح الفيديو في نافذة مستقلة ↗
+                </button>
+              }
+            </div>
+          } @else if (activeVideoStreamUrl()) {
+            <video
+              class="video-element"
+              [src]="activeVideoStreamUrl()"
+              controls
+              playsinline
+              preload="metadata"
+              (error)="onVideoElementError($event)">
+              متصفحك لا يدعم تشغيل الفيديو المباشر.
+            </video>
+          }
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="video-modal-footer">
+          <div class="meta-tag">
+            <span>الحجم: {{ v.fileSizeMb }} MB</span>
+            <span class="dot">•</span>
+            <span>الصيغة: {{ v.fileFormat }}</span>
+            <span
+              class="status-pill"
+              [class.pending]="v.parseStatus === 'Pending'"
+              [class.parsed]="v.parseStatus === 'Parsed'">
+              {{ v.parseStatus === 'Pending' ? 'قيد المعالجة' : 'جاهز للمشاهدة' }}
+            </span>
+          </div>
+          <div class="footer-btns">
+            @if (activeVideoStreamUrl()) {
+              <button
+                type="button"
+                class="btn-external"
+                (click)="openExternal(activeVideoStreamUrl())">
+                فتح في نافذة مستقلة ↗
+              </button>
+            }
+            <button type="button" class="btn-done" (click)="closeVideoStream()">
+              إغلاق المشغل
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- PDF & Document Preview Reader Modal -->
   @if (activePreviewBook(); as b) {
     <div
       class="pdf-modal-backdrop animate-fade-in"
@@ -117,110 +223,62 @@
         (keydown)="$event.stopPropagation()">
         <!-- Modal Header -->
         <div class="modal-header">
-          <div>
-            <h3 class="modal-book-title">{{ b.title }}</h3>
-            <span class="modal-sub">مكتبة درايَة الرقمية — معاينة سريعة</span>
+          <div class="doc-header-titles">
+            <span class="doc-type-badge">{{ b.fileFormat }}</span>
+            <h2 class="modal-title">{{ b.title }}</h2>
+            <span class="modal-subtitle">{{ b.subjectName }} • {{ b.fileSizeMb }} MB</span>
           </div>
-          <button type="button" class="btn-close-modal" (click)="closePreview()" title="إغلاق">
-            ✕
-          </button>
-        </div>
-
-        <!-- Modal Body -->
-        <div class="modal-body">
-          <!-- Chapters Table of Contents -->
-          <div class="chapters-sidebar">
-            <span class="sidebar-title">الفهرس الدراسي:</span>
-            @for (ch of b.chapters; track ch.id; let idx = $index) {
-              <button
-                type="button"
-                class="chapter-btn"
-                [class.active]="activePreviewPage() === idx + 1"
-                (click)="setPreviewPage(idx + 1)">
-                {{ ch.title }}
-              </button>
-            }
-          </div>
-
-          <!-- Page Canvas Simulator -->
-          <div class="page-canvas-simulator">
-            <div class="canvas-header">
-              <span class="curriculum-tag">درايَة التعليمية — المنهج الرسمي</span>
-              <span class="page-count-badge">
-                الصفحة {{ activePreviewPage() }} من {{ b.totalPages }}
-              </span>
-            </div>
-
-            <div class="canvas-content">
-              @if (activePreviewPage() === 1) {
-                <div>
-                  <h2 class="chapter-headline">{{ b.chapters[0]?.title || 'الفصل الأول' }}</h2>
-                  <p class="chapter-body">
-                    تعتبر المصفوفات أداة رياضية فعالة لحل الأنظمة الخطية وتنظيم البيانات الهندسية.
-                    في هذا الجزء، سنتناول جمع وطرح المصفوفات وخصائص الضرب وكيفية استخدام المحددات
-                    لحساب المساحات الفراغية وتعيين معكوس المصفوفات الثنائية والثلاثية.
-                  </p>
-                  <div class="ai-study-tip">
-                    <strong>💡 نصيحة دراسات درايَة الذكية:</strong>
-                    <p>
-                      تذكر دائماً أن ضرب المصفوفات ليس تبديلياً، أي أن AB لا يساوي بالضرورة BA في
-                      الجبر الخطي.
-                    </p>
-                  </div>
-                </div>
-              } @else if (activePreviewPage() === 2) {
-                <div>
-                  <h2 class="chapter-headline">{{ b.chapters[1]?.title || 'الفصل الثاني' }}</h2>
-                  <p class="chapter-body">
-                    تعتمد الهندسة الفراغية على إدراك الأبعاد الثلاثية وتحديد المتجهات في الفراغ.
-                    سنتعرف على طريقة حساب الضرب القياسي والضرب الاتجاهي للمتجهات، والزاوية بين
-                    مستقيمين، وطرق إيجاد معادلة خط مستقيم ومعادلة المستوى في الفراغ بشكل مبسط.
-                  </p>
-                </div>
-              } @else {
-                <div class="preview-limit-box">
-                  <div class="icon-limit">📖</div>
-                  <h4>نهاية صفحات المعاينة المجانية</h4>
-                  <p>
-                    لقد استعرضت الصفحات النموذجية الأولى. يمكنك تحميل الكتاب كاملاً بصيغة PDF
-                    للمذاكرة أوفلاين والطباعة.
-                  </p>
-                  <button type="button" class="btn-download-full" (click)="onDownload(b)">
-                    تحميل الكتاب كاملاً PDF
-                  </button>
-                </div>
-              }
-            </div>
-
-            <!-- Canvas Pagination Controls -->
-            <div class="canvas-footer-controls">
-              <button
-                type="button"
-                class="btn-pager"
-                [disabled]="activePreviewPage() === 1"
-                (click)="setPreviewPage(activePreviewPage() - 1)">
-                الصفحة السابقة
-              </button>
-
-              <button
-                type="button"
-                class="btn-pager"
-                [disabled]="activePreviewPage() >= b.chapters.length + 1"
-                (click)="setPreviewPage(activePreviewPage() + 1)">
-                الصفحة التالية
-              </button>
-            </div>
+          <div class="header-right-actions">
+            <button
+              type="button"
+              class="btn-header-action"
+              (click)="openExternal(b.downloadUrl)"
+              title="فتح في تبويب مستقل">
+              ↗ فتح في نافذة مستقلة
+            </button>
+            <button
+              type="button"
+              class="btn-close-modal"
+              (click)="closePreview()"
+              aria-label="إغلاق عارض المستند">
+              ✕
+            </button>
           </div>
         </div>
 
-        <!-- Modal Footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn-close-secondary" (click)="closePreview()">
-            إغلاق المعاينة
-          </button>
-          <button type="button" class="btn-download-primary" (click)="onDownload(b)">
-            تحميل PDF كامل
-          </button>
+        <!-- Real Document Viewer Frame -->
+        <div class="modal-body-reader">
+          @if (isPdf(b)) {
+            <iframe
+              [src]="getPdfPreviewUrl(b)"
+              class="document-iframe-viewer"
+              title="عارض المستند"></iframe>
+          } @else if (isImage(b)) {
+            <div class="image-viewer-container">
+              <img [src]="b.downloadUrl" [alt]="b.title" class="document-image-view" />
+            </div>
+          } @else {
+            <iframe
+              [src]="getOfficePreviewUrl(b)"
+              class="document-iframe-viewer"
+              title="عارض المستندات"></iframe>
+          }
+        </div>
+
+        <!-- Reader Footer Toolbar -->
+        <div class="modal-footer-toolbar">
+          <div class="doc-meta-info">
+            <span>الملف: {{ b.title }}</span>
+            <span class="status-indicator">
+              {{ b.parseStatus === 'Parsed' ? '✅ تمت المعالجة' : '⏳ قيد المعالجة' }}
+            </span>
+          </div>
+
+          <div class="footer-actions">
+            <button type="button" class="btn-download-direct" (click)="onDownload(b)">
+              📥 تنزيل الملف ({{ b.fileSizeMb }} MB)
+            </button>
+          </div>
         </div>
       </div>
     </div>

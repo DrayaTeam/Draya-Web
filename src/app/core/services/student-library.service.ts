@@ -3,86 +3,33 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { Observable, catchError, map, of, tap } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
-import { LibraryBookItem, StudentMaterialsPagedResponse } from '../models/student-library.model';
+import {
+  LibraryBookItem,
+  MaterialStreamResponse,
+  MaterialType,
+  StudentMaterialItem,
+  StudentMaterialsPagedResponse,
+} from '../models/student-library.model';
 
-const DEFAULT_BOOKS: LibraryBookItem[] = [
-  {
-    id: 'book-1',
-    title: 'رياضيات الصف الثالث الثانوي — الميكانيكا والتفاضل',
-    subjectName: 'رياضيات',
-    subjectTagBgColor: '#00A6F4',
-    coverImageUrl:
-      'https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=600&auto=format&fit=crop',
-    pagesCount: 312,
-    totalPages: 312,
-    fileSizeMb: 8.4,
-    fileFormat: 'PDF',
-    downloadUrl: '#',
-    chapters: [
-      { id: 'ch1', title: '1. المصفوفات والمحددات' },
-      { id: 'ch2', title: '2. الهندسة الفراغية' },
-      { id: 'ch3', title: '3. التفاضل والتكامل' },
-    ],
-    materialType: 'Document',
-  },
-  {
-    id: 'book-2',
-    title: 'الفيزياء الحديثة — شرح الكهرومغناطيسية والفيزياء الذرية',
-    subjectName: 'فيزياء',
-    subjectTagBgColor: '#AD46FF',
-    coverImageUrl:
-      'https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?q=80&w=600&auto=format&fit=crop',
-    pagesCount: 280,
-    totalPages: 280,
-    fileSizeMb: 12.1,
-    fileFormat: 'PDF',
-    downloadUrl: '#',
-    chapters: [
-      { id: 'ch1', title: '1. الكهرومغناطيسية' },
-      { id: 'ch2', title: '2. الفيزياء الذرية' },
-      { id: 'ch3', title: '3. أشباه الموصلات' },
-    ],
-    materialType: 'Document',
-  },
-  {
-    id: 'book-3',
-    title: 'كيمياء عضوية متقدمة لطلبة الثانوية العامة',
-    subjectName: 'كيمياء',
-    subjectTagBgColor: '#00BC7D',
-    coverImageUrl:
-      'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=600&auto=format&fit=crop',
-    pagesCount: 195,
-    totalPages: 195,
-    fileSizeMb: 6.7,
-    fileFormat: 'PDF',
-    downloadUrl: '#',
-    chapters: [
-      { id: 'ch1', title: '1. الهيدروكربونات الأليفاتية' },
-      { id: 'ch2', title: '2. المركبات الحلقية' },
-      { id: 'ch3', title: '3. البوليمرات والبروتينات' },
-    ],
-    materialType: 'Document',
-  },
-  {
-    id: 'book-4',
-    title: 'المراجعة النهائية الشاملة — أسئلة ونماذج الوزارة',
-    subjectName: 'متنوع',
-    subjectTagBgColor: '#FF2056',
-    coverImageUrl:
-      'https://images.unsplash.com/photo-1516979187457-637abb4f9353?q=80&w=600&auto=format&fit=crop',
-    pagesCount: 120,
-    totalPages: 120,
-    fileSizeMb: 5.2,
-    fileFormat: 'PDF',
-    downloadUrl: '#',
-    chapters: [
-      { id: 'ch1', title: '1. ملخص القوانين الهامة' },
-      { id: 'ch2', title: '2. نماذج اختبارات الوزارة' },
-      { id: 'ch3', title: '3. الإجابات النموذجية' },
-    ],
-    materialType: 'Document',
-  },
-];
+export function resolveMaterialUrl(url: string | null | undefined): string {
+  if (!url || url === '#' || url === 'null') return '';
+  if (
+    url.startsWith('http://') ||
+    url.startsWith('https://') ||
+    url.startsWith('blob:') ||
+    url.startsWith('data:')
+  ) {
+    return url;
+  }
+  // Strip all leading slashes
+  const clean = url.replace(/^\/+/, '');
+  // Encode URI path segments safely (handling Arabic characters and special symbols)
+  const encoded = clean
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+  return `http://draya-api.runasp.net/${encoded}`;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -90,9 +37,11 @@ const DEFAULT_BOOKS: LibraryBookItem[] = [
 export class StudentLibraryService extends ApiBaseService {
   readonly searchQuery = signal<string>('');
   readonly loading = signal<boolean>(false);
-  readonly selectedFilter = signal<'ALL' | 'Document' | 'Video'>('ALL');
+  readonly selectedFilter = signal<
+    'ALL' | 'Video' | 'PDF' | 'DOCX' | 'PPTX' | 'Image' | 'Document'
+  >('ALL');
 
-  readonly books = signal<readonly LibraryBookItem[]>(DEFAULT_BOOKS);
+  readonly books = signal<readonly LibraryBookItem[]>([]);
 
   readonly filteredBooks = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
@@ -103,10 +52,29 @@ export class StudentLibraryService extends ApiBaseService {
         !query ||
         book.title.toLowerCase().includes(query) ||
         book.subjectName.toLowerCase().includes(query);
-      const matchFilter =
-        filter === 'ALL' ||
-        (filter === 'Video' && book.materialType === 'Video') ||
-        (filter === 'Document' && (book.materialType === 'Document' || book.fileFormat === 'PDF'));
+
+      let matchFilter = true;
+      if (filter === 'Video') {
+        matchFilter = book.materialType === 'Video' || book.fileFormat === 'MP4';
+      } else if (filter === 'PDF') {
+        matchFilter =
+          book.materialType === 'PDF' ||
+          book.materialType === 'Document' ||
+          book.fileFormat === 'PDF';
+      } else if (filter === 'DOCX') {
+        matchFilter = book.materialType === 'DOCX' || book.fileFormat === 'DOCX';
+      } else if (filter === 'PPTX') {
+        matchFilter = book.materialType === 'PPTX' || book.fileFormat === 'PPTX';
+      } else if (filter === 'Image') {
+        matchFilter = book.materialType === 'Image' || book.fileFormat === 'IMG';
+      } else if (filter === 'Document') {
+        matchFilter =
+          book.materialType === 'PDF' ||
+          book.materialType === 'DOCX' ||
+          book.materialType === 'PPTX' ||
+          book.materialType === 'Document';
+      }
+
       return matchQuery && matchFilter;
     });
   });
@@ -116,6 +84,9 @@ export class StudentLibraryService extends ApiBaseService {
     this.loadEnrolledMaterials().subscribe();
   }
 
+  /**
+   * GET /api/v1/students/materials?page=1&pageSize=20
+   */
   loadEnrolledMaterials(page = 1, pageSize = 20): Observable<readonly LibraryBookItem[]> {
     this.loading.set(true);
 
@@ -124,17 +95,41 @@ export class StudentLibraryService extends ApiBaseService {
     ).pipe(
       map((res) => {
         if (!res || !res.items || res.items.length === 0) {
-          return DEFAULT_BOOKS;
+          return [];
         }
 
         const mapped: LibraryBookItem[] = res.items.map((item, index) => {
-          const isVideo = item.materialType === 'Video';
-          const fileFormat = isVideo ? 'MP4' : 'PDF';
+          const type = (item.materialType || 'PDF') as MaterialType;
+          const isVideo = type === 'Video';
+          const fileFormat = isVideo
+            ? 'MP4'
+            : type === 'DOCX'
+              ? 'DOCX'
+              : type === 'PPTX'
+                ? 'PPTX'
+                : type === 'Image'
+                  ? 'IMG'
+                  : 'PDF';
+
           const tagBg = isVideo
             ? '#AD46FF'
-            : item.materialType === 'Document'
-              ? '#00BC7D'
-              : '#00A6F4';
+            : type === 'DOCX'
+              ? '#2B579A'
+              : type === 'PPTX'
+                ? '#D24726'
+                : type === 'Image'
+                  ? '#00BC7D'
+                  : '#00A6F4';
+
+          const subjectName = isVideo
+            ? 'فيديو تعليمي'
+            : type === 'DOCX'
+              ? 'مستند Word'
+              : type === 'PPTX'
+                ? 'عرض تقديمي'
+                : type === 'Image'
+                  ? 'صورة ومخطط'
+                  : 'مذكرة دراسية';
 
           const covers = [
             'https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=600&auto=format&fit=crop',
@@ -143,23 +138,23 @@ export class StudentLibraryService extends ApiBaseService {
             'https://images.unsplash.com/photo-1516979187457-637abb4f9353?q=80&w=600&auto=format&fit=crop',
           ];
 
+          const rawFileUrl = item.currentVersion?.fileUrl;
+          const downloadUrl = resolveMaterialUrl(rawFileUrl);
+
           return {
             id: item.materialId || `mat-${index}`,
             title: item.title,
-            subjectName: isVideo
-              ? 'فيديو تعليمي'
-              : item.materialType === 'Document'
-                ? 'مذكرة دراسية'
-                : 'مادة تعليمية',
+            subjectName,
             subjectTagBgColor: tagBg,
             coverImageUrl: covers[index % covers.length],
             pagesCount: isVideo ? 1 : 45,
             totalPages: isVideo ? 1 : 45,
             fileSizeMb: isVideo ? 45.2 : 6.8,
             fileFormat,
-            downloadUrl: item.currentVersion?.fileUrl || '#',
+            downloadUrl: downloadUrl || '#',
             chapters: [],
-            materialType: item.materialType,
+            materialType: type,
+            parseStatus: item.currentVersion?.parseStatus || 'Parsed',
             uploadedAt: item.currentVersion?.uploadedAt || item.createdAt,
           };
         });
@@ -167,15 +162,59 @@ export class StudentLibraryService extends ApiBaseService {
         return mapped;
       }),
       tap((loaded) => {
-        this.books.set(loaded.length > 0 ? loaded : DEFAULT_BOOKS);
+        this.books.set(loaded);
         this.loading.set(false);
       }),
       catchError(() => {
-        // Fallback to default books on offline or 404
-        this.books.set(DEFAULT_BOOKS);
+        this.books.set([]);
         this.loading.set(false);
-        return of(DEFAULT_BOOKS);
+        return of([]);
       }),
+    );
+  }
+
+  /**
+   * GET /api/v1/materials/{materialId}
+   */
+  getSingleMaterial(materialId: string): Observable<StudentMaterialItem | null> {
+    return this.get<StudentMaterialItem>(`/materials/${materialId}`).pipe(
+      catchError(() => of(null)),
+    );
+  }
+
+  /**
+   * GET /api/v1/materials/{materialId}/stream
+   */
+  getVideoStreamUrl(materialId: string): Observable<MaterialStreamResponse | null> {
+    return this.get<MaterialStreamResponse>(`/materials/${materialId}/stream`).pipe(
+      map((res) => {
+        if (!res) return null;
+        return {
+          ...res,
+          streamUrl: resolveMaterialUrl(res.streamUrl),
+        };
+      }),
+      catchError(() => of(null)),
+    );
+  }
+
+  /**
+   * GET /api/v1/classrooms/{classroomId}/materials?page=1&pageSize=20
+   */
+  getClassroomMaterials(
+    classroomId: string,
+    page = 1,
+    pageSize = 20,
+  ): Observable<StudentMaterialItem[]> {
+    return this.get<StudentMaterialItem[] | StudentMaterialsPagedResponse>(
+      `/classrooms/${classroomId}/materials?page=${page}&pageSize=${pageSize}`,
+    ).pipe(
+      map((res) => {
+        if (Array.isArray(res)) return res;
+        if (res && res.items) return res.items;
+        return [];
+      }),
+      catchError(() => of([])),
     );
   }
 
@@ -183,7 +222,7 @@ export class StudentLibraryService extends ApiBaseService {
     this.searchQuery.set(query);
   }
 
-  setFilter(filter: 'ALL' | 'Document' | 'Video'): void {
+  setFilter(filter: 'ALL' | 'Video' | 'PDF' | 'DOCX' | 'PPTX' | 'Image' | 'Document'): void {
     this.selectedFilter.set(filter);
   }
 }

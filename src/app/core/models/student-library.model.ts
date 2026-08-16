@@ -1,5 +1,8 @@
 // src/app/core/models/student-library.model.ts
 
+export type MaterialType = 'Video' | 'PDF' | 'DOCX' | 'PPTX' | 'Image' | 'Document' | string;
+export type ParseStatus = 'Pending' | 'Parsed' | 'Failed' | string;
+
 export interface LibraryBookChapter {
   id: string;
   title: string;
@@ -17,15 +20,17 @@ export interface LibraryBookItem {
   readonly fileFormat: string;
   readonly downloadUrl: string;
   readonly chapters: readonly LibraryBookChapter[];
-  readonly materialType?: 'Video' | 'Document' | 'Exam' | string;
+  readonly materialType?: MaterialType;
+  readonly parseStatus?: ParseStatus;
   readonly uploadedAt?: string;
+  readonly streamUrl?: string;
 }
 
 export interface MaterialVersion {
   versionId: string;
   versionNumber: number;
   fileUrl: string;
-  parseStatus?: string;
+  parseStatus?: ParseStatus;
   uploadedAt?: string;
   errorMessage?: string | null;
 }
@@ -33,7 +38,7 @@ export interface MaterialVersion {
 export interface StudentMaterialItem {
   materialId: string;
   title: string;
-  materialType: 'Video' | 'Document' | 'Exam' | string;
+  materialType: MaterialType;
   createdAt: string;
   currentVersion?: MaterialVersion;
 }
@@ -46,4 +51,11 @@ export interface StudentMaterialsPagedResponse {
   totalPages: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
+}
+
+export interface MaterialStreamResponse {
+  provider: string;
+  videoId: string;
+  streamUrl: string;
+  expiresAt: string;
 }

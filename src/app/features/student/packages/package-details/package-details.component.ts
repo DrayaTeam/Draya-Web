@@ -3,9 +3,11 @@ import { Component, ChangeDetectionStrategy, inject, OnInit, signal } from '@ang
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import {
   StudentEnrollmentService,
   PackageDetailsView,
+  LessonItem,
 } from '../../../../core/services/student-enrollment.service';
 import { ToastService } from '../../../../core/services/toast.service';
 
@@ -22,11 +24,19 @@ export class PackageDetailsComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly enrollmentService = inject(StudentEnrollmentService);
   private readonly toast = inject(ToastService);
+  private readonly sanitizer = inject(DomSanitizer);
 
   readonly loading = signal<boolean>(true);
   readonly activatingCode = signal<boolean>(false);
   readonly isEnrolled = signal<boolean>(false);
   readonly pkg = signal<PackageDetailsView | null>(null);
+
+  // Accordion state: map chapterId to boolean
+  readonly expandedChapters = signal<Record<string, boolean>>({ ch_1: true });
+
+  // Modal / Preview state
+  readonly selectedLesson = signal<LessonItem | null>(null);
+  readonly showLockModal = signal<boolean>(false);
 
   activationCode = '';
 
@@ -37,6 +47,14 @@ export class PackageDetailsComponent implements OnInit {
     this.enrollmentService.getPackageDetails(pkgId).subscribe({
       next: (data) => {
         this.pkg.set(data);
+        // Expand first chapter by default
+        if (data?.chapters?.length) {
+          const initialMap: Record<string, boolean> = {};
+          data.chapters.forEach((ch, i) => {
+            initialMap[ch.id] = i === 0;
+          });
+          this.expandedChapters.set(initialMap);
+        }
         this.loading.set(false);
       },
       error: () => {
@@ -56,6 +74,44 @@ export class PackageDetailsComponent implements OnInit {
         }
       },
     });
+  }
+
+  toggleChapter(chapterId: string): void {
+    this.expandedChapters.update((current) => ({
+      ...current,
+      [chapterId]: !current[chapterId],
+    }));
+  }
+
+  isChapterExpanded(chapterId: string): boolean {
+    return !!this.expandedChapters()[chapterId];
+  }
+
+  onSelectLesson(lesson: LessonItem): void {
+    if (this.isEnrolled()) {
+      if (lesson.type === 'exam') {
+        this.toast.info('اختبار تدريبي', `جارٍ الانتقال للامتحان: ${lesson.title}`);
+        this.router.navigate(['/student/exams']);
+        return;
+      }
+      // Open lesson viewer modal
+      this.selectedLesson.set(lesson);
+      this.showLockModal.set(false);
+    } else {
+      // Prompt user with lock modal
+      this.selectedLesson.set(lesson);
+      this.showLockModal.set(true);
+    }
+  }
+
+  closeModal(): void {
+    this.selectedLesson.set(null);
+    this.showLockModal.set(false);
+  }
+
+  getSafeUrl(url?: string): SafeResourceUrl | null {
+    if (!url) return null;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   onRedeemCode(): void {
@@ -82,15 +138,11 @@ export class PackageDetailsComponent implements OnInit {
     });
   }
 
-  onGoToCheckout(pkgId: string): void {
-    this.router.navigate(['/student/checkout', pkgId]);
-  }
-
-  onPlayLesson(lessonTitle: string): void {
-    if (this.isEnrolled()) {
-      this.toast.info('تشغيل المحاضرة', `جارٍ تشغيل: ${lessonTitle}`);
-    } else {
-      this.toast.warning('محتوى مغلق', 'يرجى الاشتراك في الباقة أولاً للوصول إلى هذا المحتوى.');
+  onGoToCheckout(pkgId?: string): void {
+    const id = pkgId || this.pkg()?.id;
+    if (id) {
+      this.closeModal();
+      this.router.navigate(['/student/checkout', id]);
     }
   }
 }
