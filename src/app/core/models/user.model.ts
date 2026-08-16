@@ -13,6 +13,7 @@ export interface User {
   phone?: string;
   dateOfBirth?: string;
   parentGuardianEmail?: string;
+  profilePictureUrl?: string;
 }
 
 /**
@@ -27,4 +28,5 @@ export interface UserProfile {
   role: UserRole;
   parentGuardianEmail?: string;
   dateOfBirth?: string;
+  profilePictureUrl?: string;
 }

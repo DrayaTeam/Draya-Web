@@ -13,6 +13,7 @@ export interface StudentProfileData {
   parentPhone: string;
   parentEmail: string;
   dateOfBirth?: string;
+  profilePictureUrl?: string;
 }
 
 export interface UpdateStudentProfileDto {
@@ -31,6 +32,11 @@ interface UserProfileResponse {
   parentPhone?: string;
   parentGuardianEmail?: string;
   dateOfBirth?: string;
+  profilePictureUrl?: string;
+}
+
+interface AvatarUploadResponse {
+  profilePictureUrl: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -54,6 +60,7 @@ export class StudentProfileService extends ApiBaseService {
           parentPhone: res?.parentPhone || '',
           parentEmail: res?.parentGuardianEmail || '',
           dateOfBirth: res?.dateOfBirth,
+          profilePictureUrl: u?.profilePictureUrl || res?.profilePictureUrl || '',
         };
       }),
       catchError(() =>
@@ -65,6 +72,7 @@ export class StudentProfileService extends ApiBaseService {
           parentName: '',
           parentPhone: '',
           parentEmail: '',
+          profilePictureUrl: u?.profilePictureUrl || '',
         }),
       ),
     );
@@ -106,7 +114,6 @@ export class StudentProfileService extends ApiBaseService {
         }) => {
           console.error('PUT /students/profile error:', err);
           if (payload.fullName) {
-            // Keep local user in sync for current browser session
             this.auth.updateLocalUser({ fullName: payload.fullName });
           }
 
@@ -126,17 +133,47 @@ export class StudentProfileService extends ApiBaseService {
   }
 
   /**
-   * Updates student password.
+   * Uploads student profile avatar to Cloudinary via POST /api/v1/students/profile/picture.
+   */
+  uploadAvatar(
+    file: File,
+  ): Observable<{ success: boolean; profilePictureUrl?: string; message: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.post<AvatarUploadResponse>('/students/profile/picture', formData).pipe(
+      tap((res) => {
+        if (res && res.profilePictureUrl) {
+          this.auth.updateLocalUser({ profilePictureUrl: res.profilePictureUrl });
+        }
+      }),
+      map((res) => ({
+        success: true,
+        profilePictureUrl: res?.profilePictureUrl,
+        message: 'تم تحديث الصورة الشخصية بنجاح عبر السحابة!',
+      })),
+      catchError((err) => {
+        console.error('Avatar upload error:', err);
+        return of({
+          success: false,
+          message: 'تعذر رفع الصورة الشخصية. يرجى التأكد من صيغة الملف (.png, .jpg, .webp).',
+        });
+      }),
+    );
+  }
+
+  /**
+   * Updates student password via POST /api/v1/auth/change-password.
    */
   updatePassword(
     currentPassword: string,
     newPassword: string,
+    confirmPassword = newPassword,
   ): Observable<{ success: boolean; message: string }> {
-    void currentPassword;
-    void newPassword;
-    return of({
-      success: true,
-      message: 'تم تحديث كلمة المرور بنجاح!',
+    return this.auth.changePassword({
+      currentPassword,
+      newPassword,
+      confirmPassword,
     });
   }
 }

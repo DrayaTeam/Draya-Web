@@ -5,8 +5,11 @@ export interface QuestionItem {
   classroomId: string;
   authorId: string;
   authorName?: string;
+  authorRole?: string;
   authorAvatar?: string;
+  authorProfilePictureUrl?: string;
   content: string;
+  imageUrl?: string;
   createdAt: string;
   voteCount: number;
   replyCount: number;
@@ -20,9 +23,11 @@ export interface QuestionReplyItem {
   questionId: string;
   authorId: string;
   authorName?: string;
-  authorRole?: 'teacher' | 'assistant' | 'student';
+  authorRole?: string;
   authorAvatar?: string;
+  authorProfilePictureUrl?: string;
   content: string;
+  imageUrl?: string;
   createdAt: string;
   isTeacherAnswer: boolean;
   isAuthor: boolean;
@@ -51,6 +56,7 @@ export interface SignalRQuestionCreatedPayload {
   questionId: string;
   authorId: string;
   content: string;
+  imageUrl?: string;
   createdAt: string;
 }
 
@@ -60,6 +66,7 @@ export interface SignalRQuestionRepliedPayload {
   replyId: string;
   authorId: string;
   content: string;
+  imageUrl?: string;
   createdAt: string;
   isTeacherAnswer: boolean;
 }
