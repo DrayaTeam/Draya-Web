@@ -48,6 +48,12 @@ export const appRoutes: Routes = [
         loadChildren: () => import('./features/parent/parent.routes').then((m) => m.parentRoutes),
       },
       {
+        path: 'admin',
+        canActivate: [roleGuard],
+        data: { roles: ['admin', 'superadmin'] },
+        loadChildren: () => import('./features/admin/admin.routes').then((m) => m.adminRoutes),
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import('./features/auth/pages/profile/profile.component').then((m) => m.ProfileComponent),

@@ -19,8 +19,9 @@ export const roleGuard: CanActivateFn = (route) => {
     return router.createUrlTree(['/auth/login']);
   }
 
-  const allowedRoles: string[] = route.data?.['roles'] ?? [];
-  if (allowedRoles.length === 0 || allowedRoles.includes(user.role)) {
+  const userRoleLower = user.role.toLowerCase();
+  const allowedRoles: string[] = (route.data?.['roles'] ?? []).map((r: string) => r.toLowerCase());
+  if (allowedRoles.length === 0 || allowedRoles.includes(userRoleLower)) {
     return true;
   }
 
@@ -28,9 +29,10 @@ export const roleGuard: CanActivateFn = (route) => {
   const roleDashboards: Record<string, string> = {
     teacher: '/teacher/dashboard',
     student: '/student/dashboard',
-    admin: '/teacher/dashboard',
+    admin: '/admin/dashboard',
+    superadmin: '/admin/dashboard',
     parent: '/parent/reports',
   };
 
-  return router.createUrlTree([roleDashboards[user.role] ?? '/']);
+  return router.createUrlTree([roleDashboards[userRoleLower] ?? '/']);
 };

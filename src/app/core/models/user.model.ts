@@ -1,4 +1,4 @@
-export type UserRole = 'Teacher' | 'Student' | 'Admin' | 'teacher' | 'student' | 'admin';
+export type UserRole = 'Teacher' | 'Student' | 'Admin' | 'SuperAdmin' | 'teacher' | 'student' | 'admin' | 'superadmin';
 
 /**
  * Minimal user object returned by login / register / refresh responses.

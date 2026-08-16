@@ -1,0 +1,119 @@
+<div class="admin-layout" [class.sidebar-collapsed]="isSidebarCollapsed()">
+  <!-- Mobile Sidebar Backdrop -->
+  @if (isMobileSidebarOpen()) {
+    <div
+      class="sidebar-backdrop"
+      (click)="closeMobileSidebar()"
+      (keydown.escape)="closeMobileSidebar()"
+      tabindex="-1"
+      role="button"
+      [attr.aria-label]="'ADMIN.SHELL.CLOSE_MENU' | translate"></div>
+  }
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.mobile-open]="isMobileSidebarOpen()">
+    <div class="sidebar-header">
+      <div class="logo-area">
+        <div class="logo-circle">
+          <i class="pi pi-shield"></i>
+        </div>
+        @if (!isSidebarCollapsed()) {
+          <div class="logo-text">
+            <h1>{{ 'ADMIN.SHELL.BRAND_NAME' | translate }}</h1>
+            <p>{{ 'ADMIN.SHELL.BRAND_SUBTITLE' | translate }}</p>
+          </div>
+        }
+      </div>
+      <!-- Close button for mobile -->
+      <button
+        class="sidebar-close-btn"
+        (click)="closeMobileSidebar()"
+        [attr.aria-label]="'ADMIN.SHELL.CLOSE_MENU' | translate">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      @for (item of navItems; track item.link) {
+        <a
+          [routerLink]="item.link"
+          [routerLinkActive]="'active'"
+          [routerLinkActiveOptions]="{ exact: item.exact || false }"
+          class="nav-item"
+          (click)="closeMobileSidebar()">
+          <i [class]="item.icon + ' nav-icon'"></i>
+          @if (!isSidebarCollapsed()) {
+            <span class="nav-label">{{ item.labelKey | translate }}</span>
+          }
+          @if (
+            item.badgeSignal === 'pendingWithdrawals' &&
+            pendingWithdrawalsCount() > 0 &&
+            !isSidebarCollapsed()
+          ) {
+            <span class="nav-badge">{{ pendingWithdrawalsCount() }}</span>
+          }
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <i class="pi pi-sign-out logout-icon"></i>
+        @if (!isSidebarCollapsed()) {
+          <span class="logout-label">{{ 'ADMIN.SHELL.LOGOUT' | translate }}</span>
+        }
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-end">
+        <!-- Mobile hamburger -->
+        <button
+          class="mobile-toggle"
+          (click)="toggleMobileSidebar()"
+          [attr.aria-label]="'ADMIN.SHELL.OPEN_MENU' | translate">
+          <i class="pi pi-bars"></i>
+        </button>
+
+        <div class="page-title-area">
+          <h2 class="page-title">{{ pageTitle() | translate }}</h2>
+          <span class="breadcrumb-text">
+            {{ 'ADMIN.BREADCRUMB.HOME' | translate }} / {{ breadcrumbKey() | translate }}
+          </span>
+        </div>
+      </div>
+
+      <div class="topbar-start">
+        <div class="admin-profile-pill">
+          <span class="profile-name">{{ currentUserName() }}</span>
+          <div class="profile-avatar">{{ currentUserInitial() }}</div>
+          <i class="pi pi-chevron-down profile-caret"></i>
+        </div>
+
+        <!-- Desktop collapse toggle -->
+        <button
+          class="collapse-toggle"
+          (click)="toggleSidebar()"
+          [attr.aria-label]="
+            isSidebarCollapsed()
+              ? ('ADMIN.SHELL.EXPAND_SIDEBAR' | translate)
+              : ('ADMIN.SHELL.COLLAPSE_SIDEBAR' | translate)
+          ">
+          <i
+            class="pi"
+            [class.pi-chevron-left]="!isSidebarCollapsed()"
+            [class.pi-chevron-right]="isSidebarCollapsed()"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>
