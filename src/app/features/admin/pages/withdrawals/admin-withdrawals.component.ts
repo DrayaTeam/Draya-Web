@@ -63,6 +63,42 @@ export class AdminWithdrawalsComponent implements OnInit {
 
   readonly activeStatusTab = signal<string>('All');
 
+  // Robust Helpers
+  getTeacherName(row: Partial<WithdrawalDto> | null | undefined): string {
+    if (!row) return 'معلم';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const r = row as any;
+    return (
+      r.teacherName ||
+      r.teacherFullName ||
+      r.teacher?.fullName ||
+      r.teacher?.name ||
+      r.user?.fullName ||
+      r.user?.name ||
+      r.teacherEmail ||
+      'معلم'
+    );
+  }
+
+  getTeacherInitial(row: Partial<WithdrawalDto> | null | undefined): string {
+    const name = this.getTeacherName(row);
+    return name && name.length > 0 ? name.charAt(0) : 'م';
+  }
+
+  getTeacherEmail(row: Partial<WithdrawalDto> | null | undefined): string {
+    if (!row) return '';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const r = row as any;
+    return r.teacherEmail || r.teacher?.email || r.user?.email || r.email || '';
+  }
+
+  getPayoutAccount(row: Partial<WithdrawalDto> | null | undefined) {
+    if (!row) return null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const r = row as any;
+    return r.payoutAccount || r.payout || r.account || null;
+  }
+
   isPending(status: unknown): boolean {
     if (status === null || status === undefined) return false;
     return (
