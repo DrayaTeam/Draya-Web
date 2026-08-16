@@ -9,11 +9,11 @@
 
 ## 1. Executive Summary
 
-The Admin Module shell, UI components, layout, and 7 operational pages have been built and styled according to the **Academic Precision** design specification.
+The Admin Module shell, UI components, layout, and 8 operational pages (Dashboard, Withdrawals, Adjustments, Classroom Types, Grade Levels, Supervisors, Settings, and Profile) have been built and styled according to the **Academic Precision** design specification.
 
 - **Live Endpoints Integrated:** 11 endpoints (Financial Overview, Withdrawals Workflow, Manual Adjustments, Platform Financial Settings, Classroom Types CRUD, Grade Levels CRUD, and Auth/Profile).
 - **Fallback Policy:** **Zero artificial fallbacks.** If the database has 0 items, the UI displays genuine empty states. If an API call fails, actual error messages from the backend payload are surfaced via `ToastService`.
-- **Mocked Features:** 2 features (Supervisors Management and Teacher Autocomplete) require new backend endpoints as detailed in Section 3.
+- **Pending Backend Endpoints:** 4 key areas (Admin Profile/Security, Supervisor Invitation & Onboarding Workflow, Supervisor Status Management, and Teacher Search/Autocomplete).
 
 ---
 
@@ -49,13 +49,94 @@ The frontend services are fully wired to the following live endpoints:
 
 ---
 
-## 3. Required Endpoints from Backend Team
+## 3. Required Endpoints & Workflows for Backend Team
 
-The following endpoints are currently **missing** from Swagger and need to be implemented on the backend:
+The following endpoints and workflows need to be implemented or confirmed on the backend:
 
-### 3.1 Supervisors Management (`AdminSupervisorsController`)
+### 3.1 Admin Self-Profile & Security Management (`/admin/profile`)
 
-#### 1. List All Supervisors
+Admins require dedicated endpoints to update their personal identity information and modify their password securely.
+
+#### 1. Update Admin Profile
+- **Route:** `PUT /api/v1/auth/profile` (or `PUT /api/v1/admin/profile`)
+- **Authorization:** `RequireRole("Admin", "SuperAdmin")`
+- **Request Body:**
+```json
+{
+  "fullName": "أ. عبدالرحمن العنزي",
+  "email": "admin@draya.com",
+  "phoneNumber": "+966501234567"
+}
+```
+- **Response `200 OK`:** Returns updated user object.
+
+#### 2. Change Password
+- **Route:** `POST /api/v1/auth/change-password` (or `POST /api/v1/admin/profile/change-password`)
+- **Authorization:** `RequireRole("Admin", "SuperAdmin")`
+- **Request Body:**
+```json
+{
+  "currentPassword": "Admin@123456",
+  "newPassword": "NewAdminPassword@2026",
+  "confirmNewPassword": "NewAdminPassword@2026"
+}
+```
+- **Response `200 OK` / `204 NoContent`**
+
+---
+
+### 3.2 Supervisor / Admin Invitation & Onboarding Lifecycle
+
+To enable superadmins to invite new administrators or supervisors who can securely set their credentials via email link:
+
+#### 1. Invite Admin / Supervisor (Dispatches Email)
+- **Route:** `POST /api/v1/admin/supervisors/invite`
+- **Authorization:** `RequireRole("SuperAdmin")`
+- **Request Body:**
+```json
+{
+  "name": "د. سارة المنصور",
+  "email": "sara.mansour@draya.edu.sa",
+  "role": "Admin"
+}
+```
+- **Backend Flow:**
+  1. Creates user with status `PendingActivation` (or `Invited`).
+  2. Generates an encrypted invitation/reset token (e.g. valid for 48 hours).
+  3. Sends a branded welcome email containing the link:  
+     `https://draya.com/auth/accept-invite?token={inviteToken}&email={email}` (or `https://draya.com/auth/reset-password?token={inviteToken}&email={email}`).
+- **Response `201 Created` / `200 OK`:**
+```json
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "name": "د. سارة المنصور",
+  "email": "sara.mansour@draya.edu.sa",
+  "role": "Admin",
+  "status": "PendingActivation",
+  "invitedAt": "2026-08-17T02:00:00Z"
+}
+```
+
+#### 2. Accept Invitation / Set Initial Password
+- **Route:** `POST /api/v1/auth/accept-invite` (or `POST /api/v1/auth/reset-password`)
+- **Authorization:** Anonymous / Public with Token
+- **Request Body:**
+```json
+{
+  "email": "sara.mansour@draya.edu.sa",
+  "token": "CF91B0E2A18D...",
+  "password": "NewSecurePassword@2026",
+  "confirmPassword": "NewSecurePassword@2026"
+}
+```
+- **Response `200 OK`:** Activates user, marks email as verified, and returns JWT token or redirects to login.
+
+#### 3. Resend Invitation Email
+- **Route:** `POST /api/v1/admin/supervisors/{id}/resend-invite`
+- **Authorization:** `RequireRole("SuperAdmin")`
+- **Response `200 OK` / `204 NoContent`**
+
+#### 4. List All Supervisors
 - **Route:** `GET /api/v1/admin/supervisors`
 - **Authorization:** `RequireRole("SuperAdmin", "Admin")`
 - **Response `200 OK`:**
@@ -72,21 +153,8 @@ The following endpoints are currently **missing** from Swagger and need to be im
 ]
 ```
 
-#### 2. Invite New Supervisor
-- **Route:** `POST /api/v1/admin/supervisors/invite`
-- **Authorization:** `RequireRole("SuperAdmin")`
-- **Request Body:**
-```json
-{
-  "name": "د. سارة المنصور",
-  "email": "sara.mansour@draya.edu.sa",
-  "role": "Admin"
-}
-```
-- **Response `201 Created` / `200 OK`:** Returns created supervisor object with temporary invite state or confirmation message.
-
-#### 3. Toggle Supervisor Status (Activate / Deactivate)
-- **Route:** `PUT /api/v1/admin/supervisors/{id}/status` or `DELETE /api/v1/admin/supervisors/{id}`
+#### 5. Toggle Supervisor Status (Activate / Deactivate)
+- **Route:** `PUT /api/v1/admin/supervisors/{id}/status`
 - **Authorization:** `RequireRole("SuperAdmin")`
 - **Request Body:**
 ```json
@@ -98,7 +166,7 @@ The following endpoints are currently **missing** from Swagger and need to be im
 
 ---
 
-### 3.2 Teacher Autocomplete & Balance Lookup (`AdminTeachersController` or `TeachersController`)
+### 3.3 Teacher Autocomplete & Balance Lookup (`AdminTeachersController` or `TeachersController`)
 
 In the manual adjustment screen (`/admin/adjustments`), admins need to select a teacher dynamically:
 
@@ -193,6 +261,7 @@ export interface PlatformSettingsDto {
   - *Withdrawals:* "لا توجد طلبات سحب" (No withdrawal requests).
   - *Classroom Types:* "لا توجد أنواع فصول" (No classroom types configured).
   - *Grade Levels:* "لا توجد مراحل دراسية" (No grade levels configured).
+  - *Supervisors:* "لا يوجد مشرفون" (No supervisors found).
 - **Backend Error Propagation:** `error.error.message` from ASP.NET Core response is passed directly to `ToastService.error()` for transparent troubleshooting.
 
 ---
@@ -213,7 +282,17 @@ Before handoff, the entire test and quality pipeline was executed and passed wit
 
 ## 7. Action Checklist for Backend Team
 
-- [ ] Implement `AdminSupervisorsController` (`GET /supervisors`, `POST /invite`, `PUT /{id}/status`).
-- [ ] Provide `GET /admin/teachers/search?q={query}` endpoint for the adjustment form autocomplete.
-- [ ] Confirm CORS configuration allows `http://localhost:4200` with standard auth headers (`Authorization: Bearer <token>`).
-- [ ] Notify frontend team once supervisor endpoints are deployed to Swagger (`https://draya-api.runasp.net/swagger/v1/swagger.json`) for final end-to-end switch.
+- [ ] **Admin Profile & Security:**
+  - Implement `PUT /api/v1/auth/profile` or `PUT /api/v1/admin/profile` (Update name, email, phone).
+  - Implement `POST /api/v1/auth/change-password` (Validate current password and set new password).
+- [ ] **Supervisor Invitation Flow:**
+  - Implement `POST /api/v1/admin/supervisors/invite` (Create user with `PendingActivation` & send invite email with reset token).
+  - Implement `POST /api/v1/auth/accept-invite` or `POST /api/v1/auth/reset-password` for password creation from token.
+  - Implement `POST /api/v1/admin/supervisors/{id}/resend-invite`.
+  - Implement `GET /api/v1/admin/supervisors` and `PUT /api/v1/admin/supervisors/{id}/status`.
+- [ ] **Teacher Lookup:**
+  - Provide `GET /api/v1/admin/teachers/search?q={query}` endpoint for the adjustment form autocomplete.
+- [ ] **CORS & Auth:**
+  - Confirm CORS configuration allows `http://localhost:4200` with standard auth headers (`Authorization: Bearer <token>`).
+- [ ] **Swagger Deployment:**
+  - Notify frontend team once endpoints are deployed to Swagger (`https://draya-api.runasp.net/swagger/v1/swagger.json`) for final end-to-end switch.
