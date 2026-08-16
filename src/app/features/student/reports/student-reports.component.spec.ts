@@ -15,12 +15,7 @@ describe('StudentReportsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StudentReportsComponent],
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        MessageService,
-        ToastService,
-      ],
+      providers: [provideHttpClient(), provideHttpClientTesting(), MessageService, ToastService],
     }).compileComponents();
 
     fixture = TestBed.createComponent(StudentReportsComponent);
