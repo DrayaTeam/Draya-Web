@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { catchError, finalize, Observable, throwError, tap } from 'rxjs';
+import { catchError, finalize, Observable, throwError, tap, map, of } from 'rxjs';
 import { AUTH_API } from './auth-api.token';
 import { User, UserProfile, UserRole } from '../../../core/models/user.model';
 import { ApiError } from '../../../core/models/api-error.model';
@@ -219,6 +219,40 @@ export class AuthService {
         this._authError.set(error);
         return throwError(() => error);
       }),
+      finalize(() => this._isLoading.set(false)),
+    );
+  }
+
+  changePassword(payload: {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  }): Observable<{ success: boolean; message: string }> {
+    this._isLoading.set(true);
+    this._authError.set(null);
+    return this.authApi.changePassword(payload).pipe(
+      map(() => ({
+        success: true,
+        message: 'تم تغيير كلمة المرور بنجاح!',
+      })),
+      catchError(
+        (error: {
+          error?: { code?: string; message?: string; error?: { message?: string } };
+          message?: string;
+          status?: number;
+        }) => {
+          const errorMsg =
+            error?.error?.error?.message ||
+            error?.error?.message ||
+            (error?.error?.code === 'INVALID_CURRENT_PASSWORD'
+              ? 'كلمة المرور الحالية غير صحيحة.'
+              : 'تعذر تغيير كلمة المرور. يرجى التأكد من مطابقة الشروط.');
+          return of({
+            success: false,
+            message: errorMsg,
+          });
+        },
+      ),
       finalize(() => this._isLoading.set(false)),
     );
   }
