@@ -1,0 +1,18 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:4200",
+      "localStorage": [
+        {
+          "name": "draya_access_token",
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZW1vLXN0dWRlbnQtMSIsImVtYWlsIjoic3R1ZGVudEBkcmF5YS5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJTdHVkZW50IiwiZnVsbE5hbWUiOiLYo9it2YXYryDYudmE2YkiLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MjUzNDA2MDgwMCwianRpIjoiZGVtby1qdGktdG9rZW4ifQ.dummy_signature"
+        },
+        {
+          "name": "draya_user",
+          "value": "{\"userId\":\"demo-student-1\",\"email\":\"student@draya.com\",\"fullName\":\"أحمد علي\",\"role\":\"student\",\"gradeLevel\":\"الصف الثالث الثانوي\"}"
+        }
+      ]
+    }
+  ]
+}
