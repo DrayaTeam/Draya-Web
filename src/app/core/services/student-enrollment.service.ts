@@ -35,6 +35,20 @@ export interface TeacherPackageCard {
   subjectName: string;
 }
 
+export interface LessonItem {
+  id: string;
+  title: string;
+  type: 'video' | 'pdf' | 'exam';
+  duration?: string;
+  fileUrl?: string;
+}
+
+export interface ChapterItem {
+  id: string;
+  title: string;
+  lessons: LessonItem[];
+}
+
 export interface PackageDetailsView {
   id: string;
   name: string;
@@ -43,16 +57,7 @@ export interface PackageDetailsView {
   price: number;
   description: string;
   features: string[];
-  chapters: {
-    id: string;
-    title: string;
-    lessons: {
-      id: string;
-      title: string;
-      type: 'video' | 'pdf' | 'exam';
-      duration?: string;
-    }[];
-  }[];
+  chapters: ChapterItem[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -168,16 +173,48 @@ export class StudentEnrollmentService extends ApiBaseService {
         const name = classroom?.name || 'الباقة الدراسية';
         const price = classroom?.price || 0;
 
-        const lessonsList = rawMaterials.map((m, idx) => ({
-          id: m.materialId || m.id || `les_${idx + 1}`,
-          title: m.title || `محاضرة ${idx + 1}`,
-          type: (m.type === 'pdf' || m.materialType === 'pdf'
-            ? 'pdf'
-            : m.type === 'exam' || m.materialType === 'exam'
-              ? 'exam'
-              : 'video') as 'video' | 'pdf' | 'exam',
-          duration: m.durationText || '25 دقيقة',
-        }));
+        const lessonsList: LessonItem[] = rawMaterials.map((m: {
+          materialId?: string;
+          id?: string;
+          title?: string;
+          name?: string;
+          type?: string;
+          materialType?: string;
+          durationText?: string;
+          fileUrl?: string;
+          url?: string;
+          currentVersion?: { fileUrl?: string };
+        }, idx: number) => {
+          const rawType = (m.materialType || m.type || '').toString().toLowerCase();
+          const rawTitle = (m.title || m.name || '').toString().toLowerCase();
+          const isPdf =
+            rawType.includes('pdf') ||
+            rawType.includes('doc') ||
+            rawTitle.endsWith('.pdf') ||
+            rawTitle.endsWith('.doc');
+          const isExam = rawType.includes('exam') || rawType.includes('quiz');
+          const type: 'video' | 'pdf' | 'exam' = isPdf ? 'pdf' : isExam ? 'exam' : 'video';
+
+          const fileUrl =
+            m.currentVersion?.fileUrl ||
+            m.fileUrl ||
+            m.url ||
+            (m.materialId
+              ? `http://draya-api.runasp.net/api/v1/materials/${m.materialId}/stream`
+              : '');
+
+          const durationText =
+            m.durationText ||
+            (isPdf ? 'مستند PDF' : isExam ? 'اختبار تدريبي' : 'فيديو تعليمي');
+
+          return {
+            id: m.materialId || m.id || `les_${idx + 1}`,
+            title: m.title || m.name || `محاضرة ${idx + 1}`,
+            type,
+            duration: durationText,
+            fileUrl,
+          };
+        });
 
         return {
           id: classroomId,
@@ -229,17 +266,28 @@ export class StudentEnrollmentService extends ApiBaseService {
 
   /**
    * Initiates Paymob checkout session for a classroom.
+   * Sends redirectionUrl as required by the new backend architecture.
    * Returns the Paymob payment URL to redirect the student to.
    */
   checkoutClassroom(
     classroomId: string,
+    redirectionUrl?: string,
   ): Observable<{ success: boolean; checkoutUrl?: string; message?: string }> {
+    const defaultRedir =
+      typeof window !== 'undefined'
+        ? `${window.location.origin}/payment/result`
+        : 'https://draya.com/payment/result';
+
+    const body = {
+      redirectionUrl: redirectionUrl || defaultRedir,
+    };
+
     return this.post<{
       checkoutUrl?: string;
       paymentUrl?: string;
       url?: string;
       data?: { checkoutUrl?: string };
-    }>(`/classrooms/${classroomId}/checkout`, {}).pipe(
+    }>(`/classrooms/${classroomId}/checkout`, body).pipe(
       map((res) => {
         const url =
           res?.checkoutUrl ||
@@ -257,15 +305,23 @@ export class StudentEnrollmentService extends ApiBaseService {
         };
       }),
       catchError((err) => {
-        const errorMsg =
+        let errorMsg =
           err?.error?.message ||
-          err?.error?.title ||
-          (err?.status === 400
-            ? 'معرف الباقة غير صالح (يجب أن يكون UUID حقيقي من السيرفر).'
-            : null) ||
-          (err?.status === 404 ? 'هذه الباقة غير موجودة في قاعدة بيانات السيرفر.' : null) ||
-          (err?.status === 401 ? 'يجب تسجيل الدخول كطالب أولاً لإتمام الدفع.' : null) ||
-          'فشل الاتصال بسيرفر الدفع، يرجى المحاولة مرة أخرى.';
+          err?.error?.error?.message ||
+          err?.message ||
+          err?.error?.title;
+
+        if (errorMsg === 'An unexpected error occurred.' || err?.code === 'INTERNAL_ERROR' || err?.status === 500) {
+          errorMsg = 'تعذر الاتصال ببوابة Paymob من الخادم (Paymob 500 Internal Error)، يرجى مراجعة إعدادات الربط في السيرفر.';
+        } else if (err?.status === 400) {
+          errorMsg = 'معرف الباقة غير صالح أو البيانات غير مكتملة.';
+        } else if (err?.status === 404) {
+          errorMsg = 'هذه الباقة غير موجودة في قاعدة بيانات السيرفر.';
+        } else if (err?.status === 401) {
+          errorMsg = 'يجب تسجيل الدخول كطالب أولاً لإتمام الدفع.';
+        } else if (!errorMsg) {
+          errorMsg = 'فشل الاتصال بسيرفر الدفع، يرجى المحاولة مرة أخرى.';
+        }
 
         return of({
           success: false,
@@ -274,4 +330,40 @@ export class StudentEnrollmentService extends ApiBaseService {
       }),
     );
   }
+
+  /**
+   * Fetches the source of truth payment status for a transaction.
+   * Used for verifying enrollment and handling background webhook processing.
+   */
+  getPaymentStatus(transactionId: string): Observable<{
+    paymentTransactionId: string;
+    status: string;
+    grossAmount: number;
+    purpose?: string;
+    classroomId?: string;
+    isEnrolled: boolean;
+  } | null> {
+    return this.get<{
+      paymentTransactionId: string;
+      status: string;
+      grossAmount: number;
+      purpose?: string;
+      classroomId?: string;
+      isEnrolled: boolean;
+    }>(`/payments/${transactionId}/status`).pipe(
+      catchError(() => of(null)),
+    );
+  }
+
+  /**
+   * Confirms payment transaction status with backend.
+   * Automatically synchronizes the transaction when returning from Paymob.
+   */
+  confirmPayment(transactionId: string, isSuccess = true): Observable<boolean> {
+    return this.post<unknown>(`/payments/confirm/${transactionId}?isSuccess=${isSuccess}`, {}).pipe(
+      map(() => true),
+      catchError(() => of(false)),
+    );
+  }
 }
+

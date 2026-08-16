@@ -52,15 +52,23 @@ export const appRoutes: Routes = [
         loadComponent: () =>
           import('./features/auth/pages/profile/profile.component').then((m) => m.ProfileComponent),
       },
-      {
-        path: 'payment/callback',
-        redirectTo: 'student/checkout/callback',
-      },
-      {
-        path: 'payments/callback',
-        redirectTo: 'student/checkout/callback',
-      },
     ],
+  },
+  // Payment Callbacks & Verification
+  {
+    path: 'payment/result',
+    loadComponent: () =>
+      import(
+        './features/student/checkout/payment-callback/student-payment-callback.component'
+      ).then((m) => m.StudentPaymentCallbackComponent),
+  },
+  {
+    path: 'payment/callback',
+    redirectTo: 'payment/result',
+  },
+  {
+    path: 'payments/callback',
+    redirectTo: 'payment/result',
   },
   {
     path: 'error',

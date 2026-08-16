@@ -3,7 +3,26 @@
   <div class="glow-orb orb-2"></div>
 
   <div class="callback-card">
-    @if (isSuccess()) {
+    @if (verificationState() === 'verifying') {
+      <!-- Verifying / Polling State -->
+      <div class="icon-circle loading-circle">
+        <div class="spinner-lg"></div>
+      </div>
+
+      <div class="status-pill pending-pill">
+        <span class="dot pulse-dot"></span>
+        <span>جارٍ التحقق من تأكيد المعاملة...</span>
+      </div>
+
+      <h1 class="card-title">معالجة وتأكيد الدفع</h1>
+      <p class="card-desc">
+        ننتظر تأكيد المعاملة المالية من بوابة الدفع والسيرفر السحابي، يُرجى الانتظار بضع ثوانٍ...
+      </p>
+
+      <div class="poll-counter-box">
+        <span>فحص حالة العملية (المحاولة {{ retryCount() }} من 10)</span>
+      </div>
+    } @else if (verificationState() === 'completed') {
       <!-- Success Icon Circle -->
       <div class="icon-circle success-circle">
         <svg
@@ -22,14 +41,14 @@
 
       <div class="status-pill success-pill">
         <span class="dot"></span>
-        <span>تم تأكيد المعاملة المالية بنجاح</span>
+        <span>تم تأكيد المعاملة والاشتراك بنجاح</span>
       </div>
 
       <h1 class="card-title">
         @if (isTeacher()) {
           مبروك! تم تفعيل اشتراك المعلم بنجاح 🎉
         } @else {
-          مبروك! تم الاشتراك في الكلاس رووم 🎉
+          مبروك! تم الاشتراك في المجموعة الدراسية 🎉
         }
       </h1>
 
@@ -47,14 +66,19 @@
         <div class="txn-info-box">
           <span class="txn-label">رقم المعاملة (Transaction ID):</span>
           <span class="txn-code">{{ transactionId() }}</span>
+          @if (grossAmount() > 0) {
+            <span class="txn-amount">المبلغ: {{ grossAmount() }} ج.م</span>
+          }
         </div>
       }
 
-      <div class="redirect-notice">
-        <span>سيتم تحويلك تلقائياً خلال</span>
-        <strong class="timer-num">{{ countdownSeconds() }}</strong>
-        <span>ثوانٍ...</span>
-      </div>
+      @if (!isPopup()) {
+        <div class="redirect-notice">
+          <span>سيتم تحويلك تلقائياً خلال</span>
+          <strong class="timer-num">{{ countdownSeconds() }}</strong>
+          <span>ثوانٍ...</span>
+        </div>
+      }
 
       <div class="actions-row">
         <button type="button" class="btn-primary" (click)="onPrimaryAction()">
@@ -113,6 +137,13 @@
         لم يتم خصم المبلغ أو تم إلغاء العملية من بوابة الدفع. يرجى المحاولة مرة أخرى أو اختيار وسيلة
         دفع بديلة.
       </p>
+
+      @if (transactionId()) {
+        <div class="txn-info-box error-txn-box">
+          <span class="txn-label">رقم المعاملة:</span>
+          <span class="txn-code">{{ transactionId() }}</span>
+        </div>
+      }
 
       <div class="actions-row">
         <a

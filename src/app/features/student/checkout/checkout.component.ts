@@ -105,25 +105,18 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   onSubmitPayment(): void {
     this.loading.set(true);
 
-    this.enrollmentService.checkoutClassroom(this.pkgId).subscribe({
+    const redirectUrl =
+      typeof window !== 'undefined'
+        ? `${window.location.origin}/payment/result`
+        : 'https://draya.com/payment/result';
+
+    this.enrollmentService.checkoutClassroom(this.pkgId, redirectUrl).subscribe({
       next: (res) => {
         this.loading.set(false);
         if (res.success && res.checkoutUrl) {
-          this.paymobUrl.set(res.checkoutUrl);
-          this.isAwaitingPayment.set(true);
-
-          // Open Centered Paymob Popup Window and store reference
-          this.popupRef = this.openCenteredPopup(res.checkoutUrl);
-          if (!this.popupRef) {
-            // If popup is blocked by browser, redirect current window
-            window.location.href = res.checkoutUrl;
-          } else {
-            this.toast.info(
-              'بوابة الدفع الآمنة',
-              'تم فتح نافذة Paymob في المنتصف. في انتظار إتمام العملية...',
-            );
-            this.startEnrollmentPolling();
-          }
+          this.toast.info('جاري تحويلك لبوابة الدفع', 'سيتم نقلك لصفحة الدفع الآمنة من Paymob...');
+          // Redirect to Paymob payment page (Phase 2 in guide)
+          window.location.href = res.checkoutUrl;
         } else {
           this.toast.error(
             'خطأ في إتمام الدفع',
