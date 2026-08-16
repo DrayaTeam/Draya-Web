@@ -97,12 +97,48 @@
         </div>
       </div>
 
-      <!-- Left area (end of reading in RTL): Admin profile -->
+      <!-- Left area (end of reading in RTL): Admin profile dropdown -->
       <div class="topbar-end">
-        <div class="admin-profile-pill">
-          <div class="profile-avatar">{{ currentUserInitial() }}</div>
-          <span class="profile-name">{{ currentUserName() }}</span>
-          <i class="pi pi-chevron-down profile-caret"></i>
+        <div class="profile-dropdown-wrapper">
+          <button
+            class="admin-profile-pill"
+            (click)="toggleProfileMenu()"
+            [attr.aria-expanded]="isProfileMenuOpen()"
+            aria-haspopup="true"
+            type="button"
+          >
+            <div class="profile-avatar">{{ currentUserInitial() }}</div>
+            <span class="profile-name">{{ currentUserName() }}</span>
+            <i class="pi pi-chevron-down profile-caret" [class.rotated]="isProfileMenuOpen()"></i>
+          </button>
+
+          @if (isProfileMenuOpen()) {
+            <!-- Backdrop to click outside and close -->
+            <div
+              class="dropdown-backdrop"
+              (click)="closeProfileMenu()"
+              (keydown.escape)="closeProfileMenu()"
+              tabindex="-1"
+              role="button"
+              [attr.aria-label]="'ADMIN.SHELL.CLOSE_MENU' | translate"
+            ></div>
+
+            <div class="profile-menu">
+              <div class="menu-header">
+                <span class="menu-user-name">{{ currentUserName() }}</span>
+                <span class="menu-user-role">مسؤول المنصة</span>
+              </div>
+              <div class="menu-divider"></div>
+              <a routerLink="/profile" class="menu-item" (click)="closeProfileMenu()">
+                <i class="pi pi-user menu-item-icon"></i>
+                <span>حسابي</span>
+              </a>
+              <button class="menu-item logout-item" (click)="logout()" type="button">
+                <i class="pi pi-sign-out menu-item-icon"></i>
+                <span>تسجيل الخروج</span>
+              </button>
+            </div>
+          }
         </div>
       </div>
     </header>

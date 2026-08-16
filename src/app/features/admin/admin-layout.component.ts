@@ -28,6 +28,7 @@ export class AdminLayoutComponent {
 
   readonly isSidebarCollapsed = signal<boolean>(false);
   readonly isMobileSidebarOpen = signal<boolean>(false);
+  readonly isProfileMenuOpen = signal<boolean>(false);
   readonly pendingWithdrawalsCount = signal<number>(0);
 
   private readonly routerEvents = toSignal(
@@ -111,7 +112,16 @@ export class AdminLayoutComponent {
     this.isMobileSidebarOpen.set(false);
   }
 
+  toggleProfileMenu(): void {
+    this.isProfileMenuOpen.update((v) => !v);
+  }
+
+  closeProfileMenu(): void {
+    this.isProfileMenuOpen.set(false);
+  }
+
   logout(): void {
+    this.closeProfileMenu();
     this.auth.logout();
   }
 }

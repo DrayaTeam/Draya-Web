@@ -296,6 +296,10 @@ $color-danger: #ef4444;
   gap: 12px;
 }
 
+.profile-dropdown-wrapper {
+  position: relative;
+}
+
 .admin-profile-pill {
   display: flex;
   align-items: center;
@@ -305,10 +309,11 @@ $color-danger: #ef4444;
   border: 1px solid $color-border;
   background: $color-surface;
   cursor: pointer;
-  transition: box-shadow 0.15s ease;
+  transition: all 0.15s ease;
 
   &:hover {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    border-color: rgba($color-genoa, 0.3);
   }
 }
 
@@ -334,6 +339,111 @@ $color-danger: #ef4444;
 .profile-caret {
   font-size: 10px;
   color: $color-text-muted;
+  transition: transform 0.2s ease;
+
+  &.rotated {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  background: transparent;
+}
+
+.profile-menu {
+  position: absolute;
+  inset-block-start: calc(100% + 8px);
+  inset-inline-start: 0;
+  min-inline-size: 200px;
+  background: $color-surface;
+  border-radius: 12px;
+  border: 1px solid $color-border;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  z-index: 50;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.15s cubic-bezier(0, 0, 0.2, 1);
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-header {
+  padding: 12px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: #FAFAF8;
+
+  .menu-user-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: $color-text-primary;
+  }
+
+  .menu-user-role {
+    font-size: 11px;
+    color: $color-text-muted;
+    font-weight: 500;
+  }
+}
+
+.menu-divider {
+  block-size: 1px;
+  background: $color-border;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  color: $color-text-primary;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  inline-size: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: start;
+
+  .menu-item-icon {
+    font-size: 14px;
+    color: $color-text-secondary;
+  }
+
+  &:hover {
+    background: #F8FAFA;
+    color: $color-deep-teal;
+
+    .menu-item-icon {
+      color: $color-deep-teal;
+    }
+  }
+
+  &.logout-item {
+    color: $color-danger;
+
+    .menu-item-icon {
+      color: $color-danger;
+    }
+
+    &:hover {
+      background: #FEF2F2;
+    }
+  }
 }
 
 // ─── Content Area ───────────────────────
