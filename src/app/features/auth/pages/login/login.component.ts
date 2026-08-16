@@ -51,11 +51,13 @@ export class LoginComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
-          const role = res.user.role;
+          const role = (res.user?.role || '').toLowerCase();
           const dashboards: Record<string, string> = {
             teacher: '/teacher/dashboard',
             student: '/student/dashboard',
             parent: '/parent/reports',
+            admin: '/admin/dashboard',
+            superadmin: '/admin/dashboard',
           };
           const targetUrl = dashboards[role];
           if (targetUrl) {

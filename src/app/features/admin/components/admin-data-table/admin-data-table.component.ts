@@ -13,7 +13,7 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-export interface AdminColumn<T = any> {
+export interface AdminColumn<T = Record<string, unknown>> {
   key: string;
   headerKey: string;
   sortable?: boolean;
@@ -30,7 +30,7 @@ export interface AdminColumn<T = any> {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminDataTableComponent {
-  data = input<any[]>([]);
+  data = input<Record<string, unknown>[]>([]);
   columns = input<AdminColumn[]>([]);
   loading = input<boolean>(false);
   totalCount = input<number>(0);
@@ -38,7 +38,7 @@ export class AdminDataTableComponent {
   currentPage = input<number>(1);
   searchPlaceholderKey = input<string>('ADMIN.SHARED.SEARCH');
 
-  getCellValue(row: any, key: string): any {
+  getCellValue(row: Record<string, unknown>, key: string): unknown {
     return row ? row[key] : '';
   }
 
