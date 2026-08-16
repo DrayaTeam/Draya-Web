@@ -165,20 +165,40 @@
               </div>
             </div>
 
-            @if (q.hasTeacherAnswer) {
-              <div class="badge-answered">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-                <span>تم الرد من المعلم</span>
-              </div>
-            }
+            <div class="q-header-actions">
+              @if (q.hasTeacherAnswer) {
+                <div class="badge-answered">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>تم الرد من المعلم</span>
+                </div>
+              }
+              @if (q.isAuthor) {
+                <div class="author-actions-group">
+                  <button
+                    type="button"
+                    class="btn-author-action btn-edit-action"
+                    (click)="openEditQuestionModal(q, $event)"
+                    title="تعديل السؤال">
+                    ✏️
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-author-action btn-delete-action"
+                    (click)="openDeleteQuestionModal(q, $event)"
+                    title="حذف السؤال">
+                    🗑️
+                  </button>
+                </div>
+              }
+            </div>
           </div>
 
           <div class="q-card-content">
@@ -218,7 +238,11 @@
               <span class="vote-label">تصويت</span>
             </button>
 
-            <button type="button" class="btn-replies-count">
+            <button
+              type="button"
+              class="btn-replies-count"
+              (click)="openThread(q); $event.stopPropagation()"
+              title="عرض المناقشة والردود">
               <svg
                 width="16"
                 height="16"
@@ -265,7 +289,7 @@
           <div>
             <h3 class="modal-title">طرح سؤال دراسي جديد</h3>
             <span class="modal-subtitle">
-              سيظهر سؤالك للمعلم وزملائك في {{ selectedClassroom()?.title || 'المجموعة الدراسية' }}
+              سيظهر سؤالك للمعلم وزملائك في {{ selectedClassroom().title || 'المجموعة الدراسية' }}
             </span>
           </div>
           <button type="button" class="btn-close-x" (click)="closeAskModal()">✕</button>
@@ -362,7 +386,9 @@
         <div class="modal-header">
           <div>
             <h3 class="modal-title">تفاصيل النقاش والردود</h3>
-            <span class="modal-subtitle">{{ selectedClassroom()?.title || 'المجموعة الدراسية' }}</span>
+            <span class="modal-subtitle">
+              {{ selectedClassroom().title || 'المجموعة الدراسية' }}
+            </span>
           </div>
           <button type="button" class="btn-close-x" (click)="closeThread()">✕</button>
         </div>
@@ -399,23 +425,44 @@
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  class="btn-vote"
-                  [class.voted]="q.hasVoted"
-                  (click)="onToggleVote($event, q)">
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2">
-                    <path
-                      d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
-                  </svg>
-                  <span>{{ q.voteCount }}</span>
-                </button>
+                <div class="thread-header-actions">
+                  <button
+                    type="button"
+                    class="btn-vote"
+                    [class.voted]="q.hasVoted"
+                    (click)="onToggleVote($event, q)">
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2">
+                      <path
+                        d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+                    </svg>
+                    <span>{{ q.voteCount }}</span>
+                  </button>
+
+                  @if (q.isAuthor) {
+                    <div class="author-actions-group">
+                      <button
+                        type="button"
+                        class="btn-author-action btn-edit-action"
+                        (click)="openEditQuestionModal(q, $event)"
+                        title="تعديل السؤال">
+                        ✏️
+                      </button>
+                      <button
+                        type="button"
+                        class="btn-author-action btn-delete-action"
+                        (click)="openDeleteQuestionModal(q, $event)"
+                        title="حذف السؤال">
+                        🗑️
+                      </button>
+                    </div>
+                  }
+                </div>
               </div>
 
               <p class="thread-q-text">{{ q.content }}</p>
@@ -487,6 +534,25 @@
                           <span class="reply-timestamp">{{ rep.createdAt | date: 'short' }}</span>
                         </div>
                       </div>
+
+                      @if (rep.isAuthor) {
+                        <div class="reply-header-actions author-actions-group">
+                          <button
+                            type="button"
+                            class="btn-author-action btn-edit-action"
+                            (click)="openEditReplyModal(rep, $event)"
+                            title="تعديل الرد">
+                            ✏️
+                          </button>
+                          <button
+                            type="button"
+                            class="btn-author-action btn-delete-action"
+                            (click)="openDeleteReplyModal(rep, $event)"
+                            title="حذف الرد">
+                            🗑️
+                          </button>
+                        </div>
+                      }
                     </div>
 
                     <p class="reply-text">{{ rep.content }}</p>
@@ -556,6 +622,188 @@
               <button type="button" class="btn-remove-pill" (click)="removeReplyPhoto()">✕</button>
             </div>
           }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- Edit Question Modal -->
+  <!-- ========================================== -->
+  @if (showEditQuestionModal()) {
+    <div
+      class="modal-backdrop animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      (keydown.escape)="closeEditQuestionModal()">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div>
+            <h3 class="modal-title">تعديل السؤال</h3>
+            <span class="modal-subtitle">يمكنك تحديث نص سؤالك المطروح</span>
+          </div>
+          <button type="button" class="btn-close-x" (click)="closeEditQuestionModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <label class="form-label" for="edit-question-content">نص السؤال المعدل *</label>
+          <textarea
+            id="edit-question-content"
+            class="modal-textarea"
+            rows="4"
+            placeholder="اكتب التعديل على سؤالك..."
+            [value]="editQuestionText()"
+            (input)="editQuestionText.set($any($event.target).value)"></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeEditQuestionModal()">إلغاء</button>
+          <button
+            type="button"
+            class="btn-submit"
+            [disabled]="isSubmittingAction() || !editQuestionText().trim()"
+            (click)="submitEditQuestion()">
+            @if (isSubmittingAction()) {
+              <span>جارٍ الحفظ...</span>
+            } @else {
+              <span>حفظ التعديلات</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- Delete Question Confirmation Modal -->
+  <!-- ========================================== -->
+  @if (showDeleteQuestionModal()) {
+    <div
+      class="modal-backdrop animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      (keydown.escape)="closeDeleteQuestionModal()">
+      <div class="modal-card modal-card-sm">
+        <div class="modal-header modal-header-danger">
+          <div>
+            <h3 class="modal-title text-danger">حذف السؤال</h3>
+            <span class="modal-subtitle">هل أنت متأكد من حذف هذا السؤال نهائياً؟</span>
+          </div>
+          <button type="button" class="btn-close-x" (click)="closeDeleteQuestionModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <p class="delete-warning-text">
+            سيتم إزالة السؤال مع جميع الردود والمناقشات المرتبطة به ولا يمكن التراجع عن هذا الإجراء.
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeDeleteQuestionModal()">إلغاء</button>
+          <button
+            type="button"
+            class="btn-submit btn-danger-action"
+            [disabled]="isSubmittingAction()"
+            (click)="confirmDeleteQuestion()">
+            @if (isSubmittingAction()) {
+              <span>جارٍ الحذف...</span>
+            } @else {
+              <span>تأكيد الحذف</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- Edit Reply Modal -->
+  <!-- ========================================== -->
+  @if (showEditReplyModal()) {
+    <div
+      class="modal-backdrop animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      (keydown.escape)="closeEditReplyModal()">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div>
+            <h3 class="modal-title">تعديل الرد</h3>
+            <span class="modal-subtitle">تحديث نص الرد الخاص بك</span>
+          </div>
+          <button type="button" class="btn-close-x" (click)="closeEditReplyModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <label class="form-label" for="edit-reply-content">نص الرد المعدل *</label>
+          <textarea
+            id="edit-reply-content"
+            class="modal-textarea"
+            rows="3"
+            placeholder="اكتب التعديل على ردك..."
+            [value]="editReplyText()"
+            (input)="editReplyText.set($any($event.target).value)"></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeEditReplyModal()">إلغاء</button>
+          <button
+            type="button"
+            class="btn-submit"
+            [disabled]="isSubmittingAction() || !editReplyText().trim()"
+            (click)="submitEditReply()">
+            @if (isSubmittingAction()) {
+              <span>جارٍ الحفظ...</span>
+            } @else {
+              <span>حفظ التعديل</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ========================================== -->
+  <!-- Delete Reply Confirmation Modal -->
+  <!-- ========================================== -->
+  @if (showDeleteReplyModal()) {
+    <div
+      class="modal-backdrop animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      (keydown.escape)="closeDeleteReplyModal()">
+      <div class="modal-card modal-card-sm">
+        <div class="modal-header modal-header-danger">
+          <div>
+            <h3 class="modal-title text-danger">حذف الرد</h3>
+            <span class="modal-subtitle">هل أنت متأكد من حذف هذا الرد؟</span>
+          </div>
+          <button type="button" class="btn-close-x" (click)="closeDeleteReplyModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <p class="delete-warning-text">
+            سيتم إزالة هذا الرد نهائياً من سجل النقاش.
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeDeleteReplyModal()">إلغاء</button>
+          <button
+            type="button"
+            class="btn-submit btn-danger-action"
+            [disabled]="isSubmittingAction()"
+            (click)="confirmDeleteReply()">
+            @if (isSubmittingAction()) {
+              <span>جارٍ الحذف...</span>
+            } @else {
+              <span>تأكيد الحذف</span>
+            }
+          </button>
         </div>
       </div>
     </div>

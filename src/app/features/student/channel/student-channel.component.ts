@@ -18,6 +18,7 @@ import { StudentCoursesService } from '../../../core/services/student-courses.se
 import { ToastService } from '../../../core/services/toast.service';
 import {
   QuestionItem,
+  QuestionReplyItem,
   QuestionSortBy,
   QuestionFilterBy,
 } from '../../../core/models/student-channel.model';
@@ -40,16 +41,36 @@ export class StudentChannelComponent implements OnInit, OnDestroy {
   readonly classrooms = this.coursesService.subscribedPackages;
   readonly selectedClassroomId = signal<string>('');
 
-  // Modal Dialogs
+  // Modal Dialogs - Ask
   readonly showAskModal = signal<boolean>(false);
   readonly newQuestionText = signal<string>('');
   readonly questionPhoto = signal<File | null>(null);
   readonly questionPhotoPreview = signal<string | null>(null);
 
+  // Modal Dialogs - Thread & Reply
   readonly showThreadModal = signal<boolean>(false);
   readonly newReplyText = signal<string>('');
   readonly replyPhoto = signal<File | null>(null);
   readonly replyPhotoPreview = signal<string | null>(null);
+
+  // Edit & Delete Modals - Question
+  readonly showEditQuestionModal = signal<boolean>(false);
+  readonly editingQuestion = signal<QuestionItem | null>(null);
+  readonly editQuestionText = signal<string>('');
+
+  readonly showDeleteQuestionModal = signal<boolean>(false);
+  readonly deletingQuestion = signal<QuestionItem | null>(null);
+
+  // Edit & Delete Modals - Reply
+  readonly showEditReplyModal = signal<boolean>(false);
+  readonly editingReply = signal<QuestionReplyItem | null>(null);
+  readonly editReplyText = signal<string>('');
+
+  readonly showDeleteReplyModal = signal<boolean>(false);
+  readonly deletingReply = signal<QuestionReplyItem | null>(null);
+
+  // Submitting States
+  readonly isSubmittingAction = signal<boolean>(false);
 
   // Lightbox Zoom Image Modal
   readonly previewImageUrl = signal<string | null>(null);
@@ -244,5 +265,154 @@ export class StudentChannelComponent implements OnInit, OnDestroy {
 
   closeImagePreview(): void {
     this.previewImageUrl.set(null);
+  }
+
+  // ==========================================
+  // Edit & Delete Question Handlers
+  // ==========================================
+
+  openEditQuestionModal(question: QuestionItem, event?: Event): void {
+    if (event) event.stopPropagation();
+    this.editingQuestion.set(question);
+    this.editQuestionText.set(question.content);
+    this.showEditQuestionModal.set(true);
+    this.cdr.markForCheck();
+  }
+
+  closeEditQuestionModal(): void {
+    this.showEditQuestionModal.set(false);
+    this.editingQuestion.set(null);
+    this.editQuestionText.set('');
+    this.cdr.markForCheck();
+  }
+
+  submitEditQuestion(): void {
+    const q = this.editingQuestion();
+    const text = this.editQuestionText().trim();
+    if (!q || !text) {
+      this.toastService.warning('تنبيه', 'يرجى كتابة نص السؤال.');
+      return;
+    }
+
+    this.isSubmittingAction.set(true);
+    this.qaService.editQuestion(this.selectedClassroomId(), q.id, text).subscribe({
+      next: () => {
+        this.isSubmittingAction.set(false);
+        this.toastService.success('تم التعديل', 'تم تعديل السؤال بنجاح.');
+        this.closeEditQuestionModal();
+      },
+      error: () => {
+        this.isSubmittingAction.set(false);
+        this.toastService.error('خطأ', 'تعذر تعديل السؤال، يرجى المحاولة لاحقاً.');
+      },
+    });
+  }
+
+  openDeleteQuestionModal(question: QuestionItem, event?: Event): void {
+    if (event) event.stopPropagation();
+    this.deletingQuestion.set(question);
+    this.showDeleteQuestionModal.set(true);
+    this.cdr.markForCheck();
+  }
+
+  closeDeleteQuestionModal(): void {
+    this.showDeleteQuestionModal.set(false);
+    this.deletingQuestion.set(null);
+    this.cdr.markForCheck();
+  }
+
+  confirmDeleteQuestion(): void {
+    const q = this.deletingQuestion();
+    if (!q) return;
+
+    this.isSubmittingAction.set(true);
+    this.qaService.deleteQuestion(this.selectedClassroomId(), q.id).subscribe({
+      next: () => {
+        this.isSubmittingAction.set(false);
+        this.toastService.success('تم الحذف', 'تم حذف السؤال بنجاح.');
+        this.closeDeleteQuestionModal();
+        if (this.showThreadModal() && this.qaService.activeQuestion()?.id === q.id) {
+          this.closeThread();
+        }
+      },
+      error: () => {
+        this.isSubmittingAction.set(false);
+        this.toastService.error('خطأ', 'تعذر حذف السؤال، يرجى المحاولة لاحقاً.');
+      },
+    });
+  }
+
+  // ==========================================
+  // Edit & Delete Reply Handlers
+  // ==========================================
+
+  openEditReplyModal(reply: QuestionReplyItem, event?: Event): void {
+    if (event) event.stopPropagation();
+    this.editingReply.set(reply);
+    this.editReplyText.set(reply.content);
+    this.showEditReplyModal.set(true);
+    this.cdr.markForCheck();
+  }
+
+  closeEditReplyModal(): void {
+    this.showEditReplyModal.set(false);
+    this.editingReply.set(null);
+    this.editReplyText.set('');
+    this.cdr.markForCheck();
+  }
+
+  submitEditReply(): void {
+    const r = this.editingReply();
+    const activeQ = this.qaService.activeQuestion();
+    const text = this.editReplyText().trim();
+    if (!r || !activeQ || !text) {
+      this.toastService.warning('تنبيه', 'يرجى كتابة نص الرد.');
+      return;
+    }
+
+    this.isSubmittingAction.set(true);
+    this.qaService.editReply(this.selectedClassroomId(), activeQ.id, r.id, text).subscribe({
+      next: () => {
+        this.isSubmittingAction.set(false);
+        this.toastService.success('تم التعديل', 'تم تعديل الرد بنجاح.');
+        this.closeEditReplyModal();
+      },
+      error: () => {
+        this.isSubmittingAction.set(false);
+        this.toastService.error('خطأ', 'تعذر تعديل الرد، يرجى المحاولة لاحقاً.');
+      },
+    });
+  }
+
+  openDeleteReplyModal(reply: QuestionReplyItem, event?: Event): void {
+    if (event) event.stopPropagation();
+    this.deletingReply.set(reply);
+    this.showDeleteReplyModal.set(true);
+    this.cdr.markForCheck();
+  }
+
+  closeDeleteReplyModal(): void {
+    this.showDeleteReplyModal.set(false);
+    this.deletingReply.set(null);
+    this.cdr.markForCheck();
+  }
+
+  confirmDeleteReply(): void {
+    const r = this.deletingReply();
+    const activeQ = this.qaService.activeQuestion();
+    if (!r || !activeQ) return;
+
+    this.isSubmittingAction.set(true);
+    this.qaService.deleteReply(this.selectedClassroomId(), activeQ.id, r.id).subscribe({
+      next: () => {
+        this.isSubmittingAction.set(false);
+        this.toastService.success('تم الحذف', 'تم حذف الرد بنجاح.');
+        this.closeDeleteReplyModal();
+      },
+      error: () => {
+        this.isSubmittingAction.set(false);
+        this.toastService.error('خطأ', 'تعذر حذف الرد، يرجى المحاولة لاحقاً.');
+      },
+    });
   }
 }

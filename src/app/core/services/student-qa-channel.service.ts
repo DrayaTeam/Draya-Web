@@ -435,4 +435,76 @@ export class StudentQaChannelService extends ApiBaseService {
       )
       .subscribe();
   }
+
+  editQuestion(
+    classroomId: string,
+    questionId: string,
+    content: string,
+  ): Observable<void> {
+    const trimmed = content.trim();
+    return this.put<void>(`/classrooms/${classroomId}/questions/${questionId}`, {
+      content: trimmed,
+    }).pipe(
+      tap(() => {
+        this.questions.update((list) =>
+          list.map((q) => (q.id === questionId ? { ...q, content: trimmed } : q)),
+        );
+        if (this.activeQuestion()?.id === questionId) {
+          this.activeQuestion.update((q) => (q ? { ...q, content: trimmed } : null));
+        }
+      }),
+    );
+  }
+
+  deleteQuestion(classroomId: string, questionId: string): Observable<void> {
+    return this.delete<void>(`/classrooms/${classroomId}/questions/${questionId}`).pipe(
+      tap(() => {
+        this.questions.update((list) => list.filter((q) => q.id !== questionId));
+        this.totalQuestionsCount.update((c) => Math.max(0, c - 1));
+        if (this.activeQuestion()?.id === questionId) {
+          this.activeQuestion.set(null);
+          this.activeReplies.set([]);
+        }
+      }),
+    );
+  }
+
+  editReply(
+    classroomId: string,
+    questionId: string,
+    replyId: string,
+    content: string,
+  ): Observable<void> {
+    const trimmed = content.trim();
+    return this.put<void>(
+      `/classrooms/${classroomId}/questions/${questionId}/replies/${replyId}`,
+      { content: trimmed },
+    ).pipe(
+      tap(() => {
+        this.activeReplies.update((list) =>
+          list.map((r) => (r.id === replyId ? { ...r, content: trimmed } : r)),
+        );
+      }),
+    );
+  }
+
+  deleteReply(
+    classroomId: string,
+    questionId: string,
+    replyId: string,
+  ): Observable<void> {
+    return this.delete<void>(
+      `/classrooms/${classroomId}/questions/${questionId}/replies/${replyId}`,
+    ).pipe(
+      tap(() => {
+        this.activeReplies.update((list) => list.filter((r) => r.id !== replyId));
+        this.questions.update((list) =>
+          list.map((q) =>
+            q.id === questionId ? { ...q, replyCount: Math.max(0, q.replyCount - 1) } : q,
+          ),
+        );
+      }),
+    );
+  }
 }
+
