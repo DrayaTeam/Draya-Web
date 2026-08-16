@@ -51,12 +51,11 @@ test.describe('Admin Module E2E Flow', () => {
     await page.goto('/admin/classroom-types');
     await expect(page.locator('h1.page-title')).toContainText('أنواع الفصول');
 
-    const addBtn = page.locator('button.add-btn');
+    const addBtn = page.locator('.page-header button');
     await expect(addBtn).toBeVisible();
     await addBtn.click();
 
-    const modal = page.locator('.modal-card');
-    await expect(modal).toBeVisible();
+    await expect(page.locator('.modal-card')).toBeVisible();
   });
 
   test('should render grade levels page', async ({ page }) => {

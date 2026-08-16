@@ -34,18 +34,27 @@ export class AdminDashboardComponent implements OnInit {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (data) => {
-          this.overview.set(data);
+          this.overview.set(
+            data ?? {
+              totalClassroomRevenues: 0,
+              totalCommissionFees: 0,
+              totalTopUps: 0,
+              totalAiExamFees: 0,
+              totalEarnedTeacherBalance: 0,
+              totalPurchasedTeacherBalance: 0,
+              totalEarnedDue: 0,
+            },
+          );
         },
         error: () => {
-          // Fallback mock data in case API fails or is empty
           this.overview.set({
-            totalClassroomRevenues: 145200,
-            totalCommissionFees: 21780,
-            totalTopUps: 54000,
-            totalAiExamFees: 8650,
-            totalEarnedTeacherBalance: 123420,
-            totalPurchasedTeacherBalance: 32500,
-            totalEarnedDue: 45800,
+            totalClassroomRevenues: 0,
+            totalCommissionFees: 0,
+            totalTopUps: 0,
+            totalAiExamFees: 0,
+            totalEarnedTeacherBalance: 0,
+            totalPurchasedTeacherBalance: 0,
+            totalEarnedDue: 0,
           });
         },
       });
@@ -56,10 +65,10 @@ export class AdminDashboardComponent implements OnInit {
       .getWithdrawals({ statusFilter: 'Pending', pageNumber: 1, pageSize: 1 })
       .subscribe({
         next: (res) => {
-          this.pendingWithdrawalsCount.set(res.totalCount || 3);
+          this.pendingWithdrawalsCount.set(res?.totalCount ?? 0);
         },
         error: () => {
-          this.pendingWithdrawalsCount.set(3);
+          this.pendingWithdrawalsCount.set(0);
         },
       });
   }

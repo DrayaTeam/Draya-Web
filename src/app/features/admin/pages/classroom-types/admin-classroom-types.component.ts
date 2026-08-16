@@ -5,21 +5,21 @@ import {
   inject,
   signal,
   computed,
-  TemplateRef,
   viewChild,
+  TemplateRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AdminClassroomTypeService } from '../../services/admin-classroom-type.service';
 import { ClassroomTypeDto } from '../../models/admin-classroom-type.model';
-import { ToastService } from '../../../../core/services/toast.service';
 import {
   AdminDataTableComponent,
   AdminColumn,
 } from '../../components/admin-data-table/admin-data-table.component';
 import { AdminStatusBadgeComponent } from '../../components/admin-status-badge/admin-status-badge.component';
 import { AdminConfirmDialogComponent } from '../../components/admin-confirm-dialog/admin-confirm-dialog.component';
+import { ToastService } from '../../../../core/services/toast.service';
 import { finalize } from 'rxjs/operators';
 
 @Component({
@@ -48,31 +48,33 @@ export class AdminClassroomTypesComponent implements OnInit {
   readonly totalCount = signal<number>(0);
   readonly searchQuery = signal<string>('');
 
-  // Form Modal State
+  // Modal State
   readonly isModalOpen = signal<boolean>(false);
   readonly isEditMode = signal<boolean>(false);
-  readonly selectedItem = signal<ClassroomTypeDto | null>(null);
   readonly isSaving = signal<boolean>(false);
+  readonly selectedItem = signal<ClassroomTypeDto | null>(null);
 
-  // Delete Confirm Dialog State
+  // Delete State
   readonly isDeleteConfirmOpen = signal<boolean>(false);
   readonly itemToDelete = signal<ClassroomTypeDto | null>(null);
 
+  // Column Templates
+  readonly nameTpl = viewChild<TemplateRef<unknown>>('nameTpl');
+  readonly statusTpl = viewChild<TemplateRef<unknown>>('statusTpl');
+  readonly actionsTpl = viewChild<TemplateRef<unknown>>('actionsTpl');
+
   readonly form = this.fb.group({
-    name: ['', Validators.required],
+    name: ['', [Validators.required, Validators.minLength(2)]],
     description: [''],
     isActive: [true],
   });
-
-  // Column Templates
-  readonly statusTpl = viewChild<TemplateRef<unknown>>('statusTpl');
-  readonly actionsTpl = viewChild<TemplateRef<unknown>>('actionsTpl');
 
   readonly columns = computed<AdminColumn<ClassroomTypeDto>[]>(() => [
     {
       key: 'name',
       headerKey: 'ADMIN.CLASSROOM_TYPES.COL_NAME',
       sortable: true,
+      cellTemplate: this.nameTpl() as TemplateRef<{ $implicit: ClassroomTypeDto }>,
     },
     {
       key: 'description',
@@ -120,32 +122,8 @@ export class AdminClassroomTypesComponent implements OnInit {
           this.totalCount.set(items?.length || 0);
         },
         error: () => {
-          // Fallback mock data
-          const mock: ClassroomTypeDto[] = [
-            {
-              id: 'ct-1',
-              name: 'دروس خصوصية',
-              description: 'فصول فردية مباشرة بين المعلم والطالب',
-              isActive: true,
-              createdAt: '2024-01-10T10:00:00Z',
-            },
-            {
-              id: 'ct-2',
-              name: 'مجموعات دراسية',
-              description: 'فصول تفاعلية لمجموعات صغيرة حتى 15 طالب',
-              isActive: true,
-              createdAt: '2024-01-12T14:00:00Z',
-            },
-            {
-              id: 'ct-3',
-              name: 'محاضرات عامة',
-              description: 'بث مباشر تفاعلي لعدد غير محدود من الطلاب',
-              isActive: false,
-              createdAt: '2024-02-01T09:30:00Z',
-            },
-          ];
-          this.classroomTypes.set(mock);
-          this.totalCount.set(mock.length);
+          this.classroomTypes.set([]);
+          this.totalCount.set(0);
         },
       });
   }
@@ -201,22 +179,9 @@ export class AdminClassroomTypesComponent implements OnInit {
             this.closeModal();
             this.loadData();
           },
-          error: () => {
-            // Mock fallback
-            this.classroomTypes.update((list) =>
-              list.map((t) =>
-                t.id === id
-                  ? {
-                      ...t,
-                      name: formVal.name!,
-                      description: formVal.description || '',
-                      isActive: Boolean(formVal.isActive),
-                    }
-                  : t,
-              ),
-            );
-            this.toast.success('ADMIN.CLASSROOM_TYPES.SUCCESS_UPDATED');
-            this.closeModal();
+          error: (err) => {
+            const msg = err?.error?.message || 'فشلت عملية تحديث نوع الفصل';
+            this.toast.error(msg);
           },
         });
     } else {
@@ -232,19 +197,9 @@ export class AdminClassroomTypesComponent implements OnInit {
             this.closeModal();
             this.loadData();
           },
-          error: () => {
-            // Mock fallback
-            const newItem: ClassroomTypeDto = {
-              id: `ct-${Date.now()}`,
-              name: formVal.name!,
-              description: formVal.description || '',
-              isActive: true,
-              createdAt: new Date().toISOString(),
-            };
-            this.classroomTypes.update((list) => [newItem, ...list]);
-            this.totalCount.update((c) => c + 1);
-            this.toast.success('ADMIN.CLASSROOM_TYPES.SUCCESS_CREATED');
-            this.closeModal();
+          error: (err) => {
+            const msg = err?.error?.message || 'فشلت عملية إنشاء نوع الفصل';
+            this.toast.error(msg);
           },
         });
     }
@@ -265,12 +220,9 @@ export class AdminClassroomTypesComponent implements OnInit {
         this.isDeleteConfirmOpen.set(false);
         this.loadData();
       },
-      error: () => {
-        // Mock fallback: set inactive or remove
-        this.classroomTypes.update((list) =>
-          list.map((t) => (t.id === item.id ? { ...t, isActive: false } : t)),
-        );
-        this.toast.success('ADMIN.CLASSROOM_TYPES.SUCCESS_DELETED');
+      error: (err) => {
+        const msg = err?.error?.message || 'فشلت عملية حذف نوع الفصل';
+        this.toast.error(msg);
         this.isDeleteConfirmOpen.set(false);
       },
     });

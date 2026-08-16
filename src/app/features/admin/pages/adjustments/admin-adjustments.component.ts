@@ -35,6 +35,7 @@ export class AdminAdjustmentsComponent {
 
   readonly WalletBalanceType = WalletBalanceType;
 
+  // Initial teacher options
   readonly teachers = signal<TeacherOption[]>([
     { id: 't-1', name: 'أ. محمد الشناوي', email: 'm.shinawy@draya.edu.sa' },
     { id: 't-2', name: 'د. فاطمة الزهراء', email: 'fatma.z@draya.edu.sa' },
@@ -91,17 +92,10 @@ export class AdminAdjustmentsComponent {
             reason: '',
           });
         },
-        error: () => {
-          // Mock success fallback for offline / mock testing
-          this.toast.success('ADMIN.ADJUSTMENTS.SUCCESS');
+        error: (err) => {
+          const msg = err?.error?.message || 'فشلت عملية تسوية الرصيد';
+          this.toast.error(msg);
           this.isConfirmOpen.set(false);
-          this.form.reset({
-            teacherId: '',
-            balanceType: WalletBalanceType.Earned,
-            amount: null,
-            adjustmentDirection: 'credit',
-            reason: '',
-          });
         },
       });
   }

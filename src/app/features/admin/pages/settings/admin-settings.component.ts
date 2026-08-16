@@ -49,19 +49,16 @@ export class AdminSettingsComponent implements OnInit {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (settings) => {
-          this.form.patchValue({
-            aiExamPrice: settings.aiExamPrice,
-            freeMonthlyAIExamQuota: settings.freeMonthlyAIExamQuota,
-            platformCommissionPercent: settings.platformCommissionPercent,
-          });
+          if (settings) {
+            this.form.patchValue({
+              aiExamPrice: settings.aiExamPrice,
+              freeMonthlyAIExamQuota: settings.freeMonthlyAIExamQuota,
+              platformCommissionPercent: settings.platformCommissionPercent,
+            });
+          }
         },
         error: () => {
-          // Fallback defaults
-          this.form.patchValue({
-            aiExamPrice: 5,
-            freeMonthlyAIExamQuota: 3,
-            platformCommissionPercent: 15,
-          });
+          this.toast.error('فشل في جلب إعدادات المنصة');
         },
       });
   }
@@ -94,10 +91,9 @@ export class AdminSettingsComponent implements OnInit {
           this.lastUpdated.set(new Date());
           this.isConfirmOpen.set(false);
         },
-        error: () => {
-          // Mock fallback
-          this.toast.success('ADMIN.SETTINGS.SUCCESS');
-          this.lastUpdated.set(new Date());
+        error: (err) => {
+          const msg = err?.error?.message || 'فشل في حفظ إعدادات المنصة';
+          this.toast.error(msg);
           this.isConfirmOpen.set(false);
         },
       });

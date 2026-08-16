@@ -5,21 +5,21 @@ import {
   inject,
   signal,
   computed,
-  TemplateRef,
   viewChild,
+  TemplateRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AdminGradeLevelService } from '../../services/admin-grade-level.service';
 import { GradeLevelDto } from '../../models/admin-grade-level.model';
-import { ToastService } from '../../../../core/services/toast.service';
 import {
   AdminDataTableComponent,
   AdminColumn,
 } from '../../components/admin-data-table/admin-data-table.component';
 import { AdminStatusBadgeComponent } from '../../components/admin-status-badge/admin-status-badge.component';
 import { AdminConfirmDialogComponent } from '../../components/admin-confirm-dialog/admin-confirm-dialog.component';
+import { ToastService } from '../../../../core/services/toast.service';
 import { finalize } from 'rxjs/operators';
 
 @Component({
@@ -48,42 +48,45 @@ export class AdminGradeLevelsComponent implements OnInit {
   readonly totalCount = signal<number>(0);
   readonly searchQuery = signal<string>('');
 
-  // Form Modal State
+  // Modal State
   readonly isModalOpen = signal<boolean>(false);
   readonly isEditMode = signal<boolean>(false);
-  readonly selectedItem = signal<GradeLevelDto | null>(null);
   readonly isSaving = signal<boolean>(false);
+  readonly selectedItem = signal<GradeLevelDto | null>(null);
 
-  // Delete Confirm Dialog State
+  // Delete State
   readonly isDeleteConfirmOpen = signal<boolean>(false);
   readonly itemToDelete = signal<GradeLevelDto | null>(null);
 
+  // Column Templates
+  readonly nameTpl = viewChild<TemplateRef<unknown>>('nameTpl');
+  readonly sortTpl = viewChild<TemplateRef<unknown>>('sortTpl');
+  readonly statusTpl = viewChild<TemplateRef<unknown>>('statusTpl');
+  readonly actionsTpl = viewChild<TemplateRef<unknown>>('actionsTpl');
+
   readonly form = this.fb.group({
-    name: ['', Validators.required],
+    name: ['', [Validators.required, Validators.minLength(2)]],
     description: [''],
     sortOrder: [1, [Validators.required, Validators.min(1)]],
     isActive: [true],
   });
 
-  // Column Templates
-  readonly statusTpl = viewChild<TemplateRef<unknown>>('statusTpl');
-  readonly actionsTpl = viewChild<TemplateRef<unknown>>('actionsTpl');
-
   readonly columns = computed<AdminColumn<GradeLevelDto>[]>(() => [
-    {
-      key: 'sortOrder',
-      headerKey: 'ADMIN.GRADE_LEVELS.COL_ORDER',
-      sortable: true,
-      width: '60px',
-    },
     {
       key: 'name',
       headerKey: 'ADMIN.GRADE_LEVELS.COL_NAME',
       sortable: true,
+      cellTemplate: this.nameTpl() as TemplateRef<{ $implicit: GradeLevelDto }>,
     },
     {
       key: 'description',
       headerKey: 'ADMIN.GRADE_LEVELS.COL_DESCRIPTION',
+    },
+    {
+      key: 'sortOrder',
+      headerKey: 'ADMIN.GRADE_LEVELS.COL_SORT_ORDER',
+      sortable: true,
+      cellTemplate: this.sortTpl() as TemplateRef<{ $implicit: GradeLevelDto }>,
     },
     {
       key: 'isActive',
@@ -127,43 +130,8 @@ export class AdminGradeLevelsComponent implements OnInit {
           this.totalCount.set(items?.length || 0);
         },
         error: () => {
-          // Fallback mock data
-          const mock: GradeLevelDto[] = [
-            {
-              id: 'gl-1',
-              name: 'الصف الأول الثانوي',
-              description: 'مناهج الصف الأول الثانوي العام',
-              sortOrder: 1,
-              isActive: true,
-              createdAt: '2024-01-10T10:00:00Z',
-            },
-            {
-              id: 'gl-2',
-              name: 'الصف الثاني الثانوي',
-              description: 'شعبة علمي وأدبي',
-              sortOrder: 2,
-              isActive: true,
-              createdAt: '2024-01-12T14:00:00Z',
-            },
-            {
-              id: 'gl-3',
-              name: 'الصف الثالث الثانوي',
-              description: 'شهادة الثانوية العامة',
-              sortOrder: 3,
-              isActive: true,
-              createdAt: '2024-01-15T09:30:00Z',
-            },
-            {
-              id: 'gl-4',
-              name: 'الصف الثالث الإعدادي',
-              description: 'الشهادة الإعدادية',
-              sortOrder: 4,
-              isActive: false,
-              createdAt: '2024-02-01T11:00:00Z',
-            },
-          ];
-          this.gradeLevels.set(mock);
-          this.totalCount.set(mock.length);
+          this.gradeLevels.set([]);
+          this.totalCount.set(0);
         },
       });
   }
@@ -175,8 +143,12 @@ export class AdminGradeLevelsComponent implements OnInit {
   openCreateModal(): void {
     this.isEditMode.set(false);
     this.selectedItem.set(null);
-    const nextOrder = (this.gradeLevels().length || 0) + 1;
-    this.form.reset({ name: '', description: '', sortOrder: nextOrder, isActive: true });
+    this.form.reset({
+      name: '',
+      description: '',
+      sortOrder: (this.gradeLevels().length || 0) + 1,
+      isActive: true,
+    });
     this.isModalOpen.set(true);
   }
 
@@ -222,23 +194,9 @@ export class AdminGradeLevelsComponent implements OnInit {
             this.closeModal();
             this.loadData();
           },
-          error: () => {
-            // Mock fallback
-            this.gradeLevels.update((list) =>
-              list.map((l) =>
-                l.id === id
-                  ? {
-                      ...l,
-                      name: formVal.name!,
-                      description: formVal.description || '',
-                      sortOrder: Number(formVal.sortOrder),
-                      isActive: Boolean(formVal.isActive),
-                    }
-                  : l,
-              ),
-            );
-            this.toast.success('ADMIN.GRADE_LEVELS.SUCCESS_UPDATED');
-            this.closeModal();
+          error: (err) => {
+            const msg = err?.error?.message || 'فشلت عملية تحديث المرحلة الدراسية';
+            this.toast.error(msg);
           },
         });
     } else {
@@ -255,20 +213,9 @@ export class AdminGradeLevelsComponent implements OnInit {
             this.closeModal();
             this.loadData();
           },
-          error: () => {
-            // Mock fallback
-            const newLevel: GradeLevelDto = {
-              id: `gl-${Date.now()}`,
-              name: formVal.name!,
-              description: formVal.description || '',
-              sortOrder: Number(formVal.sortOrder),
-              isActive: true,
-              createdAt: new Date().toISOString(),
-            };
-            this.gradeLevels.update((list) => [newLevel, ...list]);
-            this.totalCount.update((c) => c + 1);
-            this.toast.success('ADMIN.GRADE_LEVELS.SUCCESS_CREATED');
-            this.closeModal();
+          error: (err) => {
+            const msg = err?.error?.message || 'فشلت عملية إنشاء المرحلة الدراسية';
+            this.toast.error(msg);
           },
         });
     }
@@ -289,12 +236,9 @@ export class AdminGradeLevelsComponent implements OnInit {
         this.isDeleteConfirmOpen.set(false);
         this.loadData();
       },
-      error: () => {
-        // Mock fallback
-        this.gradeLevels.update((list) =>
-          list.map((l) => (l.id === item.id ? { ...l, isActive: false } : l)),
-        );
-        this.toast.success('ADMIN.GRADE_LEVELS.SUCCESS_DELETED');
+      error: (err) => {
+        const msg = err?.error?.message || 'فشلت عملية حذف المرحلة الدراسية';
+        this.toast.error(msg);
         this.isDeleteConfirmOpen.set(false);
       },
     });

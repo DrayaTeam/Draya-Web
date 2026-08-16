@@ -5,8 +5,8 @@ import {
   inject,
   signal,
   computed,
-  TemplateRef,
   viewChild,
+  TemplateRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,7 +14,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { AdminFinancialService } from '../../services/admin-financial.service';
 import { WithdrawalDto } from '../../models/admin-financial.model';
 import { WithdrawalStatus, PayoutAccountType } from '../../models/admin-enums';
-import { ToastService } from '../../../../core/services/toast.service';
 import {
   AdminDataTableComponent,
   AdminColumn,
@@ -22,7 +21,13 @@ import {
 import { AdminStatusBadgeComponent } from '../../components/admin-status-badge/admin-status-badge.component';
 import { AdminSlideOverComponent } from '../../components/admin-slide-over/admin-slide-over.component';
 import { AdminConfirmDialogComponent } from '../../components/admin-confirm-dialog/admin-confirm-dialog.component';
+import { ToastService } from '../../../../core/services/toast.service';
 import { finalize } from 'rxjs/operators';
+
+interface StatusTab {
+  key: string;
+  labelKey: string;
+}
 
 @Component({
   selector: 'draya-admin-withdrawals',
@@ -47,9 +52,7 @@ export class AdminWithdrawalsComponent implements OnInit {
   readonly WithdrawalStatus = WithdrawalStatus;
   readonly PayoutAccountType = PayoutAccountType;
 
-  // Status Filter Tabs
-  readonly activeStatusTab = signal<string>('All');
-  readonly statusTabs = [
+  readonly statusTabs: StatusTab[] = [
     { key: 'All', labelKey: 'ADMIN.WITHDRAWALS.TAB_ALL' },
     { key: 'Pending', labelKey: 'ADMIN.WITHDRAWALS.TAB_PENDING' },
     { key: 'Approved', labelKey: 'ADMIN.WITHDRAWALS.TAB_APPROVED' },
@@ -57,6 +60,8 @@ export class AdminWithdrawalsComponent implements OnInit {
     { key: 'Rejected', labelKey: 'ADMIN.WITHDRAWALS.TAB_REJECTED' },
     { key: 'Cancelled', labelKey: 'ADMIN.WITHDRAWALS.TAB_CANCELLED' },
   ];
+
+  readonly activeStatusTab = signal<string>('All');
 
   // Table State
   readonly withdrawals = signal<WithdrawalDto[]>([]);
@@ -130,13 +135,12 @@ export class AdminWithdrawalsComponent implements OnInit {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (res) => {
-          this.withdrawals.set(res.items || []);
-          this.totalCount.set(res.totalCount || 0);
+          this.withdrawals.set(res?.items ?? []);
+          this.totalCount.set(res?.totalCount ?? 0);
         },
         error: () => {
-          // Fallback mock withdrawals
-          this.withdrawals.set(this.getMockWithdrawals());
-          this.totalCount.set(this.getMockWithdrawals().length);
+          this.withdrawals.set([]);
+          this.totalCount.set(0);
         },
       });
   }
@@ -154,7 +158,6 @@ export class AdminWithdrawalsComponent implements OnInit {
 
   onSearch(query: string): void {
     this.searchQuery.set(query);
-    // Local filter if using mock/cached data or pass to API
   }
 
   openDetail(withdrawal: WithdrawalDto): void {
@@ -196,12 +199,10 @@ export class AdminWithdrawalsComponent implements OnInit {
         this.closeDetail();
         this.loadWithdrawals();
       },
-      error: () => {
-        // Fallback update local state for mock testing
-        this.updateMockStatus(target.id, WithdrawalStatus.Approved);
-        this.toast.success('ADMIN.WITHDRAWALS.SUCCESS_APPROVED');
+      error: (err) => {
+        const msg = err?.error?.message || 'فشلت عملية الموافقة على طلب السحب';
+        this.toast.error(msg);
         this.confirmApproveOpen.set(false);
-        this.closeDetail();
       },
     });
   }
@@ -217,11 +218,10 @@ export class AdminWithdrawalsComponent implements OnInit {
         this.closeDetail();
         this.loadWithdrawals();
       },
-      error: () => {
-        this.updateMockStatus(target.id, WithdrawalStatus.Rejected, String(reason || ''));
-        this.toast.success('ADMIN.WITHDRAWALS.SUCCESS_REJECTED');
+      error: (err) => {
+        const msg = err?.error?.message || 'فشلت عملية رفض طلب السحب';
+        this.toast.error(msg);
         this.confirmRejectOpen.set(false);
-        this.closeDetail();
       },
     });
   }
@@ -237,85 +237,11 @@ export class AdminWithdrawalsComponent implements OnInit {
         this.closeDetail();
         this.loadWithdrawals();
       },
-      error: () => {
-        this.updateMockStatus(target.id, WithdrawalStatus.Paid);
-        this.toast.success('ADMIN.WITHDRAWALS.SUCCESS_PAID');
+      error: (err) => {
+        const msg = err?.error?.message || 'فشلت عملية تعليم السحب كمدفوع';
+        this.toast.error(msg);
         this.confirmPaidOpen.set(false);
-        this.closeDetail();
       },
     });
-  }
-
-  private updateMockStatus(id: string, status: WithdrawalStatus, reason?: string): void {
-    this.withdrawals.update((list) =>
-      list.map((w) => (w.id === id ? { ...w, status, rejectionReason: reason } : w)),
-    );
-  }
-
-  private getMockWithdrawals(): WithdrawalDto[] {
-    return [
-      {
-        id: 'w-1',
-        teacherName: 'أ. محمد الشناوي',
-        teacherEmail: 'm.shinawy@draya.edu.sa',
-        amount: 3500,
-        status: WithdrawalStatus.Pending,
-        requestedAt: '2024-05-12T14:30:00Z',
-        payoutAccount: {
-          id: 'acc-1',
-          accountType: PayoutAccountType.BankAccount,
-          accountName: 'محمد أحمد الشناوي',
-          accountIdentifier: 'EG380002000100000012345678901',
-          isDefault: true,
-        },
-      },
-      {
-        id: 'w-2',
-        teacherName: 'د. فاطمة الزهراء',
-        teacherEmail: 'fatma.z@draya.edu.sa',
-        amount: 5200,
-        status: WithdrawalStatus.Approved,
-        requestedAt: '2024-05-10T11:20:00Z',
-        payoutAccount: {
-          id: 'acc-2',
-          accountType: PayoutAccountType.MobileWallet,
-          accountName: 'فاطمة الزهراء محمد',
-          accountIdentifier: '01012345678',
-          isDefault: true,
-        },
-      },
-      {
-        id: 'w-3',
-        teacherName: 'م. أحمد كمال',
-        teacherEmail: 'ahmed.kamal@draya.edu.sa',
-        amount: 1800,
-        status: WithdrawalStatus.Paid,
-        requestedAt: '2024-05-08T09:15:00Z',
-        payoutAccount: {
-          id: 'acc-3',
-          accountType: PayoutAccountType.BankAccount,
-          accountName: 'أحمد كمال الدين',
-          accountIdentifier: 'EG520003000200000098765432109',
-          isDefault: true,
-        },
-        adminNote: 'تم التحويل عبر InstaPay بنجاح',
-      },
-      {
-        id: 'w-4',
-        teacherName: 'أ. سارة إبراهيم',
-        teacherEmail: 'sara.i@draya.edu.sa',
-        amount: 2400,
-        status: WithdrawalStatus.Rejected,
-        requestedAt: '2024-05-05T16:45:00Z',
-        payoutAccount: {
-          id: 'acc-4',
-          accountType: PayoutAccountType.MobileWallet,
-          accountName: 'سارة إبراهيم علي',
-          accountIdentifier: '01198765432',
-          isDefault: false,
-        },
-        rejectionReason: 'رقم المحفظة الإلكترونية غير صحيح أو غير مسجل',
-      },
-    ];
   }
 }
