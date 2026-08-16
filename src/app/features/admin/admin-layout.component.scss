@@ -1,7 +1,6 @@
 // Admin Layout – "Academic Precision" design language
 // Deep Teal #14453F / Genoa #1B6D63 / Iceberg #DDF5F1
 
-// ─── Variables ──────────────────────────
 $sidebar-width: 260px;
 $sidebar-collapsed-width: 72px;
 $topbar-height: 64px;
@@ -16,32 +15,43 @@ $color-text-secondary: #525e5a;
 $color-text-muted: #94a3a0;
 $color-danger: #ef4444;
 
-// ─── Layout Shell ───────────────────────
-.admin-layout {
-  display: flex;
-  flex-direction: row-reverse; // RTL: sidebar on the right
-  min-height: 100vh;
-  background: $color-bg;
+:host {
+  display: block;
+  inline-size: 100%;
+  min-block-size: 100vh;
+  background-color: $color-bg;
 }
 
-// ─── Sidebar ────────────────────────────
+// ─── Layout Container ───────────────────
+.admin-layout {
+  display: flex;
+  min-block-size: 100vh;
+  inline-size: 100%;
+  background: $color-bg;
+  position: relative;
+}
+
+// ─── Sidebar (Stands on the Right in RTL by natural flex order) ───
 .sidebar {
-  position: fixed;
-  inset-block-start: 0;
-  inset-inline-end: 0;
   inline-size: $sidebar-width;
+  min-inline-size: $sidebar-width;
   block-size: 100vh;
+  position: sticky;
+  inset-block-start: 0;
   background: $color-surface;
-  border-inline-start: 1px solid $color-border;
+  border-inline-end: 1px solid $color-border;
   display: flex;
   flex-direction: column;
   z-index: 40;
-  transition: inline-size 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-shrink: 0;
 }
 
 .sidebar-collapsed .sidebar {
   inline-size: $sidebar-collapsed-width;
+  min-inline-size: $sidebar-collapsed-width;
 }
 
 // ─── Sidebar Header ─────────────────────
@@ -49,19 +59,22 @@ $color-danger: #ef4444;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 16px 16px;
+  padding: 16px 20px;
   border-block-end: 1px solid $color-border;
+  block-size: $topbar-height;
+  flex-shrink: 0;
 }
 
 .logo-area {
   display: flex;
   align-items: center;
   gap: 12px;
+  overflow: hidden;
 }
 
 .logo-circle {
-  inline-size: 40px;
-  block-size: 40px;
+  inline-size: 38px;
+  block-size: 38px;
   border-radius: 50%;
   background: linear-gradient(135deg, $color-genoa, $color-deep-teal);
   display: flex;
@@ -70,15 +83,19 @@ $color-danger: #ef4444;
   flex-shrink: 0;
 
   i {
-    color: white;
+    color: #ffffff;
     font-size: 18px;
   }
 }
 
 .logo-text {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+
   h1 {
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 17px;
+    font-weight: 800;
     color: $color-deep-teal;
     line-height: 1.2;
     margin: 0;
@@ -88,7 +105,7 @@ $color-danger: #ef4444;
     font-size: 11px;
     color: $color-text-muted;
     margin: 0;
-    letter-spacing: 0.02em;
+    font-weight: 500;
   }
 }
 
@@ -98,25 +115,24 @@ $color-danger: #ef4444;
   border: none;
   cursor: pointer;
   color: $color-text-secondary;
-  font-size: 18px;
+  font-size: 16px;
   padding: 4px;
 }
 
 // ─── Sidebar Nav ────────────────────────
 .sidebar-nav {
   flex: 1;
-  padding: 12px 8px;
+  padding: 12px 10px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  overflow-y: auto;
+  gap: 4px;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 16px;
+  padding: 10px 14px;
   border-radius: 8px;
   color: $color-text-secondary;
   text-decoration: none;
@@ -134,7 +150,7 @@ $color-danger: #ef4444;
   &.active {
     background: $color-iceberg;
     color: $color-genoa;
-    font-weight: 600;
+    font-weight: 700;
   }
 }
 
@@ -154,7 +170,7 @@ $color-danger: #ef4444;
   block-size: 20px;
   border-radius: 50%;
   background: $color-danger;
-  color: white;
+  color: #ffffff;
   font-size: 11px;
   font-weight: 700;
   display: flex;
@@ -165,27 +181,29 @@ $color-danger: #ef4444;
 
 // ─── Sidebar Footer ────────────────────
 .sidebar-footer {
-  padding: 12px 8px 16px;
+  padding: 12px 10px 16px;
   border-block-start: 1px solid $color-border;
+  flex-shrink: 0;
 }
 
 .logout-btn {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 16px;
+  padding: 10px 14px;
   border-radius: 8px;
   background: none;
   border: none;
   cursor: pointer;
   color: $color-danger;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   inline-size: 100%;
   transition: background 0.15s ease;
+  white-space: nowrap;
 
   &:hover {
-    background: rgba($color-danger, 0.06);
+    background: rgba($color-danger, 0.08);
   }
 }
 
@@ -197,13 +215,10 @@ $color-danger: #ef4444;
 // ─── Main Content ───────────────────────
 .main-content {
   flex: 1;
-  margin-inline-end: $sidebar-width;
-  transition: margin-inline-end 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: 100vh;
-}
-
-.sidebar-collapsed .main-content {
-  margin-inline-end: $sidebar-collapsed-width;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100vh;
 }
 
 // ─── Topbar ─────────────────────────────
@@ -221,10 +236,30 @@ $color-danger: #ef4444;
   z-index: 30;
 }
 
-.topbar-end {
+.topbar-start {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+.collapse-toggle {
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: 50%;
+  border: 1px solid $color-border;
+  background: $color-surface;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $color-text-secondary;
+  font-size: 12px;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: $color-bg;
+    color: $color-deep-teal;
+  }
 }
 
 .mobile-toggle {
@@ -247,7 +282,7 @@ $color-danger: #ef4444;
   font-weight: 700;
   color: $color-text-primary;
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.2;
 }
 
 .breadcrumb-text {
@@ -255,7 +290,7 @@ $color-danger: #ef4444;
   color: $color-text-muted;
 }
 
-.topbar-start {
+.topbar-end {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -264,8 +299,8 @@ $color-danger: #ef4444;
 .admin-profile-pill {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px 6px 8px;
+  gap: 10px;
+  padding: 6px 14px;
   border-radius: 100px;
   border: 1px solid $color-border;
   background: $color-surface;
@@ -273,7 +308,7 @@ $color-danger: #ef4444;
   transition: box-shadow 0.15s ease;
 
   &:hover {
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
   }
 }
 
@@ -288,12 +323,11 @@ $color-danger: #ef4444;
   display: flex;
   align-items: center;
   justify-content: center;
-  order: -1; // avatar on the right in RTL
 }
 
 .profile-name {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: $color-text-primary;
 }
 
@@ -302,29 +336,10 @@ $color-danger: #ef4444;
   color: $color-text-muted;
 }
 
-.collapse-toggle {
-  inline-size: 32px;
-  block-size: 32px;
-  border-radius: 50%;
-  border: 1px solid $color-border;
-  background: $color-surface;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: $color-text-secondary;
-  font-size: 12px;
-  transition: all 0.15s ease;
-
-  &:hover {
-    background: $color-bg;
-  }
-}
-
 // ─── Content Area ───────────────────────
 .content-area {
   padding: 24px;
-  min-height: calc(100vh - #{$topbar-height});
+  flex: 1;
 }
 
 // ─── Sidebar Backdrop ───────────────────
@@ -334,47 +349,30 @@ $color-danger: #ef4444;
 
 // ─── Responsive: Mobile ─────────────────
 @media (max-width: 1024px) {
-  .admin-layout {
-    flex-direction: column;
-  }
-
   .sidebar {
     position: fixed;
     inset-block-start: 0;
-    inset-inline-end: 0;
+    inset-inline-start: 0; // In RTL, start is Right
     inline-size: 280px;
-    transform: translateX(-100%); // Hidden off-screen in RTL
+    min-inline-size: 280px;
+    transform: translateX(100%); // Hidden to the right in RTL
 
     &.mobile-open {
       transform: translateX(0);
     }
   }
 
-  // Undo the sidebar-collapsed behavior on mobile
-  .sidebar-collapsed .sidebar {
-    inline-size: 280px;
-  }
-
   .sidebar-close-btn {
     display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   .sidebar-backdrop {
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.45);
+    background: rgba(15, 23, 42, 0.5);
     z-index: 39;
-  }
-
-  .main-content {
-    margin-inline-end: 0;
-  }
-
-  .sidebar-collapsed .main-content {
-    margin-inline-end: 0;
+    backdrop-filter: blur(2px);
   }
 
   .mobile-toggle {
@@ -391,47 +389,5 @@ $color-danger: #ef4444;
 
   .topbar {
     padding-inline: 16px;
-  }
-}
-
-// ─── LTR support ────────────────────────
-:host-context([dir='ltr']) {
-  .admin-layout {
-    flex-direction: row;
-  }
-
-  .sidebar {
-    inset-inline-start: 0;
-    inset-inline-end: auto;
-    border-inline-end: 1px solid $color-border;
-    border-inline-start: none;
-  }
-
-  .main-content {
-    margin-inline-start: $sidebar-width;
-    margin-inline-end: 0;
-  }
-
-  .sidebar-collapsed .main-content {
-    margin-inline-start: $sidebar-collapsed-width;
-    margin-inline-end: 0;
-  }
-
-  @media (max-width: 1024px) {
-    .sidebar {
-      transform: translateX(100%);
-
-      &.mobile-open {
-        transform: translateX(0);
-      }
-    }
-
-    .main-content {
-      margin-inline-start: 0;
-    }
-
-    .sidebar-collapsed .main-content {
-      margin-inline-start: 0;
-    }
   }
 }

@@ -7,10 +7,11 @@
       (keydown.escape)="closeMobileSidebar()"
       tabindex="-1"
       role="button"
-      [attr.aria-label]="'ADMIN.SHELL.CLOSE_MENU' | translate"></div>
+      [attr.aria-label]="'ADMIN.SHELL.CLOSE_MENU' | translate"
+    ></div>
   }
 
-  <!-- Sidebar -->
+  <!-- Sidebar (Right side in RTL) -->
   <aside class="sidebar" [class.mobile-open]="isMobileSidebarOpen()">
     <div class="sidebar-header">
       <div class="logo-area">
@@ -28,7 +29,8 @@
       <button
         class="sidebar-close-btn"
         (click)="closeMobileSidebar()"
-        [attr.aria-label]="'ADMIN.SHELL.CLOSE_MENU' | translate">
+        [attr.aria-label]="'ADMIN.SHELL.CLOSE_MENU' | translate"
+      >
         <i class="pi pi-times"></i>
       </button>
     </div>
@@ -40,16 +42,13 @@
           [routerLinkActive]="'active'"
           [routerLinkActiveOptions]="{ exact: item.exact || false }"
           class="nav-item"
-          (click)="closeMobileSidebar()">
+          (click)="closeMobileSidebar()"
+        >
           <i [class]="item.icon + ' nav-icon'"></i>
           @if (!isSidebarCollapsed()) {
             <span class="nav-label">{{ item.labelKey | translate }}</span>
           }
-          @if (
-            item.badgeSignal === 'pendingWithdrawals' &&
-            pendingWithdrawalsCount() > 0 &&
-            !isSidebarCollapsed()
-          ) {
+          @if (item.badgeSignal === 'pendingWithdrawals' && pendingWithdrawalsCount() > 0 && !isSidebarCollapsed()) {
             <span class="nav-badge">{{ pendingWithdrawalsCount() }}</span>
           }
         </a>
@@ -66,17 +65,28 @@
     </div>
   </aside>
 
-  <!-- Main Content -->
+  <!-- Main Content (Left side in RTL) -->
   <main class="main-content">
     <!-- Topbar -->
     <header class="topbar">
-      <div class="topbar-end">
+      <!-- Right area (start of reading in RTL): title & breadcrumbs -->
+      <div class="topbar-start">
         <!-- Mobile hamburger -->
         <button
           class="mobile-toggle"
           (click)="toggleMobileSidebar()"
-          [attr.aria-label]="'ADMIN.SHELL.OPEN_MENU' | translate">
+          [attr.aria-label]="'ADMIN.SHELL.OPEN_MENU' | translate"
+        >
           <i class="pi pi-bars"></i>
+        </button>
+
+        <!-- Desktop collapse toggle button -->
+        <button
+          class="collapse-toggle"
+          (click)="toggleSidebar()"
+          [attr.aria-label]="isSidebarCollapsed() ? ('ADMIN.SHELL.EXPAND_SIDEBAR' | translate) : ('ADMIN.SHELL.COLLAPSE_SIDEBAR' | translate)"
+        >
+          <i class="pi" [class.pi-chevron-right]="!isSidebarCollapsed()" [class.pi-chevron-left]="isSidebarCollapsed()"></i>
         </button>
 
         <div class="page-title-area">
@@ -87,27 +97,13 @@
         </div>
       </div>
 
-      <div class="topbar-start">
+      <!-- Left area (end of reading in RTL): Admin profile -->
+      <div class="topbar-end">
         <div class="admin-profile-pill">
-          <span class="profile-name">{{ currentUserName() }}</span>
           <div class="profile-avatar">{{ currentUserInitial() }}</div>
+          <span class="profile-name">{{ currentUserName() }}</span>
           <i class="pi pi-chevron-down profile-caret"></i>
         </div>
-
-        <!-- Desktop collapse toggle -->
-        <button
-          class="collapse-toggle"
-          (click)="toggleSidebar()"
-          [attr.aria-label]="
-            isSidebarCollapsed()
-              ? ('ADMIN.SHELL.EXPAND_SIDEBAR' | translate)
-              : ('ADMIN.SHELL.COLLAPSE_SIDEBAR' | translate)
-          ">
-          <i
-            class="pi"
-            [class.pi-chevron-left]="!isSidebarCollapsed()"
-            [class.pi-chevron-right]="isSidebarCollapsed()"></i>
-        </button>
       </div>
     </header>
 
