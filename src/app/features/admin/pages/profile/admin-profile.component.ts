@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../auth';
 import { ToastService } from '../../../../core/services/toast.service';
 import { finalize } from 'rxjs/operators';
@@ -16,7 +15,7 @@ import { finalize } from 'rxjs/operators';
 @Component({
   selector: 'draya-admin-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './admin-profile.component.html',
   styleUrls: ['./admin-profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

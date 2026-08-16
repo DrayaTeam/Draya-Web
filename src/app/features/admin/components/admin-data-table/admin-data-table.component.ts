@@ -13,7 +13,8 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-export interface AdminColumn<T = Record<string, unknown>> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface AdminColumn<T = any> {
   key: string;
   headerKey: string;
   sortable?: boolean;
@@ -30,16 +31,19 @@ export interface AdminColumn<T = Record<string, unknown>> {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminDataTableComponent {
-  data = input<Record<string, unknown>[]>([]);
-  columns = input<AdminColumn[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data = input<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  columns = input<AdminColumn<any>[]>([]);
   loading = input<boolean>(false);
   totalCount = input<number>(0);
   pageSize = input<number>(10);
   currentPage = input<number>(1);
   searchPlaceholderKey = input<string>('ADMIN.SHARED.SEARCH');
 
-  getCellValue(row: Record<string, unknown>, key: string): unknown {
-    return row ? row[key] : '';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getCellValue(row: any, key: string): unknown {
+    return row && typeof row === 'object' ? (row as Record<string, unknown>)[key] : '';
   }
 
   pageChange = output<number>();
