@@ -1,0 +1,150 @@
+<div class="grade-levels-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ 'ADMIN.GRADE_LEVELS.TITLE' | translate }}</h1>
+      <p class="page-subtitle">{{ 'ADMIN.GRADE_LEVELS.SUBTITLE' | translate }}</p>
+    </div>
+    <button class="add-btn" (click)="openCreateModal()">
+      <i class="pi pi-plus"></i>
+      <span>{{ 'ADMIN.GRADE_LEVELS.ADD_LEVEL' | translate }}</span>
+    </button>
+  </div>
+
+  <!-- Table Container -->
+  <div class="table-container">
+    <draya-admin-data-table
+      [data]="filteredLevels()"
+      [columns]="columns()"
+      [loading]="loading()"
+      [totalCount]="totalCount()"
+      [pageSize]="10"
+      [currentPage]="1"
+      (searchQuery)="onSearch($event)"></draya-admin-data-table>
+  </div>
+
+  <!-- Status Column Template -->
+  <ng-template #statusTpl let-row>
+    <draya-admin-status-badge
+      [status]="row.isActive ? 'active' : 'inactive'"
+      [labelKey]="
+        row.isActive
+          ? 'ADMIN.CLASSROOM_TYPES.STATUS_ACTIVE'
+          : 'ADMIN.CLASSROOM_TYPES.STATUS_INACTIVE'
+      "></draya-admin-status-badge>
+  </ng-template>
+
+  <!-- Actions Column Template -->
+  <ng-template #actionsTpl let-row>
+    <div class="actions-cell">
+      <button class="action-icon-btn edit-btn" (click)="openEditModal(row)" title="تعديل">
+        <i class="pi pi-pencil"></i>
+      </button>
+      <button class="action-icon-btn delete-btn" (click)="promptDelete(row)" title="حذف / تعطيل">
+        <i class="pi pi-trash"></i>
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- Create / Edit Modal -->
+  @if (isModalOpen()) {
+    <div
+      class="modal-backdrop"
+      (click)="closeModal()"
+      (keydown.escape)="closeModal()"
+      tabindex="-1"
+      role="button"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          {{
+            (isEditMode() ? 'ADMIN.GRADE_LEVELS.EDIT_TITLE' : 'ADMIN.GRADE_LEVELS.CREATE_TITLE')
+              | translate
+          }}
+        </h3>
+        <button class="modal-close-btn" (click)="closeModal()">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="saveLevel()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="levelName">
+              {{ 'ADMIN.GRADE_LEVELS.FORM_NAME' | translate }}
+              <span class="required">*</span>
+            </label>
+            <input
+              id="levelName"
+              type="text"
+              formControlName="name"
+              [placeholder]="'ADMIN.GRADE_LEVELS.FORM_NAME_PLACEHOLDER' | translate"
+              class="form-input" />
+            @if (form.get('name')?.touched && form.get('name')?.errors?.['required']) {
+              <span class="form-error">اسم المرحلة مطلوب</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="levelDesc">
+              {{ 'ADMIN.GRADE_LEVELS.FORM_DESCRIPTION' | translate }}
+            </label>
+            <textarea
+              id="levelDesc"
+              rows="3"
+              formControlName="description"
+              [placeholder]="'ADMIN.GRADE_LEVELS.FORM_DESCRIPTION_PLACEHOLDER' | translate"
+              class="form-textarea"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="levelSort">
+              {{ 'ADMIN.GRADE_LEVELS.FORM_SORT_ORDER' | translate }}
+              <span class="required">*</span>
+            </label>
+            <input
+              id="levelSort"
+              type="number"
+              min="1"
+              formControlName="sortOrder"
+              class="form-input w-24" />
+          </div>
+
+          @if (isEditMode()) {
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" formControlName="isActive" class="form-checkbox" />
+                <span>{{ 'ADMIN.GRADE_LEVELS.FORM_IS_ACTIVE' | translate }}</span>
+              </label>
+            </div>
+          }
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid || isSaving()">
+            @if (isSaving()) {
+              <i class="pi pi-spin pi-spinner"></i>
+              <span>{{ 'ADMIN.SHARED.LOADING' | translate }}</span>
+            } @else {
+              <span>{{ 'ADMIN.GRADE_LEVELS.SAVE' | translate }}</span>
+            }
+          </button>
+          <button type="button" class="btn btn-outline" (click)="closeModal()">
+            <span>{{ 'ADMIN.GRADE_LEVELS.CANCEL' | translate }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- Delete Confirm Dialog -->
+  <draya-admin-confirm-dialog
+    [isOpen]="isDeleteConfirmOpen()"
+    [titleKey]="'ADMIN.GRADE_LEVELS.DELETE_TITLE'"
+    [descriptionKey]="'ADMIN.GRADE_LEVELS.DELETE_DESC'"
+    [variant]="'danger'"
+    [confirmLabelKey]="'ADMIN.GRADE_LEVELS.DELETE_CONFIRM'"
+    [cancelLabelKey]="'ADMIN.GRADE_LEVELS.CANCEL'"
+    (confirmed)="onConfirmDelete()"
+    (cancelled)="isDeleteConfirmOpen.set(false)"></draya-admin-confirm-dialog>
+</div>

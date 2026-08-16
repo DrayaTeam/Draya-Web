@@ -1,0 +1,106 @@
+<div class="dashboard-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ 'ADMIN.DASHBOARD.TITLE' | translate }}</h1>
+      <p class="page-subtitle">
+        {{ 'ADMIN.BREADCRUMB.HOME' | translate }} / {{ 'ADMIN.DASHBOARD.TITLE' | translate }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Pending Withdrawals Callout Banner -->
+  @if (pendingWithdrawalsCount() > 0) {
+    <div class="pending-alert-card">
+      <div class="alert-content">
+        <div class="alert-icon-wrap">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+        <div class="alert-text">
+          <h3 class="alert-title">{{ 'ADMIN.DASHBOARD.PENDING_WITHDRAWALS_TITLE' | translate }}</h3>
+          <p class="alert-desc">
+            {{
+              'ADMIN.DASHBOARD.PENDING_WITHDRAWALS_DESC'
+                | translate: { count: pendingWithdrawalsCount() }
+            }}
+          </p>
+        </div>
+      </div>
+      <a routerLink="/admin/withdrawals" class="alert-action-btn">
+        <i class="pi pi-arrow-left"></i>
+        <span>{{ 'ADMIN.DASHBOARD.PROCESS_WITHDRAWALS' | translate }}</span>
+      </a>
+    </div>
+  }
+
+  <!-- Financial Overview Section -->
+  <div class="section-container">
+    <div class="section-header">
+      <h2 class="section-title">{{ 'ADMIN.DASHBOARD.TITLE' | translate }}</h2>
+    </div>
+
+    <!-- Stat Cards Grid -->
+    <div class="stats-grid">
+      <draya-admin-stat-card
+        [value]="overview()?.totalClassroomRevenues ?? 0"
+        [labelKey]="'ADMIN.DASHBOARD.TOTAL_CLASSROOM_REVENUE'"
+        [iconClass]="'pi pi-book'"
+        [variant]="'teal'"
+        [currencySuffix]="'ADMIN.DASHBOARD.CURRENCY' | translate"></draya-admin-stat-card>
+
+      <draya-admin-stat-card
+        [value]="overview()?.totalCommissionFees ?? 0"
+        [labelKey]="'ADMIN.DASHBOARD.TOTAL_COMMISSION_FEES'"
+        [iconClass]="'pi pi-percentage'"
+        [variant]="'emerald'"
+        [currencySuffix]="'ADMIN.DASHBOARD.CURRENCY' | translate"></draya-admin-stat-card>
+
+      <draya-admin-stat-card
+        [value]="overview()?.totalTopUps ?? 0"
+        [labelKey]="'ADMIN.DASHBOARD.TOTAL_TOPUPS'"
+        [iconClass]="'pi pi-wallet'"
+        [variant]="'blue'"
+        [currencySuffix]="'ADMIN.DASHBOARD.CURRENCY' | translate"></draya-admin-stat-card>
+
+      <draya-admin-stat-card
+        [value]="overview()?.totalAiExamFees ?? 0"
+        [labelKey]="'ADMIN.DASHBOARD.TOTAL_AI_EXAM_FEES'"
+        [iconClass]="'pi pi-bolt'"
+        [variant]="'violet'"
+        [currencySuffix]="'ADMIN.DASHBOARD.CURRENCY' | translate"></draya-admin-stat-card>
+    </div>
+  </div>
+
+  <!-- Wallet Balances Section -->
+  <div class="section-container mt-8">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">{{ 'ADMIN.DASHBOARD.WALLET_BALANCES_TITLE' | translate }}</h2>
+        <p class="section-subtitle">{{ 'ADMIN.DASHBOARD.WALLET_BALANCES_SUBTITLE' | translate }}</p>
+      </div>
+    </div>
+
+    <div class="stats-grid grid-cols-3">
+      <draya-admin-stat-card
+        [value]="overview()?.totalEarnedTeacherBalance ?? 0"
+        [labelKey]="'ADMIN.DASHBOARD.EARNED_TEACHER_BALANCE'"
+        [iconClass]="'pi pi-check-circle'"
+        [variant]="'emerald'"
+        [currencySuffix]="'ADMIN.DASHBOARD.CURRENCY' | translate"></draya-admin-stat-card>
+
+      <draya-admin-stat-card
+        [value]="overview()?.totalPurchasedTeacherBalance ?? 0"
+        [labelKey]="'ADMIN.DASHBOARD.PURCHASED_TEACHER_BALANCE'"
+        [iconClass]="'pi pi-shopping-cart'"
+        [variant]="'blue'"
+        [currencySuffix]="'ADMIN.DASHBOARD.CURRENCY' | translate"></draya-admin-stat-card>
+
+      <draya-admin-stat-card
+        [value]="overview()?.totalEarnedDue ?? 0"
+        [labelKey]="'ADMIN.DASHBOARD.EARNED_DUE'"
+        [iconClass]="'pi pi-clock'"
+        [variant]="'amber'"
+        [currencySuffix]="'ADMIN.DASHBOARD.CURRENCY' | translate"></draya-admin-stat-card>
+    </div>
+  </div>
+</div>
