@@ -48,6 +48,7 @@ export class AdminLayoutComponent {
     if (url.includes('/admin/grade-levels')) return 'ADMIN.NAV.GRADE_LEVELS';
     if (url.includes('/admin/supervisors')) return 'ADMIN.NAV.SUPERVISORS';
     if (url.includes('/admin/settings')) return 'ADMIN.NAV.SETTINGS';
+    if (url.includes('/admin/profile')) return 'ADMIN.NAV.PROFILE';
     return 'ADMIN.NAV.DASHBOARD';
   });
 
@@ -59,6 +60,7 @@ export class AdminLayoutComponent {
     if (url.includes('/admin/grade-levels')) return 'ADMIN.BREADCRUMB.GRADE_LEVELS';
     if (url.includes('/admin/supervisors')) return 'ADMIN.BREADCRUMB.SUPERVISORS';
     if (url.includes('/admin/settings')) return 'ADMIN.BREADCRUMB.SETTINGS';
+    if (url.includes('/admin/profile')) return 'ADMIN.BREADCRUMB.PROFILE';
     return 'ADMIN.BREADCRUMB.DASHBOARD';
   });
 
@@ -98,6 +100,7 @@ export class AdminLayoutComponent {
     },
     { labelKey: 'ADMIN.NAV.SUPERVISORS', link: '/admin/supervisors', icon: 'pi pi-user-edit' },
     { labelKey: 'ADMIN.NAV.SETTINGS', link: '/admin/settings', icon: 'pi pi-cog' },
+    { labelKey: 'ADMIN.NAV.PROFILE', link: '/admin/profile', icon: 'pi pi-user' },
   ];
 
   toggleSidebar(): void {

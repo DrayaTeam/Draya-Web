@@ -548,7 +548,8 @@
       "CLASSROOM_TYPES": "Classroom Types",
       "GRADE_LEVELS": "Grade Levels",
       "SUPERVISORS": "Supervisors",
-      "SETTINGS": "Settings"
+      "SETTINGS": "Settings",
+      "PROFILE": "My Account"
     },
     "BREADCRUMB": {
       "HOME": "Draya",
@@ -558,7 +559,8 @@
       "CLASSROOM_TYPES": "Classroom Types",
       "GRADE_LEVELS": "Grade Levels",
       "SUPERVISORS": "Manage Supervisors",
-      "SETTINGS": "Settings"
+      "SETTINGS": "Settings",
+      "PROFILE": "Profile"
     },
     "DASHBOARD": {
       "TITLE": "Dashboard",

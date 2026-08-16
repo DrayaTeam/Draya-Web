@@ -548,7 +548,8 @@
       "CLASSROOM_TYPES": "أنواع الفصول",
       "GRADE_LEVELS": "المراحل الدراسية",
       "SUPERVISORS": "المشرفون",
-      "SETTINGS": "الإعدادات"
+      "SETTINGS": "الإعدادات",
+      "PROFILE": "حسابي"
     },
     "BREADCRUMB": {
       "HOME": "درايَة",
@@ -558,7 +559,8 @@
       "CLASSROOM_TYPES": "أنواع الفصول",
       "GRADE_LEVELS": "المراحل الدراسية",
       "SUPERVISORS": "إدارة المشرفين",
-      "SETTINGS": "الإعدادات"
+      "SETTINGS": "الإعدادات",
+      "PROFILE": "الملف الشخصي"
     },
     "DASHBOARD": {
       "TITLE": "لوحة التحكم",

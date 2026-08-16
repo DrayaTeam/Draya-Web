@@ -9,11 +9,7 @@ describe('AdminClassroomTypeService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        AdminClassroomTypeService,
-        provideHttpClient(),
-        provideHttpClientTesting(),
-      ],
+      providers: [AdminClassroomTypeService, provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(AdminClassroomTypeService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -30,7 +26,10 @@ describe('AdminClassroomTypeService', () => {
 
     const req = httpMock.expectOne((r) => r.url.endsWith('/admin/classrooms/types'));
     expect(req.request.method).toBe('GET');
-    req.flush([{ id: '1', name: 'Private' }, { id: '2', name: 'Group' }]);
+    req.flush([
+      { id: '1', name: 'Private' },
+      { id: '2', name: 'Group' },
+    ]);
   });
 
   it('should create classroom type', () => {
@@ -40,7 +39,13 @@ describe('AdminClassroomTypeService', () => {
 
     const req = httpMock.expectOne((r) => r.url.endsWith('/admin/classrooms/types'));
     expect(req.request.method).toBe('POST');
-    req.flush({ id: '1', name: 'Private', description: 'One-on-one', isActive: true, createdAt: '' });
+    req.flush({
+      id: '1',
+      name: 'Private',
+      description: 'One-on-one',
+      isActive: true,
+      createdAt: '',
+    });
   });
 
   it('should deactivate classroom type', () => {

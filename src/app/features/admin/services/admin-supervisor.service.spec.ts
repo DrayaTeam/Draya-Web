@@ -23,11 +23,13 @@ describe('AdminSupervisorService', () => {
   });
 
   it('should invite a new supervisor', (done) => {
-    service.inviteSupervisor({ name: 'Test Supervisor', email: 'test@draya.edu.sa' }).subscribe((newSup) => {
-      expect(newSup.name).toBe('Test Supervisor');
-      expect(newSup.email).toBe('test@draya.edu.sa');
-      done();
-    });
+    service
+      .inviteSupervisor({ name: 'Test Supervisor', email: 'test@draya.edu.sa' })
+      .subscribe((newSup) => {
+        expect(newSup.name).toBe('Test Supervisor');
+        expect(newSup.email).toBe('test@draya.edu.sa');
+        done();
+      });
   });
 
   it('should toggle supervisor active state', (done) => {

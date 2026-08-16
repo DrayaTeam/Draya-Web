@@ -10,11 +10,7 @@ describe('AdminFinancialService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        AdminFinancialService,
-        provideHttpClient(),
-        provideHttpClientTesting(),
-      ],
+      providers: [AdminFinancialService, provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(AdminFinancialService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -39,37 +35,47 @@ describe('AdminFinancialService', () => {
   });
 
   it('should get withdrawals with params', () => {
-    service.getWithdrawals({ statusFilter: 'Pending', pageNumber: 1, pageSize: 10 }).subscribe((res) => {
-      expect(res.items.length).toBe(1);
-    });
+    service
+      .getWithdrawals({ statusFilter: 'Pending', pageNumber: 1, pageSize: 10 })
+      .subscribe((res) => {
+        expect(res.items.length).toBe(1);
+      });
 
-    const req = httpMock.expectOne((r) => r.url.endsWith('/admin/financial/withdrawals') && r.params.has('statusFilter'));
+    const req = httpMock.expectOne(
+      (r) => r.url.endsWith('/admin/financial/withdrawals') && r.params.has('statusFilter'),
+    );
     expect(req.request.method).toBe('GET');
     req.flush({ items: [{ id: '1', status: WithdrawalStatus.Pending }], totalCount: 1 });
   });
 
   it('should approve withdrawal', () => {
     service.approveWithdrawal('w-1').subscribe();
-    const req = httpMock.expectOne((r) => r.url.endsWith('/admin/financial/withdrawals/w-1/approve'));
+    const req = httpMock.expectOne((r) =>
+      r.url.endsWith('/admin/financial/withdrawals/w-1/approve'),
+    );
     expect(req.request.method).toBe('POST');
     req.flush(null);
   });
 
   it('should reject withdrawal with reason', () => {
     service.rejectWithdrawal('w-1', 'Invalid account').subscribe();
-    const req = httpMock.expectOne((r) => r.url.endsWith('/admin/financial/withdrawals/w-1/reject'));
+    const req = httpMock.expectOne((r) =>
+      r.url.endsWith('/admin/financial/withdrawals/w-1/reject'),
+    );
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ rejectionReason: 'Invalid account' });
     req.flush(null);
   });
 
   it('should create adjustment', () => {
-    service.createAdjustment({
-      teacherId: 't-1',
-      amount: 500,
-      balanceType: WalletBalanceType.Earned,
-      reason: 'Bonus',
-    }).subscribe();
+    service
+      .createAdjustment({
+        teacherId: 't-1',
+        amount: 500,
+        balanceType: WalletBalanceType.Earned,
+        reason: 'Bonus',
+      })
+      .subscribe();
 
     const req = httpMock.expectOne((r) => r.url.endsWith('/admin/financial/adjustments'));
     expect(req.request.method).toBe('POST');

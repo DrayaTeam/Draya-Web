@@ -9,11 +9,7 @@ describe('AdminGradeLevelService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        AdminGradeLevelService,
-        provideHttpClient(),
-        provideHttpClientTesting(),
-      ],
+      providers: [AdminGradeLevelService, provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(AdminGradeLevelService);
     httpMock = TestBed.inject(HttpTestingController);

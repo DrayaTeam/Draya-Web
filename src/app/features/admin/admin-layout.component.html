@@ -7,8 +7,7 @@
       (keydown.escape)="closeMobileSidebar()"
       tabindex="-1"
       role="button"
-      [attr.aria-label]="'ADMIN.SHELL.CLOSE_MENU' | translate"
-    ></div>
+      [attr.aria-label]="'ADMIN.SHELL.CLOSE_MENU' | translate"></div>
   }
 
   <!-- Sidebar (Right side in RTL) -->
@@ -29,8 +28,7 @@
       <button
         class="sidebar-close-btn"
         (click)="closeMobileSidebar()"
-        [attr.aria-label]="'ADMIN.SHELL.CLOSE_MENU' | translate"
-      >
+        [attr.aria-label]="'ADMIN.SHELL.CLOSE_MENU' | translate">
         <i class="pi pi-times"></i>
       </button>
     </div>
@@ -42,13 +40,16 @@
           [routerLinkActive]="'active'"
           [routerLinkActiveOptions]="{ exact: item.exact || false }"
           class="nav-item"
-          (click)="closeMobileSidebar()"
-        >
+          (click)="closeMobileSidebar()">
           <i [class]="item.icon + ' nav-icon'"></i>
           @if (!isSidebarCollapsed()) {
             <span class="nav-label">{{ item.labelKey | translate }}</span>
           }
-          @if (item.badgeSignal === 'pendingWithdrawals' && pendingWithdrawalsCount() > 0 && !isSidebarCollapsed()) {
+          @if (
+            item.badgeSignal === 'pendingWithdrawals' &&
+            pendingWithdrawalsCount() > 0 &&
+            !isSidebarCollapsed()
+          ) {
             <span class="nav-badge">{{ pendingWithdrawalsCount() }}</span>
           }
         </a>
@@ -75,8 +76,7 @@
         <button
           class="mobile-toggle"
           (click)="toggleMobileSidebar()"
-          [attr.aria-label]="'ADMIN.SHELL.OPEN_MENU' | translate"
-        >
+          [attr.aria-label]="'ADMIN.SHELL.OPEN_MENU' | translate">
           <i class="pi pi-bars"></i>
         </button>
 
@@ -84,9 +84,15 @@
         <button
           class="collapse-toggle"
           (click)="toggleSidebar()"
-          [attr.aria-label]="isSidebarCollapsed() ? ('ADMIN.SHELL.EXPAND_SIDEBAR' | translate) : ('ADMIN.SHELL.COLLAPSE_SIDEBAR' | translate)"
-        >
-          <i class="pi" [class.pi-chevron-right]="!isSidebarCollapsed()" [class.pi-chevron-left]="isSidebarCollapsed()"></i>
+          [attr.aria-label]="
+            isSidebarCollapsed()
+              ? ('ADMIN.SHELL.EXPAND_SIDEBAR' | translate)
+              : ('ADMIN.SHELL.COLLAPSE_SIDEBAR' | translate)
+          ">
+          <i
+            class="pi"
+            [class.pi-chevron-right]="!isSidebarCollapsed()"
+            [class.pi-chevron-left]="isSidebarCollapsed()"></i>
         </button>
 
         <div class="page-title-area">
@@ -105,8 +111,7 @@
             (click)="toggleProfileMenu()"
             [attr.aria-expanded]="isProfileMenuOpen()"
             aria-haspopup="true"
-            type="button"
-          >
+            type="button">
             <div class="profile-avatar">{{ currentUserInitial() }}</div>
             <span class="profile-name">{{ currentUserName() }}</span>
             <i class="pi pi-chevron-down profile-caret" [class.rotated]="isProfileMenuOpen()"></i>
@@ -120,8 +125,7 @@
               (keydown.escape)="closeProfileMenu()"
               tabindex="-1"
               role="button"
-              [attr.aria-label]="'ADMIN.SHELL.CLOSE_MENU' | translate"
-            ></div>
+              [attr.aria-label]="'ADMIN.SHELL.CLOSE_MENU' | translate"></div>
 
             <div class="profile-menu">
               <div class="menu-header">
@@ -129,7 +133,7 @@
                 <span class="menu-user-role">مسؤول المنصة</span>
               </div>
               <div class="menu-divider"></div>
-              <a routerLink="/profile" class="menu-item" (click)="closeProfileMenu()">
+              <a routerLink="/admin/profile" class="menu-item" (click)="closeProfileMenu()">
                 <i class="pi pi-user menu-item-icon"></i>
                 <span>حسابي</span>
               </a>

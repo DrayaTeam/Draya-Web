@@ -356,12 +356,16 @@ $color-danger: #ef4444;
 .profile-menu {
   position: absolute;
   inset-block-start: calc(100% + 8px);
-  inset-inline-start: 0;
-  min-inline-size: 200px;
+  inset-inline-end: 0; // In RTL, inline-end is LEFT, so menu aligns to the left and expands inward
+  left: 0; // explicit fallback
+  right: auto;
+  min-inline-size: 220px;
   background: $color-surface;
   border-radius: 12px;
   border: 1px solid $color-border;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.12),
+    0 8px 10px -6px rgba(0, 0, 0, 0.05);
   z-index: 50;
   overflow: hidden;
   animation: dropdownFadeIn 0.15s cubic-bezier(0, 0, 0.2, 1);
@@ -383,7 +387,7 @@ $color-danger: #ef4444;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  background: #FAFAF8;
+  background: #fafaf8;
 
   .menu-user-name {
     font-size: 13px;
@@ -425,7 +429,7 @@ $color-danger: #ef4444;
   }
 
   &:hover {
-    background: #F8FAFA;
+    background: #f8fafa;
     color: $color-deep-teal;
 
     .menu-item-icon {
@@ -441,7 +445,7 @@ $color-danger: #ef4444;
     }
 
     &:hover {
-      background: #FEF2F2;
+      background: #fef2f2;
     }
   }
 }
