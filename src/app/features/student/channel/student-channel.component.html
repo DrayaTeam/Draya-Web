@@ -17,7 +17,7 @@
         <h1 class="main-title">منتدى الأسئلة والمناقشة الأكاديمية</h1>
         <p class="subtitle">
           اطرح استفساراتك وتناقش مع المعلم والمساعدين وزملائك في الشعبة، واطلع على الإجابات
-          النموذجية.
+          النموذجية والمسائل المصورة.
         </p>
       </div>
 
@@ -140,13 +140,24 @@
           (keydown.enter)="openThread(q)">
           <div class="q-card-header">
             <div class="author-info">
-              <div class="author-avatar">
-                <span>{{ q.authorName?.charAt(0) || 'ط' }}</span>
+              <div
+                class="author-avatar"
+                [class.avatar-teacher]="q.authorRole === 'Teacher' || q.authorRole === 'teacher'">
+                @if (q.authorProfilePictureUrl) {
+                  <img
+                    [src]="q.authorProfilePictureUrl"
+                    [alt]="q.authorName || ''"
+                    class="avatar-photo" />
+                } @else {
+                  <span>{{ q.authorName?.charAt(0) || 'ط' }}</span>
+                }
               </div>
               <div>
                 <div class="author-name-row">
                   <span class="author-name">{{ q.authorName || 'طالب متميز' }}</span>
-                  @if (q.isAuthor) {
+                  @if (q.authorRole === 'Teacher' || q.authorRole === 'teacher') {
+                    <span class="teacher-official-badge">معلم</span>
+                  } @else if (q.isAuthor) {
                     <span class="you-badge">أنت</span>
                   }
                 </div>
@@ -172,6 +183,18 @@
 
           <div class="q-card-content">
             <p class="q-text">{{ q.content }}</p>
+
+            @if (q.imageUrl) {
+              <div
+                class="q-attached-image-box"
+                role="button"
+                tabindex="0"
+                (click)="openImagePreview(q.imageUrl, $event)"
+                (keydown.enter)="openImagePreview(q.imageUrl, $event)">
+                <img [src]="q.imageUrl" alt="مرفق السؤال" class="attached-img-preview" />
+                <span class="zoom-badge">🔍 اضغط للتكبير</span>
+              </div>
+            }
           </div>
 
           <div class="q-card-footer">
@@ -233,7 +256,7 @@
       (click)="closeAskModal()"
       (keydown.escape)="closeAskModal()">
       <div
-        class="modal-card animate-scale-up"
+        class="modal-card ask-modal-card animate-scale-up"
         role="document"
         tabindex="0"
         (click)="$event.stopPropagation()"
@@ -242,7 +265,7 @@
           <div>
             <h3 class="modal-title">طرح سؤال دراسي جديد</h3>
             <span class="modal-subtitle">
-              سيظهر سؤالك للمعلم وزملائك في {{ selectedClassroom().title }}
+              سيظهر سؤالك للمعلم وزملائك في {{ selectedClassroom()?.title || 'المجموعة الدراسية' }}
             </span>
           </div>
           <button type="button" class="btn-close-x" (click)="closeAskModal()">✕</button>
@@ -253,17 +276,52 @@
           <textarea
             id="questionInput"
             class="question-textarea"
-            rows="5"
+            rows="4"
             placeholder="اكتب استفسارك بوضوح، وحدد رقم المسألة أو المحاضرة لتصلك الإجابة النموذجية أسرع..."
             [value]="newQuestionText()"
             (input)="newQuestionText.set($any($event.target).value)"></textarea>
 
+          <!-- Photo Attachment in Ask Question -->
+          <div class="photo-attachment-zone">
+            <input
+              #questionFileInput
+              type="file"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
+              class="hidden-file-input"
+              (change)="onQuestionPhotoSelected($event)" />
+
+            @if (questionPhotoPreview()) {
+              <div class="photo-preview-item">
+                <img [src]="questionPhotoPreview()" alt="معاينة الصورة" class="preview-thumb" />
+                <button
+                  type="button"
+                  class="btn-remove-photo"
+                  (click)="removeQuestionPhoto()"
+                  title="حذف الصورة">
+                  ✕
+                </button>
+              </div>
+            } @else {
+              <button type="button" class="btn-attach-photo" (click)="questionFileInput.click()">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2">
+                  <path
+                    d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                <span>إرفاق صورة مسألة أو مخطط (اختياري)</span>
+              </button>
+            }
+          </div>
+
           <div class="ai-hint-box">
             <strong>💡 نصيحة درايَة:</strong>
-            <p>
-              يمكنك الإشارة لرقم الصفحة أو عنوان الفيديو في الباقة حتى يتمكن المعلم والمساعدون من
-              فهم مسألتك بدقة.
-            </p>
+            <p>يمكنك إرفاق لقطة شاشة من المذكرة أو الواجب مع كتابة رقم الصفحة ليسهل الرد السريع.</p>
           </div>
         </div>
 
@@ -304,7 +362,7 @@
         <div class="modal-header">
           <div>
             <h3 class="modal-title">تفاصيل النقاش والردود</h3>
-            <span class="modal-subtitle">{{ selectedClassroom().title }}</span>
+            <span class="modal-subtitle">{{ selectedClassroom()?.title || 'المجموعة الدراسية' }}</span>
           </div>
           <button type="button" class="btn-close-x" (click)="closeThread()">✕</button>
         </div>
@@ -316,11 +374,27 @@
             <div class="thread-main-question">
               <div class="q-header-row">
                 <div class="author-info">
-                  <div class="author-avatar">
-                    <span>{{ q.authorName?.charAt(0) || 'ط' }}</span>
+                  <div
+                    class="author-avatar"
+                    [class.avatar-teacher]="
+                      q.authorRole === 'Teacher' || q.authorRole === 'teacher'
+                    ">
+                    @if (q.authorProfilePictureUrl) {
+                      <img
+                        [src]="q.authorProfilePictureUrl"
+                        [alt]="q.authorName || ''"
+                        class="avatar-photo" />
+                    } @else {
+                      <span>{{ q.authorName?.charAt(0) || 'ط' }}</span>
+                    }
                   </div>
                   <div>
-                    <span class="author-name">{{ q.authorName || 'طالب متميز' }}</span>
+                    <div class="author-name-row">
+                      <span class="author-name">{{ q.authorName || 'طالب متميز' }}</span>
+                      @if (q.authorRole === 'Teacher' || q.authorRole === 'teacher') {
+                        <span class="teacher-official-badge">معلم</span>
+                      }
+                    </div>
                     <span class="q-timestamp">{{ q.createdAt | date: 'medium' }}</span>
                   </div>
                 </div>
@@ -345,6 +419,18 @@
               </div>
 
               <p class="thread-q-text">{{ q.content }}</p>
+
+              @if (q.imageUrl) {
+                <div
+                  class="q-attached-image-box"
+                  role="button"
+                  tabindex="0"
+                  (click)="openImagePreview(q.imageUrl, $event)"
+                  (keydown.enter)="openImagePreview(q.imageUrl, $event)">
+                  <img [src]="q.imageUrl" alt="مرفق السؤال" class="attached-img-preview" />
+                  <span class="zoom-badge">🔍 تكبير الصورة</span>
+                </div>
+              }
             </div>
           }
 
@@ -365,16 +451,33 @@
                   <div class="reply-bubble" [class.official-teacher-reply]="rep.isTeacherAnswer">
                     <div class="reply-header">
                       <div class="reply-author-group">
-                        <div class="reply-avatar" [class.avatar-teacher]="rep.isTeacherAnswer">
-                          <span>
-                            {{ rep.authorName?.charAt(0) || (rep.isTeacherAnswer ? 'م' : 'ط') }}
-                          </span>
+                        <div
+                          class="reply-avatar"
+                          [class.avatar-teacher]="
+                            rep.isTeacherAnswer ||
+                            rep.authorRole === 'Teacher' ||
+                            rep.authorRole === 'teacher'
+                          ">
+                          @if (rep.authorProfilePictureUrl) {
+                            <img
+                              [src]="rep.authorProfilePictureUrl"
+                              [alt]="rep.authorName || ''"
+                              class="avatar-photo" />
+                          } @else {
+                            <span>
+                              {{ rep.authorName?.charAt(0) || (rep.isTeacherAnswer ? 'م' : 'ط') }}
+                            </span>
+                          }
                         </div>
                         <div>
                           <div class="reply-name-row">
                             <span class="reply-name">{{ rep.authorName || 'عضو' }}</span>
-                            @if (rep.isTeacherAnswer) {
-                              <span class="teacher-official-badge">⭐ إجابة المعلم الرسمية</span>
+                            @if (
+                              rep.isTeacherAnswer ||
+                              rep.authorRole === 'Teacher' ||
+                              rep.authorRole === 'teacher'
+                            ) {
+                              <span class="teacher-official-badge">⭐ إجابة المعلم</span>
                             } @else if (rep.authorRole === 'assistant') {
                               <span class="assistant-badge">🛡️ مساعد</span>
                             } @else if (rep.isAuthor) {
@@ -387,6 +490,18 @@
                     </div>
 
                     <p class="reply-text">{{ rep.content }}</p>
+
+                    @if (rep.imageUrl) {
+                      <div
+                        class="reply-attached-image-box"
+                        role="button"
+                        tabindex="0"
+                        (click)="openImagePreview(rep.imageUrl, $event)"
+                        (keydown.enter)="openImagePreview(rep.imageUrl, $event)">
+                        <img [src]="rep.imageUrl" alt="مرفق الرد" class="attached-img-preview" />
+                        <span class="zoom-badge">🔍 تكبير الرسم / التوضيح</span>
+                      </div>
+                    }
                   </div>
                 } @empty {
                   <div class="no-replies-yet">
@@ -398,27 +513,66 @@
           </div>
         </div>
 
-        <!-- Add Reply Footer -->
+        <!-- Add Reply Footer with Attachment -->
         <div class="thread-footer-input">
           <input
-            type="text"
-            class="reply-input"
-            placeholder="اكتب ردك أو تعقيبك هنا..."
-            [value]="newReplyText()"
-            (input)="newReplyText.set($any($event.target).value)"
-            (keyup.enter)="submitReply()" />
-          <button
-            type="button"
-            class="btn-send-reply"
-            [disabled]="qaService.sendingReply() || !newReplyText().trim()"
-            (click)="submitReply()">
-            @if (qaService.sendingReply()) {
-              <span>...</span>
-            } @else {
-              <span>إرسال الرد</span>
-            }
-          </button>
+            #replyFileInput
+            type="file"
+            accept="image/png,image/jpeg,image/jpg,image/webp"
+            class="hidden-file-input"
+            (change)="onReplyPhotoSelected($event)" />
+
+          <div class="reply-input-row">
+            <button
+              type="button"
+              class="btn-reply-attach"
+              (click)="replyFileInput.click()"
+              title="إرفاق صورة أو رسم توضيحي">
+              📷
+            </button>
+            <input
+              type="text"
+              class="reply-input"
+              placeholder="اكتب ردك أو تعقيبك هنا..."
+              [value]="newReplyText()"
+              (input)="newReplyText.set($any($event.target).value)"
+              (keyup.enter)="submitReply()" />
+            <button
+              type="button"
+              class="btn-send-reply"
+              [disabled]="qaService.sendingReply() || (!newReplyText().trim() && !replyPhoto())"
+              (click)="submitReply()">
+              @if (qaService.sendingReply()) {
+                <span>...</span>
+              } @else {
+                <span>إرسال</span>
+              }
+            </button>
+          </div>
+
+          @if (replyPhotoPreview()) {
+            <div class="reply-preview-pill">
+              <span>📎 صورة مرفقة للرد</span>
+              <button type="button" class="btn-remove-pill" (click)="removeReplyPhoto()">✕</button>
+            </div>
+          }
         </div>
+      </div>
+    </div>
+  }
+
+  <!-- Lightbox Full Image Modal -->
+  @if (previewImageUrl(); as imgUrl) {
+    <div
+      class="lightbox-backdrop animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      (click)="closeImagePreview()"
+      (keydown.escape)="closeImagePreview()">
+      <div class="lightbox-content">
+        <button type="button" class="btn-close-lightbox" (click)="closeImagePreview()">✕</button>
+        <img [src]="imgUrl" alt="صورة مكبرة" class="lightbox-img" />
       </div>
     </div>
   }

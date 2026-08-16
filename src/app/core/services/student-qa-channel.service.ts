@@ -275,11 +275,28 @@ export class StudentQaChannelService extends ApiBaseService {
     );
   }
 
-  askQuestion(classroomId: string, content: string): Observable<QuestionItem | null> {
+  askQuestion(
+    classroomId: string,
+    content: string,
+    photoFile?: File | null,
+  ): Observable<QuestionItem | null> {
     this.sendingQuestion.set(true);
-    const body = { content: content.trim() };
 
-    return this.post<QuestionItem>(`/classrooms/${classroomId}/questions`, body).pipe(
+    let request$: Observable<QuestionItem>;
+    if (photoFile) {
+      const formData = new FormData();
+      formData.append('content', content.trim());
+      formData.append('file', photoFile);
+      request$ = this.post<QuestionItem>(
+        `/classrooms/${classroomId}/questions/with-photo`,
+        formData,
+      );
+    } else {
+      const body = { content: content.trim() };
+      request$ = this.post<QuestionItem>(`/classrooms/${classroomId}/questions`, body);
+    }
+
+    return request$.pipe(
       tap((created) => {
         if (created && created.id) {
           this.questions.update((list) => [created, ...list]);
@@ -296,6 +313,9 @@ export class StudentQaChannelService extends ApiBaseService {
             classroomId,
             authorId: this.auth.currentUser()?.userId || 'me',
             authorName: this.auth.currentUser()?.fullName || 'أنا',
+            authorRole: 'Student',
+            authorProfilePictureUrl: this.auth.currentUser()?.profilePictureUrl,
+            imageUrl: photoFile ? URL.createObjectURL(photoFile) : undefined,
             content: content.trim(),
             createdAt: new Date().toISOString(),
             voteCount: 0,
@@ -317,14 +337,28 @@ export class StudentQaChannelService extends ApiBaseService {
     classroomId: string,
     questionId: string,
     content: string,
+    photoFile?: File | null,
   ): Observable<QuestionReplyItem | null> {
     this.sendingReply.set(true);
-    const body = { content: content.trim() };
 
-    return this.post<QuestionReplyItem>(
-      `/classrooms/${classroomId}/questions/${questionId}/replies`,
-      body,
-    ).pipe(
+    let request$: Observable<QuestionReplyItem>;
+    if (photoFile) {
+      const formData = new FormData();
+      formData.append('content', content.trim());
+      formData.append('file', photoFile);
+      request$ = this.post<QuestionReplyItem>(
+        `/classrooms/${classroomId}/questions/${questionId}/replies/with-photo`,
+        formData,
+      );
+    } else {
+      const body = { content: content.trim() };
+      request$ = this.post<QuestionReplyItem>(
+        `/classrooms/${classroomId}/questions/${questionId}/replies`,
+        body,
+      );
+    }
+
+    return request$.pipe(
       tap((created) => {
         if (created && created.id) {
           this.activeReplies.update((list) => [...list, created]);
@@ -342,7 +376,9 @@ export class StudentQaChannelService extends ApiBaseService {
             questionId,
             authorId: this.auth.currentUser()?.userId || 'me',
             authorName: this.auth.currentUser()?.fullName || 'أنا',
-            authorRole: 'student',
+            authorRole: 'Student',
+            authorProfilePictureUrl: this.auth.currentUser()?.profilePictureUrl,
+            imageUrl: photoFile ? URL.createObjectURL(photoFile) : undefined,
             content: content.trim(),
             createdAt: new Date().toISOString(),
             isTeacherAnswer: false,

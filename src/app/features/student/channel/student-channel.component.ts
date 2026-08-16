@@ -2,6 +2,7 @@
 
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   OnInit,
   OnDestroy,
@@ -33,6 +34,7 @@ export class StudentChannelComponent implements OnInit, OnDestroy {
   protected readonly qaService = inject(StudentQaChannelService);
   protected readonly coursesService = inject(StudentCoursesService);
   private readonly toastService = inject(ToastService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   // Classrooms selection
   readonly classrooms = this.coursesService.subscribedPackages;
@@ -41,9 +43,16 @@ export class StudentChannelComponent implements OnInit, OnDestroy {
   // Modal Dialogs
   readonly showAskModal = signal<boolean>(false);
   readonly newQuestionText = signal<string>('');
+  readonly questionPhoto = signal<File | null>(null);
+  readonly questionPhotoPreview = signal<string | null>(null);
 
   readonly showThreadModal = signal<boolean>(false);
   readonly newReplyText = signal<string>('');
+  readonly replyPhoto = signal<File | null>(null);
+  readonly replyPhotoPreview = signal<string | null>(null);
+
+  // Lightbox Zoom Image Modal
+  readonly previewImageUrl = signal<string | null>(null);
 
   // Selected Classroom Computed
   readonly selectedClassroom = computed(() => {
@@ -115,12 +124,39 @@ export class StudentChannelComponent implements OnInit, OnDestroy {
   // Ask Question
   openAskModal(): void {
     this.newQuestionText.set('');
+    this.removeQuestionPhoto();
     this.showAskModal.set(true);
+    this.cdr.markForCheck();
   }
 
   closeAskModal(): void {
     this.showAskModal.set(false);
     this.newQuestionText.set('');
+    this.removeQuestionPhoto();
+    this.cdr.markForCheck();
+  }
+
+  onQuestionPhotoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    if (file.size > 5 * 1024 * 1024) {
+      this.toastService.warning('تنبيه', 'حجم الصورة يجب ألا يتجاوز 5 ميجابايت.');
+      return;
+    }
+
+    this.questionPhoto.set(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.questionPhotoPreview.set(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeQuestionPhoto(): void {
+    this.questionPhoto.set(null);
+    this.questionPhotoPreview.set(null);
   }
 
   submitQuestion(): void {
@@ -130,7 +166,7 @@ export class StudentChannelComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.qaService.askQuestion(this.selectedClassroomId(), text).subscribe({
+    this.qaService.askQuestion(this.selectedClassroomId(), text, this.questionPhoto()).subscribe({
       next: () => {
         this.toastService.success('تم النشر', 'تم نشر سؤالك في القناة الدراسية بنجاح.');
         this.closeAskModal();
@@ -145,12 +181,37 @@ export class StudentChannelComponent implements OnInit, OnDestroy {
   openThread(question: QuestionItem): void {
     this.qaService.loadQuestionDetails(this.selectedClassroomId(), question.id).subscribe();
     this.newReplyText.set('');
+    this.removeReplyPhoto();
     this.showThreadModal.set(true);
   }
 
   closeThread(): void {
     this.showThreadModal.set(false);
     this.newReplyText.set('');
+    this.removeReplyPhoto();
+  }
+
+  onReplyPhotoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    if (file.size > 5 * 1024 * 1024) {
+      this.toastService.warning('تنبيه', 'حجم الصورة يجب ألا يتجاوز 5 ميجابايت.');
+      return;
+    }
+
+    this.replyPhoto.set(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.replyPhotoPreview.set(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeReplyPhoto(): void {
+    this.replyPhoto.set(null);
+    this.replyPhotoPreview.set(null);
   }
 
   submitReply(): void {
@@ -161,14 +222,27 @@ export class StudentChannelComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.qaService.sendReply(this.selectedClassroomId(), activeQ.id, text).subscribe({
-      next: () => {
-        this.toastService.success('تم الرد', 'تم إضافة ردك إلى النقاش بنجاح.');
-        this.newReplyText.set('');
-      },
-      error: () => {
-        this.toastService.error('خطأ', 'تعذر إرسال الرد، يرجى المحاولة لاحقاً.');
-      },
-    });
+    this.qaService
+      .sendReply(this.selectedClassroomId(), activeQ.id, text, this.replyPhoto())
+      .subscribe({
+        next: () => {
+          this.toastService.success('تم الرد', 'تم إضافة ردك إلى النقاش بنجاح.');
+          this.newReplyText.set('');
+          this.removeReplyPhoto();
+        },
+        error: () => {
+          this.toastService.error('خطأ', 'تعذر إرسال الرد، يرجى المحاولة لاحقاً.');
+        },
+      });
+  }
+
+  // Lightbox Preview
+  openImagePreview(url: string, event: Event): void {
+    event.stopPropagation();
+    this.previewImageUrl.set(url);
+  }
+
+  closeImagePreview(): void {
+    this.previewImageUrl.set(null);
   }
 }
