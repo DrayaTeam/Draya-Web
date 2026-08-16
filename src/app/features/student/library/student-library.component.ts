@@ -31,11 +31,20 @@ export class StudentLibraryComponent {
     this.libraryService.setSearchQuery(value);
   }
 
+  setFilter(filter: 'ALL' | 'Document' | 'Video'): void {
+    this.libraryService.setFilter(filter);
+  }
+
   onDownload(book: LibraryBookItem): void {
-    this.toastService.success(
-      'بدء تحميل الملف',
-      `جارٍ تحميل ملف PDF الخاص بكتاب [${book.title}] بحجم (${book.fileSizeMb} MB)...`,
-    );
+    if (book.downloadUrl && book.downloadUrl !== '#') {
+      window.open(book.downloadUrl, '_blank');
+      this.toastService.success('بدء فتح الملف', `جارٍ فتح وتحميل [${book.title}]...`);
+    } else {
+      this.toastService.success(
+        'بدء تحميل الملف',
+        `جارٍ تحميل ملف [${book.title}] بحجم (${book.fileSizeMb} MB)...`,
+      );
+    }
   }
 
   onPreview(book: LibraryBookItem): void {
