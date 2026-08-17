@@ -5,6 +5,8 @@ import { AuthService } from '../auth';
 import { filter } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 
+import { AdminFinancialService } from './services/admin-financial.service';
+
 export interface AdminNavItem {
   labelKey: string;
   link: string;
@@ -23,6 +25,7 @@ export interface AdminNavItem {
 })
 export class AdminLayoutComponent {
   protected readonly auth = inject(AuthService);
+  private readonly financialService = inject(AdminFinancialService);
   private readonly router = inject(Router);
   private readonly translate = inject(TranslateService);
 
@@ -30,6 +33,23 @@ export class AdminLayoutComponent {
   readonly isMobileSidebarOpen = signal<boolean>(false);
   readonly isProfileMenuOpen = signal<boolean>(false);
   readonly pendingWithdrawalsCount = signal<number>(0);
+
+  constructor() {
+    this.refreshPendingCount();
+  }
+
+  refreshPendingCount(): void {
+    this.financialService
+      .getWithdrawals({ statusFilter: 'Pending', pageNumber: 1, pageSize: 1 })
+      .subscribe({
+        next: (res) => {
+          this.pendingWithdrawalsCount.set(res?.totalCount ?? 0);
+        },
+        error: () => {
+          this.pendingWithdrawalsCount.set(0);
+        },
+      });
+  }
 
   private readonly routerEvents = toSignal(
     this.router.events.pipe(filter((e) => e instanceof NavigationEnd)),

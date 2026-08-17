@@ -57,13 +57,14 @@ export class AdminSupervisorsComponent implements OnInit {
   readonly selectedSupervisor = signal<AdminSupervisorDto | null>(null);
 
   readonly inviteForm = this.fb.group({
-    name: ['', Validators.required],
+    name: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    role: ['Admin', Validators.required],
   });
 
   // Column Templates
   readonly nameTpl = viewChild<TemplateRef<unknown>>('nameTpl');
+  readonly roleTpl = viewChild<TemplateRef<unknown>>('roleTpl');
   readonly statusTpl = viewChild<TemplateRef<unknown>>('statusTpl');
   readonly actionsTpl = viewChild<TemplateRef<unknown>>('actionsTpl');
 
@@ -78,6 +79,11 @@ export class AdminSupervisorsComponent implements OnInit {
       key: 'email',
       headerKey: 'ADMIN.SUPERVISORS.COL_EMAIL',
       sortable: true,
+    },
+    {
+      key: 'role',
+      headerKey: 'الصلاحية / الدور',
+      cellTemplate: this.roleTpl() as TemplateRef<{ $implicit: AdminSupervisorDto }>,
     },
     {
       key: 'isActive',
@@ -100,7 +106,7 @@ export class AdminSupervisorsComponent implements OnInit {
     const q = this.searchQuery().toLowerCase().trim();
     if (!q) return this.supervisors();
     return this.supervisors().filter(
-      (s) => s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q),
+      (s) => s.name?.toLowerCase().includes(q) || s.email?.toLowerCase().includes(q),
     );
   });
 
@@ -118,6 +124,10 @@ export class AdminSupervisorsComponent implements OnInit {
           this.supervisors.set(items || []);
           this.totalCount.set(items?.length || 0);
         },
+        error: () => {
+          this.supervisors.set([]);
+          this.totalCount.set(0);
+        },
       });
   }
 
@@ -126,7 +136,11 @@ export class AdminSupervisorsComponent implements OnInit {
   }
 
   openInviteModal(): void {
-    this.inviteForm.reset();
+    this.inviteForm.reset({
+      name: '',
+      email: '',
+      role: 'Admin',
+    });
     this.isInviteModalOpen.set(true);
   }
 
@@ -147,14 +161,18 @@ export class AdminSupervisorsComponent implements OnInit {
       .inviteSupervisor({
         name: formVal.name!,
         email: formVal.email!,
-        password: formVal.password!,
+        role: formVal.role as 'Admin' | 'SuperAdmin',
       })
       .pipe(finalize(() => this.isInviting.set(false)))
       .subscribe({
         next: () => {
-          this.toast.success('تم إرسال الدعوة للمشرف بنجاح');
+          this.toast.success('تم إرسال رابط الدعوة إلى البريد الإلكتروني بنجاح');
           this.closeInviteModal();
           this.loadData();
+        },
+        error: (err) => {
+          const msg = err?.error?.message || 'فشل إرسال الدعوة';
+          this.toast.error(msg);
         },
       });
   }
@@ -175,6 +193,10 @@ export class AdminSupervisorsComponent implements OnInit {
         this.toast.success(msg);
         this.isStatusConfirmOpen.set(false);
         this.loadData();
+      },
+      error: (err) => {
+        const msg = err?.error?.message || 'فشلت العملية';
+        this.toast.error(msg);
       },
     });
   }

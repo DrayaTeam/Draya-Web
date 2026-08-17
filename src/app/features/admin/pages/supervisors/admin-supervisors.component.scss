@@ -221,6 +221,57 @@ $color-success: #10b981;
   }
 }
 
+.role-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #475569;
+
+  &.super-admin {
+    background: #ede9fe;
+    color: #6d28d9;
+  }
+}
+
+.invite-info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  color: #1e40af;
+  font-size: 12px;
+  line-height: 1.5;
+
+  i {
+    font-size: 14px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+}
+
+.form-select {
+  inline-size: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid $color-border;
+  background: #fafaf8;
+  color: $color-text-primary;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.15s ease;
+
+  &:focus {
+    background: #ffffff;
+    border-color: $color-genoa;
+    box-shadow: 0 0 0 3px rgba($color-genoa, 0.12);
+  }
+}
+
 .form-input {
   inline-size: 100%;
   padding: 10px 12px;
