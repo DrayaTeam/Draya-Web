@@ -1,0 +1,137 @@
+/* src/app/features/teacher/wallet/components/wallet-balance-card/wallet-balance-card.component.scss */
+.stripe-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.stripe-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb; /* Very thin, sharp light gray border */
+  border-radius: 8px; /* Structured, tighter radius */
+  display: flex;
+  flex-direction: column;
+}
+
+.card-top {
+  padding: 20px;
+  border-bottom: 1px solid #f3f4f6; /* Subtle inner divider */
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.card-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4b5563; /* Dark gray */
+  margin: 0;
+}
+
+.status-indicator {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #059669;
+  background-color: #ecfdf5;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.ai-indicator {
+  color: #4f46e5;
+  background-color: #e0e7ff;
+}
+
+.card-amount-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.amount {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.currency {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.card-bottom {
+  padding: 12px 20px;
+  background-color: #f9fafb; /* Very faint gray footer */
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.stripe-btn-outline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 150ms ease;
+  
+  &:hover {
+    background-color: #f3f4f6;
+    color: #111827;
+  }
+  
+  &:active {
+    background-color: #e5e7eb;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dark Mode */
+:host-context(.dark) {
+  .stripe-card {
+    background-color: #1f2937;
+    border-color: #374151;
+  }
+  .card-top { border-color: #374151; }
+  .card-label { color: #9ca3af; }
+  .amount { color: #f9fafb; }
+  .currency { color: #9ca3af; }
+  
+  .status-indicator { background-color: rgba(5, 150, 105, 0.2); color: #34d399; }
+  .ai-indicator { background-color: rgba(79, 70, 229, 0.2); color: #818cf8; }
+  
+  .card-bottom { background-color: #111827; }
+  .stripe-btn-outline {
+    border-color: #4b5563;
+    color: #d1d5db;
+    &:hover { background-color: #374151; color: #f9fafb; }
+    &:active { background-color: #4b5563; }
+  }
+}
