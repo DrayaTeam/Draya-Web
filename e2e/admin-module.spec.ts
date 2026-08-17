@@ -51,7 +51,7 @@ test.describe('Admin Module E2E Flow', () => {
     await page.goto('/admin/classroom-types');
     await expect(page.locator('h1.page-title')).toContainText('أنواع الفصول');
 
-    const addBtn = page.locator('.page-header button');
+    const addBtn = page.locator('.add-btn');
     await expect(addBtn).toBeVisible();
     await addBtn.click();
 
@@ -77,7 +77,7 @@ test.describe('Admin Module E2E Flow', () => {
     await page.goto('/admin/profile');
     await expect(page.locator('h1.page-title')).toContainText('حسابي');
 
-    const tabBtn = page.locator('.tab-btn').nth(1);
+    const tabBtn = page.locator('.profile-tabs .tab-btn').nth(1);
     await tabBtn.click();
     await expect(page.locator('input#newPass')).toBeVisible();
   });

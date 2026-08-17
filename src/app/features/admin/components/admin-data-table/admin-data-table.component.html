@@ -1,15 +1,29 @@
 <div class="table-container">
+  <!-- Table Header Actions -->
   <div class="table-header-actions">
     <div class="search-box">
       <i class="pi pi-search search-icon"></i>
       <input
         type="text"
         [placeholder]="searchPlaceholderKey() | translate"
+        [value]="searchVal()"
         (input)="onSearch($event)"
         class="search-input" />
+      @if (searchVal()) {
+        <button class="clear-search-btn" (click)="clearSearch()" type="button" title="مسح البحث">
+          <i class="pi pi-times"></i>
+        </button>
+      }
     </div>
+    @if (totalCount() > 0) {
+      <div class="total-count-pill">
+        <span class="count-num">{{ totalCount() }}</span>
+        <span class="count-label">عنصر</span>
+      </div>
+    }
   </div>
 
+  <!-- Table Responsive Body -->
   <div class="table-responsive">
     <table class="draya-table">
       <thead>
@@ -39,17 +53,25 @@
 
       <tbody>
         @if (loading()) {
-          <tr>
-            <td [attr.colspan]="columns().length" class="loading-state">
-              <i class="pi pi-spin pi-spinner"></i>
-              <p>{{ 'ADMIN.SHARED.LOADING' | translate }}</p>
-            </td>
-          </tr>
+          @for (item of skeletonRows; track item) {
+            <tr class="skeleton-row">
+              @for (col of columns(); track col.key) {
+                <td>
+                  <div class="skeleton-shimmer" [style.width]="col.width || '80%'"></div>
+                </td>
+              }
+            </tr>
+          }
         } @else if (data().length === 0) {
           <tr>
-            <td [attr.colspan]="columns().length" class="empty-state">
-              <i class="pi pi-inbox empty-icon"></i>
-              <p>{{ 'ADMIN.SHARED.EMPTY_STATE' | translate }}</p>
+            <td [attr.colspan]="columns().length" class="empty-state-cell">
+              <div class="empty-state-wrap">
+                <div class="empty-icon-circle">
+                  <i class="pi pi-folder-open"></i>
+                </div>
+                <h4 class="empty-title">{{ 'ADMIN.SHARED.EMPTY_STATE' | translate }}</h4>
+                <p class="empty-desc">لا توجد سجلات تطابق معايير العرض الحالية</p>
+              </div>
             </td>
           </tr>
         } @else {
@@ -64,7 +86,7 @@
                         context: { $implicit: row }
                       "></ng-container>
                   } @else {
-                    {{ getCellValue(row, col.key) }}
+                    <span class="cell-text">{{ getCellValue(row, col.key) }}</span>
                   }
                 </td>
               }
@@ -75,29 +97,33 @@
     </table>
   </div>
 
+  <!-- Table Pagination Footer -->
   @if (totalCount() > 0) {
     <div class="table-footer">
       <div class="pagination-info">
-        {{
-          'ADMIN.SHARED.PAGE_OF'
-            | translate
-              : {
-                  current: currentPage(),
-                  total:
-                    (totalCount() / pageSize() > 0 ? totalCount() / pageSize() : 1)
-                    | number: '1.0-0',
-                  count: totalCount(),
-                }
-        }}
+        <span>عرض الصفحة</span>
+        <strong class="page-highlight">{{ currentPage() }}</strong>
+        <span>من</span>
+        <strong class="page-highlight">{{ totalPages() }}</strong>
+        <span class="total-text">({{ totalCount() }} عنصر إجمالي)</span>
       </div>
+
       <div class="pagination-actions">
-        <button class="btn-prev" [disabled]="currentPage() === 1" (click)="prevPage()">
+        <button
+          class="btn-nav"
+          [disabled]="currentPage() === 1"
+          (click)="prevPage()"
+          title="الصفحة السابقة"
+          type="button">
           <i class="pi pi-chevron-right"></i>
         </button>
+        <span class="page-indicator">{{ currentPage() }} / {{ totalPages() }}</span>
         <button
-          class="btn-next"
-          [disabled]="currentPage() * pageSize() >= totalCount()"
-          (click)="nextPage()">
+          class="btn-nav"
+          [disabled]="currentPage() >= totalPages()"
+          (click)="nextPage()"
+          title="الصفحة التالية"
+          type="button">
           <i class="pi pi-chevron-left"></i>
         </button>
       </div>

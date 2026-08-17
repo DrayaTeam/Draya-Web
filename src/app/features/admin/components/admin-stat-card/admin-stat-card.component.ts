@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -17,4 +17,12 @@ export class AdminStatCardComponent {
   variant = input<'violet' | 'emerald' | 'blue' | 'amber' | 'teal'>('teal');
   trendPercent = input<number>();
   currencySuffix = input<string>();
+
+  readonly displayValue = computed(() => {
+    const val = this.value();
+    if (typeof val === 'number') {
+      return new Intl.NumberFormat('en-US').format(val);
+    }
+    return val ?? '0';
+  });
 }

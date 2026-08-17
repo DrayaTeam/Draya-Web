@@ -1,9 +1,9 @@
 <div class="profile-page">
   <!-- Page Header -->
   <div class="page-header">
-    <div>
-      <h1 class="page-title">حسابي</h1>
-      <p class="page-subtitle">إدارة البيانات الشخصية وإعدادات أمان حساب المشرف</p>
+    <div class="header-text">
+      <h1 class="page-title">حسابي الشخصي</h1>
+      <p class="page-subtitle">إدارة البيانات الشخصية وإعدادات أمان حساب المشرف والمسؤول</p>
     </div>
   </div>
 
@@ -52,14 +52,14 @@
     <div class="card-container">
       <div class="card-header">
         <h3 class="card-title">تعديل البيانات الشخصية</h3>
-        <p class="card-subtitle">تحديث الاسم ورقم الهاتف الخاص بحسابك</p>
+        <p class="card-subtitle">تحديث الاسم بالكامل ورقم الهاتف الخاص بحساب المشرف</p>
       </div>
 
       <form [formGroup]="infoForm" (ngSubmit)="saveInfo()">
         <div class="form-grid">
           <div class="form-group">
             <label class="form-label" for="fullName">
-              الاسم بالكامل
+              <span>الاسم بالكامل</span>
               <span class="required">*</span>
             </label>
             <input
@@ -71,14 +71,17 @@
             @if (
               infoForm.get('fullName')?.touched && infoForm.get('fullName')?.errors?.['required']
             ) {
-              <span class="form-error">الاسم مطلوب</span>
+              <span class="form-error">
+                <i class="pi pi-times-circle"></i>
+                <span>الاسم الكامل مطلوب</span>
+              </span>
             }
           </div>
 
           <div class="form-group">
             <label class="form-label" for="email">البريد الإلكتروني</label>
             <input id="email" type="email" formControlName="email" class="form-input disabled" />
-            <span class="field-hint">البريد الإلكتروني مرتبط بحساب المشرف ولا يمكن تغييره</span>
+            <span class="field-hint">البريد الإلكتروني مرتبط بالنظام ولا يمكن تغييره يدوياً</span>
           </div>
 
           <div class="form-group">
@@ -120,7 +123,7 @@
     <div class="card-container">
       <div class="card-header">
         <h3 class="card-title">تغيير كلمة المرور</h3>
-        <p class="card-subtitle">تأكد من اختيار كلمة مرور قوية تحتوي على أحرف وأرقام</p>
+        <p class="card-subtitle">تأكد من اختيار كلمة مرور قوية لحماية حساب الإدارة</p>
       </div>
 
       <form [formGroup]="securityForm" (ngSubmit)="changePassword()">
@@ -128,7 +131,7 @@
           <!-- Current Password -->
           <div class="form-group">
             <label class="form-label" for="currPass">
-              كلمة المرور الحالية
+              <span>كلمة المرور الحالية</span>
               <span class="required">*</span>
             </label>
             <div class="password-input-wrap">
@@ -153,14 +156,17 @@
               securityForm.get('currentPassword')?.touched &&
               securityForm.get('currentPassword')?.errors?.['required']
             ) {
-              <span class="form-error">يرجى إدخال كلمة المرور الحالية</span>
+              <span class="form-error">
+                <i class="pi pi-times-circle"></i>
+                <span>يرجى إدخال كلمة المرور الحالية</span>
+              </span>
             }
           </div>
 
           <!-- New Password -->
           <div class="form-group">
             <label class="form-label" for="newPass">
-              كلمة المرور الجديدة
+              <span>كلمة المرور الجديدة</span>
               <span class="required">*</span>
             </label>
             <div class="password-input-wrap">
@@ -185,14 +191,17 @@
               securityForm.get('newPassword')?.touched &&
               securityForm.get('newPassword')?.errors?.['required']
             ) {
-              <span class="form-error">يرجى إدخال كلمة المرور الجديدة (6 أحرف على الأقل)</span>
+              <span class="form-error">
+                <i class="pi pi-times-circle"></i>
+                <span>يرجى إدخال كلمة المرور الجديدة (6 أحرف على الأقل)</span>
+              </span>
             }
           </div>
 
           <!-- Confirm Password -->
           <div class="form-group">
             <label class="form-label" for="confirmPass">
-              تأكيد كلمة المرور الجديدة
+              <span>تأكيد كلمة المرور الجديدة</span>
               <span class="required">*</span>
             </label>
             <div class="password-input-wrap">
@@ -214,7 +223,10 @@
               </button>
             </div>
             @if (securityForm.touched && securityForm.errors?.['passwordMismatch']) {
-              <span class="form-error">كلمتا المرور غير متطابقتين</span>
+              <span class="form-error">
+                <i class="pi pi-times-circle"></i>
+                <span>كلمتا المرور غير متطابقتين</span>
+              </span>
             }
           </div>
         </div>
