@@ -223,6 +223,18 @@ export class AuthService {
     );
   }
 
+  acceptInvite(payload: { token: string; newPassword: string }): Observable<void> {
+    this._isLoading.set(true);
+    this._authError.set(null);
+    return this.authApi.acceptInvite(payload).pipe(
+      catchError((error: ApiError) => {
+        this._authError.set(error);
+        return throwError(() => error);
+      }),
+      finalize(() => this._isLoading.set(false)),
+    );
+  }
+
   changePassword(payload: {
     currentPassword: string;
     newPassword: string;

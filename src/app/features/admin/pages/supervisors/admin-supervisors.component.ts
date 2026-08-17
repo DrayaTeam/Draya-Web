@@ -177,6 +177,19 @@ export class AdminSupervisorsComponent implements OnInit {
       });
   }
 
+  onResendInvite(supervisor: AdminSupervisorDto): void {
+    if (!supervisor?.id) return;
+    this.supervisorService.resendInvite(supervisor.id).subscribe({
+      next: () => {
+        this.toast.success(`تمت إعادة إرسال رابط الدعوة إلى ${supervisor.email}`);
+      },
+      error: (err) => {
+        const msg = err?.error?.message || 'فشلت إعادة إرسال الدعوة';
+        this.toast.error(msg);
+      },
+    });
+  }
+
   promptToggleStatus(supervisor: AdminSupervisorDto): void {
     this.selectedSupervisor.set(supervisor);
     this.isStatusConfirmOpen.set(true);

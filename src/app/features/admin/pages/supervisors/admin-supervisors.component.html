@@ -59,6 +59,14 @@
     <div class="actions-cell">
       @if (!row?.isCurrentUser) {
         <button
+          class="action-btn resend-btn"
+          (click)="onResendInvite(row)"
+          type="button"
+          title="إعادة إرسال رابط الدعوة">
+          <i class="pi pi-send"></i>
+          <span>إعادة إرسال الدعوة</span>
+        </button>
+        <button
           class="action-btn"
           [class.deactivate-btn]="row?.isActive"
           [class.activate-btn]="!row?.isActive"

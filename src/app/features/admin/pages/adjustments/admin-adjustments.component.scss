@@ -149,6 +149,43 @@ $color-danger: #ef4444;
   }
 }
 
+.teacher-balances-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+
+  .balance-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+
+    &.earned {
+      background: #dcfce7;
+      border: 1px solid rgba(21, 128, 61, 0.2);
+      color: #15803d;
+
+      .bal-val {
+        font-weight: 800;
+      }
+    }
+
+    &.purchased {
+      background: #dbeafe;
+      border: 1px solid rgba(29, 78, 216, 0.2);
+      color: #1d4ed8;
+
+      .bal-val {
+        font-weight: 800;
+      }
+    }
+  }
+}
+
 .form-select,
 .form-input,
 .form-textarea {

@@ -44,6 +44,14 @@ export const authRoutes: Routes = [
         title: 'Reset Password — Draya',
       },
       {
+        path: 'accept-invite',
+        loadComponent: () =>
+          import('./pages/accept-invite/accept-invite.component').then(
+            (m) => m.AcceptInviteComponent,
+          ),
+        title: 'Accept Invitation — Draya',
+      },
+      {
         path: '',
         redirectTo: 'login',
         pathMatch: 'full',
