@@ -33,9 +33,6 @@ export class TeachersDirectoryComponent {
   }
 
   onViewPackages(teacher: TeacherDirectoryItem): void {
-    this.toastService.info(
-      'استعراض الباقات',
-      `جارٍ الانتقال لباقات المعلم ${teacher.name}...`,
-    );
+    this.toastService.info('استعراض الباقات', `جارٍ الانتقال لباقات المعلم ${teacher.name}...`);
   }
 }

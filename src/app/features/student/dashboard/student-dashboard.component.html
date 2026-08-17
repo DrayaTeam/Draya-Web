@@ -30,7 +30,8 @@
         أهلاً بعودتك، {{ auth.currentUser()?.fullName || summary().studentName }}! 👋
       </h1>
       <p class="hero-subtext">
-        لديك {{ summary().scheduledExamsCount }} اختباران مجدولان قريباً هذا الأسبوع. واصل الدراسة يومياً وحافظ على لهيب حماسك!
+        لديك {{ summary().scheduledExamsCount }} اختباران مجدولان قريباً هذا الأسبوع. واصل الدراسة
+        يومياً وحافظ على لهيب حماسك!
       </p>
 
       <!-- Rating/Performance Pill -->
@@ -245,9 +246,7 @@
       <!-- Loop of Course Progress Cards -->
       <div class="courses-cards-list">
         @for (course of enrolledCourses(); track course.id) {
-          <draya-course-progress-card
-            [course]="course"
-            (resumeWatching)="onResumeCourse($event)" />
+          <draya-course-progress-card [course]="course" (resumeWatching)="onResumeCourse($event)" />
         }
       </div>
     </section>

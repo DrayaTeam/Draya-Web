@@ -42,7 +42,9 @@ describe('SubscribedPackageCardComponent', () => {
     expect(compiled.querySelector('.package-title')?.textContent).toContain(
       'باقة الجبر وحساب المثلثات للشهادة الثانوية',
     );
-    expect(compiled.querySelector('.group-name-value')?.textContent).toContain('مجموعة أ - علمي رياضة');
+    expect(compiled.querySelector('.group-name-value')?.textContent).toContain(
+      'مجموعة أ - علمي رياضة',
+    );
   });
 
   it('should emit openPackageDetails on button click', () => {

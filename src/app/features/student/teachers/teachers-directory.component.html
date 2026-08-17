@@ -46,9 +46,7 @@
       @if (filteredTeachers().length > 0) {
         <div class="teachers-card-grid">
           @for (teacher of filteredTeachers(); track teacher.id) {
-            <draya-teacher-card
-              [teacher]="teacher"
-              (viewPackages)="onViewPackages($event)" />
+            <draya-teacher-card [teacher]="teacher" (viewPackages)="onViewPackages($event)" />
           }
         </div>
       } @else {
@@ -69,9 +67,7 @@
             </svg>
           </div>
           <h3 class="empty-title">لم يتم العثور على معلميك المستهدفين</h3>
-          <p class="empty-desc">
-            جرب البحث باسم آخر أو اختيار مادة دراسية أخرى من القائمة أعلاه.
-          </p>
+          <p class="empty-desc">جرب البحث باسم آخر أو اختيار مادة دراسية أخرى من القائمة أعلاه.</p>
         </div>
       }
     </section>

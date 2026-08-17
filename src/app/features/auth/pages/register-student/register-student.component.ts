@@ -1,13 +1,30 @@
-import { Component, ChangeDetectionStrategy, inject, signal, ElementRef, DestroyRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  signal,
+  ElementRef,
+  DestroyRef,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
+  ValidatorFn,
+  ValidationErrors,
+} from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/auth.service';
 import { ApiError } from '../../../../core/models/api-error.model';
-import { passwordStrengthValidator, calculatePasswordStrength } from '../../validators/password-strength.validator';
+import {
+  passwordStrengthValidator,
+  calculatePasswordStrength,
+} from '../../validators/password-strength.validator';
 import { minAgeValidator } from '../../validators/min-age.validator';
 import { differentEmailValidator } from '../../validators/different-email.validator';
 import { PasswordStrength } from '../../constants/auth.constants';
@@ -25,7 +42,7 @@ const noPureNumericValidator: ValidatorFn = (control: AbstractControl): Validati
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './register-student.component.html'
+  templateUrl: './register-student.component.html',
 })
 export class RegisterStudentComponent {
   private readonly auth = inject(AuthService);
@@ -36,15 +53,18 @@ export class RegisterStudentComponent {
   private readonly el = inject(ElementRef);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly registerForm = this.fb.nonNullable.group({
-    fullName: ['', [Validators.required, Validators.minLength(3), noPureNumericValidator]],
-    email: ['', [Validators.required, Validators.email]],
-    parentGuardianEmail: ['', [Validators.required, Validators.email]],
-    dateOfBirth: ['', [Validators.required, minAgeValidator()]],
-    password: ['', [Validators.required, passwordStrengthValidator()]],
-    confirmPassword: ['', [Validators.required, matchFieldValidator('password')]],
-    termsAccepted: [false, Validators.requiredTrue]
-  }, { validators: [differentEmailValidator()] });
+  readonly registerForm = this.fb.nonNullable.group(
+    {
+      fullName: ['', [Validators.required, Validators.minLength(3), noPureNumericValidator]],
+      email: ['', [Validators.required, Validators.email]],
+      parentGuardianEmail: ['', [Validators.required, Validators.email]],
+      dateOfBirth: ['', [Validators.required, minAgeValidator()]],
+      password: ['', [Validators.required, passwordStrengthValidator()]],
+      confirmPassword: ['', [Validators.required, matchFieldValidator('password')]],
+      termsAccepted: [false, Validators.requiredTrue],
+    },
+    { validators: [differentEmailValidator()] },
+  );
 
   readonly loading = this.auth.isLoading;
   readonly showPassword = signal(false);
@@ -53,18 +73,18 @@ export class RegisterStudentComponent {
   readonly passwordStrength = signal<PasswordStrength>('weak');
 
   constructor() {
-    this.registerForm.controls.password.valueChanges.pipe(takeUntilDestroyed()).subscribe(val => {
+    this.registerForm.controls.password.valueChanges.pipe(takeUntilDestroyed()).subscribe((val) => {
       this.passwordStrength.set(calculatePasswordStrength(val));
       this.registerForm.controls.confirmPassword.updateValueAndValidity();
     });
   }
 
   togglePassword(): void {
-    this.showPassword.update(s => !s);
+    this.showPassword.update((s) => !s);
   }
 
   toggleConfirmPassword(): void {
-    this.showConfirmPassword.update(s => !s);
+    this.showConfirmPassword.update((s) => !s);
   }
 
   onSubmit(): void {
@@ -85,38 +105,41 @@ export class RegisterStudentComponent {
       parentGuardianEmail: formValue.parentGuardianEmail.trim().toLowerCase(),
       dateOfBirth: formValue.dateOfBirth,
       password: formValue.password,
-      confirmPassword: formValue.confirmPassword
+      confirmPassword: formValue.confirmPassword,
     };
 
-    this.auth.registerStudent(payload).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.router.navigate(['/student/dashboard']);
-      },
-      error: (err: ApiError) => {
-        if (err.code === 'EMAIL_ALREADY_EXISTS') {
-          this.registerForm.controls.email.setErrors({ emailTaken: true });
-          this.scrollToFirstInvalidControl();
-        } else if (err.code === 'VALIDATION_FAILED') {
-          if (err.details && err.details.length > 0) {
-            err.details.forEach(detail => {
-              const control = this.registerForm.get(detail.field);
-              if (control) {
-                control.setErrors({ serverError: detail.issue });
-              }
-            });
+    this.auth
+      .registerStudent(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/student/dashboard']);
+        },
+        error: (err: ApiError) => {
+          if (err.code === 'EMAIL_ALREADY_EXISTS') {
+            this.registerForm.controls.email.setErrors({ emailTaken: true });
             this.scrollToFirstInvalidControl();
+          } else if (err.code === 'VALIDATION_FAILED') {
+            if (err.details && err.details.length > 0) {
+              err.details.forEach((detail) => {
+                const control = this.registerForm.get(detail.field);
+                if (control) {
+                  control.setErrors({ serverError: detail.issue });
+                }
+              });
+              this.scrollToFirstInvalidControl();
+            } else {
+              this.showGenericError();
+            }
           } else {
             this.showGenericError();
           }
-        } else {
-          this.showGenericError();
-        }
-      }
-    });
+        },
+      });
   }
 
   private clearServerErrors() {
-    Object.keys(this.registerForm.controls).forEach(key => {
+    Object.keys(this.registerForm.controls).forEach((key) => {
       const control = this.registerForm.get(key);
       if (control?.hasError('serverError') || control?.hasError('emailTaken')) {
         control.updateValueAndValidity();
@@ -127,7 +150,7 @@ export class RegisterStudentComponent {
   private scrollToFirstInvalidControl() {
     setTimeout(() => {
       const firstInvalidControl: HTMLElement = this.el.nativeElement.querySelector(
-        "form .ng-invalid, form.ng-invalid"
+        'form .ng-invalid, form.ng-invalid',
       );
       if (firstInvalidControl) {
         firstInvalidControl.focus();
@@ -139,7 +162,7 @@ export class RegisterStudentComponent {
     this.messageService?.add({
       severity: 'error',
       summary: this.translate.instant('ERROR.TITLE'),
-      detail: this.translate.instant('COMMON.ERROR')
+      detail: this.translate.instant('COMMON.ERROR'),
     });
   }
 }

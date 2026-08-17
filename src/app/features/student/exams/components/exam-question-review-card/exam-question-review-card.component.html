@@ -5,8 +5,7 @@
     <span
       class="status-pill"
       [class.correct]="reviewItem().isCorrect"
-      [class.wrong]="!reviewItem().isCorrect"
-    >
+      [class.wrong]="!reviewItem().isCorrect">
       {{ reviewItem().isCorrect ? 'إجابة صحيحة' : 'إجابة خاطئة' }}
     </span>
   </div>
@@ -22,8 +21,7 @@
     <div
       class="answer-box student-box"
       [class.wrong-box]="!reviewItem().isCorrect"
-      [class.correct-box]="reviewItem().isCorrect"
-    >
+      [class.correct-box]="reviewItem().isCorrect">
       <span class="box-label">إجابتك:</span>
       <span class="box-val">{{ reviewItem().studentAnswerText }}</span>
     </div>

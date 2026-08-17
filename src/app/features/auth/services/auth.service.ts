@@ -4,7 +4,12 @@ import { catchError, finalize, Observable, throwError, tap } from 'rxjs';
 import { AUTH_API } from './auth-api.token';
 import { User, UserProfile, UserRole } from '../../../core/models/user.model';
 import { ApiError } from '../../../core/models/api-error.model';
-import { LoginRequest, RegisterTeacherRequest, RegisterStudentRequest, AuthResponse } from '../../../core/models/auth.model';
+import {
+  LoginRequest,
+  RegisterTeacherRequest,
+  RegisterStudentRequest,
+  AuthResponse,
+} from '../../../core/models/auth.model';
 import { isTokenExpired } from '../../../core/auth/jwt.util';
 
 import { Router } from '@angular/router';
@@ -14,7 +19,7 @@ export class AuthService {
   private readonly authApi = inject(AUTH_API);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
-  
+
   // State
   private readonly _currentUser = signal<User | null>(null);
   private readonly _isLoading = signal<boolean>(false);
@@ -89,7 +94,7 @@ export class AuthService {
         this._authError.set(error);
         return throwError(() => error);
       }),
-      finalize(() => this._isLoading.set(false))
+      finalize(() => this._isLoading.set(false)),
     );
   }
 
@@ -102,7 +107,7 @@ export class AuthService {
         this._authError.set(error);
         return throwError(() => error);
       }),
-      finalize(() => this._isLoading.set(false))
+      finalize(() => this._isLoading.set(false)),
     );
   }
 
@@ -115,22 +120,25 @@ export class AuthService {
         this._authError.set(error);
         return throwError(() => error);
       }),
-      finalize(() => this._isLoading.set(false))
+      finalize(() => this._isLoading.set(false)),
     );
   }
 
   logout(): void {
     this._isLoading.set(true);
     this._authError.set(null);
-    
+
     // Call backend revocation while token is still in localStorage
-    this.authApi.logout().pipe(
-      finalize(() => {
-        this.clearStorage();
-        this._isLoading.set(false);
-        this.router.navigate(['/auth/login']);
-      })
-    ).subscribe();
+    this.authApi
+      .logout()
+      .pipe(
+        finalize(() => {
+          this.clearStorage();
+          this._isLoading.set(false);
+          this.router.navigate(['/auth/login']);
+        }),
+      )
+      .subscribe();
   }
 
   refreshToken(token: string): Observable<AuthResponse> {
@@ -143,12 +151,14 @@ export class AuthService {
         this.clearStorage();
         return throwError(() => error);
       }),
-      finalize(() => this._isLoading.set(false))
+      finalize(() => this._isLoading.set(false)),
     );
   }
 
   refresh(): Observable<AuthResponse> {
-    const refreshToken = isPlatformBrowser(this.platformId) ? localStorage.getItem('draya_refresh_token') : null;
+    const refreshToken = isPlatformBrowser(this.platformId)
+      ? localStorage.getItem('draya_refresh_token')
+      : null;
     return this.refreshToken(refreshToken ?? '');
   }
 
@@ -174,7 +184,7 @@ export class AuthService {
         this._authError.set(error);
         return throwError(() => error);
       }),
-      finalize(() => this._isLoading.set(false))
+      finalize(() => this._isLoading.set(false)),
     );
   }
 
@@ -186,7 +196,7 @@ export class AuthService {
         this._authError.set(error);
         return throwError(() => error);
       }),
-      finalize(() => this._isLoading.set(false))
+      finalize(() => this._isLoading.set(false)),
     );
   }
 
@@ -198,7 +208,7 @@ export class AuthService {
         this._authError.set(error);
         return throwError(() => error);
       }),
-      finalize(() => this._isLoading.set(false))
+      finalize(() => this._isLoading.set(false)),
     );
   }
 }

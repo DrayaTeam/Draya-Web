@@ -1,10 +1,7 @@
 // src/app/core/services/student-exam-taking.service.ts
 
 import { Injectable, computed, signal } from '@angular/core';
-import {
-  ExamQuestion,
-  ExamResultReport,
-} from '../models/student-exam-taking.model';
+import { ExamQuestion, ExamResultReport } from '../models/student-exam-taking.model';
 
 @Injectable({
   providedIn: 'root',
@@ -76,7 +73,7 @@ export class StudentExamTakingService {
   readonly isFirstQuestion = computed(() => this.currentQuestionIndex() === 0);
 
   readonly isLastQuestion = computed(
-    () => this.currentQuestionIndex() === this.totalQuestionsCount() - 1
+    () => this.currentQuestionIndex() === this.totalQuestionsCount() - 1,
   );
 
   readonly formattedTimer = computed(() => {
@@ -138,17 +135,13 @@ export class StudentExamTakingService {
 
   selectOption(questionId: string, optionId: string): void {
     this.questions.update((list) =>
-      list.map((q) =>
-        q.id === questionId ? { ...q, selectedOptionId: optionId } : q
-      )
+      list.map((q) => (q.id === questionId ? { ...q, selectedOptionId: optionId } : q)),
     );
   }
 
   toggleFlagQuestion(questionId: string): void {
     this.questions.update((list) =>
-      list.map((q) =>
-        q.id === questionId ? { ...q, isFlagged: !q.isFlagged } : q
-      )
+      list.map((q) => (q.id === questionId ? { ...q, isFlagged: !q.isFlagged } : q)),
     );
   }
 

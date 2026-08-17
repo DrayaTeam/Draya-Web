@@ -7,7 +7,10 @@
     <div class="banner-right">
       <div class="banner-icon-box">
         <svg class="banner-icon" viewBox="0 0 24 24" fill="none" stroke="#0F4F49" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
       </div>
 
@@ -19,7 +22,10 @@
 
     <div class="timer-pill">
       <svg class="timer-icon" viewBox="0 0 24 24" fill="none" stroke="#0F4F49" stroke-width="1.5">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
       <span class="timer-label">الوقت المتبقي:</span>
       <span class="timer-countdown">{{ examService.formattedTimer() }}</span>
@@ -39,8 +45,7 @@
         (toggleFlag)="onToggleFlag($event)"
         (nextQuestion)="onNextQuestion()"
         (prevQuestion)="onPrevQuestion()"
-        (submitExam)="onSubmitExam()"
-      ></app-exam-question-card>
+        (submitExam)="onSubmitExam()"></app-exam-question-card>
     </div>
 
     <!-- Sidebar Map & Security Warnings (Left side in RTL) -->
@@ -48,8 +53,7 @@
       <app-exam-question-map
         [questions]="examService.questions()"
         [currentIndex]="examService.currentQuestionIndex()"
-        (selectQuestionIndex)="onGoToQuestion($event)"
-      ></app-exam-question-map>
+        (selectQuestionIndex)="onGoToQuestion($event)"></app-exam-question-map>
 
       <app-exam-security-warning></app-exam-security-warning>
     </aside>

@@ -1,13 +1,30 @@
-import { Component, ChangeDetectionStrategy, inject, signal, ElementRef, DestroyRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  signal,
+  ElementRef,
+  DestroyRef,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
+  ValidatorFn,
+  ValidationErrors,
+} from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/auth.service';
 import { ApiError } from '../../../../core/models/api-error.model';
-import { passwordStrengthValidator, calculatePasswordStrength } from '../../validators/password-strength.validator';
+import {
+  passwordStrengthValidator,
+  calculatePasswordStrength,
+} from '../../validators/password-strength.validator';
 import { egyptianPhoneValidator } from '../../validators/egyptian-phone.validator';
 import { PasswordStrength } from '../../constants/auth.constants';
 import { matchFieldValidator } from '../../../../shared/validators/match-field.validator';
@@ -24,7 +41,7 @@ const noPureNumericValidator: ValidatorFn = (control: AbstractControl): Validati
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './register-teacher.component.html'
+  templateUrl: './register-teacher.component.html',
 })
 export class RegisterTeacherComponent {
   private readonly auth = inject(AuthService);
@@ -43,7 +60,7 @@ export class RegisterTeacherComponent {
     description: [''],
     password: ['', [Validators.required, passwordStrengthValidator()]],
     confirmPassword: ['', [Validators.required, matchFieldValidator('password')]],
-    termsAccepted: [false, Validators.requiredTrue]
+    termsAccepted: [false, Validators.requiredTrue],
   });
 
   readonly loading = this.auth.isLoading;
@@ -67,22 +84,22 @@ export class RegisterTeacherComponent {
     'التاريخ',
     'الجغرافيا',
     'الفلسفة والمنطق',
-    'علم النفس والاجتماع'
+    'علم النفس والاجتماع',
   ];
 
   constructor() {
-    this.registerForm.controls.password.valueChanges.pipe(takeUntilDestroyed()).subscribe(val => {
+    this.registerForm.controls.password.valueChanges.pipe(takeUntilDestroyed()).subscribe((val) => {
       this.passwordStrength.set(calculatePasswordStrength(val));
       this.registerForm.controls.confirmPassword.updateValueAndValidity();
     });
   }
 
   togglePassword(): void {
-    this.showPassword.update(s => !s);
+    this.showPassword.update((s) => !s);
   }
 
   toggleConfirmPassword(): void {
-    this.showConfirmPassword.update(s => !s);
+    this.showConfirmPassword.update((s) => !s);
   }
 
   onSubmit(): void {
@@ -105,38 +122,41 @@ export class RegisterTeacherComponent {
       specialization: formValue.specialization.trim(),
       description: formValue.description?.trim() || '',
       password: formValue.password,
-      confirmPassword: formValue.confirmPassword
+      confirmPassword: formValue.confirmPassword,
     };
 
-    this.auth.registerTeacher(payload).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.router.navigate(['/teacher/classrooms']);
-      },
-      error: (err: ApiError) => {
-        if (err.code === 'EMAIL_ALREADY_EXISTS') {
-          this.registerForm.controls.email.setErrors({ emailTaken: true });
-          this.scrollToFirstInvalidControl();
-        } else if (err.code === 'VALIDATION_FAILED') {
-          if (err.details && err.details.length > 0) {
-            err.details.forEach(detail => {
-              const control = this.registerForm.get(detail.field);
-              if (control) {
-                control.setErrors({ serverError: detail.issue });
-              }
-            });
+    this.auth
+      .registerTeacher(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/teacher/classrooms']);
+        },
+        error: (err: ApiError) => {
+          if (err.code === 'EMAIL_ALREADY_EXISTS') {
+            this.registerForm.controls.email.setErrors({ emailTaken: true });
             this.scrollToFirstInvalidControl();
+          } else if (err.code === 'VALIDATION_FAILED') {
+            if (err.details && err.details.length > 0) {
+              err.details.forEach((detail) => {
+                const control = this.registerForm.get(detail.field);
+                if (control) {
+                  control.setErrors({ serverError: detail.issue });
+                }
+              });
+              this.scrollToFirstInvalidControl();
+            } else {
+              this.showGenericError();
+            }
           } else {
             this.showGenericError();
           }
-        } else {
-          this.showGenericError();
-        }
-      }
-    });
+        },
+      });
   }
 
   private clearServerErrors() {
-    Object.keys(this.registerForm.controls).forEach(key => {
+    Object.keys(this.registerForm.controls).forEach((key) => {
       const control = this.registerForm.get(key);
       if (control?.hasError('serverError') || control?.hasError('emailTaken')) {
         control.updateValueAndValidity();
@@ -146,9 +166,8 @@ export class RegisterTeacherComponent {
 
   private scrollToFirstInvalidControl() {
     setTimeout(() => {
-      const firstInvalidControl: HTMLElement = this.el.nativeElement.querySelector(
-        "form .ng-invalid"
-      );
+      const firstInvalidControl: HTMLElement =
+        this.el.nativeElement.querySelector('form .ng-invalid');
       if (firstInvalidControl) {
         firstInvalidControl.focus();
       }
@@ -159,7 +178,7 @@ export class RegisterTeacherComponent {
     this.messageService?.add({
       severity: 'error',
       summary: this.translate.instant('ERROR.TITLE'),
-      detail: this.translate.instant('COMMON.ERROR')
+      detail: this.translate.instant('COMMON.ERROR'),
     });
   }
 }

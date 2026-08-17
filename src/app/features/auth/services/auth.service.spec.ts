@@ -3,7 +3,11 @@ import { AuthService } from './auth.service';
 import { AUTH_API, IAuthApi } from './auth-api.token';
 import { of, throwError } from 'rxjs';
 import { ApiError } from '../../../core/models/api-error.model';
-import { AuthResponse, LoginRequest, RegisterTeacherRequest } from '../../../core/models/auth.model';
+import {
+  AuthResponse,
+  LoginRequest,
+  RegisterTeacherRequest,
+} from '../../../core/models/auth.model';
 import { User } from '../../../core/models/user.model';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
@@ -16,15 +20,16 @@ describe('AuthService', () => {
     userId: '1',
     email: 'test@example.com',
     fullName: 'Test User',
-    role: 'teacher'
+    role: 'teacher',
   };
 
-  const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVGVhY2hlciIsImZ1bGxOYW1lIjoiVGVzdCBVc2VyIiwiZXhwIjo5OTk5OTk5OTk5fQ.signature';
+  const mockToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVGVhY2hlciIsImZ1bGxOYW1lIjoiVGVzdCBVc2VyIiwiZXhwIjo5OTk5OTk5OTk5fQ.signature';
   const mockAuthResponse: AuthResponse = {
     accessToken: mockToken,
     refreshToken: 'refresh-token',
     expiresIn: 3600,
-    user: mockUser
+    user: mockUser,
   };
 
   beforeEach(() => {
@@ -36,7 +41,7 @@ describe('AuthService', () => {
       'getProfile',
       'forgotPassword',
       'resetPassword',
-      'refreshToken'
+      'refreshToken',
     ]);
 
     TestBed.configureTestingModule({
@@ -44,10 +49,10 @@ describe('AuthService', () => {
         AuthService,
         { provide: AUTH_API, useValue: authApiSpy },
         provideHttpClient(),
-        provideHttpClientTesting()
-      ]
+        provideHttpClientTesting(),
+      ],
     });
-    
+
     // Clear storage before each test
     localStorage.clear();
     service = TestBed.inject(AuthService);
@@ -70,7 +75,7 @@ describe('AuthService', () => {
           expect(service.authError()).toBeNull();
           expect(localStorage.getItem('draya_access_token')).toBe(mockToken);
           done();
-        }
+        },
       });
     });
 
@@ -86,7 +91,7 @@ describe('AuthService', () => {
           expect(service.authError()).toEqual(apiError);
           expect(service.currentUser()).toBeNull();
           done();
-        }
+        },
       });
     });
   });
@@ -101,7 +106,7 @@ describe('AuthService', () => {
           expect(service.currentUser()).toEqual(mockUser);
           expect(localStorage.getItem('draya_access_token')).toBe(mockToken);
           done();
-        }
+        },
       });
     });
   });
@@ -111,14 +116,21 @@ describe('AuthService', () => {
       const apiError: ApiError = { code: 'CONFLICT', message: 'Email already exists' };
       authApiSpy.registerTeacher.and.returnValue(throwError(() => apiError));
 
-      const payload: RegisterTeacherRequest = { email: 'test@example.com', password: 'pass', fullName: 'test', phone: '0100', specialization: 'Math', description: 'Test' };
+      const payload: RegisterTeacherRequest = {
+        email: 'test@example.com',
+        password: 'pass',
+        fullName: 'test',
+        phone: '0100',
+        specialization: 'Math',
+        description: 'Test',
+      };
 
       service.registerTeacher(payload).subscribe({
         error: (err) => {
           expect(err).toEqual(apiError);
           expect(service.authError()).toEqual(apiError);
           done();
-        }
+        },
       });
     });
 
@@ -126,18 +138,25 @@ describe('AuthService', () => {
       const apiError: ApiError = {
         code: 'VALIDATION_FAILED',
         message: 'One or more fields are invalid.',
-        details: [{ field: 'email', issue: 'A valid email address is required.' }]
+        details: [{ field: 'email', issue: 'A valid email address is required.' }],
       };
       authApiSpy.registerTeacher.and.returnValue(throwError(() => apiError));
 
-      const payload: RegisterTeacherRequest = { email: 'test', password: 'pass', fullName: 'test', phone: '0100', specialization: 'Math', description: 'Test' };
+      const payload: RegisterTeacherRequest = {
+        email: 'test',
+        password: 'pass',
+        fullName: 'test',
+        phone: '0100',
+        specialization: 'Math',
+        description: 'Test',
+      };
 
       service.registerTeacher(payload).subscribe({
         error: (err) => {
           expect(err).toEqual(apiError);
           expect(service.authError()).toEqual(apiError);
           done();
-        }
+        },
       });
     });
   });

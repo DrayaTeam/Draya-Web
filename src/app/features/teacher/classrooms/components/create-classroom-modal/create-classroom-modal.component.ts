@@ -1,9 +1,31 @@
 // src/app/features/teacher/classrooms/components/create-classroom-modal/create-classroom-modal.component.ts
-import { Component, ChangeDetectionStrategy, input, output, signal, inject, OnInit, effect } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  output,
+  signal,
+  inject,
+  OnInit,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormControl, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+  FormControl,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { ClassroomService } from '../../../services/classroom.service';
-import { ClassroomTypeDto, GradeLevelDto, SubjectDto, CreateClassroomRequest } from '../../../../../core/models/classroom.model';
+import {
+  ClassroomTypeDto,
+  GradeLevelDto,
+  SubjectDto,
+  CreateClassroomRequest,
+} from '../../../../../core/models/classroom.model';
 import { ApiError } from '../../../../../core/models/api-error.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
@@ -41,12 +63,12 @@ export class CreateClassroomModalComponent implements OnInit {
   readonly created = output<void>();
 
   form!: FormGroup;
-  
+
   // Lookup Data Signals
   readonly subjects = signal<SubjectDto[]>([]);
   readonly classroomTypes = signal<ClassroomTypeDto[]>([]);
   readonly gradeLevels = signal<GradeLevelDto[]>([]);
-  
+
   // State Signals
   readonly isSubmitting = signal<boolean>(false);
   readonly isCreatingSubject = signal<boolean>(false);
@@ -74,29 +96,32 @@ export class CreateClassroomModalComponent implements OnInit {
   }
 
   private initForm(): void {
-    this.form = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
-      subjectId: ['', Validators.required],
-      classroomTypeId: ['', Validators.required],
-      gradeLevelId: ['', Validators.required],
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
-      price: [0, [Validators.required, Validators.min(0)]],
-    }, { validators: dateRangeValidator });
+    this.form = this.fb.group(
+      {
+        name: ['', [Validators.required, Validators.minLength(3)]],
+        subjectId: ['', Validators.required],
+        classroomTypeId: ['', Validators.required],
+        gradeLevelId: ['', Validators.required],
+        startDate: ['', Validators.required],
+        endDate: ['', Validators.required],
+        price: [0, [Validators.required, Validators.min(0)]],
+      },
+      { validators: dateRangeValidator },
+    );
   }
 
   private loadLookupData(): void {
     this.classroomService.getSubjects().subscribe({
       next: (data) => this.subjects.set(data),
-      error: (err) => console.error('Failed to load subjects', err)
+      error: (err) => console.error('Failed to load subjects', err),
     });
     this.classroomService.getClassroomTypes().subscribe({
       next: (data) => this.classroomTypes.set(data),
-      error: (err) => console.error('Failed to load types', err)
+      error: (err) => console.error('Failed to load types', err),
     });
     this.classroomService.getGradeLevels().subscribe({
       next: (data) => this.gradeLevels.set(data),
-      error: (err) => console.error('Failed to load grades', err)
+      error: (err) => console.error('Failed to load grades', err),
     });
   }
 
@@ -111,20 +136,21 @@ export class CreateClassroomModalComponent implements OnInit {
     const subjectName = this.newSubjectControl.value!;
     this.isCreatingSubjectLoading.set(true);
 
-    this.classroomService.createSubject(subjectName).pipe(
-      finalize(() => this.isCreatingSubjectLoading.set(false))
-    ).subscribe({
-      next: (newSubject) => {
-        this.subjects.update(subs => [...subs, newSubject]);
-        this.form.patchValue({ subjectId: newSubject.id });
-        this.isCreatingSubject.set(false);
-        this.toastService.success('نجاح', 'تمت إضافة المادة الجديدة بنجاح');
-      },
-      error: (err) => {
-        console.error('Failed to create subject', err);
-        this.toastService.error('خطأ', 'فشل في إضافة المادة، يرجى المحاولة مرة أخرى');
-      }
-    });
+    this.classroomService
+      .createSubject(subjectName)
+      .pipe(finalize(() => this.isCreatingSubjectLoading.set(false)))
+      .subscribe({
+        next: (newSubject) => {
+          this.subjects.update((subs) => [...subs, newSubject]);
+          this.form.patchValue({ subjectId: newSubject.id });
+          this.isCreatingSubject.set(false);
+          this.toastService.success('نجاح', 'تمت إضافة المادة الجديدة بنجاح');
+        },
+        error: (err) => {
+          console.error('Failed to create subject', err);
+          this.toastService.error('خطأ', 'فشل في إضافة المادة، يرجى المحاولة مرة أخرى');
+        },
+      });
   }
 
   onSubmit(): void {
@@ -139,7 +165,7 @@ export class CreateClassroomModalComponent implements OnInit {
     this.quotaError.set(null);
 
     const formValue = this.form.value;
-    
+
     // Ensure ISO strings for dates
     const payload: CreateClassroomRequest = {
       subjectId: formValue.subjectId,
@@ -148,34 +174,37 @@ export class CreateClassroomModalComponent implements OnInit {
       gradeLevelId: formValue.gradeLevelId,
       startDate: new Date(formValue.startDate).toISOString(),
       endDate: new Date(formValue.endDate).toISOString(),
-      price: Number(formValue.price)
+      price: Number(formValue.price),
     };
 
-    this.classroomService.createClassroom(payload).pipe(
-      finalize(() => this.isSubmitting.set(false))
-    ).subscribe({
-      next: () => {
-        this.toastService.success('نجاح', 'تم إنشاء الفصل الدراسي بنجاح!');
-        this.created.emit();
-        this.close();
-      },
-      error: (errorRes: HttpErrorResponse) => {
-        const responseBody = errorRes.error as { error: ApiError };
-        const apiError = responseBody?.error;
+    this.classroomService
+      .createClassroom(payload)
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.toastService.success('نجاح', 'تم إنشاء الفصل الدراسي بنجاح!');
+          this.created.emit();
+          this.close();
+        },
+        error: (errorRes: HttpErrorResponse) => {
+          const responseBody = errorRes.error as { error: ApiError };
+          const apiError = responseBody?.error;
 
-        // Handle confirmed backend quirk: 422 Quota Exceeded
-        if (errorRes.status === 422) {
-          if (apiError && apiError.code === 'QUOTA_EXCEEDED') {
-            this.quotaError.set('لقد استنفدت الحد المسموح به من الفصول. يرجى شحن رصيدك أو ترقية باقتك للاستمرار.');
-            return;
+          // Handle confirmed backend quirk: 422 Quota Exceeded
+          if (errorRes.status === 422) {
+            if (apiError && apiError.code === 'QUOTA_EXCEEDED') {
+              this.quotaError.set(
+                'لقد استنفدت الحد المسموح به من الفصول. يرجى شحن رصيدك أو ترقية باقتك للاستمرار.',
+              );
+              return;
+            }
           }
-        }
-        
-        // Generic fallback error
-        const msg = apiError?.message || 'حدث خطأ أثناء إنشاء الفصل. يرجى المحاولة مرة أخرى.';
-        this.toastService.error('خطأ', msg);
-      }
-    });
+
+          // Generic fallback error
+          const msg = apiError?.message || 'حدث خطأ أثناء إنشاء الفصل. يرجى المحاولة مرة أخرى.';
+          this.toastService.error('خطأ', msg);
+        },
+      });
   }
 
   close(): void {

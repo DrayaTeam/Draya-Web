@@ -5,7 +5,7 @@ import { isPlatformBrowser } from '@angular/common';
 export class ThemeService {
   private readonly _isDarkMode = signal<boolean>(false);
   readonly isDarkMode = this._isDarkMode.asReadonly();
-  
+
   private readonly platformId = inject(PLATFORM_ID);
 
   constructor() {
@@ -22,7 +22,7 @@ export class ThemeService {
     if (isPlatformBrowser(this.platformId)) {
       const isDark = !this._isDarkMode();
       this._isDarkMode.set(isDark);
-      
+
       if (isDark) {
         document.documentElement.classList.add('dark');
         localStorage.setItem('draya_theme', 'dark');

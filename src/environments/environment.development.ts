@@ -6,5 +6,5 @@ export const environment = {
   apiBaseUrl: 'http://draya-api.runasp.net/api/v1',
   signalrHubUrl: 'http://draya-api.runasp.net/hubs/notifications',
   useMockTeacherDashboardApi: true,
-  useMockAuthApi: false
+  useMockAuthApi: false,
 };

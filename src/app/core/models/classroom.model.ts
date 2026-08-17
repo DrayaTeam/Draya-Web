@@ -42,8 +42,19 @@ export interface CreateClassroomRequest {
   classroomTypeId: string;
   gradeLevelId: string;
   startDate: string; // Must be ISO string
-  endDate: string;   // Must be ISO string
+  endDate: string; // Must be ISO string
   price: number;
+}
+
+export interface UpdateClassroomRequest {
+  subjectId: string;
+  name: string;
+  classroomTypeId: string;
+  gradeLevelId: string;
+  startDate: string;
+  endDate: string;
+  price: number;
+  isActive: boolean;
 }
 
 export interface PaginatedResponse<T> {
@@ -57,4 +68,3 @@ export interface PaginatedResponse<T> {
 }
 
 export type ClassroomDtoPagedResult = PaginatedResponse<ClassroomDto>;
-

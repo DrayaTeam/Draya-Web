@@ -21,9 +21,6 @@ export class StudentCoursesComponent {
   readonly packages = this.coursesService.filteredPackages;
 
   onOpenPackage(pkg: SubscribedPackage): void {
-    this.toastService.info(
-      'متابعة الباقة',
-      `جارٍ فتح محتوى ${pkg.title}...`,
-    );
+    this.toastService.info('متابعة الباقة', `جارٍ فتح محتوى ${pkg.title}...`);
   }
 }

@@ -26,7 +26,9 @@ describe('StudentLibraryComponent', () => {
 
   it('should render main title and search bar', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.main-title')?.textContent).toContain('مكتبة المذكرات والكتب الدراسية');
+    expect(compiled.querySelector('.main-title')?.textContent).toContain(
+      'مكتبة المذكرات والكتب الدراسية',
+    );
     expect(compiled.querySelector('.search-input')).toBeTruthy();
   });
 
@@ -54,7 +56,7 @@ describe('StudentLibraryComponent', () => {
 
     expect(toastService.info).toHaveBeenCalledWith(
       'تحميل الملف',
-      'جاري بدء تحميل كتاب: رياضيات (بحجم 5 MB)'
+      'جاري بدء تحميل كتاب: رياضيات (بحجم 5 MB)',
     );
   });
 });

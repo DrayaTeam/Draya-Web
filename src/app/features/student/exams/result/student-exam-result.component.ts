@@ -11,11 +11,7 @@ import { ExamQuestionReviewCardComponent } from '../components/exam-question-rev
 @Component({
   selector: 'app-student-exam-result',
   standalone: true,
-  imports: [
-    CommonModule,
-    ExamResultCardComponent,
-    ExamQuestionReviewCardComponent,
-  ],
+  imports: [CommonModule, ExamResultCardComponent, ExamQuestionReviewCardComponent],
   templateUrl: './student-exam-result.component.html',
   styleUrl: './student-exam-result.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,7 +26,7 @@ export class StudentExamResultComponent {
   onOpenLecture(lectureUrl: string): void {
     this.toastService.info(
       'المحاضرة التأسيسية',
-      `جاري التوجيه إلى المحاضرة التأسيسية للمراجعة: ${lectureUrl}`
+      `جاري التوجيه إلى المحاضرة التأسيسية للمراجعة: ${lectureUrl}`,
     );
   }
 

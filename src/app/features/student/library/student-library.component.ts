@@ -30,14 +30,11 @@ export class StudentLibraryComponent {
   onDownload(book: LibraryBookItem): void {
     this.toastService.info(
       'تحميل الملف',
-      `جاري بدء تحميل كتاب: ${book.title} (بحجم ${book.fileSizeMb} MB)`
+      `جاري بدء تحميل كتاب: ${book.title} (بحجم ${book.fileSizeMb} MB)`,
     );
   }
 
   onPreview(book: LibraryBookItem): void {
-    this.toastService.info(
-      'معاينة الكتاب',
-      `جاري فتح المعاينة السريعة لكتاب: ${book.title}`
-    );
+    this.toastService.info('معاينة الكتاب', `جاري فتح المعاينة السريعة لكتاب: ${book.title}`);
   }
 }

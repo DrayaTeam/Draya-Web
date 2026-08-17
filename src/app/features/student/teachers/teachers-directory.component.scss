@@ -27,7 +27,11 @@
     height: 320px;
     bottom: 0;
     left: 0;
-    background: linear-gradient(45deg, rgba(194, 122, 255, 0.15) 0%, rgba(253, 165, 213, 0.15) 100%);
+    background: linear-gradient(
+      45deg,
+      rgba(194, 122, 255, 0.15) 0%,
+      rgba(253, 165, 213, 0.15) 100%
+    );
   }
 }
 

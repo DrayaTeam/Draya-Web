@@ -11,10 +11,30 @@ export class TeacherDirectoryService {
   // Available filter options
   readonly subjectOptions: readonly SubjectFilterOption[] = [
     { id: 'all', labelKey: 'STUDENT.TEACHERS.FILTER_ALL', defaultLabel: 'كل المواد' },
-    { id: 'math', labelKey: 'STUDENT.TEACHERS.FILTER_MATH', defaultLabel: 'الرياضيات', emoji: '📐' },
-    { id: 'physics', labelKey: 'STUDENT.TEACHERS.FILTER_PHYSICS', defaultLabel: 'الفيزياء', emoji: '⚡' },
-    { id: 'chemistry', labelKey: 'STUDENT.TEACHERS.FILTER_CHEMISTRY', defaultLabel: 'الكيمياء', emoji: '🧪' },
-    { id: 'biology', labelKey: 'STUDENT.TEACHERS.FILTER_BIOLOGY', defaultLabel: 'الأحياء', emoji: '🧬' },
+    {
+      id: 'math',
+      labelKey: 'STUDENT.TEACHERS.FILTER_MATH',
+      defaultLabel: 'الرياضيات',
+      emoji: '📐',
+    },
+    {
+      id: 'physics',
+      labelKey: 'STUDENT.TEACHERS.FILTER_PHYSICS',
+      defaultLabel: 'الفيزياء',
+      emoji: '⚡',
+    },
+    {
+      id: 'chemistry',
+      labelKey: 'STUDENT.TEACHERS.FILTER_CHEMISTRY',
+      defaultLabel: 'الكيمياء',
+      emoji: '🧪',
+    },
+    {
+      id: 'biology',
+      labelKey: 'STUDENT.TEACHERS.FILTER_BIOLOGY',
+      defaultLabel: 'الأحياء',
+      emoji: '🧬',
+    },
   ];
 
   // Initial mock dataset from Figma specifications

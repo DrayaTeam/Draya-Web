@@ -5,7 +5,7 @@ export function calculatePasswordStrength(password: string): PasswordStrength {
   if (!password) {
     return 'weak';
   }
-  
+
   let score = 0;
   if (password.length >= AUTH_CONSTANTS.VALIDATION.PASSWORD_MIN_LENGTH) score++;
   if (AUTH_CONSTANTS.VALIDATION.PASSWORD_UPPERCASE_REGEX.test(password)) score++;
@@ -31,20 +31,21 @@ export function passwordStrengthValidator(): ValidatorFn {
     const hasNumeric = AUTH_CONSTANTS.VALIDATION.PASSWORD_DIGIT_REGEX.test(value);
     const hasSpecial = AUTH_CONSTANTS.VALIDATION.PASSWORD_SPECIAL_REGEX.test(value);
 
-    const passwordValid = minLengthValid && hasUpperCase && hasLowerCase && hasNumeric && hasSpecial;
+    const passwordValid =
+      minLengthValid && hasUpperCase && hasLowerCase && hasNumeric && hasSpecial;
 
     if (!passwordValid) {
-      return { 
-        passwordStrength: { 
+      return {
+        passwordStrength: {
           messageKey: AUTH_CONSTANTS.KEYS.PASSWORD_WEAK,
           requirements: {
             minLength: minLengthValid,
             upperCase: hasUpperCase,
             lowerCase: hasLowerCase,
             numeric: hasNumeric,
-            special: hasSpecial
-          }
-        } 
+            special: hasSpecial,
+          },
+        },
       };
     }
 

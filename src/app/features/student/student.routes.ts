@@ -27,9 +27,7 @@ export const studentRoutes: Routes = [
       {
         path: 'courses',
         loadComponent: () =>
-          import('./courses/student-courses.component').then(
-            (m) => m.StudentCoursesComponent,
-          ),
+          import('./courses/student-courses.component').then((m) => m.StudentCoursesComponent),
         title: 'باقاتي الدراسية — درايَة',
       },
       {
@@ -38,9 +36,7 @@ export const studentRoutes: Routes = [
           {
             path: '',
             loadComponent: () =>
-              import('./exams/student-exams.component').then(
-                (m) => m.StudentExamsComponent,
-              ),
+              import('./exams/student-exams.component').then((m) => m.StudentExamsComponent),
             title: 'الامتحانات والواجبات — درايَة',
           },
           {
@@ -72,17 +68,13 @@ export const studentRoutes: Routes = [
       {
         path: 'reports',
         loadComponent: () =>
-          import('./reports/student-reports.component').then(
-            (m) => m.StudentReportsComponent,
-          ),
+          import('./reports/student-reports.component').then((m) => m.StudentReportsComponent),
         title: 'تقاريري ودرجاتي — درايَة',
       },
       {
         path: 'library',
         loadComponent: () =>
-          import('./library/student-library.component').then(
-            (m) => m.StudentLibraryComponent,
-          ),
+          import('./library/student-library.component').then((m) => m.StudentLibraryComponent),
         title: 'المكتبة — درايَة',
       },
       {

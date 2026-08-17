@@ -52,7 +52,7 @@ export class StudentActiveExamComponent {
     this.examService.submitExam();
     this.toastService.success(
       'تم تسليم الامتحان بنجاح',
-      'جاري استخراج تقرير تحليل النتيجة والمهارات...'
+      'جاري استخراج تقرير تحليل النتيجة والمهارات...',
     );
     this.router.navigate(['/student/exams/exam-1/result']);
   }

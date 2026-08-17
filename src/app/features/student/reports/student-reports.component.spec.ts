@@ -26,7 +26,9 @@ describe('StudentReportsComponent', () => {
 
   it('should render main title', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.main-title')?.textContent).toContain('سجل درجاتي وتحليلات الأداء');
+    expect(compiled.querySelector('.main-title')?.textContent).toContain(
+      'سجل درجاتي وتحليلات الأداء',
+    );
   });
 
   it('should render summary KPI cards', () => {
@@ -53,7 +55,7 @@ describe('StudentReportsComponent', () => {
 
     expect(toastService.info).toHaveBeenCalledWith(
       'بدء المراجعة التفاعلية',
-      'جاري فتح المراجعة التفاعلية لموضوع: المشتقات والتكامل'
+      'جاري فتح المراجعة التفاعلية لموضوع: المشتقات والتكامل',
     );
   });
 });

@@ -33,9 +33,6 @@ export class StudentDashboardComponent {
   readonly weaknessTopics = this.dashboardService.weaknessTopics;
 
   onResumeCourse(course: EnrolledCourseItem): void {
-    this.toastService.info(
-      'استئناف الكورس',
-      `جارٍ الانتقال لمتابعة درس ${course.title}...`,
-    );
+    this.toastService.info('استئناف الكورس', `جارٍ الانتقال لمتابعة درس ${course.title}...`);
   }
 }
