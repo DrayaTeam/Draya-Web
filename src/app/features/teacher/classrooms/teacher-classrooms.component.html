@@ -68,7 +68,11 @@
               </div>
 
               <!-- Custom Action Dropdown -->
-              <div class="card-menu-wrapper" (click)="$event.stopPropagation()">
+              <div class="card-menu-wrapper"
+                   role="presentation"
+                   tabindex="-1"
+                   (click)="$event.stopPropagation()"
+                   (keydown)="$event.stopPropagation()">
                 <button class="options-btn" (click)="toggleMenu(classroom.classroomId, $event)" [attr.aria-expanded]="openMenuId() === classroom.classroomId">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                     <circle cx="12" cy="5" r="2"/>
@@ -107,7 +111,7 @@
                       <span class="dropdown-item-label">{{ classroom.isActive ? 'تعطيل' : 'تفعيل' }}</span>
                     </button>
                   </div>
-                  <div class="dropdown-backdrop" (click)="closeMenu()"></div>
+                  <button type="button" class="dropdown-backdrop" aria-label="إغلاق القائمة" (click)="closeMenu()"></button>
                 }
               </div>
             </div>

@@ -93,7 +93,11 @@
               </div>
             </div>
 
-            <div class="material-actions card-menu-wrapper" (click)="$event.stopPropagation()">
+            <div class="material-actions card-menu-wrapper"
+                 role="presentation"
+                 tabindex="-1"
+                 (click)="$event.stopPropagation()"
+                 (keydown)="$event.stopPropagation()">
               <button
                 class="action-btn-menu"
                 (click)="toggleMenu(material.materialId, $event)"
