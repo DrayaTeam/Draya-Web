@@ -63,7 +63,24 @@ export class TeacherProfileService {
           ...profile,
           // Overwrite the empty string with the real email from JWT
           email: realEmail,
-          pictureUrl: (profile as any).profilePictureUrl || (profile as any).pictureUrl || (profile as any).profilePicture || (profile as any).avatarUrl || (profile as any).avatar || (profile as any).imageUrl || undefined
+          // DEFENSIVE: backend uses inconsistent field names for the profile picture URL.
+          // Check all known variants before falling through to undefined.
+          pictureUrl: (
+            (profile as TeacherProfile & {
+              profilePictureUrl?: string;
+              pictureUrl?: string;
+              profilePicture?: string;
+              avatarUrl?: string;
+              avatar?: string;
+              imageUrl?: string;
+            }).profilePictureUrl ||
+            (profile as TeacherProfile & { pictureUrl?: string }).pictureUrl ||
+            (profile as TeacherProfile & { profilePicture?: string }).profilePicture ||
+            (profile as TeacherProfile & { avatarUrl?: string }).avatarUrl ||
+            (profile as TeacherProfile & { avatar?: string }).avatar ||
+            (profile as TeacherProfile & { imageUrl?: string }).imageUrl ||
+            undefined
+          ),
         };
       }),
     );
