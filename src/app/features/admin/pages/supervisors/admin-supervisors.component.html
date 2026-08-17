@@ -54,6 +54,13 @@
       "></draya-admin-status-badge>
   </ng-template>
 
+  <!-- Created At Column Template -->
+  <ng-template #createdAtTpl let-row>
+    <span class="created-at-text">
+      {{ row?.createdAt ? (row.createdAt | date: 'yyyy/MM/dd') : '—' }}
+    </span>
+  </ng-template>
+
   <!-- Actions Column Template -->
   <ng-template #actionsTpl let-row>
     <div class="actions-cell">

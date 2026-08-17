@@ -135,6 +135,15 @@ $color-success: #15803d;
   }
 }
 
+.created-at-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-text-secondary;
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+  display: inline-block;
+}
+
 .actions-cell {
   display: flex;
   align-items: center;

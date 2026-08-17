@@ -87,9 +87,7 @@ export class AdminSupervisorService extends ApiBaseService {
 
   /** POST /api/v1/admin/supervisors/{id}/resend-invite */
   resendInvite(id: string): Observable<void> {
-    return this.post<void, undefined>(`${this.basePath}/${id}/resend-invite`, undefined).pipe(
-      catchError(() => of(undefined)),
-    );
+    return this.post<void, undefined>(`${this.basePath}/${id}/resend-invite`, undefined);
   }
 
   /** PUT /api/v1/admin/supervisors/{id}/status */
@@ -101,12 +99,6 @@ export class AdminSupervisorService extends ApiBaseService {
         this.mockSupervisors.update((list) =>
           list.map((s) => (s.id === id ? { ...s, isActive: active } : s)),
         );
-      }),
-      catchError(() => {
-        this.mockSupervisors.update((list) =>
-          list.map((s) => (s.id === id ? { ...s, isActive: active } : s)),
-        );
-        return of(undefined);
       }),
     );
   }

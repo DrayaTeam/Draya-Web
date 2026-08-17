@@ -66,6 +66,7 @@ export class AdminSupervisorsComponent implements OnInit {
   readonly nameTpl = viewChild<TemplateRef<unknown>>('nameTpl');
   readonly roleTpl = viewChild<TemplateRef<unknown>>('roleTpl');
   readonly statusTpl = viewChild<TemplateRef<unknown>>('statusTpl');
+  readonly createdAtTpl = viewChild<TemplateRef<unknown>>('createdAtTpl');
   readonly actionsTpl = viewChild<TemplateRef<unknown>>('actionsTpl');
 
   readonly columns = computed<AdminColumn<AdminSupervisorDto>[]>(() => [
@@ -94,6 +95,7 @@ export class AdminSupervisorsComponent implements OnInit {
       key: 'createdAt',
       headerKey: 'ADMIN.SUPERVISORS.COL_ADDED_AT',
       sortable: true,
+      cellTemplate: this.createdAtTpl() as TemplateRef<{ $implicit: AdminSupervisorDto }>,
     },
     {
       key: 'actions',
