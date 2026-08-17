@@ -1,0 +1,507 @@
+// Admin Layout – "Academic Precision" design language
+// Deep Teal #14453F / Genoa #1B6D63 / Iceberg #DDF5F1
+
+$sidebar-width: 260px;
+$sidebar-collapsed-width: 72px;
+$topbar-height: 64px;
+$color-deep-teal: #14453f;
+$color-genoa: #1b6d63;
+$color-iceberg: #ddf5f1;
+$color-bg: #fafaf8;
+$color-surface: #ffffff;
+$color-border: #ebefef;
+$color-text-primary: #151b19;
+$color-text-secondary: #525e5a;
+$color-text-muted: #94a3a0;
+$color-danger: #ef4444;
+
+:host {
+  display: block;
+  inline-size: 100%;
+  min-block-size: 100vh;
+  background-color: $color-bg;
+}
+
+// ─── Layout Container ───────────────────
+.admin-layout {
+  display: flex;
+  min-block-size: 100vh;
+  inline-size: 100%;
+  background: $color-bg;
+  position: relative;
+}
+
+// ─── Sidebar (Stands on the Right in RTL by natural flex order) ───
+.sidebar {
+  inline-size: $sidebar-width;
+  min-inline-size: $sidebar-width;
+  block-size: 100vh;
+  position: sticky;
+  inset-block-start: 0;
+  background: $color-surface;
+  border-inline-end: 1px solid $color-border;
+  display: flex;
+  flex-direction: column;
+  z-index: 40;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-shrink: 0;
+}
+
+.sidebar-collapsed .sidebar {
+  inline-size: $sidebar-collapsed-width;
+  min-inline-size: $sidebar-collapsed-width;
+}
+
+// ─── Sidebar Header ─────────────────────
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-block-end: 1px solid $color-border;
+  block-size: $topbar-height;
+  flex-shrink: 0;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.logo-circle {
+  inline-size: 38px;
+  block-size: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $color-genoa, $color-deep-teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  i {
+    color: #ffffff;
+    font-size: 18px;
+  }
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+
+  h1 {
+    font-size: 17px;
+    font-weight: 800;
+    color: $color-deep-teal;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  p {
+    font-size: 11px;
+    color: $color-text-muted;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+.sidebar-close-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-text-secondary;
+  font-size: 16px;
+  padding: 4px;
+}
+
+// ─── Sidebar Nav ────────────────────────
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: $color-text-secondary;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba($color-genoa, 0.06);
+    color: $color-genoa;
+  }
+
+  &.active {
+    background: $color-iceberg;
+    color: $color-genoa;
+    font-weight: 700;
+  }
+}
+
+.nav-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  inline-size: 20px;
+  text-align: center;
+}
+
+.nav-label {
+  flex: 1;
+}
+
+.nav-badge {
+  inline-size: 20px;
+  block-size: 20px;
+  border-radius: 50%;
+  background: $color-danger;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+// ─── Sidebar Footer ────────────────────
+.sidebar-footer {
+  padding: 12px 10px 16px;
+  border-block-start: 1px solid $color-border;
+  flex-shrink: 0;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-danger;
+  font-size: 14px;
+  font-weight: 600;
+  inline-size: 100%;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba($color-danger, 0.08);
+  }
+}
+
+.logout-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+// ─── Main Content ───────────────────────
+.main-content {
+  flex: 1;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100vh;
+}
+
+// ─── Topbar ─────────────────────────────
+.topbar {
+  position: sticky;
+  inset-block-start: 0;
+  block-size: $topbar-height;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-block-end: 1px solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 24px;
+  z-index: 30;
+}
+
+.topbar-start {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.collapse-toggle {
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: 50%;
+  border: 1px solid $color-border;
+  background: $color-surface;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $color-text-secondary;
+  font-size: 12px;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: $color-bg;
+    color: $color-deep-teal;
+  }
+}
+
+.mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-text-primary;
+  font-size: 20px;
+  padding: 6px;
+}
+
+.page-title-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: $color-text-primary;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.breadcrumb-text {
+  font-size: 12px;
+  color: $color-text-muted;
+}
+
+.topbar-end {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-dropdown-wrapper {
+  position: relative;
+}
+
+.admin-profile-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid $color-border;
+  background: $color-surface;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    border-color: rgba($color-genoa, 0.3);
+  }
+}
+
+.profile-avatar {
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: 50%;
+  background: $color-iceberg;
+  color: $color-genoa;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-text-primary;
+}
+
+.profile-caret {
+  font-size: 10px;
+  color: $color-text-muted;
+  transition: transform 0.2s ease;
+
+  &.rotated {
+    transform: rotate(180deg);
+  }
+}
+
+.dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  background: transparent;
+}
+
+.profile-menu {
+  position: absolute;
+  inset-block-start: calc(100% + 8px);
+  inset-inline-end: 0; // In RTL, inline-end is LEFT, so menu aligns to the left and expands inward
+  left: 0; // explicit fallback
+  right: auto;
+  min-inline-size: 220px;
+  background: $color-surface;
+  border-radius: 12px;
+  border: 1px solid $color-border;
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.12),
+    0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  z-index: 50;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.15s cubic-bezier(0, 0, 0.2, 1);
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-header {
+  padding: 12px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: #fafaf8;
+
+  .menu-user-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: $color-text-primary;
+  }
+
+  .menu-user-role {
+    font-size: 11px;
+    color: $color-text-muted;
+    font-weight: 500;
+  }
+}
+
+.menu-divider {
+  block-size: 1px;
+  background: $color-border;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  color: $color-text-primary;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  inline-size: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: start;
+
+  .menu-item-icon {
+    font-size: 14px;
+    color: $color-text-secondary;
+  }
+
+  &:hover {
+    background: #f8fafa;
+    color: $color-deep-teal;
+
+    .menu-item-icon {
+      color: $color-deep-teal;
+    }
+  }
+
+  &.logout-item {
+    color: $color-danger;
+
+    .menu-item-icon {
+      color: $color-danger;
+    }
+
+    &:hover {
+      background: #fef2f2;
+    }
+  }
+}
+
+// ─── Content Area ───────────────────────
+.content-area {
+  padding: 24px;
+  flex: 1;
+}
+
+// ─── Sidebar Backdrop ───────────────────
+.sidebar-backdrop {
+  display: none;
+}
+
+// ─── Responsive: Mobile ─────────────────
+@media (max-width: 1024px) {
+  .sidebar {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 0; // In RTL, start is Right
+    inline-size: 280px;
+    min-inline-size: 280px;
+    transform: translateX(100%); // Hidden to the right in RTL
+
+    &.mobile-open {
+      transform: translateX(0);
+    }
+  }
+
+  .sidebar-close-btn {
+    display: flex;
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 39;
+    backdrop-filter: blur(2px);
+  }
+
+  .mobile-toggle {
+    display: flex;
+  }
+
+  .collapse-toggle {
+    display: none;
+  }
+
+  .content-area {
+    padding: 16px;
+  }
+
+  .topbar {
+    padding-inline: 16px;
+  }
+}

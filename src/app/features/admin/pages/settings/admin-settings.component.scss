@@ -1,0 +1,161 @@
+// Settings Page SCSS
+$color-deep-teal: #14453f;
+$color-genoa: #1b6d63;
+$color-iceberg: #ddf5f1;
+$color-border: #ebefef;
+$color-text-primary: #151b19;
+$color-text-secondary: #525e5a;
+$color-text-muted: #94a3a0;
+$color-danger: #ef4444;
+
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-inline-size: 720px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .page-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: $color-text-primary;
+    margin: 0 0 4px;
+  }
+
+  .page-subtitle {
+    font-size: 13px;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}
+
+.last-updated-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #f1f5f5;
+  border-radius: 100px;
+  font-size: 12px;
+  color: $color-text-secondary;
+
+  i {
+    font-size: 11px;
+    color: $color-text-muted;
+  }
+}
+
+.settings-card {
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-block-end: 24px;
+}
+
+.label-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-text-primary;
+
+  .required {
+    color: $color-danger;
+  }
+}
+
+.form-hint {
+  font-size: 12px;
+  color: $color-text-muted;
+}
+
+.input-addon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-inline-size: 320px;
+
+  .form-input {
+    inline-size: 100%;
+    padding: 10px 14px;
+    padding-inline-end: 54px;
+    border-radius: 8px;
+    border: 1px solid $color-border;
+    background: #fafaf8;
+    color: $color-text-primary;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+    transition: all 0.15s ease;
+
+    &:focus {
+      background: #ffffff;
+      border-color: $color-genoa;
+      box-shadow: 0 0 0 3px rgba($color-genoa, 0.12);
+    }
+  }
+
+  .addon-text {
+    position: absolute;
+    inset-inline-end: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $color-text-muted;
+    pointer-events: none;
+  }
+}
+
+.form-error {
+  font-size: 11px;
+  color: $color-danger;
+  font-weight: 500;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-start: 12px;
+  padding-block-start: 16px;
+  border-block-start: 1px solid $color-border;
+
+  .submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    background: $color-deep-teal;
+    color: #ffffff;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+
+    &:hover:not(:disabled) {
+      opacity: 0.92;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}

@@ -161,7 +161,11 @@ describe('StudentChannelComponent', () => {
     component.editQuestionText.set('سؤال معدل بالكامل');
     component.submitEditQuestion();
 
-    expect(qaServiceMock.editQuestion).toHaveBeenCalledWith('cls-1', mockQuestion.id, 'سؤال معدل بالكامل');
+    expect(qaServiceMock.editQuestion).toHaveBeenCalledWith(
+      'cls-1',
+      mockQuestion.id,
+      'سؤال معدل بالكامل',
+    );
     expect(component.showEditQuestionModal()).toBeFalse();
   });
 
@@ -181,7 +185,12 @@ describe('StudentChannelComponent', () => {
     component.editReplyText.set('رد معدل');
     component.submitEditReply();
 
-    expect(qaServiceMock.editReply).toHaveBeenCalledWith('cls-1', mockQuestion.id, mockReply.id, 'رد معدل');
+    expect(qaServiceMock.editReply).toHaveBeenCalledWith(
+      'cls-1',
+      mockQuestion.id,
+      mockReply.id,
+      'رد معدل',
+    );
     expect(component.showEditReplyModal()).toBeFalse();
   });
 

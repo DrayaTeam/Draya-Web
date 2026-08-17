@@ -14,7 +14,10 @@ export class ToastService {
   private readonly _toasts = signal<ToastMessage[]>([]);
   readonly toasts = this._toasts.asReadonly();
 
-  add(message: { severity: 'success' | 'error' | 'info' | 'warn'; summary: string; detail?: string }, duration = 4500): void {
+  add(
+    message: { severity: 'success' | 'error' | 'info' | 'warn'; summary: string; detail?: string },
+    duration = 4500,
+  ): void {
     const now = Date.now();
     const isDuplicate = this._toasts().some(
       (t) =>

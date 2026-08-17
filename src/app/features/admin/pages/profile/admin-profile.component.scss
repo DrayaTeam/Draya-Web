@@ -1,0 +1,298 @@
+// Admin Profile Page SCSS
+$color-deep-teal: #14453f;
+$color-genoa: #1b6d63;
+$color-iceberg: #ddf5f1;
+$color-border: #ebefef;
+$color-text-primary: #151b19;
+$color-text-secondary: #525e5a;
+$color-text-muted: #94a3a0;
+$color-danger: #ef4444;
+
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-inline-size: 800px;
+}
+
+.page-header {
+  .page-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: $color-text-primary;
+    margin: 0 0 4px;
+  }
+
+  .page-subtitle {
+    font-size: 13px;
+    color: $color-text-secondary;
+    margin: 0;
+  }
+}
+
+.profile-hero-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid $color-border;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+  .hero-avatar-wrap {
+    .hero-avatar {
+      inline-size: 72px;
+      block-size: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, $color-iceberg, #c3ebe4);
+      color: $color-deep-teal;
+      font-size: 28px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(20, 69, 63, 0.12);
+    }
+  }
+
+  .hero-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .hero-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: $color-text-primary;
+      margin: 0;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .role-badge,
+    .email-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .role-badge {
+      background: $color-iceberg;
+      color: $color-deep-teal;
+
+      i {
+        font-size: 11px;
+      }
+    }
+
+    .email-badge {
+      background: #f1f5f5;
+      color: $color-text-secondary;
+
+      i {
+        font-size: 11px;
+        color: $color-text-muted;
+      }
+    }
+  }
+}
+
+.profile-tabs {
+  display: flex;
+  gap: 8px;
+  border-block-end: 1px solid $color-border;
+  padding-block-end: 8px;
+
+  .tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: $color-text-secondary;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    i {
+      font-size: 13px;
+    }
+
+    &:hover {
+      background: #f1f5f5;
+      color: $color-deep-teal;
+    }
+
+    &.active {
+      background: $color-deep-teal;
+      color: #ffffff;
+
+      i {
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+.card-container {
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+  .card-header {
+    margin-block-end: 20px;
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: $color-text-primary;
+      margin: 0 0 4px;
+    }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: $color-text-muted;
+      margin: 0;
+    }
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+
+  &.single-col {
+    grid-template-columns: 1fr;
+    max-inline-size: 440px;
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  .field-hint {
+    font-size: 11px;
+    color: $color-text-muted;
+  }
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-text-primary;
+
+  .required {
+    color: $color-danger;
+  }
+}
+
+.form-input {
+  inline-size: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid $color-border;
+  background: #fafaf8;
+  color: $color-text-primary;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.15s ease;
+
+  &:focus:not(.disabled) {
+    background: #ffffff;
+    border-color: $color-genoa;
+    box-shadow: 0 0 0 3px rgba($color-genoa, 0.12);
+  }
+
+  &.disabled {
+    background: #f1f5f5;
+    color: $color-text-muted;
+    cursor: not-allowed;
+  }
+}
+
+.password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .form-input {
+    padding-inline-end: 40px;
+  }
+
+  .eye-btn {
+    position: absolute;
+    inset-inline-end: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $color-text-muted;
+    font-size: 14px;
+    padding: 4px;
+
+    &:hover {
+      color: $color-text-primary;
+    }
+  }
+}
+
+.form-error {
+  font-size: 11px;
+  color: $color-danger;
+  font-weight: 500;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-start: 24px;
+  padding-block-start: 16px;
+  border-block-start: 1px solid $color-border;
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s ease;
+
+    &.btn-primary {
+      background: $color-deep-teal;
+      color: #ffffff;
+    }
+
+    &:hover:not(:disabled) {
+      opacity: 0.92;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}

@@ -48,6 +48,12 @@ export const appRoutes: Routes = [
         loadChildren: () => import('./features/parent/parent.routes').then((m) => m.parentRoutes),
       },
       {
+        path: 'admin',
+        canActivate: [roleGuard],
+        data: { roles: ['admin', 'superadmin'] },
+        loadChildren: () => import('./features/admin/admin.routes').then((m) => m.adminRoutes),
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import('./features/auth/pages/profile/profile.component').then((m) => m.ProfileComponent),
@@ -58,9 +64,9 @@ export const appRoutes: Routes = [
   {
     path: 'payment/result',
     loadComponent: () =>
-      import(
-        './features/student/checkout/payment-callback/student-payment-callback.component'
-      ).then((m) => m.StudentPaymentCallbackComponent),
+      import('./features/student/checkout/payment-callback/student-payment-callback.component').then(
+        (m) => m.StudentPaymentCallbackComponent,
+      ),
   },
   {
     path: 'payment/callback',

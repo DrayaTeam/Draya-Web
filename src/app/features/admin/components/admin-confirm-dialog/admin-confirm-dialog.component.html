@@ -1,0 +1,48 @@
+@if (isOpen()) {
+  <div class="dialog-overlay" (click)="cancel()" (keydown.enter)="cancel()" tabindex="0">
+    <div
+      class="dialog-panel"
+      (click)="$event.stopPropagation()"
+      (keydown.enter)="$event.stopPropagation()"
+      tabindex="0">
+      <div class="dialog-header">
+        <div
+          class="icon-container"
+          [ngClass]="variant() === 'neutral' ? 'icon-neutral' : 'icon-danger'">
+          <i
+            class="pi"
+            [ngClass]="variant() === 'neutral' ? 'pi-info-circle' : 'pi-exclamation-triangle'"></i>
+        </div>
+      </div>
+
+      <div class="dialog-body">
+        <h3 class="dialog-title">{{ titleKey() | translate }}</h3>
+        <p class="dialog-description">{{ descriptionKey() | translate }}</p>
+
+        @if (variant() === 'danger-with-reason') {
+          <div class="reason-input-group">
+            <textarea
+              class="reason-textarea"
+              [ngModel]="reason()"
+              (ngModelChange)="reason.set($event)"
+              rows="3"
+              [placeholder]="'ADMIN.COMMON.REASON_PLACEHOLDER' | translate"></textarea>
+          </div>
+        }
+      </div>
+
+      <div class="dialog-footer">
+        <button class="btn-cancel" (click)="cancel()">
+          {{ cancelLabelKey() | translate }}
+        </button>
+        <button
+          class="btn-confirm"
+          [ngClass]="variant() === 'neutral' ? 'btn-primary' : 'btn-danger'"
+          (click)="confirm()"
+          [disabled]="variant() === 'danger-with-reason' && !reason().trim()">
+          {{ confirmLabelKey() | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

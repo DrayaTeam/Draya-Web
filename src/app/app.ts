@@ -14,4 +14,3 @@ export class App {
   protected readonly localeService = inject(LocaleService);
   protected readonly directionService = inject(DirectionService);
 }
-

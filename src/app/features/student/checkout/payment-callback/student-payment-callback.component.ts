@@ -137,7 +137,9 @@ export class StudentPaymentCallbackComponent implements OnInit, OnDestroy {
           if (attempt < this.MAX_POLL_ATTEMPTS) {
             this.scheduleNextPoll(transactionId, attempt + 1);
           } else {
-            this.markAsFailed('استغرقت معالجة الدفع وقتاً أطول من المتوقع. يرجى مراجعة إدارة الحساب.');
+            this.markAsFailed(
+              'استغرقت معالجة الدفع وقتاً أطول من المتوقع. يرجى مراجعة إدارة الحساب.',
+            );
           }
         } else {
           this.markAsFailed('فشلت عملية الدفع أو تم إلغاؤها من البنك.');

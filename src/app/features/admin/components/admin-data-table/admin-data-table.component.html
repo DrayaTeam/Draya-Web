@@ -1,0 +1,106 @@
+<div class="table-container">
+  <div class="table-header-actions">
+    <div class="search-box">
+      <i class="pi pi-search search-icon"></i>
+      <input
+        type="text"
+        [placeholder]="searchPlaceholderKey() | translate"
+        (input)="onSearch($event)"
+        class="search-input" />
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="draya-table">
+      <thead>
+        <tr>
+          @for (col of columns(); track col.key) {
+            <th [style.width]="col.width" (click)="handleSort(col)" [class.sortable]="col.sortable">
+              <div class="th-content">
+                <span>{{ col.headerKey | translate }}</span>
+                @if (col.sortable) {
+                  <span class="sort-indicator">
+                    @if (sortState()?.key === col.key) {
+                      <i
+                        class="pi"
+                        [ngClass]="
+                          sortState()?.direction === 'asc' ? 'pi-arrow-up' : 'pi-arrow-down'
+                        "></i>
+                    } @else {
+                      <i class="pi pi-sort-alt"></i>
+                    }
+                  </span>
+                }
+              </div>
+            </th>
+          }
+        </tr>
+      </thead>
+
+      <tbody>
+        @if (loading()) {
+          <tr>
+            <td [attr.colspan]="columns().length" class="loading-state">
+              <i class="pi pi-spin pi-spinner"></i>
+              <p>{{ 'ADMIN.SHARED.LOADING' | translate }}</p>
+            </td>
+          </tr>
+        } @else if (data().length === 0) {
+          <tr>
+            <td [attr.colspan]="columns().length" class="empty-state">
+              <i class="pi pi-inbox empty-icon"></i>
+              <p>{{ 'ADMIN.SHARED.EMPTY_STATE' | translate }}</p>
+            </td>
+          </tr>
+        } @else {
+          @for (row of data(); track $index) {
+            <tr class="table-row">
+              @for (col of columns(); track col.key) {
+                <td>
+                  @if (col.cellTemplate) {
+                    <ng-container
+                      *ngTemplateOutlet="
+                        col.cellTemplate;
+                        context: { $implicit: row }
+                      "></ng-container>
+                  } @else {
+                    {{ getCellValue(row, col.key) }}
+                  }
+                </td>
+              }
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (totalCount() > 0) {
+    <div class="table-footer">
+      <div class="pagination-info">
+        {{
+          'ADMIN.SHARED.PAGE_OF'
+            | translate
+              : {
+                  current: currentPage(),
+                  total:
+                    (totalCount() / pageSize() > 0 ? totalCount() / pageSize() : 1)
+                    | number: '1.0-0',
+                  count: totalCount(),
+                }
+        }}
+      </div>
+      <div class="pagination-actions">
+        <button class="btn-prev" [disabled]="currentPage() === 1" (click)="prevPage()">
+          <i class="pi pi-chevron-right"></i>
+        </button>
+        <button
+          class="btn-next"
+          [disabled]="currentPage() * pageSize() >= totalCount()"
+          (click)="nextPage()">
+          <i class="pi pi-chevron-left"></i>
+        </button>
+      </div>
+    </div>
+  }
+</div>

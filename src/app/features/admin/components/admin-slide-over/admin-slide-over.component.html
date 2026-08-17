@@ -1,0 +1,19 @@
+@if (isOpen()) {
+  <div class="slide-over-overlay" (click)="close()" (keydown.enter)="close()" tabindex="0"></div>
+  <div class="slide-over-panel" [style.width]="widthClass()">
+    <div class="slide-over-header">
+      <h2 class="slide-over-title">{{ title() }}</h2>
+      <button class="close-btn" (click)="close()">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <div class="slide-over-body">
+      <ng-content></ng-content>
+    </div>
+
+    <div class="slide-over-footer">
+      <ng-content select="[footer]"></ng-content>
+    </div>
+  </div>
+}

@@ -12,11 +12,7 @@ describe('StudentEnrollmentService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        StudentEnrollmentService,
-        provideHttpClient(),
-        provideHttpClientTesting(),
-      ],
+      providers: [StudentEnrollmentService, provideHttpClient(), provideHttpClientTesting()],
     });
 
     service = TestBed.inject(StudentEnrollmentService);
