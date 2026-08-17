@@ -47,7 +47,11 @@ export class TopupModalComponent {
     this.isSubmitting.set(true);
     this.errorMessage.set('');
 
-    this.walletService.topup(requestedAmount).pipe(
+    const redirectUrl = typeof window !== 'undefined'
+      ? `${window.location.origin}/payment/result?type=teacher`
+      : 'https://draya-lms.vercel.app/payment/result?type=teacher';
+
+    this.walletService.topup(requestedAmount, redirectUrl).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (response) => {

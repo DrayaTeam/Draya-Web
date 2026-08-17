@@ -24,7 +24,7 @@ export class WalletService {
   }
 
   /** Retrieves the teacher's wallet transaction history. */
-  getTransactions(pageNumber: number = 1, pageSize: number = 20): Observable<PaginatedResponse<WalletTransaction>> {
+  getTransactions(pageNumber = 1, pageSize = 20): Observable<PaginatedResponse<WalletTransaction>> {
     const params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());
@@ -58,7 +58,7 @@ export class WalletService {
   }
 
   /** Retrieves the teacher's withdrawal history. */
-  getWithdrawals(pageNumber: number = 1, pageSize: number = 20): Observable<PaginatedResponse<Withdrawal>> {
+  getWithdrawals(pageNumber = 1, pageSize = 20): Observable<PaginatedResponse<Withdrawal>> {
     const params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());
@@ -67,8 +67,9 @@ export class WalletService {
   }
 
   /** Initiates a wallet top-up (Purchased Balance) via Paymob. */
-  topup(amount: number): Observable<TopupResponse> {
-    return this.http.post<TopupResponse>(`${this.baseUrl}/topup`, { amount });
+  topup(amount: number, redirectionUrl?: string): Observable<TopupResponse> {
+    const payload = redirectionUrl ? { amount, redirectionUrl } : { amount };
+    return this.http.post<TopupResponse>(`${this.baseUrl}/topup`, payload);
   }
 }
 
