@@ -72,7 +72,7 @@
         </div>
       }
 
-      @if (!isPopup()) {
+      @if (!isPopup() && !isTeacher()) {
         <div class="redirect-notice">
           <span>سيتم تحويلك تلقائياً خلال</span>
           <strong class="timer-num">{{ countdownSeconds() }}</strong>
@@ -83,7 +83,7 @@
       <div class="actions-row">
         <button type="button" class="btn-primary" (click)="onPrimaryAction()">
           @if (isTeacher()) {
-            <span>الانتقال إلى لوحة تحكم المعلم</span>
+            <span>العودة إلى المحفظة</span>
           } @else {
             <span>الانتقال إلى باقاتي النشطة الآن</span>
           }

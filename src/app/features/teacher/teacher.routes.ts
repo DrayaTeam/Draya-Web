@@ -97,6 +97,12 @@ export const teacherRoutes: Routes = [
         title: 'الاشتراك والعدادات — درايَة',
       },
       {
+        path: 'wallet',
+        loadComponent: () =>
+          import('./wallet/teacher-wallet.component').then((m) => m.TeacherWalletComponent),
+        title: 'المحفظة المالية — درايَة',
+      },
+      {
         path: 'account',
         loadComponent: () =>
           import('./profile/teacher-profile.component').then((m) => m.TeacherProfileComponent),
