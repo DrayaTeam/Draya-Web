@@ -33,6 +33,14 @@ export const teacherRoutes: Routes = [
         title: 'إدارة الفصول — درايَة',
       },
       {
+        path: 'classrooms/:id',
+        loadComponent: () =>
+          import('./classrooms/classroom-detail/classroom-detail.component').then(
+            (m) => m.ClassroomDetailComponent,
+          ),
+        title: 'تفاصيل الفصل — درايَة',
+      },
+      {
         path: 'students',
         loadComponent: () =>
           import('./placeholder/teacher-placeholder.component').then(
@@ -89,19 +97,9 @@ export const teacherRoutes: Routes = [
         title: 'الاشتراك والعدادات — درايَة',
       },
       {
-        path: 'wallet',
-        loadComponent: () =>
-          import('./wallet/teacher-wallet.component').then(
-            (m) => m.TeacherWalletComponent,
-          ),
-        title: 'المحفظة المالية — درايَة',
-      },
-      {
         path: 'account',
         loadComponent: () =>
-          import('./profile/teacher-profile.component').then(
-            (m) => m.TeacherProfileComponent,
-          ),
+          import('./profile/teacher-profile.component').then((m) => m.TeacherProfileComponent),
         title: 'الملف الشخصي — درايَة',
       },
       {

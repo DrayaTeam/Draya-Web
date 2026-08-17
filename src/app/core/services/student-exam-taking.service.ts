@@ -1,10 +1,7 @@
 // src/app/core/services/student-exam-taking.service.ts
 
 import { Injectable, computed, signal } from '@angular/core';
-import {
-  ExamQuestion,
-  ExamResultReport,
-} from '../models/student-exam-taking.model';
+import { ExamQuestion, ExamResultReport } from '../models/student-exam-taking.model';
 
 @Injectable({
   providedIn: 'root',
@@ -76,7 +73,7 @@ export class StudentExamTakingService {
   readonly isFirstQuestion = computed(() => this.currentQuestionIndex() === 0);
 
   readonly isLastQuestion = computed(
-    () => this.currentQuestionIndex() === this.totalQuestionsCount() - 1
+    () => this.currentQuestionIndex() === this.totalQuestionsCount() - 1,
   );
 
   readonly formattedTimer = computed(() => {
@@ -136,19 +133,45 @@ export class StudentExamTakingService {
     ],
   });
 
+  private timerInterval: ReturnType<typeof setInterval> | null = null;
+  readonly violations = signal<number>(0);
+
+  startTimer(): void {
+    this.stopTimer();
+    this.remainingSeconds.set(2700); // 45 minutes
+    this.timerInterval = setInterval(() => {
+      this.remainingSeconds.update((s) => {
+        if (s <= 1) {
+          this.stopTimer();
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+  }
+
+  stopTimer(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  recordViolation(): number {
+    const next = this.violations() + 1;
+    this.violations.set(next);
+    return next;
+  }
+
   selectOption(questionId: string, optionId: string): void {
     this.questions.update((list) =>
-      list.map((q) =>
-        q.id === questionId ? { ...q, selectedOptionId: optionId } : q
-      )
+      list.map((q) => (q.id === questionId ? { ...q, selectedOptionId: optionId } : q)),
     );
   }
 
   toggleFlagQuestion(questionId: string): void {
     this.questions.update((list) =>
-      list.map((q) =>
-        q.id === questionId ? { ...q, isFlagged: !q.isFlagged } : q
-      )
+      list.map((q) => (q.id === questionId ? { ...q, isFlagged: !q.isFlagged } : q)),
     );
   }
 
@@ -170,7 +193,67 @@ export class StudentExamTakingService {
     }
   }
 
-  submitExam(): void {
+  submitExam(): number {
+    this.stopTimer();
     this.isSubmitted.set(true);
+
+    const questionsList = this.questions();
+    let correctCount = 0;
+
+    const reviewQuestions = questionsList.map((q) => {
+      const isCorrect = q.selectedOptionId === q.correctOptionId;
+      if (isCorrect) correctCount++;
+
+      const chosen = q.options.find((o) => o.id === q.selectedOptionId)?.text || 'لم يتم الإجابة';
+      const correct = q.options.find((o) => o.id === q.correctOptionId)?.text || '';
+
+      return {
+        questionIndex: q.index,
+        questionText: q.text,
+        isCorrect,
+        studentAnswerText: chosen,
+        correctAnswerText: correct,
+      };
+    });
+
+    const finalScore = Math.round((correctCount / questionsList.length) * 100);
+    const isPassed = finalScore >= 50;
+
+    let gradeLabel = 'راسب — ضعيف جداً';
+    if (finalScore >= 85) gradeLabel = 'ممتاز جداً 🌟';
+    else if (finalScore >= 65) gradeLabel = 'جيد جداً 👍';
+    else if (finalScore >= 50) gradeLabel = 'مقبول — يحتاج مراجعة';
+
+    this.examResult.set({
+      examId: 'exam-1',
+      examTitle: this.examTitle(),
+      scorePercentage: finalScore,
+      gradeLabel,
+      isPassed,
+      submittedAt: new Date().toLocaleDateString('ar-EG', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }),
+      weaknessTopics: [
+        {
+          id: 'w1',
+          title: 'التباديل وحساب المضاريب',
+          accuracyPercentage: finalScore < 50 ? 33 : 75,
+          aiTip: 'أخطاء متكررة في فهم قيم ن الممكنة لمضروب العدد والتباديل.',
+          reviewLectureUrl: '/student/courses',
+        },
+        {
+          id: 'w2',
+          title: 'التوافيق وحل مسائل اللجان المشتركة',
+          accuracyPercentage: finalScore < 50 ? 40 : 80,
+          aiTip: 'راجع الفرق بين التباديل والتوافيق في سياق الاختيار العشوائي بدون ترتيب.',
+          reviewLectureUrl: '/student/courses',
+        },
+      ],
+      reviewQuestions,
+    });
+
+    return finalScore;
   }
 }

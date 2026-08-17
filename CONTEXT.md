@@ -15,6 +15,7 @@
 | **Target Users** | Secondary school teachers, students, parents                                         |
 | **Market**       | Egypt (EGP currency, Paymob payments)                                                |
 | **AI Features**  | AI Exam Generation from materials (RAG), AI Grading (essay/rubric), Weakness Reports |
+| **API Status**   | See [`API_INTEGRATION_STATUS.md`](file:///e:/ITI/Draya/Draya-Web/API_INTEGRATION_STATUS.md) for full endpoint tracker |
 
 ---
 

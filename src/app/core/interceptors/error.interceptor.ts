@@ -2,7 +2,7 @@ import { HttpInterceptorFn, HttpErrorResponse, HttpStatusCode } from '@angular/c
 import { inject, Injector } from '@angular/core';
 import { catchError, throwError, switchMap } from 'rxjs';
 import { AuthService } from '../../features/auth/services/auth.service';
-import { MessageService } from 'primeng/api';
+import { ToastService } from '../services/toast.service';
 import { ApiError, ValidationError } from '../models/api-error.model';
 
 /**
@@ -34,6 +34,27 @@ function normalizeFieldName(pascalField: string): string {
  */
 function parseApiError(err: HttpErrorResponse): ApiError {
   const wrapper = err.error?.error;
+
+  // ASP.NET model validation: { errors: { content: ["The content field is required."] } }
+  const modelErrors = err.error?.errors;
+  if (modelErrors && typeof modelErrors === 'object') {
+    const details: ValidationError[] = [];
+    for (const [field, issues] of Object.entries(modelErrors)) {
+      const issueList = Array.isArray(issues) ? issues : [String(issues)];
+      details.push({
+        field: normalizeFieldName(field),
+        issue: issueList.filter(Boolean).join(' '),
+      });
+    }
+
+    if (details.length > 0) {
+      return {
+        code: 'VALIDATION_ERROR',
+        message: details.map((d) => d.issue).join(' '),
+        details,
+      };
+    }
+  }
 
   // Empty-body 401 (logout, /auth/me bad token, etc.)
   if (!wrapper || typeof wrapper !== 'object') {
@@ -71,13 +92,16 @@ function parseApiError(err: HttpErrorResponse): ApiError {
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const injector = inject(Injector);
-  const messageService = inject(MessageService);
+  const toastService = inject(ToastService);
 
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
       const auth = injector.get(AuthService);
       // Avoid intercepting auth requests (login, logout, refresh) to prevent infinite loops
-      const isAuthRequest = req.url.includes('/auth/refresh') || req.url.includes('/auth/login') || req.url.includes('/auth/logout');
+      const isAuthRequest =
+        req.url.includes('/auth/refresh') ||
+        req.url.includes('/auth/login') ||
+        req.url.includes('/auth/logout');
 
       if (err.status === HttpStatusCode.Unauthorized && !isAuthRequest) {
         return auth.refresh().pipe(
@@ -89,26 +113,20 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           }),
           catchError((refreshErr) => {
             auth.logout();
-            return throwError(() => parseApiError(refreshErr instanceof HttpErrorResponse ? refreshErr : err));
-          })
+            return throwError(() =>
+              parseApiError(refreshErr instanceof HttpErrorResponse ? refreshErr : err),
+            );
+          }),
         );
       }
 
       if (err.status === HttpStatusCode.Forbidden) {
-        messageService.add({
-          severity: 'error',
-          summary: 'غير مسموح',
-          detail: 'ليس لديك الصلاحية للوصول إلى هذا المورد.',
-        });
-      } else if (err.status >= 500) {
-        messageService.add({
-          severity: 'error',
-          summary: 'خطأ في الخادم',
-          detail: 'حدث خطأ في الخادم الداخلي، يرجى المحاولة لاحقًا.',
-        });
+        toastService.error('غير مسموح', 'ليس لديك الصلاحية للوصول إلى هذا المورد.');
+      } else if (err.status >= 500 && !req.url.includes('/checkout')) {
+        toastService.error('خطأ في الخادم', 'حدث خطأ في الخادم الداخلي، يرجى المحاولة لاحقًا.');
       }
 
       return throwError(() => parseApiError(err));
-    })
+    }),
   );
 };

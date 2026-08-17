@@ -7,7 +7,7 @@
 
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../../features/auth/services/auth.service';
+import { AuthService } from '../../features/auth';
 
 export const roleGuard: CanActivateFn = (route) => {
   const auth = inject(AuthService);
@@ -19,17 +19,20 @@ export const roleGuard: CanActivateFn = (route) => {
     return router.createUrlTree(['/auth/login']);
   }
 
-  const allowedRoles: string[] = route.data?.['roles'] ?? [];
-  if (allowedRoles.length === 0 || allowedRoles.includes(user.role)) {
+  const userRoleLower = user.role.toLowerCase();
+  const allowedRoles: string[] = (route.data?.['roles'] ?? []).map((r: string) => r.toLowerCase());
+  if (allowedRoles.length === 0 || allowedRoles.includes(userRoleLower)) {
     return true;
   }
 
   // Authenticated but wrong role — redirect to the user's own dashboard.
   const roleDashboards: Record<string, string> = {
-    teacher: '/teacher/subscription',
+    teacher: '/teacher/dashboard',
     student: '/student/dashboard',
     admin: '/admin/dashboard',
+    superadmin: '/admin/dashboard',
+    parent: '/parent/reports',
   };
 
-  return router.createUrlTree([roleDashboards[user.role] ?? '/']);
+  return router.createUrlTree([roleDashboards[userRoleLower] ?? '/']);
 };

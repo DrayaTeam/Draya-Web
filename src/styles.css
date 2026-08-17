@@ -1,0 +1,240 @@
+@import 'tailwindcss';
+@import '../theme.css';
+@import 'primeicons/primeicons.css';
+
+/* Global SVG & Scroll Constraints */
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+svg {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* Force cursor pointer on all buttons */
+button, 
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  cursor: pointer;
+}
+
+/* ── Global Keyframes & Animations ── */
+@keyframes drayaFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes drayaFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes drayaScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes drayaFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes drayaPulseGlow {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes drayaShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ── Animation Utility Classes ── */
+.animate-fade-in-up {
+  animation: drayaFadeInUp 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: drayaFadeIn 400ms ease-out forwards;
+}
+
+.animate-scale-up {
+  animation: drayaScaleUp 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-float {
+  animation: drayaFloat 4s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: drayaPulseGlow 3s ease-in-out infinite;
+}
+
+/* Stagger Delays */
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+.delay-400 {
+  animation-delay: 400ms;
+}
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+/* ── Skeleton Shimmer Effect ── */
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #eef2f1 0%, #f8fbfa 50%, #eef2f1 100%);
+  background-size: 200% 100%;
+  animation: drayaShimmer 1.6s infinite ease-in-out;
+  border-radius: 8px;
+}
+
+/* ── Smooth Micro-Interactions ── */
+.interactive-hover-card {
+  transition:
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 220ms ease-out;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px -4px rgba(21, 27, 25, 0.12);
+  }
+}
+
+/* ── Scroll Reveal Section Animations ── */
+.scroll-reveal-init {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal-init {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* ── PrimeNG RTL Overrides for Menus ── */
+.p-menu.draya-action-menu {
+  min-width: 14rem !important;
+  padding: 0.5rem !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #f1f5f9 !important;
+}
+
+.draya-action-menu .p-menu-list {
+  padding: 0 !important;
+  margin: 0 !important;
+  list-style: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  width: 100% !important;
+}
+
+.draya-action-menu .p-menuitem {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.draya-action-menu .p-menuitem-link {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.75rem !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  text-decoration: none !important;
+  outline: none !important;
+  border: none !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.draya-action-menu .p-menuitem-icon {
+  margin: 0 !important;
+  color: #64748b !important;
+  font-size: 1.1rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.draya-action-menu .p-menuitem-text {
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  font-family: inherit !important;
+  color: #334155 !important;
+  margin: 0 !important;
+  flex-grow: 1 !important;
+  text-align: right !important;
+}
+
+.draya-action-menu .p-menuitem-link:hover {
+  background-color: #f5fcfb !important;
+}
+
+.draya-action-menu .p-menuitem-link:hover .p-menuitem-text,
+.draya-action-menu .p-menuitem-link:hover .p-menuitem-icon {
+  color: #1b6d63 !important;
+}
+

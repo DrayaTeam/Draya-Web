@@ -7,6 +7,7 @@ export interface TeacherProfile {
   phone: string;
   specialization: string;
   description: string;
+  pictureUrl?: string;
 }
 
 export type TeacherSubjectCategory = 'all' | 'math' | 'physics' | 'chemistry' | 'biology';

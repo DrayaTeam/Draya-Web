@@ -11,10 +11,10 @@ export function differentEmailValidator(): ValidatorFn {
     }
 
     if (email.toLowerCase() === parentEmail.toLowerCase()) {
-      return { 
-        differentEmail: { 
-          messageKey: AUTH_CONSTANTS.KEYS.SAME_EMAIL_ERROR 
-        } 
+      return {
+        differentEmail: {
+          messageKey: AUTH_CONSTANTS.KEYS.SAME_EMAIL_ERROR,
+        },
       };
     }
 

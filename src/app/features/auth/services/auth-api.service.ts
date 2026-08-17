@@ -3,7 +3,12 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, throwError, of } from 'rxjs';
 import { IAuthApi } from './auth-api.token';
-import { RegisterTeacherRequest, RegisterStudentRequest, LoginRequest, AuthResponse } from '../../../core/models/auth.model';
+import {
+  RegisterTeacherRequest,
+  RegisterStudentRequest,
+  LoginRequest,
+  AuthResponse,
+} from '../../../core/models/auth.model';
 import { UserProfile } from '../../../core/models/user.model';
 import { environment } from '../../../../environments/environment';
 import { decodeToken } from '../../../core/auth/jwt.util';
@@ -65,7 +70,7 @@ export class AuthApiService implements IAuthApi {
           }
         }
         return throwError(() => err);
-      })
+      }),
     );
   }
 
@@ -74,6 +79,14 @@ export class AuthApiService implements IAuthApi {
   }
 
   resetPassword(payload: { token: string; newPassword: string }): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/password-reset/confirm`, payload);
+    return this.http.post<void>(`${this.baseUrl}/reset-password`, payload);
+  }
+
+  changePassword(payload: {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  }): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/change-password`, payload);
   }
 }

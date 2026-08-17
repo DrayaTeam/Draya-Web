@@ -8,25 +8,21 @@
       <span
         class="badge-pill"
         [style.background-color]="topic().badgeBgColor"
-        [style.color]="topic().badgeTextColor"
-      >
+        [style.color]="topic().badgeTextColor">
         {{ topic().badgeText }}
       </span>
     </div>
   </div>
 
   <div class="actions-col">
-    <div class="score-box" [style.color]="topic().scoreTextColor">
-      {{ topic().scorePercent }}%
-    </div>
-    <button
-      type="button"
-      class="action-btn"
-      (click)="startReview.emit(topic())"
-    >
+    <div class="score-box" [style.color]="topic().scoreTextColor">{{ topic().scorePercent }}%</div>
+    <button type="button" class="action-btn" (click)="startReview.emit(topic())">
       <span>بدء المراجعة التفاعلية</span>
       <svg class="btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
       </svg>
     </button>
   </div>

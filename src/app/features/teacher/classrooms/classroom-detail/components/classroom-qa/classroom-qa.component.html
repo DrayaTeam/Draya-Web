@@ -1,0 +1,450 @@
+<!-- src/app/features/teacher/classrooms/classroom-detail/components/classroom-qa/classroom-qa.component.html -->
+<div class="flex flex-col gap-6" dir="rtl">
+  
+  <!-- Unified Professional Header & Toolbar -->
+  <div class="flex flex-col gap-5 bg-white rounded-2xl border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] p-5 mb-2">
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+      
+      <!-- Title Area -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-primary-50 text-primary-600 shrink-0">
+          <i class="pi pi-comments text-xl"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-gray-900 m-0 leading-tight">ساحة المناقشات</h2>
+          <p class="text-sm text-gray-500 m-0 mt-0.5">تواصل مع طلابك وأجب عن استفساراتهم</p>
+        </div>
+        <span class="mr-2 rounded-full bg-primary-50 px-3 py-1 text-sm font-bold text-primary-700 border border-primary-100 hidden sm:inline-block">
+          {{ questions().length }} استفسار
+        </span>
+      </div>
+
+      <!-- Actions Area -->
+      <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+
+        <!-- Filter Pills -->
+        <div class="qa-pill-group">
+          @for (opt of filterOptions; track opt.value) {
+            <button
+              class="qa-pill"
+              [class.qa-pill-active]="filters().filterBy === opt.value"
+              (click)="updateFilterBy(opt.value)">
+              {{ opt.label }}
+            </button>
+          }
+        </div>
+
+        <!-- Sort Pills -->
+        <div class="qa-pill-group qa-pill-group-sort">
+          @for (opt of sortOptions; track opt.value) {
+            <button
+              class="qa-pill"
+              [class.qa-pill-active]="filters().sortBy === opt.value"
+              (click)="updateSortBy(opt.value)">
+              @if (opt.value === 'newest') {
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+              } @else {
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              }
+              {{ opt.label }}
+            </button>
+          }
+        </div>
+
+        <!-- Add Button -->
+        <button class="btn-primary flex-shrink-0 w-full sm:w-auto justify-center" (click)="toggleNewQuestionMode()">
+          <i class="pi" [ngClass]="isNewQuestionMode() ? 'pi-times' : 'pi-plus'"></i>
+          {{ isNewQuestionMode() ? 'إلغاء' : 'إضافة منشور' }}
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Inline New Question Composer -->
+  @if (isNewQuestionMode()) {
+    <div class="rounded-3xl border border-gray-200 bg-white p-5 transition-all animate-fade-in-up">
+      <div class="flex gap-4">
+        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary-50 to-primary-100 text-primary-600 border border-white shadow-sm">
+          <i class="pi pi-user text-xl"></i>
+        </div>
+        <div class="flex-1 flex flex-col gap-3">
+          <textarea
+            [(ngModel)]="newQuestionContent"
+            class="w-full resize-none rounded-2xl bg-gray-50 p-4 text-gray-800 outline-none transition-all focus:bg-white focus:ring-2 focus:ring-primary-100 border border-transparent focus:border-primary-300"
+            rows="3"
+            placeholder="بم تفكر؟ اطرح سؤالك أو استفسارك هنا..."
+            [disabled]="isPosting()">
+          </textarea>
+
+          <!-- Image Preview -->
+          @if (selectedImagePreview()) {
+            <div class="relative w-fit mt-1 rounded-xl border border-gray-200 p-1 bg-gray-50 shadow-sm animate-fade-in">
+              <img [src]="selectedImagePreview()" alt="معاينة" class="max-h-40 rounded-lg object-contain">
+              <button 
+                class="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-sm hover:bg-red-600 transition-colors"
+                (click)="removeSelectedImage()"
+                title="حذف الصورة">
+                <i class="pi pi-times text-[10px] font-bold"></i>
+              </button>
+            </div>
+          }
+
+          <div class="flex justify-between items-center mt-1">
+            <div class="flex items-center gap-3">
+              <input type="file" #imageInput accept="image/*" class="hidden" (change)="onImageSelected($event)">
+              <button 
+                class="flex items-center gap-2 px-3 py-2 rounded-xl text-gray-500 hover:bg-primary-50 hover:text-primary-600 transition-colors font-semibold text-sm"
+                (click)="imageInput.click()"
+                [disabled]="isPosting()">
+                <i class="pi pi-image text-lg"></i>
+                <span class="hidden sm:inline-block">إرفاق صورة</span>
+              </button>
+              <span class="text-xs text-gray-400 hidden md:inline-block">سيتم نشر السؤال ليراه المعلم وباقي الطلاب</span>
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto justify-end">
+              <button class="px-5 py-2 text-sm font-bold text-gray-500 hover:bg-gray-100 rounded-xl transition-colors" (click)="toggleNewQuestionMode()">إلغاء</button>
+              <button 
+                class="flex items-center justify-center gap-2 rounded-xl bg-[#1b6d63] px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-[#134e48] disabled:opacity-50 disabled:cursor-not-allowed" 
+                (click)="postNewQuestion()"
+                [disabled]="(!newQuestionContent.trim() && !selectedImageFile()) || isPosting()">
+                @if (isPosting()) {
+                  <i class="pi pi-spin pi-spinner"></i>
+                } @else {
+                  نشر <i class="pi pi-send text-xs"></i>
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Questions Feed -->
+  @if (isLoading()) {
+    <div class="flex flex-col items-center justify-center py-12 text-gray-400">
+      <i class="pi pi-spin pi-spinner mb-4 text-4xl text-primary-600"></i>
+      <p>جاري تحميل الأسئلة...</p>
+    </div>
+  } @else if (questions().length === 0) {
+    <div class="flex flex-col items-center justify-center py-12 text-gray-400">
+      <i class="pi pi-comments mb-4 text-5xl"></i>
+      <p class="text-lg">لا توجد أسئلة حالياً.</p>
+    </div>
+  } @else {
+    <div class="flex flex-col gap-6 pb-12">
+      @for (question of sortedQuestions(); track question.id) {
+        
+        <!-- Question Thread Container -->
+        <div class="flex flex-col animate-fade-in-up">
+          
+          <div 
+            class="relative flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/60 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]"
+            [ngClass]="localPinnedQuestions().has(question.id) ? 'ring-2 ring-primary-400 ring-offset-2' : ''">
+            
+            @if (localPinnedQuestions().has(question.id)) {
+              <!-- Mockup Banner -->
+              <div class="flex items-center gap-1.5 text-xs font-bold text-primary-800 mb-1">
+                <i class="pi pi-thumbtack text-primary-500"></i>
+                <span class="bg-primary-50 px-2.5 py-1 rounded-lg">مثبت في أعلى الساحة</span>
+              </div>
+            }
+
+            <!-- Header -->
+            <div class="flex items-start justify-between">
+              
+              <!-- Right side (RTL): Avatar, Name, Badges -->
+              <div class="flex items-center gap-4">
+                <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 text-gray-500 shadow-sm border border-white shrink-0 overflow-hidden">
+                  @if (question.authorProfilePictureUrl) {
+                    <img [src]="question.authorProfilePictureUrl" alt="" class="h-full w-full object-cover">
+                  } @else {
+                    <span class="text-xl font-bold">{{ question.authorName.charAt(0) }}</span>
+                  }
+                </div>
+                
+                <div class="flex flex-col gap-1">
+                  <span class="font-bold text-gray-900 text-lg leading-tight">{{ question.authorName }}</span>
+                  
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <!-- Role Badge -->
+                    <span class="rounded px-2 py-0.5 text-xs font-bold border"
+                          [ngClass]="question.authorRole === 'Teacher' ? 'bg-primary-50 text-primary-700 border-primary-200' : 'bg-gray-100 text-gray-600 border-gray-200'">
+                      {{ question.authorRole === 'Teacher' ? 'معلم' : 'طالب' }}
+                    </span>
+                    
+                    <!-- Answered Badge -->
+                    @if (question.hasTeacherAnswer) {
+                      <span class="flex items-center gap-1 rounded bg-green-50 text-green-700 px-2 py-0.5 text-xs font-bold border border-green-200">
+                        <i class="pi pi-check-circle text-[10px]"></i>
+                        تم الرد (Answered)
+                      </span>
+                    }
+
+                    <!-- Important Star -->
+                    @if (question.voteCount >= 5) {
+                      <span class="flex items-center gap-1 rounded text-orange-600 px-2 py-0.5 text-xs font-bold">
+                        <i class="pi pi-star-fill text-orange-400 text-[10px]"></i>
+                        سؤال هام
+                      </span>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <!-- Left side (RTL): Time & Menu -->
+              <div class="flex items-center gap-3 text-gray-500">
+                <span class="text-xs flex items-center gap-1">
+                  <i class="pi pi-clock"></i>
+                  {{ question.createdAt | date:'shortTime' }}
+                </span>
+                <div class="relative">
+                  <button 
+                    class="btn-icon-small hover:bg-gray-100 text-gray-600 rounded-full h-8 w-8 transition-colors"
+                    (click)="toggleDropdown(question.id, $event)">
+                    <i class="pi pi-ellipsis-v"></i>
+                  </button>
+                  
+                    @if (activeDropdownId() === question.id) {
+                      <div class="absolute top-full mt-2 left-0 z-50 w-48 rounded-2xl bg-white shadow-[0_10px_30px_-5px_rgba(0,0,0,0.15)] border border-gray-100 py-2 overflow-hidden text-[13px] font-semibold text-gray-700 animate-fade-in origin-top-left">
+                        <button class="w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 hover:text-primary-600 transition-colors" (click)="togglePin(question.id); toggleDropdown(question.id, $event)">
+                          <span>{{ localPinnedQuestions().has(question.id) ? 'إلغاء التثبيت' : 'تثبيت' }}</span>
+                          <i class="pi pi-thumbtack text-gray-400"></i>
+                        </button>
+                        @if (question.authorRole === 'Teacher') {
+                          <button class="w-full flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 hover:text-primary-600 transition-colors border-t border-gray-50" (click)="startEditQuestion(question)">
+                            <span>تعديل</span>
+                            <i class="pi pi-pencil text-gray-400"></i>
+                          </button>
+                          <button class="w-full flex items-center justify-between px-4 py-2.5 hover:bg-red-50 hover:text-red-600 text-red-600 transition-colors border-t border-gray-50" (click)="deleteQuestion(question.id)">
+                            <span>حذف</span>
+                            <i class="pi pi-trash text-red-400"></i>
+                          </button>
+                        }
+                      </div>
+                    }
+                </div>
+              </div>
+            </div>
+
+            <!-- Content -->
+            @if (editingQuestionId() === question.id) {
+              <div class="mt-2 rounded-2xl border border-primary-200 bg-primary-50/50 p-4 transition-all">
+                <textarea
+                  [(ngModel)]="editQuestionContent"
+                  class="w-full resize-none rounded-xl bg-white p-3 text-gray-800 outline-none focus:ring-2 focus:ring-primary-100 border border-gray-200 focus:border-primary-300"
+                  rows="3">
+                </textarea>
+                <div class="mt-2 flex justify-end gap-2">
+                  <button class="px-4 py-1.5 text-sm font-bold text-gray-500 hover:bg-gray-100 rounded-lg transition-colors" (click)="cancelEditQuestion()">إلغاء</button>
+                  <button class="px-4 py-1.5 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-lg shadow-sm transition-colors" (click)="saveEditQuestion(question.id)">حفظ التعديل</button>
+                </div>
+              </div>
+            } @else {
+              <p class="text-gray-700 text-[15px] leading-loose whitespace-pre-wrap px-1">{{ question.content }}</p>
+            }
+
+            <!-- Image -->
+            @if (question.imageUrl) {
+              <div class="mt-2 flex justify-center overflow-hidden rounded-2xl bg-gray-50/50 p-2 border border-gray-100">
+                <img [src]="question.imageUrl" alt="صورة مرفقة" class="max-h-96 w-auto object-contain rounded-xl shadow-sm">
+              </div>
+            }
+
+            <!-- Footer -->
+            <div class="mt-2 flex items-center justify-between border-t border-gray-100/60 pt-4">
+              <!-- Left side: Reply Button -->
+              <button 
+                class="flex items-center gap-2 rounded-xl bg-gray-50 border border-gray-100 px-4 py-2 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                (click)="toggleThread(question)">
+                <i class="pi" [ngClass]="expandedThreads().has(question.id) ? 'pi-chevron-up' : 'pi-reply'"></i>
+                {{ expandedThreads().has(question.id) ? 'إخفاء الردود' : 'إضافة رد' }}
+              </button>
+              
+              <!-- Right side: Votes & Reply Count -->
+              <div class="flex items-center gap-2">
+                <button 
+                  class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 font-bold text-sm transition-colors hover:bg-gray-100"
+                  [ngClass]="question.hasVoted ? 'text-primary-600 bg-primary-50/50 border-primary-100 hover:bg-primary-100/50' : 'text-gray-600'"
+                  [disabled]="votingQueue().has(question.id)"
+                  (click)="toggleVote(question)">
+                  @if (votingQueue().has(question.id)) {
+                    <i class="pi pi-spin pi-spinner text-xs"></i>
+                  } @else {
+                    {{ question.voteCount }} <i class="pi" [ngClass]="question.hasVoted ? 'pi-thumbs-up-fill' : 'pi-thumbs-up'"></i>
+                  }
+                </button>
+
+                <button 
+                  class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 font-bold text-sm text-gray-600 transition-colors hover:bg-gray-100"
+                  (click)="toggleThread(question)">
+                  {{ question.replyCount }} <i class="pi pi-comments text-xs"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inline Replies Thread (Expanded) -->
+          @if (expandedThreads().has(question.id)) {
+            <div class="mt-3 pr-8 flex flex-col gap-3">
+              
+              <!-- Loader -->
+              @if (threadLoading().has(question.id) && !threadReplies().has(question.id)) {
+                <div class="flex justify-center py-4 text-gray-400">
+                  <i class="pi pi-spin pi-spinner text-xl"></i>
+                </div>
+              }
+
+              <!-- Render Loaded Replies -->
+              @if (threadReplies().has(question.id)) {
+                @for (reply of threadReplies().get(question.id); track reply.id) {
+                  <!-- Teacher Reply gets tinted bg, student gets gray bg -->
+                  <div 
+                    class="relative flex flex-col gap-3 rounded-2xl p-5 border-none transition-colors animate-fade-in-up"
+                    [ngClass]="reply.isTeacherAnswer || reply.authorRole === 'Teacher' ? 'bg-primary-50/40 hover:bg-primary-50/80' : 'bg-gray-50/80 hover:bg-gray-100/80'">
+                    
+                    <div class="flex items-start justify-between">
+                      <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-white to-gray-50 text-gray-500 shadow-sm border border-gray-100 shrink-0 overflow-hidden">
+                          @if (reply.authorProfilePictureUrl) {
+                            <img [src]="reply.authorProfilePictureUrl" alt="" class="h-full w-full object-cover">
+                          } @else {
+                            <span class="text-sm font-bold">{{ reply.authorName.charAt(0) }}</span>
+                          }
+                        </div>
+                        
+                        <div class="flex flex-col">
+                          <div class="flex items-center gap-2">
+                            <span class="font-bold text-gray-900" [ngClass]="reply.isTeacherAnswer || reply.authorRole === 'Teacher' ? 'text-primary-800' : ''">{{ reply.authorName }}</span>
+                            
+                            @if (reply.isTeacherAnswer || reply.authorRole === 'Teacher') {
+                              <span class="rounded px-2 py-0.5 text-xs font-bold border bg-primary-50 text-primary-700 border-primary-200">
+                                معلم
+                              </span>
+                            } @else {
+                              <span class="rounded px-2 py-0.5 text-xs font-bold border bg-gray-100 text-gray-600 border-gray-200">
+                                طالب
+                              </span>
+                            }
+                          </div>
+                          @if (reply.isTeacherAnswer || reply.authorRole === 'Teacher') {
+                            <div class="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                              <i class="pi pi-reply rotate-180"></i> رداً على استفسار سابق في القناة
+                            </div>
+                          }
+                        </div>
+                      </div>
+
+                      <!-- Time & Menu -->
+                      <div class="flex items-center gap-3 text-gray-500">
+                        <span class="text-[11px] font-medium text-gray-400">{{ reply.createdAt | date:'shortTime' }}</span>
+                        <div class="relative">
+                          <button class="text-gray-400 hover:text-gray-600 transition-colors" (click)="toggleDropdown(reply.id, $event)">
+                            <i class="pi pi-ellipsis-v text-xs"></i>
+                          </button>
+                          @if (activeDropdownId() === reply.id) {
+                            <div class="absolute top-full mt-2 left-0 z-50 w-32 rounded-xl bg-white shadow-lg border border-gray-100 py-1 overflow-hidden text-[12px] font-semibold text-gray-700 animate-fade-in origin-top-left">
+                              <button class="w-full flex items-center justify-between px-3 py-2 hover:bg-gray-50 hover:text-primary-600 transition-colors" (click)="startEditReply(question.id, reply)">
+                                <span>تعديل</span>
+                                <i class="pi pi-pencil text-[10px]"></i>
+                              </button>
+                              <button class="w-full flex items-center justify-between px-3 py-2 hover:bg-red-50 hover:text-red-600 transition-colors text-red-600" (click)="deleteReply(question.id, reply.id)">
+                                <span>حذف</span>
+                                <i class="pi pi-trash text-[10px]"></i>
+                              </button>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                    @if (editingReplyId() === reply.id) {
+                      <div class="mt-3 flex flex-col gap-2 rounded-xl border border-primary-200 bg-primary-50/30 p-3">
+                        <textarea
+                          [(ngModel)]="editReplyContent"
+                          class="w-full resize-none rounded-lg border border-gray-200 bg-white p-3 text-sm focus:border-primary-400 focus:outline-none focus:ring-1 focus:ring-primary-400"
+                          rows="2"></textarea>
+                        <div class="flex justify-end gap-2">
+                          <button class="rounded-lg px-4 py-1.5 text-xs font-bold text-gray-500 hover:bg-gray-200" (click)="cancelEditReply()">إلغاء</button>
+                          <button class="btn-primary px-4 py-1.5 text-xs" (click)="saveEditReply(question.id, reply.id)">حفظ</button>
+                        </div>
+                      </div>
+                    } @else {
+                      <p class="text-gray-700 text-[15px] leading-relaxed whitespace-pre-wrap px-1 pt-1 ml-4">{{ reply.content }}</p>
+                    }
+                    @if (reply.imageUrl) {
+                      <div class="mt-2 flex justify-start">
+                         <div class="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-lg p-2 max-w-sm">
+                           <i class="pi pi-image text-primary-500"></i>
+                           <a [href]="reply.imageUrl" target="_blank" class="text-xs font-bold text-gray-700 hover:text-primary-600 truncate">المرفق (انقر للفتح)</a>
+                         </div>
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (threadReplies().get(question.id)?.length === 0) {
+                  <div class="text-center py-4 text-sm text-gray-400">لا توجد ردود حتى الآن.</div>
+                }
+
+                <!-- Add Reply Input -->
+                <div class="mt-2 flex flex-col gap-2 rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
+                  <textarea
+                    [ngModel]="replyContents().get(question.id) || ''"
+                    (ngModelChange)="updateReplyContent(question.id, $event)"
+                    class="draya-input min-h-[60px] w-full resize-y text-sm bg-gray-50"
+                    placeholder="اكتب ردك هنا..."
+                    [disabled]="threadLoading().has(question.id)">
+                  </textarea>
+
+                  <!-- Selected Image Preview for Reply -->
+                  @if (replyImagePreviews().get(question.id)) {
+                    <div class="relative w-fit">
+                      <img [src]="replyImagePreviews().get(question.id)" alt="Preview" class="h-20 rounded-lg border border-gray-200 object-cover shadow-sm">
+                      <button 
+                        class="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-red-600 shadow-sm transition-transform hover:scale-110 hover:bg-red-200"
+                        (click)="removeReplyImage(question.id)">
+                        <i class="pi pi-times text-xs"></i>
+                      </button>
+                    </div>
+                  }
+
+                  <div class="flex items-center justify-between">
+                    <!-- Attach Image -->
+                    <div>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        class="hidden" 
+                        #replyImageInput 
+                        (change)="onReplyImageSelected(question.id, $event)">
+                      <button 
+                        class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-bold text-gray-500 transition-colors hover:bg-gray-100 hover:text-primary-600"
+                        (click)="replyImageInput.click()"
+                        [disabled]="threadLoading().has(question.id)">
+                        <i class="pi pi-image"></i>
+                        <span>إرفاق صورة</span>
+                      </button>
+                    </div>
+
+                    <!-- Send Button -->
+                    <button 
+                      class="btn-primary py-1.5 px-4 text-sm" 
+                      (click)="postReply(question.id)"
+                      [disabled]="(!(replyContents().get(question.id) || '').trim() && !replySelectedImages().has(question.id)) || threadLoading().has(question.id)">
+                      @if (threadLoading().has(question.id)) {
+                        <i class="pi pi-spin pi-spinner ml-2 text-xs"></i> جاري النشر...
+                      } @else {
+                        <i class="pi pi-send ml-2 text-xs"></i> إضافة الرد
+                      }
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

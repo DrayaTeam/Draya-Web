@@ -1,6 +1,10 @@
 // src/app/core/services/student-exams.service.ts
 import { Injectable, signal, computed } from '@angular/core';
-import { StudentExamItem, StudentExamsHeaderInfo, ExamStatusType } from '../models/student-exam.model';
+import {
+  StudentExamItem,
+  StudentExamsHeaderInfo,
+  ExamStatusType,
+} from '../models/student-exam.model';
 
 @Injectable({ providedIn: 'root' })
 export class StudentExamsService {

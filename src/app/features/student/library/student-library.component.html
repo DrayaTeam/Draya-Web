@@ -7,14 +7,18 @@
   <header class="page-header">
     <div class="badge-pill">
       <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="#FD9A00" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
       </svg>
       <span>المكتبة الأكاديمية الرقمية</span>
     </div>
 
-    <h1 class="main-title">مكتبة المذكرات والكتب الدراسية</h1>
+    <h1 class="main-title">مكتبة المذكرات والمحتوى الدراسي</h1>
     <p class="subtitle">
-      استعرض الكتب والمذكرات الأكاديمية والملخصات المرفقة بموادك الدراسية للتحميل والمذاكرة أوفلاين.
+      استعرض الكتب والمذكرات الأكاديمية، الفيديوهات والشروحات المرفقة بموادك المشترك بها للمشاهدة
+      والتحميل المباشر.
     </p>
   </header>
 
@@ -24,31 +28,259 @@
       <input
         type="text"
         class="search-input"
-        placeholder="بحث باسم الكتاب، المادة، أو الفصل الدراسي..."
+        placeholder="بحث باسم المذكرة، الفيديو، أو الفصل الدراسي..."
         [value]="libraryService.searchQuery()"
-        (input)="onSearchChange($event)"
-      />
-      <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        (input)="onSearchChange($event)" />
+      <svg
+        class="search-icon"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
       </svg>
+    </div>
+
+    <div class="library-filter-chips">
+      <button
+        type="button"
+        class="filter-chip"
+        [class.active]="libraryService.selectedFilter() === 'ALL'"
+        (click)="setFilter('ALL')">
+        جميع المواد ({{ libraryService.books().length }})
+      </button>
+      <button
+        type="button"
+        class="filter-chip"
+        [class.active]="libraryService.selectedFilter() === 'PDF'"
+        (click)="setFilter('PDF')">
+        📄 مذكرات PDF
+      </button>
+      <button
+        type="button"
+        class="filter-chip"
+        [class.active]="libraryService.selectedFilter() === 'Video'"
+        (click)="setFilter('Video')">
+        🎬 فيديوهات تعليمية
+      </button>
+      <button
+        type="button"
+        class="filter-chip"
+        [class.active]="libraryService.selectedFilter() === 'DOCX'"
+        (click)="setFilter('DOCX')">
+        📝 مستندات Word
+      </button>
+      <button
+        type="button"
+        class="filter-chip"
+        [class.active]="libraryService.selectedFilter() === 'PPTX'"
+        (click)="setFilter('PPTX')">
+        📊 عروض تقديمية
+      </button>
     </div>
   </section>
 
   <!-- Books Grid -->
   <section class="books-grid">
-    @for (book of books(); track book.id) {
-      <app-book-card
-        [book]="book"
-        (download)="onDownload($event)"
-        (preview)="onPreview($event)"
-      ></app-book-card>
-    } @empty {
-      <div class="empty-state">
-        <svg class="empty-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-        </svg>
-        <p class="empty-text">لم يتم العثور على كتب تطابق البحث الحالي.</p>
+    @if (libraryService.loading()) {
+      <div class="loading-state-box">
+        <div class="spinner"></div>
+        <p>جارٍ جلب وتحديث المحتوى والمذكرات المشترك بها من الخادم...</p>
       </div>
+    } @else {
+      @for (book of books(); track book.id) {
+        <app-book-card
+          [book]="book"
+          (download)="onDownload($event)"
+          (preview)="onPreview($event)"></app-book-card>
+      } @empty {
+        <div class="empty-state">
+          <svg
+            class="empty-icon"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="1.5">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+          <p class="empty-text">لم يتم العثور على مواد أو كتب دراسية حالياً.</p>
+        </div>
+      }
     }
   </section>
+
+  <!-- Video Streaming Modal -->
+  @if (activeVideoBook(); as v) {
+    <div
+      class="video-modal-backdrop animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      (click)="closeVideoStream()"
+      (keydown.escape)="closeVideoStream()">
+      <div
+        class="video-modal-container animate-scale-up"
+        role="document"
+        tabindex="0"
+        (click)="$event.stopPropagation()"
+        (keydown)="$event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <div class="header-info">
+            <span class="video-badge">🎬 بث فيديو تعليمي</span>
+            <h2 class="modal-title">{{ v.title }}</h2>
+          </div>
+          <button
+            type="button"
+            class="btn-close-modal"
+            (click)="closeVideoStream()"
+            aria-label="إغلاق مشغل الفيديو">
+            ✕
+          </button>
+        </div>
+
+        <!-- Video Player Frame -->
+        <div class="video-player-wrapper">
+          @if (videoLoading()) {
+            <div class="video-loading-box">
+              <div class="spinner"></div>
+              <span>جارٍ إنشاء وتأمين رابط البث المباشر من السحابة...</span>
+            </div>
+          } @else if (videoError()) {
+            <div class="video-error-box">
+              <span class="error-icon">⚠️</span>
+              <p class="error-text">{{ videoError() }}</p>
+              @if (v.downloadUrl && v.downloadUrl !== '#') {
+                <button type="button" class="btn-retry" (click)="openExternal(v.downloadUrl)">
+                  محاولة فتح الفيديو في نافذة مستقلة ↗
+                </button>
+              }
+            </div>
+          } @else if (activeVideoStreamUrl()) {
+            <video
+              class="video-element"
+              [src]="activeVideoStreamUrl()"
+              controls
+              playsinline
+              preload="metadata"
+              (error)="onVideoElementError($event)">
+              متصفحك لا يدعم تشغيل الفيديو المباشر.
+            </video>
+          }
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="video-modal-footer">
+          <div class="meta-tag">
+            <span>الحجم: {{ v.fileSizeMb }} MB</span>
+            <span class="dot">•</span>
+            <span>الصيغة: {{ v.fileFormat }}</span>
+            <span
+              class="status-pill"
+              [class.pending]="v.parseStatus === 'Pending'"
+              [class.parsed]="v.parseStatus === 'Parsed'">
+              {{ v.parseStatus === 'Pending' ? 'قيد المعالجة' : 'جاهز للمشاهدة' }}
+            </span>
+          </div>
+          <div class="footer-btns">
+            @if (activeVideoStreamUrl()) {
+              <button
+                type="button"
+                class="btn-external"
+                (click)="openExternal(activeVideoStreamUrl())">
+                فتح في نافذة مستقلة ↗
+              </button>
+            }
+            <button type="button" class="btn-done" (click)="closeVideoStream()">
+              إغلاق المشغل
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- PDF & Document Preview Reader Modal -->
+  @if (activePreviewBook(); as b) {
+    <div
+      class="pdf-modal-backdrop animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+      (click)="closePreview()"
+      (keydown.escape)="closePreview()">
+      <div
+        class="pdf-modal-container animate-scale-up"
+        role="document"
+        tabindex="0"
+        (click)="$event.stopPropagation()"
+        (keydown)="$event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <div class="doc-header-titles">
+            <span class="doc-type-badge">{{ b.fileFormat }}</span>
+            <h2 class="modal-title">{{ b.title }}</h2>
+            <span class="modal-subtitle">{{ b.subjectName }} • {{ b.fileSizeMb }} MB</span>
+          </div>
+          <div class="header-right-actions">
+            <button
+              type="button"
+              class="btn-header-action"
+              (click)="openExternal(b.downloadUrl)"
+              title="فتح في تبويب مستقل">
+              ↗ فتح في نافذة مستقلة
+            </button>
+            <button
+              type="button"
+              class="btn-close-modal"
+              (click)="closePreview()"
+              aria-label="إغلاق عارض المستند">
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <!-- Real Document Viewer Frame -->
+        <div class="modal-body-reader">
+          @if (isPdf(b)) {
+            <iframe
+              [src]="getPdfPreviewUrl(b)"
+              class="document-iframe-viewer"
+              title="عارض المستند"></iframe>
+          } @else if (isImage(b)) {
+            <div class="image-viewer-container">
+              <img [src]="b.downloadUrl" [alt]="b.title" class="document-image-view" />
+            </div>
+          } @else {
+            <iframe
+              [src]="getOfficePreviewUrl(b)"
+              class="document-iframe-viewer"
+              title="عارض المستندات"></iframe>
+          }
+        </div>
+
+        <!-- Reader Footer Toolbar -->
+        <div class="modal-footer-toolbar">
+          <div class="doc-meta-info">
+            <span>الملف: {{ b.title }}</span>
+            <span class="status-indicator">
+              {{ b.parseStatus === 'Parsed' ? '✅ تمت المعالجة' : '⏳ قيد المعالجة' }}
+            </span>
+          </div>
+
+          <div class="footer-actions">
+            <button type="button" class="btn-download-direct" (click)="onDownload(b)">
+              📥 تنزيل الملف ({{ b.fileSizeMb }} MB)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 </div>

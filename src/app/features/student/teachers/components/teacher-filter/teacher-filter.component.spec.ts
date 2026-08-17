@@ -10,7 +10,12 @@ describe('TeacherFilterComponent', () => {
 
   const mockOptions: readonly SubjectFilterOption[] = [
     { id: 'all', labelKey: 'STUDENT.TEACHERS.FILTER_ALL', defaultLabel: 'كل المواد' },
-    { id: 'math', labelKey: 'STUDENT.TEACHERS.FILTER_MATH', defaultLabel: 'الرياضيات', emoji: '📐' },
+    {
+      id: 'math',
+      labelKey: 'STUDENT.TEACHERS.FILTER_MATH',
+      defaultLabel: 'الرياضيات',
+      emoji: '📐',
+    },
   ];
 
   beforeEach(async () => {

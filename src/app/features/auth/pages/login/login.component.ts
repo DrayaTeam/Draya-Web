@@ -13,7 +13,7 @@ import { ApiError } from '../../../../core/models/api-error.model';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
 })
 export class LoginComponent {
   private readonly auth = inject(AuthService);
@@ -26,7 +26,7 @@ export class LoginComponent {
   readonly loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
-    rememberMe: [false]
+    rememberMe: [false],
   });
 
   readonly loading = this.auth.isLoading;
@@ -34,52 +34,65 @@ export class LoginComponent {
   readonly showPassword = signal(false);
 
   togglePassword(): void {
-    this.showPassword.update(s => !s);
+    this.showPassword.update((s) => !s);
   }
 
   onSubmit(): void {
     // Prevent double-submit by checking loading state
-    if (this.loginForm.invalid || this.loginForm.untouched || this.loading()) return;
-    
+    if (this.loginForm.invalid || this.loading()) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
     // Clear old error for clean validation
     this.inlineError.set(null);
 
     const { email, password, rememberMe } = this.loginForm.getRawValue();
 
-    this.auth.login({ email, password, rememberMe }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (res) => {
-        const role = res.user.role;
-        const dashboards: Record<string, string> = {
-          teacher: '/teacher/dashboard',
-          student: '/student/dashboard',
-          parent: '/parent/reports',
-        };
-        const targetUrl = dashboards[role];
-        if (targetUrl) {
-          this.router.navigate([targetUrl]);
-        } else {
-          this.messageService?.add({
-            severity: 'error',
-            summary: this.translate.instant('ERROR.TITLE'),
-            detail: this.translate.instant('AUTH.LOGIN.UNRECOGNIZED_ROLE', { role })
-          });
-        }
-      },
-      error: (err: ApiError) => {
-        if (err.code === 'INVALID_CREDENTIALS' || err.code === 'HTTP_401' || err.code === 'SESSION_EXPIRED' || err.code === 'HTTP_403') {
-          // Show inline error for incorrect credentials
-          this.inlineError.set(this.translate.instant('AUTH.LOGIN.ERROR'));
-          // Mark form as touched so it doesn't immediately lock out resubmit
-          this.loginForm.markAsTouched(); 
-        } else {
-          // Unexpected or network error
-          this.messageService?.add({
-            severity: 'error',
-            summary: this.translate.instant('ERROR.TITLE'),
-            detail: this.translate.instant('COMMON.ERROR')
-          });
-        }
-      }
-    });
+    this.auth
+      .login({ email, password, rememberMe })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          const role = (res.user?.role || '').toLowerCase();
+          const dashboards: Record<string, string> = {
+            teacher: '/teacher/dashboard',
+            student: '/student/dashboard',
+            parent: '/parent/reports',
+            admin: '/admin/dashboard',
+            superadmin: '/admin/dashboard',
+          };
+          const targetUrl = dashboards[role];
+          if (targetUrl) {
+            this.router.navigate([targetUrl]);
+          } else {
+            this.messageService?.add({
+              severity: 'error',
+              summary: this.translate.instant('ERROR.TITLE'),
+              detail: this.translate.instant('AUTH.LOGIN.UNRECOGNIZED_ROLE', { role }),
+            });
+          }
+        },
+        error: (err: ApiError) => {
+          if (
+            err.code === 'INVALID_CREDENTIALS' ||
+            err.code === 'HTTP_401' ||
+            err.code === 'SESSION_EXPIRED' ||
+            err.code === 'HTTP_403'
+          ) {
+            // Show inline error for incorrect credentials
+            this.inlineError.set(this.translate.instant('AUTH.LOGIN.ERROR'));
+            // Mark form as touched so it doesn't immediately lock out resubmit
+            this.loginForm.markAsTouched();
+          } else {
+            // Unexpected or network error
+            this.messageService?.add({
+              severity: 'error',
+              summary: this.translate.instant('ERROR.TITLE'),
+              detail: this.translate.instant('COMMON.ERROR'),
+            });
+          }
+        },
+      });
   }
 }

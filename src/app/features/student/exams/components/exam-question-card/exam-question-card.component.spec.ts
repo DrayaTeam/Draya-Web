@@ -50,7 +50,10 @@ describe('ExamQuestionCardComponent', () => {
     spyOn(component.selectOption, 'emit');
     const optionBtn = fixture.nativeElement.querySelector('.option-item') as HTMLButtonElement;
     optionBtn.click();
-    expect(component.selectOption.emit).toHaveBeenCalledWith({ questionId: 'q1', optionId: 'opt1' });
+    expect(component.selectOption.emit).toHaveBeenCalledWith({
+      questionId: 'q1',
+      optionId: 'opt1',
+    });
   });
 
   it('should emit toggleFlag on flag button click', () => {

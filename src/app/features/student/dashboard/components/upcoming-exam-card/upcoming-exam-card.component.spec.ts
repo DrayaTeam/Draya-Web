@@ -35,7 +35,9 @@ describe('UpcomingExamCardComponent', () => {
 
   it('should render title and tag pill', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.exam-title')?.textContent).toContain('اختبار الباب الثالث (جبر)');
+    expect(compiled.querySelector('.exam-title')?.textContent).toContain(
+      'اختبار الباب الثالث (جبر)',
+    );
     expect(compiled.querySelector('.tag-pill')?.textContent).toContain('هام');
   });
 });
