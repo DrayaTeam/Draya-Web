@@ -463,7 +463,9 @@
         cursor: pointer;
         text-align: right;
         direction: rtl;
-        transition: background-color 0.2s ease, border-color 0.2s ease;
+        transition:
+          background-color 0.2s ease,
+          border-color 0.2s ease;
 
         &:hover {
           background: #f3f8f7;
@@ -530,7 +532,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s;
+            transition:
+              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.2s;
 
             &.rotate-180 {
               transform: rotate(180deg);
@@ -1020,4 +1024,3 @@
   height: 280px;
   border-radius: 24px;
 }
-

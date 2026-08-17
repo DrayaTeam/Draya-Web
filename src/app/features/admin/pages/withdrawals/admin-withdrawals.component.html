@@ -70,7 +70,11 @@
   <!-- 4. Actions Cell -->
   <ng-template #actionsTpl let-row>
     <div class="actions-cell">
-      <button class="action-icon-btn view-btn" (click)="openDetail(row)" title="عرض التفاصيل" type="button">
+      <button
+        class="action-icon-btn view-btn"
+        (click)="openDetail(row)"
+        title="عرض التفاصيل"
+        type="button">
         <i class="pi pi-eye"></i>
       </button>
 
@@ -163,13 +167,17 @@
             <div class="payout-details">
               @if (acc.accountName) {
                 <div class="payout-row">
-                  <span class="label">{{ 'ADMIN.WITHDRAWALS.DETAIL_ACCOUNT_NAME' | translate }}:</span>
+                  <span class="label">
+                    {{ 'ADMIN.WITHDRAWALS.DETAIL_ACCOUNT_NAME' | translate }}:
+                  </span>
                   <span class="value">{{ acc.accountName }}</span>
                 </div>
               }
               @if (acc.accountIdentifier) {
                 <div class="payout-row">
-                  <span class="label">{{ 'ADMIN.WITHDRAWALS.DETAIL_ACCOUNT_ID' | translate }}:</span>
+                  <span class="label">
+                    {{ 'ADMIN.WITHDRAWALS.DETAIL_ACCOUNT_ID' | translate }}:
+                  </span>
                   <span class="value ltr font-mono">{{ acc.accountIdentifier }}</span>
                 </div>
               }
@@ -192,21 +200,32 @@
           </div>
         }
       </div>
+    }
 
-      <!-- Drawer Footer Actions -->
+    <!-- Drawer Footer Actions -->
+    @if (selectedWithdrawal()) {
       <div footer class="drawer-actions">
         @if (isPending(selectedWithdrawal()?.status)) {
-          <button class="btn btn-primary" (click)="promptApprove(selectedWithdrawal()!)" type="button">
+          <button
+            class="btn btn-primary"
+            (click)="promptApprove(selectedWithdrawal()!)"
+            type="button">
             <i class="pi pi-check"></i>
             <span>{{ 'ADMIN.WITHDRAWALS.ACTION_APPROVE' | translate }}</span>
           </button>
-          <button class="btn btn-danger" (click)="promptReject(selectedWithdrawal()!)" type="button">
+          <button
+            class="btn btn-danger"
+            (click)="promptReject(selectedWithdrawal()!)"
+            type="button">
             <i class="pi pi-times"></i>
             <span>{{ 'ADMIN.WITHDRAWALS.ACTION_REJECT' | translate }}</span>
           </button>
         }
         @if (isApproved(selectedWithdrawal()?.status)) {
-          <button class="btn btn-success" (click)="promptMarkPaid(selectedWithdrawal()!)" type="button">
+          <button
+            class="btn btn-success"
+            (click)="promptMarkPaid(selectedWithdrawal()!)"
+            type="button">
             <i class="pi pi-dollar"></i>
             <span>{{ 'ADMIN.WITHDRAWALS.ACTION_MARK_PAID' | translate }}</span>
           </button>

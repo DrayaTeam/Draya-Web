@@ -173,48 +173,52 @@ export class StudentEnrollmentService extends ApiBaseService {
         const name = classroom?.name || 'الباقة الدراسية';
         const price = classroom?.price || 0;
 
-        const lessonsList: LessonItem[] = rawMaterials.map((m: {
-          materialId?: string;
-          id?: string;
-          title?: string;
-          name?: string;
-          type?: string;
-          materialType?: string;
-          durationText?: string;
-          fileUrl?: string;
-          url?: string;
-          currentVersion?: { fileUrl?: string };
-        }, idx: number) => {
-          const rawType = (m.materialType || m.type || '').toString().toLowerCase();
-          const rawTitle = (m.title || m.name || '').toString().toLowerCase();
-          const isPdf =
-            rawType.includes('pdf') ||
-            rawType.includes('doc') ||
-            rawTitle.endsWith('.pdf') ||
-            rawTitle.endsWith('.doc');
-          const isExam = rawType.includes('exam') || rawType.includes('quiz');
-          const type: 'video' | 'pdf' | 'exam' = isPdf ? 'pdf' : isExam ? 'exam' : 'video';
+        const lessonsList: LessonItem[] = rawMaterials.map(
+          (
+            m: {
+              materialId?: string;
+              id?: string;
+              title?: string;
+              name?: string;
+              type?: string;
+              materialType?: string;
+              durationText?: string;
+              fileUrl?: string;
+              url?: string;
+              currentVersion?: { fileUrl?: string };
+            },
+            idx: number,
+          ) => {
+            const rawType = (m.materialType || m.type || '').toString().toLowerCase();
+            const rawTitle = (m.title || m.name || '').toString().toLowerCase();
+            const isPdf =
+              rawType.includes('pdf') ||
+              rawType.includes('doc') ||
+              rawTitle.endsWith('.pdf') ||
+              rawTitle.endsWith('.doc');
+            const isExam = rawType.includes('exam') || rawType.includes('quiz');
+            const type: 'video' | 'pdf' | 'exam' = isPdf ? 'pdf' : isExam ? 'exam' : 'video';
 
-          const fileUrl =
-            m.currentVersion?.fileUrl ||
-            m.fileUrl ||
-            m.url ||
-            (m.materialId
-              ? `http://draya-api.runasp.net/api/v1/materials/${m.materialId}/stream`
-              : '');
+            const fileUrl =
+              m.currentVersion?.fileUrl ||
+              m.fileUrl ||
+              m.url ||
+              (m.materialId
+                ? `http://draya-api.runasp.net/api/v1/materials/${m.materialId}/stream`
+                : '');
 
-          const durationText =
-            m.durationText ||
-            (isPdf ? 'مستند PDF' : isExam ? 'اختبار تدريبي' : 'فيديو تعليمي');
+            const durationText =
+              m.durationText || (isPdf ? 'مستند PDF' : isExam ? 'اختبار تدريبي' : 'فيديو تعليمي');
 
-          return {
-            id: m.materialId || m.id || `les_${idx + 1}`,
-            title: m.title || m.name || `محاضرة ${idx + 1}`,
-            type,
-            duration: durationText,
-            fileUrl,
-          };
-        });
+            return {
+              id: m.materialId || m.id || `les_${idx + 1}`,
+              title: m.title || m.name || `محاضرة ${idx + 1}`,
+              type,
+              duration: durationText,
+              fileUrl,
+            };
+          },
+        );
 
         return {
           id: classroomId,
@@ -306,13 +310,15 @@ export class StudentEnrollmentService extends ApiBaseService {
       }),
       catchError((err) => {
         let errorMsg =
-          err?.error?.message ||
-          err?.error?.error?.message ||
-          err?.message ||
-          err?.error?.title;
+          err?.error?.message || err?.error?.error?.message || err?.message || err?.error?.title;
 
-        if (errorMsg === 'An unexpected error occurred.' || err?.code === 'INTERNAL_ERROR' || err?.status === 500) {
-          errorMsg = 'تعذر الاتصال ببوابة Paymob من الخادم (Paymob 500 Internal Error)، يرجى مراجعة إعدادات الربط في السيرفر.';
+        if (
+          errorMsg === 'An unexpected error occurred.' ||
+          err?.code === 'INTERNAL_ERROR' ||
+          err?.status === 500
+        ) {
+          errorMsg =
+            'تعذر الاتصال ببوابة Paymob من الخادم (Paymob 500 Internal Error)، يرجى مراجعة إعدادات الربط في السيرفر.';
         } else if (err?.status === 400) {
           errorMsg = 'معرف الباقة غير صالح أو البيانات غير مكتملة.';
         } else if (err?.status === 404) {
@@ -350,9 +356,7 @@ export class StudentEnrollmentService extends ApiBaseService {
       purpose?: string;
       classroomId?: string;
       isEnrolled: boolean;
-    }>(`/payments/${transactionId}/status`).pipe(
-      catchError(() => of(null)),
-    );
+    }>(`/payments/${transactionId}/status`).pipe(catchError(() => of(null)));
   }
 
   /**
@@ -366,4 +370,3 @@ export class StudentEnrollmentService extends ApiBaseService {
     );
   }
 }
-

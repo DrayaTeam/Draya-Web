@@ -436,11 +436,7 @@ export class StudentQaChannelService extends ApiBaseService {
       .subscribe();
   }
 
-  editQuestion(
-    classroomId: string,
-    questionId: string,
-    content: string,
-  ): Observable<void> {
+  editQuestion(classroomId: string, questionId: string, content: string): Observable<void> {
     const trimmed = content.trim();
     return this.put<void>(`/classrooms/${classroomId}/questions/${questionId}`, {
       content: trimmed,
@@ -476,10 +472,9 @@ export class StudentQaChannelService extends ApiBaseService {
     content: string,
   ): Observable<void> {
     const trimmed = content.trim();
-    return this.put<void>(
-      `/classrooms/${classroomId}/questions/${questionId}/replies/${replyId}`,
-      { content: trimmed },
-    ).pipe(
+    return this.put<void>(`/classrooms/${classroomId}/questions/${questionId}/replies/${replyId}`, {
+      content: trimmed,
+    }).pipe(
       tap(() => {
         this.activeReplies.update((list) =>
           list.map((r) => (r.id === replyId ? { ...r, content: trimmed } : r)),
@@ -488,11 +483,7 @@ export class StudentQaChannelService extends ApiBaseService {
     );
   }
 
-  deleteReply(
-    classroomId: string,
-    questionId: string,
-    replyId: string,
-  ): Observable<void> {
+  deleteReply(classroomId: string, questionId: string, replyId: string): Observable<void> {
     return this.delete<void>(
       `/classrooms/${classroomId}/questions/${questionId}/replies/${replyId}`,
     ).pipe(
@@ -507,4 +498,3 @@ export class StudentQaChannelService extends ApiBaseService {
     );
   }
 }
-

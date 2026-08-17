@@ -3,7 +3,7 @@
 **Date:** August 17, 2026  
 **Document Purpose:** Frontend-to-Backend integration reference, endpoint audit, and specification bridge for upcoming backend tasks.  
 **Frontend Stack:** Angular 20 (Standalone + Signals), PrimeNG v20, Tailwind v4.  
-**Branch:** `feature/admin-module`  
+**Branch:** `feature/admin-module`
 
 ---
 
@@ -23,29 +23,29 @@ The frontend services are fully wired to the following live endpoints:
 
 ### 2.1 Financial & Wallet Operations (`AdminFinancialService`)
 
-| Endpoint | Method | Status | Frontend Consumer | Payload / Parameters | Expected Response |
-| :--- | :---: | :---: | :--- | :--- | :--- |
-| `/api/v1/admin/financial/overview` | `GET` | **Live** | Dashboard (`/admin/dashboard`) | None | `FinancialOverviewDto` (see DTO definitions) |
-| `/api/v1/admin/financial/withdrawals` | `GET` | **Live** | Withdrawals (`/admin/withdrawals`) | Query: `statusFilter`, `pageNumber`, `pageSize` | `PaginatedResponse<WithdrawalDto>` |
-| `/api/v1/admin/financial/withdrawals/{id}/approve` | `POST` | **Live** | Withdrawals (`/admin/withdrawals`) | Path: `id` (Guid) | `200 OK` / `204 NoContent` |
-| `/api/v1/admin/financial/withdrawals/{id}/reject` | `POST` | **Live** | Withdrawals (`/admin/withdrawals`) | Path: `id`, Body: `{ rejectionReason: string }` | `200 OK` / `204 NoContent` |
-| `/api/v1/admin/financial/withdrawals/{id}/mark-paid` | `POST` | **Live** | Withdrawals (`/admin/withdrawals`) | Path: `id`, Body: `{ adminNote?: string }` | `200 OK` / `204 NoContent` |
-| `/api/v1/admin/financial/adjustments` | `POST` | **Live** | Adjustments (`/admin/adjustments`) | Body: `AdjustmentRequest` | `200 OK` / `204 NoContent` |
-| `/api/v1/admin/financial/settings` | `GET` | **Live** | Settings (`/admin/settings`) | None | `PlatformSettingsDto` |
-| `/api/v1/admin/financial/settings` | `PUT` | **Live** | Settings (`/admin/settings`) | Body: `PlatformSettingsDto` | `PlatformSettingsDto` or `200 OK` |
+| Endpoint                                             | Method |  Status  | Frontend Consumer                  | Payload / Parameters                            | Expected Response                            |
+| :--------------------------------------------------- | :----: | :------: | :--------------------------------- | :---------------------------------------------- | :------------------------------------------- |
+| `/api/v1/admin/financial/overview`                   | `GET`  | **Live** | Dashboard (`/admin/dashboard`)     | None                                            | `FinancialOverviewDto` (see DTO definitions) |
+| `/api/v1/admin/financial/withdrawals`                | `GET`  | **Live** | Withdrawals (`/admin/withdrawals`) | Query: `statusFilter`, `pageNumber`, `pageSize` | `PaginatedResponse<WithdrawalDto>`           |
+| `/api/v1/admin/financial/withdrawals/{id}/approve`   | `POST` | **Live** | Withdrawals (`/admin/withdrawals`) | Path: `id` (Guid)                               | `200 OK` / `204 NoContent`                   |
+| `/api/v1/admin/financial/withdrawals/{id}/reject`    | `POST` | **Live** | Withdrawals (`/admin/withdrawals`) | Path: `id`, Body: `{ rejectionReason: string }` | `200 OK` / `204 NoContent`                   |
+| `/api/v1/admin/financial/withdrawals/{id}/mark-paid` | `POST` | **Live** | Withdrawals (`/admin/withdrawals`) | Path: `id`, Body: `{ adminNote?: string }`      | `200 OK` / `204 NoContent`                   |
+| `/api/v1/admin/financial/adjustments`                | `POST` | **Live** | Adjustments (`/admin/adjustments`) | Body: `AdjustmentRequest`                       | `200 OK` / `204 NoContent`                   |
+| `/api/v1/admin/financial/settings`                   | `GET`  | **Live** | Settings (`/admin/settings`)       | None                                            | `PlatformSettingsDto`                        |
+| `/api/v1/admin/financial/settings`                   | `PUT`  | **Live** | Settings (`/admin/settings`)       | Body: `PlatformSettingsDto`                     | `PlatformSettingsDto` or `200 OK`            |
 
 ### 2.2 Academic Configuration Endpoints
 
-| Endpoint | Method | Status | Frontend Consumer | Payload / Parameters |
-| :--- | :---: | :---: | :--- | :--- |
-| `/api/v1/classroom-types` | `GET` | **Live** | Classroom Types (`/admin/classroom-types`) | None |
-| `/api/v1/classroom-types` | `POST` | **Live** | Classroom Types Modal | `{ name: string, description?: string }` |
-| `/api/v1/classroom-types/{id}` | `PUT` | **Live** | Classroom Types Modal | `{ name: string, description?: string, isActive: boolean }` |
-| `/api/v1/classroom-types/{id}` | `DELETE` | **Live** | Classroom Types Table | Path: `id` (Guid) |
-| `/api/v1/grade-levels` | `GET` | **Live** | Grade Levels (`/admin/grade-levels`) | None |
-| `/api/v1/grade-levels` | `POST` | **Live** | Grade Levels Modal | `{ name: string, description?: string, sortOrder: number }` |
-| `/api/v1/grade-levels/{id}` | `PUT` | **Live** | Grade Levels Modal | `{ name: string, description?: string, sortOrder: number, isActive: boolean }` |
-| `/api/v1/grade-levels/{id}` | `DELETE` | **Live** | Grade Levels Table | Path: `id` (Guid) |
+| Endpoint                       |  Method  |  Status  | Frontend Consumer                          | Payload / Parameters                                                           |
+| :----------------------------- | :------: | :------: | :----------------------------------------- | :----------------------------------------------------------------------------- |
+| `/api/v1/classroom-types`      |  `GET`   | **Live** | Classroom Types (`/admin/classroom-types`) | None                                                                           |
+| `/api/v1/classroom-types`      |  `POST`  | **Live** | Classroom Types Modal                      | `{ name: string, description?: string }`                                       |
+| `/api/v1/classroom-types/{id}` |  `PUT`   | **Live** | Classroom Types Modal                      | `{ name: string, description?: string, isActive: boolean }`                    |
+| `/api/v1/classroom-types/{id}` | `DELETE` | **Live** | Classroom Types Table                      | Path: `id` (Guid)                                                              |
+| `/api/v1/grade-levels`         |  `GET`   | **Live** | Grade Levels (`/admin/grade-levels`)       | None                                                                           |
+| `/api/v1/grade-levels`         |  `POST`  | **Live** | Grade Levels Modal                         | `{ name: string, description?: string, sortOrder: number }`                    |
+| `/api/v1/grade-levels/{id}`    |  `PUT`   | **Live** | Grade Levels Modal                         | `{ name: string, description?: string, sortOrder: number, isActive: boolean }` |
+| `/api/v1/grade-levels/{id}`    | `DELETE` | **Live** | Grade Levels Table                         | Path: `id` (Guid)                                                              |
 
 ---
 
@@ -58,22 +58,27 @@ The following endpoints and workflows need to be implemented or confirmed on the
 Admins require dedicated endpoints to update their personal identity information and modify their password securely.
 
 #### 1. Update Admin Profile
+
 - **Route:** `PUT /api/v1/auth/profile` (or `PUT /api/v1/admin/profile`)
 - **Authorization:** `RequireRole("Admin", "SuperAdmin")`
 - **Request Body:**
+
 ```json
 {
-  "fullName": "أ. عبدالرحمن العنزي",
+  "fullName": "أ.محمود مصطفى",
   "email": "admin@draya.com",
   "phoneNumber": "+966501234567"
 }
 ```
+
 - **Response `200 OK`:** Returns updated user object.
 
 #### 2. Change Password
+
 - **Route:** `POST /api/v1/auth/change-password` (or `POST /api/v1/admin/profile/change-password`)
 - **Authorization:** `RequireRole("Admin", "SuperAdmin")`
 - **Request Body:**
+
 ```json
 {
   "currentPassword": "Admin@123456",
@@ -81,6 +86,7 @@ Admins require dedicated endpoints to update their personal identity information
   "confirmNewPassword": "NewAdminPassword@2026"
 }
 ```
+
 - **Response `200 OK` / `204 NoContent`**
 
 ---
@@ -90,9 +96,11 @@ Admins require dedicated endpoints to update their personal identity information
 To enable superadmins to invite new administrators or supervisors who can securely set their credentials via email link:
 
 #### 1. Invite Admin / Supervisor (Dispatches Email)
+
 - **Route:** `POST /api/v1/admin/supervisors/invite`
 - **Authorization:** `RequireRole("SuperAdmin")`
 - **Request Body:**
+
 ```json
 {
   "name": "د. سارة المنصور",
@@ -100,12 +108,14 @@ To enable superadmins to invite new administrators or supervisors who can secure
   "role": "Admin"
 }
 ```
+
 - **Backend Flow:**
   1. Creates user with status `PendingActivation` (or `Invited`).
   2. Generates an encrypted invitation/reset token (e.g. valid for 48 hours).
   3. Sends a branded welcome email containing the link:  
      `https://draya.com/auth/accept-invite?token={inviteToken}&email={email}` (or `https://draya.com/auth/reset-password?token={inviteToken}&email={email}`).
 - **Response `201 Created` / `200 OK`:**
+
 ```json
 {
   "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -118,9 +128,11 @@ To enable superadmins to invite new administrators or supervisors who can secure
 ```
 
 #### 2. Accept Invitation / Set Initial Password
+
 - **Route:** `POST /api/v1/auth/accept-invite` (or `POST /api/v1/auth/reset-password`)
 - **Authorization:** Anonymous / Public with Token
 - **Request Body:**
+
 ```json
 {
   "email": "sara.mansour@draya.edu.sa",
@@ -129,22 +141,26 @@ To enable superadmins to invite new administrators or supervisors who can secure
   "confirmPassword": "NewSecurePassword@2026"
 }
 ```
+
 - **Response `200 OK`:** Activates user, marks email as verified, and returns JWT token or redirects to login.
 
 #### 3. Resend Invitation Email
+
 - **Route:** `POST /api/v1/admin/supervisors/{id}/resend-invite`
 - **Authorization:** `RequireRole("SuperAdmin")`
 - **Response `200 OK` / `204 NoContent`**
 
 #### 4. List All Supervisors
+
 - **Route:** `GET /api/v1/admin/supervisors`
 - **Authorization:** `RequireRole("SuperAdmin", "Admin")`
 - **Response `200 OK`:**
+
 ```json
 [
   {
     "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    "name": "أ. عبدالرحمن العنزي",
+    "name": "أ. محمود مصطفى",
     "email": "admin@draya.com",
     "role": "SuperAdmin",
     "isActive": true,
@@ -154,14 +170,17 @@ To enable superadmins to invite new administrators or supervisors who can secure
 ```
 
 #### 5. Toggle Supervisor Status (Activate / Deactivate)
+
 - **Route:** `PUT /api/v1/admin/supervisors/{id}/status`
 - **Authorization:** `RequireRole("SuperAdmin")`
 - **Request Body:**
+
 ```json
 {
   "isActive": false
 }
 ```
+
 - **Response `200 OK` / `204 NoContent`**
 
 ---
@@ -244,10 +263,10 @@ export interface PlatformSettingsDto {
 
 - **No Deceptive Fallbacks:** The UI does not fall back to fake records or mock numbers if an endpoint fails or returns empty data.
 - **Empty States:** When a table has 0 records, a dedicated empty container is rendered:
-  - *Withdrawals:* "لا توجد طلبات سحب" (No withdrawal requests).
-  - *Classroom Types:* "لا توجد أنواع فصول" (No classroom types configured).
-  - *Grade Levels:* "لا توجد مراحل دراسية" (No grade levels configured).
-  - *Supervisors:* "لا يوجد مشرفون" (No supervisors found).
+  - _Withdrawals:_ "لا توجد طلبات سحب" (No withdrawal requests).
+  - _Classroom Types:_ "لا توجد أنواع فصول" (No classroom types configured).
+  - _Grade Levels:_ "لا توجد مراحل دراسية" (No grade levels configured).
+  - _Supervisors:_ "لا يوجد مشرفون" (No supervisors found).
 - **Backend Error Propagation:** `error.error.message` from ASP.NET Core response is passed directly to `ToastService.error()` for transparent troubleshooting.
 
 ---
@@ -256,13 +275,13 @@ export interface PlatformSettingsDto {
 
 Before handoff, the entire test and quality pipeline was executed and passed with 0 failures:
 
-| Verification Stage | Command | Result |
-| :--- | :--- | :--- |
-| **Linting** | `npx ng lint` | **0 errors, 0 warnings** |
-| **Code Formatting** | `npx prettier --check` | **All files compliant** |
-| **Unit Tests** | `npx ng test --watch=false` | **201 / 201 passed (100%)** |
-| **E2E Integration** | `npx playwright test e2e/admin-module.spec.ts` | **9 / 9 passed (100%)** |
-| **Production Build** | `npx ng build --configuration=production` | **Success (`exit code 0`)** |
+| Verification Stage   | Command                                        | Result                      |
+| :------------------- | :--------------------------------------------- | :-------------------------- |
+| **Linting**          | `npx ng lint`                                  | **0 errors, 0 warnings**    |
+| **Code Formatting**  | `npx prettier --check`                         | **All files compliant**     |
+| **Unit Tests**       | `npx ng test --watch=false`                    | **201 / 201 passed (100%)** |
+| **E2E Integration**  | `npx playwright test e2e/admin-module.spec.ts` | **9 / 9 passed (100%)**     |
+| **Production Build** | `npx ng build --configuration=production`      | **Success (`exit code 0`)** |
 
 ---
 

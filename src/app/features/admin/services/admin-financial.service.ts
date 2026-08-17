@@ -74,7 +74,11 @@ export class AdminFinancialService extends ApiBaseService {
   }
 
   /** GET /api/v1/teachers - List all active teachers */
-  getTeachers(): Observable<{ userId?: string; id?: string; fullName?: string; name?: string; email?: string }[]> {
-    return this.get<{ userId?: string; id?: string; fullName?: string; name?: string; email?: string }[]>('/teachers');
+  getTeachers(): Observable<
+    { userId?: string; id?: string; fullName?: string; name?: string; email?: string }[]
+  > {
+    return this.get<
+      { userId?: string; id?: string; fullName?: string; name?: string; email?: string }[]
+    >('/teachers');
   }
 }

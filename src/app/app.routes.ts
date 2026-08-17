@@ -64,9 +64,9 @@ export const appRoutes: Routes = [
   {
     path: 'payment/result',
     loadComponent: () =>
-      import(
-        './features/student/checkout/payment-callback/student-payment-callback.component'
-      ).then((m) => m.StudentPaymentCallbackComponent),
+      import('./features/student/checkout/payment-callback/student-payment-callback.component').then(
+        (m) => m.StudentPaymentCallbackComponent,
+      ),
   },
   {
     path: 'payment/callback',
