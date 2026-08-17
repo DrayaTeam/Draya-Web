@@ -26,7 +26,13 @@
         </label>
         <select id="teacherId" formControlName="teacherId" class="form-select">
           <option value="" disabled>
-            {{ 'ADMIN.ADJUSTMENTS.TEACHER_PLACEHOLDER' | translate }}
+            @if (loadingTeachers()) {
+              جاري تحميل قائمة المعلمين...
+            } @else if (teachers().length === 0) {
+              لا يوجد معلمون مسجلون حالياً
+            } @else {
+              {{ 'ADMIN.ADJUSTMENTS.TEACHER_PLACEHOLDER' | translate }}
+            }
           </option>
           @for (teacher of teachers(); track teacher.id) {
             <option [value]="teacher.id">{{ teacher.name }} ({{ teacher.email }})</option>

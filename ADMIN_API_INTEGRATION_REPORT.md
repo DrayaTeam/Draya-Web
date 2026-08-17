@@ -166,24 +166,10 @@ To enable superadmins to invite new administrators or supervisors who can secure
 
 ---
 
-### 3.3 Teacher Autocomplete & Balance Lookup (`AdminTeachersController` or `TeachersController`)
+### 3.3 Teacher Directory & Balance Lookup (`TeachersController` / `AdminTeachersController`)
 
-In the manual adjustment screen (`/admin/adjustments`), admins need to select a teacher dynamically:
-
-- **Route:** `GET /api/v1/admin/teachers/search?q={query}` (or `GET /api/v1/teachers/dropdown`)
-- **Query Parameter:** `q` (string search by name or email, minimum 2 characters).
-- **Response `200 OK`:**
-```json
-[
-  {
-    "id": "8a32d184-e53b-4781-8178-5db77a760b24",
-    "name": "أ. محمد الشناوي",
-    "email": "m.shinawy@draya.edu.sa",
-    "earnedBalance": 12500.00,
-    "purchasedBalance": 3000.00
-  }
-]
-```
+- **Current Implementation:** The adjustments screen (`/admin/adjustments`) is now **fully integrated with the live `GET /api/v1/teachers` endpoint**, dynamically populating the real teacher selection dropdown with real IDs, names, and emails.
+- **Optional Enhancement (Dynamic Balances):** If the backend provides `GET /api/v1/admin/teachers/search?q={query}` returning current wallet balances (`earnedBalance`, `purchasedBalance`), the UI will display them as informational pills alongside the selection.
 
 ---
 

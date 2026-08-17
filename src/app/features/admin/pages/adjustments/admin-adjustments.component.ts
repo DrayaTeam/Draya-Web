@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -28,21 +28,16 @@ interface TeacherOption {
   styleUrls: ['./admin-adjustments.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdminAdjustmentsComponent {
+export class AdminAdjustmentsComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly financialService = inject(AdminFinancialService);
   private readonly toast = inject(ToastService);
 
   readonly WalletBalanceType = WalletBalanceType;
 
-  // Initial teacher options
-  readonly teachers = signal<TeacherOption[]>([
-    { id: 't-1', name: 'أ. محمد الشناوي', email: 'm.shinawy@draya.edu.sa' },
-    { id: 't-2', name: 'د. فاطمة الزهراء', email: 'fatma.z@draya.edu.sa' },
-    { id: 't-3', name: 'م. أحمد كمال', email: 'ahmed.kamal@draya.edu.sa' },
-    { id: 't-4', name: 'أ. سارة إبراهيم', email: 'sara.i@draya.edu.sa' },
-    { id: 't-5', name: 'د. يوسف النجار', email: 'youssef.n@draya.edu.sa' },
-  ]);
+  // Real teacher options from GET /api/v1/teachers
+  readonly teachers = signal<TeacherOption[]>([]);
+  readonly loadingTeachers = signal<boolean>(false);
 
   readonly form = this.fb.group({
     teacherId: ['', Validators.required],
@@ -54,6 +49,34 @@ export class AdminAdjustmentsComponent {
 
   readonly isSubmitting = signal<boolean>(false);
   readonly isConfirmOpen = signal<boolean>(false);
+
+  ngOnInit(): void {
+    this.loadTeachers();
+  }
+
+  loadTeachers(): void {
+    this.loadingTeachers.set(true);
+    this.financialService
+      .getTeachers()
+      .pipe(finalize(() => this.loadingTeachers.set(false)))
+      .subscribe({
+        next: (list) => {
+          if (Array.isArray(list)) {
+            const mapped: TeacherOption[] = list.map((t) => ({
+              id: t.userId || t.id || '',
+              name: t.fullName || t.name || t.email || 'معلم',
+              email: t.email || '',
+            }));
+            this.teachers.set(mapped);
+          } else {
+            this.teachers.set([]);
+          }
+        },
+        error: () => {
+          this.teachers.set([]);
+        },
+      });
+  }
 
   onSubmit(): void {
     if (this.form.invalid) {
