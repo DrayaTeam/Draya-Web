@@ -15,6 +15,15 @@ svg {
   flex-shrink: 0;
 }
 
+/* Force cursor pointer on all buttons */
+button, 
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  cursor: pointer;
+}
+
 /* ── Global Keyframes & Animations ── */
 @keyframes drayaFadeInUp {
   from {
@@ -159,3 +168,73 @@ svg {
     transition: none !important;
   }
 }
+
+/* ── PrimeNG RTL Overrides for Menus ── */
+.p-menu.draya-action-menu {
+  min-width: 14rem !important;
+  padding: 0.5rem !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #f1f5f9 !important;
+}
+
+.draya-action-menu .p-menu-list {
+  padding: 0 !important;
+  margin: 0 !important;
+  list-style: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  width: 100% !important;
+}
+
+.draya-action-menu .p-menuitem {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.draya-action-menu .p-menuitem-link {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.75rem !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  text-decoration: none !important;
+  outline: none !important;
+  border: none !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.draya-action-menu .p-menuitem-icon {
+  margin: 0 !important;
+  color: #64748b !important;
+  font-size: 1.1rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.draya-action-menu .p-menuitem-text {
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  font-family: inherit !important;
+  color: #334155 !important;
+  margin: 0 !important;
+  flex-grow: 1 !important;
+  text-align: right !important;
+}
+
+.draya-action-menu .p-menuitem-link:hover {
+  background-color: #f5fcfb !important;
+}
+
+.draya-action-menu .p-menuitem-link:hover .p-menuitem-text,
+.draya-action-menu .p-menuitem-link:hover .p-menuitem-icon {
+  color: #1b6d63 !important;
+}
+

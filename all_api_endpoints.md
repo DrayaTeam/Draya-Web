@@ -482,3 +482,7 @@ This guide provides a detailed overview of **all API endpoints** currently avail
 * **Endpoint:** `POST /api/v1/payments/{id}/refund`
 * **Auth:** `SuperAdmin`
 * **Response:** `200 OK`
+
+---
+> [!WARNING]
+> Note: For the most up-to-date and complete endpoint documentation, especially for Materials, please refer to the live-pulled reference at `docs/draya-api-full-reference.md`.

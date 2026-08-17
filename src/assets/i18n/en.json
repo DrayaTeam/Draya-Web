@@ -222,6 +222,7 @@
       "QUOTA_EXCEEDED_DESC": "You have reached your current plan quota. Please upgrade your subscription to continue."
     }
   },
+
   "LANDING": {
     "BRAND": "Draya",
     "NAVBAR": {
@@ -415,6 +416,16 @@
       "REPORTS": "Reports",
       "SUBSCRIPTION": "Subscription & Usage",
       "ACCOUNT": "My Account"
+    },
+    "CLASSROOMS": {
+      "TITLE": "Classrooms",
+      "SUBTITLE": "Manage your student groups and classrooms",
+      "CREATE_NEW": "Create New Classroom",
+      "FILTER_ALL_GRADES": "All Grades",
+      "FILTER_ALL_SUBJECTS": "All Subjects",
+      "STUDENTS": "Students",
+      "EMPTY_TITLE": "No Classrooms Found",
+      "EMPTY_DESC": "You haven't created any classrooms matching your filters yet. Click the button above to start."
     },
     "DASHBOARD": {
       "CURRENT_DATE": "Sunday, July 20, 2026",

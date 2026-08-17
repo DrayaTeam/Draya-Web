@@ -1,0 +1,62 @@
+:host {
+  display: block;
+}
+
+/* ─── Pill Toggle Groups ─────────────────────────── */
+.qa-pill-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.qa-pill-group-sort {
+  background: #fafaf9;
+  border-color: #e5e7eb;
+}
+
+.qa-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 150ms ease;
+  white-space: nowrap;
+
+  svg {
+    color: #9ca3af;
+    transition: color 150ms ease;
+  }
+
+  &:hover {
+    background: #ffffff;
+    color: #374151;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+
+    svg { color: #374151; }
+  }
+
+  &.qa-pill-active {
+    background: #1b6d63;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(27, 109, 99, 0.25);
+
+    svg { color: rgba(255, 255, 255, 0.85); }
+
+    &:hover {
+      background: #134e48;
+      color: #ffffff;
+    }
+  }
+}

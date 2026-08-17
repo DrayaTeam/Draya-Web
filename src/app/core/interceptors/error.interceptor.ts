@@ -35,6 +35,27 @@ function normalizeFieldName(pascalField: string): string {
 function parseApiError(err: HttpErrorResponse): ApiError {
   const wrapper = err.error?.error;
 
+  // ASP.NET model validation: { errors: { content: ["The content field is required."] } }
+  const modelErrors = err.error?.errors;
+  if (modelErrors && typeof modelErrors === 'object') {
+    const details: ValidationError[] = [];
+    for (const [field, issues] of Object.entries(modelErrors)) {
+      const issueList = Array.isArray(issues) ? issues : [String(issues)];
+      details.push({
+        field: normalizeFieldName(field),
+        issue: issueList.filter(Boolean).join(' '),
+      });
+    }
+
+    if (details.length > 0) {
+      return {
+        code: 'VALIDATION_ERROR',
+        message: details.map((d) => d.issue).join(' '),
+        details,
+      };
+    }
+  }
+
   // Empty-body 401 (logout, /auth/me bad token, etc.)
   if (!wrapper || typeof wrapper !== 'object') {
     if (err.status === HttpStatusCode.Unauthorized) {

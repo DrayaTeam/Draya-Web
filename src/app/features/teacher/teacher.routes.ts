@@ -27,10 +27,18 @@ export const teacherRoutes: Routes = [
       {
         path: 'classrooms',
         loadComponent: () =>
-          import('./placeholder/teacher-placeholder.component').then(
-            (m) => m.TeacherPlaceholderComponent,
+          import('./classrooms/teacher-classrooms.component').then(
+            (m) => m.TeacherClassroomsComponent,
           ),
         title: 'إدارة الفصول — درايَة',
+      },
+      {
+        path: 'classrooms/:id',
+        loadComponent: () =>
+          import('./classrooms/classroom-detail/classroom-detail.component').then(
+            (m) => m.ClassroomDetailComponent,
+          ),
+        title: 'تفاصيل الفصل — درايَة',
       },
       {
         path: 'students',

@@ -49,6 +49,7 @@ export class TeacherProfileService {
         return throwError(() => err);
       }),
       map((profile) => {
+        console.log('[DEBUG] GET /teachers/{id} returned:', profile);
         let realEmail = profile.email;
         const token = this.auth.accessToken();
         if (token) {
@@ -62,6 +63,7 @@ export class TeacherProfileService {
           ...profile,
           // Overwrite the empty string with the real email from JWT
           email: realEmail,
+          pictureUrl: (profile as any).profilePictureUrl || (profile as any).pictureUrl || (profile as any).profilePicture || (profile as any).avatarUrl || (profile as any).avatar || (profile as any).imageUrl || undefined
         };
       }),
     );
@@ -85,49 +87,17 @@ export class TeacherProfileService {
   }
 
   /**
-   * Uploads teacher profile avatar to Cloudinary via POST /api/v1/teachers/profile/picture.
+   * Uploads a new profile picture for the teacher.
+   * `POST /api/v1/teachers/profile/picture`
    */
-  uploadAvatar(
-    file: File,
-  ): Observable<{ success: boolean; profilePictureUrl?: string; message: string }> {
+  uploadProfilePicture(file: File): Observable<string> {
     const formData = new FormData();
     formData.append('file', file);
-
-    return this.http
-      .post<{ profilePictureUrl: string }>(`${this.baseUrl}/profile/picture`, formData)
-      .pipe(
-        map((res) => {
-          if (res && res.profilePictureUrl) {
-            this.auth.updateLocalUser({ profilePictureUrl: res.profilePictureUrl });
-          }
-          return {
-            success: true,
-            profilePictureUrl: res?.profilePictureUrl,
-            message: 'تم تحديث الصورة الشخصية للمعلم بنجاح!',
-          };
-        }),
-        catchError((err) => {
-          console.error('Teacher avatar upload error:', err);
-          return of({
-            success: false,
-            message: 'تعذر رفع الصورة الشخصية. يرجى التأكد من صيغة الملف (.png, .jpg, .webp).',
-          });
-        }),
-      );
-  }
-
-  /**
-   * Updates teacher password via POST /api/v1/auth/change-password.
-   */
-  updatePassword(
-    currentPassword: string,
-    newPassword: string,
-    confirmPassword = newPassword,
-  ): Observable<{ success: boolean; message: string }> {
-    return this.auth.changePassword({
-      currentPassword,
-      newPassword,
-      confirmPassword,
-    });
+    return this.http.post<{profilePictureUrl: string}>(`${this.baseUrl}/profile/picture`, formData).pipe(
+      map(res => {
+        console.log('[DEBUG] POST /profile/picture returned:', res);
+        return res.profilePictureUrl;
+      })
+    );
   }
 }
