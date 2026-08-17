@@ -1,0 +1,50 @@
+:host {
+  display: block;
+  font-family: 'Cairo', system-ui, sans-serif;
+  direction: rtl;
+  width: 100%;
+}
+
+.teacher-dashboard-page {
+  padding: 32px 40px 64px;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    padding: 20px 20px 40px;
+    gap: 20px;
+  }
+}
+
+.dashboard-row-grid {
+  display: grid;
+  gap: 24px;
+  width: 100%;
+
+  &.grid-row-primary {
+    grid-template-columns: 2fr 1fr;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &.grid-row-tables {
+    grid-template-columns: 1fr 1fr;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.dashboard-side-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

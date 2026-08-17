@@ -1,0 +1,268 @@
+<div class="subscription-widget-container">
+  @if (loading()) {
+    <div class="skeleton-container">
+      <div class="skeleton-header"></div>
+      <div class="skeleton-body"></div>
+    </div>
+  } @else if (plan(); as p) {
+    <!-- Active Plan Card -->
+    <div class="plan-card">
+      <div class="card-header-row">
+        <div class="plan-info">
+          <div class="badge-row">
+            <span class="status-badge" [class.badge-active]="p.status === 'active'">
+              {{ 'SUBSCRIPTION.STATUS.' + p.status.toUpperCase() | translate }}
+            </span>
+            @if (isNearLimit()) {
+              <span class="badge-warning-pill">
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path
+                    d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+                {{ 'SUBSCRIPTION.ALERTS.NEAR_LIMIT' | translate }}
+              </span>
+            }
+          </div>
+
+          <h2 class="plan-title">{{ p.planName }}</h2>
+
+          @if (p.renewDate) {
+            <p class="plan-renew-sub">
+              {{ 'SUBSCRIPTION.RENEW_NOTICE' | translate: { date: p.renewDate, price: p.price } }}
+            </p>
+          }
+        </div>
+
+        <div class="plan-actions">
+          <button type="button" class="btn-upgrade" (click)="openCompareModal()">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M7 17L17 7M17 7H7M17 7V17" />
+            </svg>
+            {{ 'SUBSCRIPTION.ACTIONS.UPGRADE' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Payment & Security Info Bar -->
+      <div class="payment-info-bar">
+        <div class="info-cell">
+          <div class="icon-circle">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <rect width="20" height="14" x="2" y="5" rx="2" />
+              <line x1="2" y1="10" x2="22" y2="10" />
+            </svg>
+          </div>
+          <div>
+            <span class="cell-label">{{ 'SUBSCRIPTION.PAYMENT_METHOD' | translate }}</span>
+            <span class="cell-val">
+              {{ p.paymentMethod || ('SUBSCRIPTION.DEFAULT_PAYMENT' | translate) }}
+            </span>
+          </div>
+        </div>
+
+        <div class="info-cell">
+          <div class="icon-circle icon-shield">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#22C55E"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+          </div>
+          <div>
+            <span class="cell-label">{{ 'SUBSCRIPTION.STATUS_LABEL' | translate }}</span>
+            <span class="cell-val text-green">
+              {{ 'SUBSCRIPTION.STATUS.ACTIVE_DESC' | translate }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quota Usage Progress Grid -->
+      <div class="quotas-section">
+        <h3 class="quotas-heading">{{ 'SUBSCRIPTION.QUOTAS.HEADING' | translate }}</h3>
+
+        <div class="quotas-grid">
+          @for (quota of quotas(); track quota.labelKey) {
+            <div
+              class="quota-card"
+              [class.warning]="quota.isWarning"
+              [class.danger]="quota.isDanger">
+              <div class="quota-header">
+                <span class="quota-name">{{ quota.labelKey | translate }}</span>
+                <span class="quota-numbers">
+                  <span class="used-val">{{ quota.used }}</span>
+                  / {{ quota.max }} {{ quota.unitKey | translate }}
+                </span>
+              </div>
+
+              <!-- Custom Progress Bar -->
+              <div class="bar-track">
+                <div
+                  class="bar-fill"
+                  [style.width.%]="quota.percentage"
+                  [class.fill-warning]="quota.isWarning"
+                  [class.fill-danger]="quota.isDanger"></div>
+              </div>
+
+              <div class="quota-footer">
+                <span class="pct-val">{{ quota.percentage }}%</span>
+                @if (quota.isDanger) {
+                  <span class="limit-tag tag-danger">
+                    {{ 'SUBSCRIPTION.ALERTS.LIMIT_REACHED' | translate }}
+                  </span>
+                } @else if (quota.isWarning) {
+                  <span class="limit-tag tag-warning">
+                    {{ 'SUBSCRIPTION.ALERTS.ALMOST_FULL' | translate }}
+                  </span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Bottom Card Actions -->
+      <div class="card-footer-actions">
+        <button type="button" class="btn-text-action" (click)="onManageBilling()">
+          {{ 'SUBSCRIPTION.ACTIONS.UPDATE_PAYMENT' | translate }}
+        </button>
+        <button type="button" class="btn-text-danger" (click)="onCancelSub()">
+          {{ 'SUBSCRIPTION.ACTIONS.CANCEL_RENEW' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Plan Comparison Modal -->
+@if (showCompareModal()) {
+  <div
+    class="modal-backdrop"
+    (click)="closeCompareModal()"
+    (keydown.escape)="closeCompareModal()"
+    tabindex="-1"
+    role="presentation"
+    aria-hidden="true"></div>
+
+  <div class="compare-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <div>
+        <h2 id="modal-title" class="modal-title">{{ 'SUBSCRIPTION.MODAL.TITLE' | translate }}</h2>
+        <p class="modal-sub">{{ 'SUBSCRIPTION.MODAL.SUBTITLE' | translate }}</p>
+      </div>
+      <button
+        type="button"
+        class="btn-modal-close"
+        (click)="closeCompareModal()"
+        aria-label="إغلاق">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="table-responsive">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>{{ 'SUBSCRIPTION.MODAL.COL_FEATURE' | translate }}</th>
+              <th>{{ 'LANDING.PRICING.BASIC.NAME' | translate }}</th>
+              <th class="col-highlight">{{ 'LANDING.PRICING.PRO.NAME' | translate }}</th>
+              <th>{{ 'LANDING.PRICING.ENTERPRISE.NAME' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="feature-name">{{ 'SUBSCRIPTION.MODAL.ROW_STUDENTS' | translate }}</td>
+              <td>50</td>
+              <td class="col-highlight font-bold">
+                {{ 'SUBSCRIPTION.UNITS.UNLIMITED' | translate }}
+              </td>
+              <td>{{ 'SUBSCRIPTION.UNITS.UNLIMITED' | translate }}</td>
+            </tr>
+            <tr>
+              <td class="feature-name">{{ 'SUBSCRIPTION.MODAL.ROW_STORAGE' | translate }}</td>
+              <td>2 GB</td>
+              <td class="col-highlight font-bold">10 GB</td>
+              <td>{{ 'SUBSCRIPTION.UNITS.CUSTOM' | translate }}</td>
+            </tr>
+            <tr>
+              <td class="feature-name">{{ 'SUBSCRIPTION.MODAL.ROW_AI_EXAMS' | translate }}</td>
+              <td>—</td>
+              <td class="col-highlight font-bold">
+                20 / {{ 'SUBSCRIPTION.UNITS.MONTH' | translate }}
+              </td>
+              <td>{{ 'SUBSCRIPTION.UNITS.UNLIMITED' | translate }}</td>
+            </tr>
+            <tr>
+              <td class="feature-name">{{ 'SUBSCRIPTION.MODAL.ROW_REPORTS' | translate }}</td>
+              <td>{{ 'SUBSCRIPTION.MODAL.BASIC_REPORTS' | translate }}</td>
+              <td class="col-highlight font-bold">
+                {{ 'SUBSCRIPTION.MODAL.AI_REPORTS' | translate }}
+              </td>
+              <td>{{ 'SUBSCRIPTION.MODAL.FULL_REPORTS' | translate }}</td>
+            </tr>
+            <tr>
+              <td class="feature-name">{{ 'SUBSCRIPTION.MODAL.ROW_PRICE' | translate }}</td>
+              <td>{{ 'LANDING.PRICING.BASIC.PRICE_MONTHLY' | translate }}</td>
+              <td class="col-highlight price-cell font-bold">399 ج.م</td>
+              <td>{{ 'LANDING.PRICING.ENTERPRISE.PRICE_MONTHLY' | translate }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <a routerLink="/plans" class="btn-modal-plans" (click)="closeCompareModal()">
+        {{ 'SUBSCRIPTION.MODAL.VIEW_ALL_PLANS' | translate }}
+      </a>
+      <button type="button" class="btn-modal-cancel" (click)="closeCompareModal()">
+        {{ 'common.cancel' | translate }}
+      </button>
+    </div>
+  </div>
+}

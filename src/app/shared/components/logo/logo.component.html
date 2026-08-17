@@ -1,0 +1,56 @@
+@if (linkable()) {
+  <a
+    routerLink="/"
+    (click)="onLogoClick()"
+    class="draya-logo-wrap"
+    [class.size-sm]="size() === 'sm'"
+    [class.size-md]="size() === 'md'"
+    [class.size-lg]="size() === 'lg'"
+    [class.text-white]="textColor() === 'white'"
+    [class.text-primary]="textColor() === 'primary'"
+    [class.text-dark]="textColor() === 'dark'"
+    aria-label="درايَة - الصفحة الرئيسية">
+    <div class="logo-icon-box">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#ffffff"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="logo-svg">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+      </svg>
+    </div>
+    @if (showText()) {
+      <span class="logo-title-text">{{ titleText() }}</span>
+    }
+  </a>
+} @else {
+  <div
+    class="draya-logo-wrap static-logo"
+    [class.size-sm]="size() === 'sm'"
+    [class.size-md]="size() === 'md'"
+    [class.size-lg]="size() === 'lg'"
+    [class.text-white]="textColor() === 'white'"
+    [class.text-primary]="textColor() === 'primary'"
+    [class.text-dark]="textColor() === 'dark'">
+    <div class="logo-icon-box">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#ffffff"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="logo-svg">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+      </svg>
+    </div>
+    @if (showText()) {
+      <span class="logo-title-text">{{ titleText() }}</span>
+    }
+  </div>
+}

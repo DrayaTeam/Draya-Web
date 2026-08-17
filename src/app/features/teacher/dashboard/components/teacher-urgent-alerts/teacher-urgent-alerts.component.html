@@ -1,0 +1,42 @@
+<div class="urgent-alerts-card-root">
+  <!-- Card Header -->
+  <div class="urgent-header">
+    <div class="title-with-icon">
+      <div class="alert-icon-box">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#EC003F"
+          stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+      </div>
+      <h3 class="urgent-title">تنبيهات ومواعيد عاجلة</h3>
+    </div>
+
+    <span class="count-badge">تنبيهان جديدان</span>
+  </div>
+
+  <!-- Alerts Stack -->
+  <div class="alerts-stack">
+    @for (alert of alerts; track alert.id) {
+      <div class="alert-item-box">
+        <div class="alert-dot" [class.dot-danger]="alert.isDanger"></div>
+        <div class="alert-info-col">
+          <span class="a-title">{{ alert.title }}</span>
+          <span class="a-time">{{ alert.time }}</span>
+        </div>
+        <span
+          class="urgency-pill"
+          [class.pill-danger]="alert.isDanger"
+          [class.pill-warning]="alert.isWarning">
+          {{ alert.tag }}
+        </span>
+      </div>
+    }
+  </div>
+</div>

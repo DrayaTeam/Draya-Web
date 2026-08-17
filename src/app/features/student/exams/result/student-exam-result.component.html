@@ -1,0 +1,37 @@
+<div class="result-page-container">
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="header-titles">
+      <h1 class="main-title">تقرير تحليل نتيجة الامتحان بالـ AI</h1>
+      <p class="subtitle">تفاصيل الدرجات ونقاط الضعف التي تحتاج إلى مراجعة وتطوير.</p>
+    </div>
+
+    <button type="button" class="back-btn" (click)="onBackToExams()">
+      <svg
+        class="back-arrow"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+      </svg>
+      <span>الرجوع لقائمة الامتحانات</span>
+    </button>
+  </header>
+
+  <!-- Summary Score & AI Weakness Report Cards -->
+  <app-exam-result-card
+    [report]="resultReport()"
+    (openLecture)="onOpenLecture($event)"></app-exam-result-card>
+
+  <!-- Detailed Questions & Answers Review Section -->
+  <section class="review-section">
+    <h2 class="section-title">مراجعة الأسئلة والإجابات التفصيلية</h2>
+
+    <div class="review-list">
+      @for (item of resultReport().reviewQuestions; track item.questionIndex) {
+        <app-exam-question-review-card [reviewItem]="item"></app-exam-question-review-card>
+      }
+    </div>
+  </section>
+</div>

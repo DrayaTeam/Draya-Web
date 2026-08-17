@@ -1,0 +1,244 @@
+// src/app/features/student/courses/components/subscribed-package-card/subscribed-package-card.component.scss
+
+.subscribed-card-root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 372px;
+  padding: 24px;
+  background-color: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 24px;
+  box-shadow:
+    0px 20px 25px -5px rgba(0, 0, 0, 0.08),
+    0px 8px 10px -6px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+  transition:
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0px 25px 30px -5px rgba(0, 0, 0, 0.12),
+      0px 10px 15px -5px rgba(0, 0, 0, 0.06);
+  }
+}
+
+// Top Banner Image Container
+.banner-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 144px;
+  border-radius: 16px;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  .banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .banner-gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      0deg,
+      rgba(2, 6, 24, 0.85) 0%,
+      rgba(15, 23, 43, 0.35) 50%,
+      rgba(15, 23, 43, 0) 100%
+    );
+  }
+
+  .subject-badge-pill {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 3px 14px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(6px);
+    border-radius: 999px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    line-height: 16px;
+    color: #ffffff;
+  }
+
+  .status-active-pill {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 12px;
+    background: rgba(0, 188, 125, 0.9);
+    backdrop-filter: blur(6px);
+    border-radius: 999px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    color: #ffffff;
+    box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .banner-text-overlay {
+    position: absolute;
+    bottom: 12px;
+    right: 14px;
+    left: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .package-title {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      line-height: 22px;
+      color: #ffffff;
+
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .teacher-info-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 12px;
+      line-height: 16px;
+      color: #cad5e2;
+
+      .teacher-label {
+        font-weight: 500;
+      }
+
+      .teacher-value {
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+// Card Body
+.card-body-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  margin-top: 16px;
+
+  .progress-info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .progress-title-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      .progress-label {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 700;
+        font-size: 12px;
+        color: #62748e;
+      }
+    }
+
+    .progress-ratio-value {
+      .ratio-text {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 700;
+        font-size: 12px;
+        color: #0f172b;
+      }
+    }
+  }
+
+  .progress-track-bar {
+    width: 100%;
+    height: 12px;
+    background-color: #f1f5f9;
+    border: 1px solid rgba(226, 232, 240, 0.5);
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 8px 0 12px;
+
+    .progress-fill-bar {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 300ms ease-out;
+    }
+  }
+
+  .study-group-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 42px;
+    padding: 0 16px;
+    background-color: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 16px;
+    margin-bottom: 16px;
+
+    .group-label-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      .group-label {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 600;
+        font-size: 12px;
+        color: #62748e;
+      }
+    }
+
+    .group-name-value {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      color: #1d293d;
+    }
+  }
+
+  .btn-continue-package {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 36px;
+    background-color: transparent;
+    border: 1px solid #1b6d63;
+    border-radius: 999px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: #1b6d63;
+    cursor: pointer;
+    transition: all 150ms ease-out;
+
+    &:hover {
+      background-color: #f0fdfa;
+      border-color: #0f4f49;
+      color: #0f4f49;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}

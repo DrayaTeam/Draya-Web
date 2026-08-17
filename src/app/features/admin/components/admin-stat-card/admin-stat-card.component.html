@@ -1,0 +1,25 @@
+<div class="stat-card">
+  <div class="stat-header">
+    <div class="icon-container" [ngClass]="'variant-' + variant()">
+      <i [class]="iconClass()"></i>
+    </div>
+    @if (trendPercent() !== undefined) {
+      <div class="trend-badge" [ngClass]="trendPercent()! >= 0 ? 'trend-up' : 'trend-down'">
+        <i class="pi" [ngClass]="trendPercent()! >= 0 ? 'pi-arrow-up' : 'pi-arrow-down'"></i>
+        <span dir="ltr">{{ (trendPercent()! >= 0 ? '+' : '') + trendPercent() }}%</span>
+      </div>
+    }
+  </div>
+
+  <div class="stat-body">
+    <div class="stat-value">
+      {{ value() }}
+      @if (currencySuffix()) {
+        <span class="currency">{{ currencySuffix() }}</span>
+      }
+    </div>
+    <div class="stat-label">
+      {{ labelKey() | translate }}
+    </div>
+  </div>
+</div>

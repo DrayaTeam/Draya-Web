@@ -1,0 +1,113 @@
+<div class="student-courses-root animate-fade-in">
+  <!-- Ambient Background Blobs matching Figma -->
+  <div class="ambient-blob blob-top-right"></div>
+  <div class="ambient-blob blob-middle-left"></div>
+
+  <!-- Top Header Content -->
+  <header class="courses-page-header">
+    <!-- Top Pill Badge -->
+    <div class="challenge-pill-badge">
+      <svg
+        class="badge-icon"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#FD9A00"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <polygon
+          points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+      </svg>
+      <span>{{ headerInfo().badgeText }}</span>
+    </div>
+
+    <!-- Main Title & Subtitle -->
+    <h1 class="page-heading">{{ headerInfo().mainHeading }}</h1>
+    <p class="page-subtitle">{{ headerInfo().subtitleText }}</p>
+  </header>
+
+  <!-- Subscribed Packages Grid (2 Cards Row on 1440w desktop, 1 col on 390w mobile) -->
+  <main class="packages-cards-grid" aria-label="قائمة الباقات الدراسية">
+    @if (packages().length > 0) {
+      @for (pkg of packages(); track pkg.id) {
+        <draya-subscribed-package-card
+          [package]="pkg"
+          (openPackageDetails)="onOpenPackage($event)" />
+      }
+    } @else {
+      <div
+        style="
+          grid-column: 1 / -1;
+          background: #ffffff;
+          border: 1px dashed #cbd5e1;
+          border-radius: 20px;
+          padding: 56px 24px;
+          text-align: center;
+        ">
+        <div
+          style="
+            width: 56px;
+            height: 56px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+          ">
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#64748B"
+            stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+        </div>
+        <h3 style="font-size: 1.15rem; font-weight: 700; color: #1e293b; margin-bottom: 8px">
+          لم تشترك في أي باقات دراسية بعد
+        </h3>
+        <p
+          style="
+            font-size: 0.95rem;
+            color: #64748b;
+            margin-bottom: 24px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+          ">
+          تصفح قائمة المعلمين المعتمدين للاشتراك في المجموعات الدراسية وبدء رحلتك التعليمية.
+        </p>
+        <a
+          routerLink="/student/teachers"
+          style="
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #00a6f4 0%, #4f39f6 100%);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+          ">
+          <span>تصفح دليل المعلمين</span>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </a>
+      </div>
+    }
+  </main>
+</div>

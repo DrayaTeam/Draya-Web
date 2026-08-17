@@ -1,0 +1,139 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.dashboard-card {
+  background: #ffffff;
+  border: 1px solid #ebefef;
+  border-radius: 12px;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.card-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #151b19;
+  margin: 0;
+}
+
+.card-section-subtitle {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: #525e5a;
+}
+
+.card-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  &.mb-4 {
+    margin-bottom: 16px;
+  }
+}
+
+.title-meta-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.view-all-table-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #1b6d63;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.draya-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: start;
+
+  th {
+    padding: 10px 12px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #94a3a0;
+    text-transform: uppercase;
+    letter-spacing: 0.55px;
+    border-bottom: 1px solid #ebefef;
+  }
+
+  td {
+    padding: 12px;
+    font-size: 0.875rem;
+    color: #151b19;
+    border-bottom: 1px solid #f8fafc;
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.student-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar-circle-sm {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #ddf5f1;
+  color: #1b6d63;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.student-name {
+  font-weight: 600;
+  color: #151b19;
+  font-size: 0.875rem;
+}
+
+.course-name-cell {
+  color: #525e5a;
+  font-size: 0.8125rem;
+}
+
+.score-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &.score-red {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+  }
+
+  &.score-amber {
+    background: rgba(245, 158, 11, 0.12);
+    color: #f59e0b;
+  }
+}

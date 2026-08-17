@@ -1,0 +1,150 @@
+<section id="hero" class="hero-section">
+  <draya-blob-bg />
+
+  <div class="hero-container">
+    <!-- Text Column -->
+    <div class="hero-text-col animate-fade-in-up">
+      <h1 class="hero-title">
+        {{ 'LANDING.HERO.TITLE' | translate }}
+      </h1>
+      <p class="hero-tagline">
+        {{ 'LANDING.HERO.TAGLINE' | translate }}
+        <br />
+        {{ 'LANDING.HERO.TAGLINE_SUB' | translate }}
+      </p>
+      <p class="hero-description">
+        {{ 'LANDING.HERO.DESCRIPTION' | translate }}
+      </p>
+
+      <!-- Action Buttons -->
+      <div class="hero-cta-group">
+        <a routerLink="/auth/register" class="btn-cta-primary">
+          {{ 'LANDING.HERO.CTA_PRIMARY' | translate }}
+        </a>
+        <button type="button" class="btn-cta-secondary" (click)="scrollToFeatures()">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="cta-icon">
+            <polygon points="5 3 19 12 5 21 5 3" />
+          </svg>
+          {{ 'LANDING.HERO.CTA_SECONDARY' | translate }}
+        </button>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="hero-stats-row">
+        @for (stat of stats; track stat.labelKey; let i = $index) {
+          <div class="stat-item">
+            <div class="stat-value">
+              {{ stat.val }}
+            </div>
+            <div class="stat-label">
+              {{ stat.labelKey | translate }}
+            </div>
+          </div>
+          @if (i < 3) {
+            <div class="stat-divider"></div>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Photo Collage Column -->
+    <div class="hero-photo-col animate-fade-in-up delay-200">
+      <!-- 4 Photo Grid -->
+      <div class="photo-grid">
+        <!-- Frame 1 (Top-Left in LTR): hero2Circle -->
+        <div class="photo-frame frame-1">
+          <div class="frame-backdrop backdrop-purple"></div>
+          <div class="photo-inner">
+            <img [src]="photos.hero2Circle" alt="طالب يذاكر" class="photo-img" loading="eager" />
+          </div>
+        </div>
+
+        <!-- Frame 2 (Top-Right in LTR): hero1Primary -->
+        <div class="photo-frame frame-2">
+          <div class="frame-backdrop backdrop-teal"></div>
+          <div class="photo-inner">
+            <img [src]="photos.hero1Primary" alt="طالبة تدرس" class="photo-img" loading="eager" />
+          </div>
+        </div>
+
+        <!-- Frame 3 (Bottom-Left in LTR): hero3Square -->
+        <div class="photo-frame frame-3">
+          <div class="frame-backdrop backdrop-amber"></div>
+          <div class="photo-inner">
+            <img [src]="photos.hero3Square" alt="مجموعة طلاب" class="photo-img" loading="eager" />
+          </div>
+        </div>
+
+        <!-- Frame 4 (Bottom-Right in LTR): hero4Blob -->
+        <div class="photo-frame frame-4">
+          <div class="frame-backdrop backdrop-coral"></div>
+          <div class="photo-inner">
+            <img [src]="photos.hero4Blob" alt="طالب متفوق" class="photo-img" loading="eager" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating Card 1: AI Exam Ready -->
+      <div class="floating-card card-ai-exam animate-float">
+        <div class="card-title-row">
+          <div class="card-icon-purple">
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#7C3AED"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <path
+                d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+            </svg>
+          </div>
+          <span class="card-title">{{ 'LANDING.HERO.FLOATING_EXAM' | translate }}</span>
+        </div>
+        <div class="card-status-row">
+          <div class="dot-green"></div>
+          <span class="card-subtitle">{{ 'LANDING.HERO.FLOATING_EXAM_SUB' | translate }}</span>
+        </div>
+      </div>
+
+      <!-- Floating Card 2: Performance Report -->
+      <div class="floating-card card-report animate-float delay-300">
+        <div class="card-title-row">
+          <div class="card-icon-orange">
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#F97316"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+          </div>
+          <span class="card-title">{{ 'LANDING.HERO.FLOATING_REPORT' | translate }}</span>
+        </div>
+        <span class="card-subtitle">{{ 'LANDING.HERO.FLOATING_REPORT_SUB' | translate }}</span>
+      </div>
+
+      <!-- Floating Card 3: 92% Rate -->
+      <div class="floating-card card-rate animate-float delay-500">
+        <div class="rate-number">92%</div>
+        <div class="rate-label">{{ 'LANDING.HERO.FLOATING_RATE' | translate }}</div>
+      </div>
+    </div>
+  </div>
+</section>

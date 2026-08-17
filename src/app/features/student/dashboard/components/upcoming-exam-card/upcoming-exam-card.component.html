@@ -1,0 +1,13 @@
+<div class="exam-item-box">
+  <!-- Left Side Color Bar Marker (RTL) -->
+  <div class="marker-bar" [style.background-color]="exam().borderMarkerColor"></div>
+
+  <!-- Title & Time Text Group -->
+  <div class="texts-group">
+    <h4 class="exam-title">{{ exam().title }}</h4>
+    <span class="exam-time">{{ exam().timeText }}</span>
+  </div>
+
+  <!-- Tag Pill (هام / مراجعة) -->
+  <span class="tag-pill">{{ exam().tagText }}</span>
+</div>

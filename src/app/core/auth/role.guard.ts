@@ -1,0 +1,38 @@
+// src/app/core/auth/role.guard.ts
+// Purpose: Role-based route guard for the Draya multi-role platform.
+// Checks that the authenticated user's role matches one of the roles declared
+// in the route's `data.roles` array. Redirects to the appropriate dashboard
+// if the user is authenticated but unauthorized for this route.
+// Usage in routes: { data: { roles: ['teacher'] }, canActivate: [authGuard, roleGuard] }
+
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { AuthService } from '../../features/auth';
+
+export const roleGuard: CanActivateFn = (route) => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+
+  const user = auth.currentUser();
+  if (!user) {
+    // Not logged in at all — authGuard should have caught this, but be defensive.
+    return router.createUrlTree(['/auth/login']);
+  }
+
+  const userRoleLower = user.role.toLowerCase();
+  const allowedRoles: string[] = (route.data?.['roles'] ?? []).map((r: string) => r.toLowerCase());
+  if (allowedRoles.length === 0 || allowedRoles.includes(userRoleLower)) {
+    return true;
+  }
+
+  // Authenticated but wrong role — redirect to the user's own dashboard.
+  const roleDashboards: Record<string, string> = {
+    teacher: '/teacher/dashboard',
+    student: '/student/dashboard',
+    admin: '/admin/dashboard',
+    superadmin: '/admin/dashboard',
+    parent: '/parent/reports',
+  };
+
+  return router.createUrlTree([roleDashboards[userRoleLower] ?? '/']);
+};

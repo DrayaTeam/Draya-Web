@@ -1,1 +1,70 @@
+# DrayaWeb
 
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.32.
+
+## UI/UX Design
+
+The UI/UX prototype and design system for Draya can be found on Figma:
+[Draya - دراية (Figma Prototype)](https://www.figma.com/make/fX6g31oH2s0k8EenujqEwS/Draya-%D8%AF%D8%B1%D8%A7%D9%8A%D8%A9--Copy-?t=vdB04uF7HQxMnccY-20&fullscreen=1)
+
+## Development server
+
+To start a local development server, run:
+
+```bash
+ng serve
+```
+
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+> **Note on API CORS:** During local development, the app uses a dev-server proxy (configured in `src/proxy.conf.json`) to forward `/api` requests to the remote backend. This is a temporary workaround to bypass CORS restrictions until the backend team enables CORS for the frontend origin. Production builds do not use this proxy.
+
+## Code scaffolding
+
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+
+```bash
+ng generate component component-name
+```
+
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+
+```bash
+ng generate --help
+```
+
+## Building
+
+To build the project run:
+
+```bash
+ng build
+```
+
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+
+## Running unit tests
+
+To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+
+```bash
+ng test
+```
+
+## Running end-to-end tests
+
+For end-to-end (e2e) testing, run:
+
+```bash
+ng e2e
+```
+
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Additional Resources
+
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Team Guidelines
+
+If you are a developer working on this project, please make sure to read the [Developer Guidelines & Walkthrough (CONTRIBUTING.md)](CONTRIBUTING.md) to understand the project's folder structure, Tailwind RTL rules, and coding conventions.

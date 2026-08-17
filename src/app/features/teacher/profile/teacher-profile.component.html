@@ -1,0 +1,233 @@
+<div class="profile-container animate-fade-in" dir="rtl">
+  <div class="profile-header">
+    <h1 class="page-title">{{ 'TEACHER.PROFILE.PAGE_TITLE' | translate }}</h1>
+    <p class="page-subtitle">{{ 'TEACHER.PROFILE.PAGE_SUBTITLE' | translate }}</p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>جاري تحميل البيانات...</p>
+    </div>
+  } @else if (profile()) {
+    <div class="profile-grid">
+      <!-- Profile Card -->
+      <div class="profile-card card-panel">
+        <h2 class="card-title">{{ 'TEACHER.PROFILE.PERSONAL_INFO_TITLE' | translate }}</h2>
+
+        <div class="profile-header-info">
+          <div class="avatar-container">
+            <div class="avatar-circle">
+              @if (avatarUrl()) {
+                <img [src]="avatarUrl()" [alt]="profile()!.fullName" class="avatar-img" />
+              } @else {
+                {{ getInitials(profile()!.fullName) }}
+              }
+            </div>
+            <input
+              #teacherAvatarFileInput
+              type="file"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
+              class="hidden-file-input"
+              (change)="onAvatarSelected($event)" />
+            <!-- Edit Icon Badge -->
+            <button
+              type="button"
+              class="avatar-edit-badge"
+              aria-label="Edit Avatar"
+              [disabled]="uploadingAvatar()"
+              (click)="teacherAvatarFileInput.click()"
+              title="تحديث الصورة الشخصية">
+              @if (uploadingAvatar()) {
+                <span class="avatar-spinner"></span>
+              } @else {
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+              }
+            </button>
+          </div>
+
+          <div class="summary-details">
+            <h3 class="teacher-name">{{ profile()!.fullName }}</h3>
+            <p class="teacher-role">
+              {{ profile()!.specialization || ('TEACHER.PROFILE.TEACHER_ROLE' | translate) }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Edit Form (Always visible as per reference) -->
+        <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="edit-form">
+          <div class="form-group">
+            <label for="fullName">
+              {{ 'TEACHER.PROFILE.FULL_NAME' | translate }}
+              <span class="text-red">*</span>
+            </label>
+            <input
+              type="text"
+              id="fullName"
+              formControlName="fullName"
+              class="form-control"
+              [class.is-invalid]="
+                editForm.controls.fullName.touched && editForm.controls.fullName.invalid
+              " />
+            @if (editForm.controls.fullName.touched && editForm.controls.fullName.invalid) {
+              <div class="error-text">{{ 'TEACHER.PROFILE.REQUIRED_FIELD' | translate }}</div>
+            }
+          </div>
+
+          <!-- Email is read-only -->
+          <div class="form-group">
+            <label for="academyEmail">
+              {{ 'TEACHER.PROFILE.EMAIL' | translate }}
+              <span class="text-red">*</span>
+            </label>
+            <input
+              type="text"
+              id="academyEmail"
+              [value]="profile()!.email"
+              class="form-control disabled-input"
+              disabled />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">{{ 'TEACHER.PROFILE.PHONE' | translate }}</label>
+            <input
+              type="text"
+              id="phone"
+              formControlName="phone"
+              class="form-control"
+              dir="ltr"
+              style="text-align: right" />
+          </div>
+
+          <div class="form-group">
+            <label for="specialization">{{ 'TEACHER.PROFILE.SPECIALIZATION' | translate }}</label>
+            <input
+              type="text"
+              id="specialization"
+              formControlName="specialization"
+              class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label for="description">{{ 'TEACHER.PROFILE.DESCRIPTION' | translate }}</label>
+            <textarea
+              id="description"
+              formControlName="description"
+              rows="3"
+              class="form-control"></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="submit"
+              class="btn-submit btn-block"
+              [disabled]="editForm.invalid || isSaving()">
+              @if (isSaving()) {
+                <span class="spinner-small"></span>
+              } @else {
+                {{ 'TEACHER.PROFILE.SAVE_CHANGES' | translate }}
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Right Column: Settings & Password -->
+      <div class="side-column">
+        <!-- Change Password Card -->
+        <div class="password-card card-panel">
+          <h2 class="card-title">تغيير كلمة المرور</h2>
+          <p class="card-subtitle">تأكد من اختيار كلمة مرور قوية لحماية حسابك وصلاحيات الفصول.</p>
+
+          <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" class="edit-form">
+            <div class="form-group">
+              <label for="currentPassword">
+                كلمة المرور الحالية
+                <span class="text-red">*</span>
+              </label>
+              <input
+                type="password"
+                id="currentPassword"
+                formControlName="currentPassword"
+                class="form-control"
+                placeholder="••••••••" />
+            </div>
+
+            <div class="form-group">
+              <label for="newPassword">
+                كلمة المرور الجديدة
+                <span class="text-red">*</span>
+              </label>
+              <input
+                type="password"
+                id="newPassword"
+                formControlName="newPassword"
+                class="form-control"
+                placeholder="••••••••" />
+            </div>
+
+            <div class="form-group">
+              <label for="confirmPassword">
+                تأكيد كلمة المرور
+                <span class="text-red">*</span>
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                formControlName="confirmPassword"
+                class="form-control"
+                placeholder="••••••••" />
+            </div>
+
+            <div class="password-hints">
+              <small>• 8 أحرف على الأقل، حرف كبير (A-Z)، ورقم (0-9).</small>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="submit"
+                class="btn-submit btn-block btn-secondary"
+                [disabled]="passwordForm.invalid || isSavingPassword()">
+                @if (isSavingPassword()) {
+                  <span class="spinner-small"></span>
+                } @else {
+                  تحديث كلمة المرور
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Settings Card (Dark Mode) -->
+        <div class="settings-card card-panel">
+          <h2 class="card-title">{{ 'TEACHER.PROFILE.APPEARANCE_TITLE' | translate }}</h2>
+
+          <div class="setting-item">
+            <div class="setting-text">
+              <h3 class="setting-label">{{ 'TEACHER.PROFILE.DARK_MODE' | translate }}</h3>
+              <p class="setting-desc">{{ 'TEACHER.PROFILE.DARK_MODE_DESC' | translate }}</p>
+            </div>
+            <!-- Toggle Switch -->
+            <label class="toggle-switch">
+              <input
+                type="checkbox"
+                [checked]="themeService.isDarkMode()"
+                (change)="themeService.toggleTheme()" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

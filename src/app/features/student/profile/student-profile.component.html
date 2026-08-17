@@ -1,0 +1,371 @@
+<div class="student-profile-root animate-fade-in">
+  <!-- Top Ambient Blobs -->
+  <div class="ambient-blob blob-top-right"></div>
+  <div class="ambient-blob blob-bottom-left"></div>
+
+  <!-- Page Header -->
+  <div class="profile-header-area">
+    <div class="header-badge">
+      <span class="sparkle-icon">✨</span>
+      <span>إعدادات الحساب الشخصي</span>
+    </div>
+    <h1 class="page-title">الملف الشخصي للطالب</h1>
+    <p class="page-subtitle">
+      إدارة وتحديث بياناتك الشخصية والدراسية، ووسائل التواصل مع ولي الأمر وإعدادات الأمان.
+    </p>
+  </div>
+
+  <!-- Profile Hero Overview Pane -->
+  <div class="profile-hero-pane">
+    <div class="user-summary-group">
+      <div class="avatar-container">
+        <div class="avatar-circle">
+          @if (avatarUrl()) {
+            <img [src]="avatarUrl()" [alt]="name" class="avatar-img" />
+          } @else {
+            <span>{{ name.charAt(0) }}</span>
+          }
+        </div>
+        <input
+          #avatarFileInput
+          type="file"
+          accept="image/png,image/jpeg,image/jpg,image/webp"
+          class="hidden-file-input"
+          (change)="onAvatarSelected($event)" />
+        <button
+          type="button"
+          class="btn-edit-avatar"
+          [disabled]="uploadingAvatar()"
+          (click)="avatarFileInput.click()"
+          title="تحديث الصورة الشخصية">
+          @if (uploadingAvatar()) {
+            <span class="avatar-spinner"></span>
+          } @else {
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          }
+        </button>
+      </div>
+
+      <div class="user-titles">
+        <h2 class="user-name">{{ name }}</h2>
+        <div class="user-meta-row">
+          <span class="grade-label">{{ grade }}</span>
+          <span class="dot-separator">•</span>
+          <span class="active-status-badge">حساب نشط ✓</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Selector -->
+    <div class="tabs-nav-container">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab() === 'info'"
+        (click)="setTab('info')">
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span>البيانات الشخصية</span>
+      </button>
+
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab() === 'parent'"
+        (click)="setTab('parent')">
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2">
+          <path
+            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+        </svg>
+        <span>ولي الأمر</span>
+      </button>
+
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab() === 'security'"
+        (click)="setTab('security')">
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <span>الأمان والكلمة السرية</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tab Contents Card -->
+  <div class="tab-content-card">
+    <!-- Tab 1: Personal Info -->
+    @if (activeTab() === 'info') {
+      <div class="tab-pane animate-fade-in">
+        <div class="pane-title-row">
+          <div class="pane-icon teal-icon">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <h3 class="pane-heading">البيانات الأساسية والدراسية</h3>
+        </div>
+
+        <form (ngSubmit)="onSaveProfile($event)" class="form-grid">
+          <div class="form-field">
+            <label for="studentFullName" class="field-label">الاسم الكامل للطالب</label>
+            <input
+              id="studentFullName"
+              type="text"
+              class="field-input"
+              [(ngModel)]="name"
+              name="name"
+              required />
+          </div>
+
+          <div class="form-field">
+            <label for="studentEmail" class="field-label">البريد الإلكتروني</label>
+            <input
+              id="studentEmail"
+              type="email"
+              class="field-input"
+              [(ngModel)]="email"
+              name="email"
+              required />
+          </div>
+
+          <div class="form-field">
+            <label for="studentPhone" class="field-label">رقم الهاتف المحمول</label>
+            <input
+              id="studentPhone"
+              type="tel"
+              class="field-input"
+              [(ngModel)]="phone"
+              name="phone"
+              required />
+          </div>
+
+          <div class="form-field">
+            <label for="studentGrade" class="field-label">السنة الدراسية والشعبة</label>
+            <input
+              id="studentGrade"
+              type="text"
+              class="field-input"
+              [(ngModel)]="grade"
+              name="grade"
+              required />
+          </div>
+
+          <div class="form-actions-row">
+            <button type="submit" class="btn-save-primary" [disabled]="saving()">
+              @if (saving()) {
+                <span>جارٍ الحفظ...</span>
+              } @else {
+                <span>حفظ وتحديث الملف الشخصي</span>
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <!-- Tab 2: Parent Info -->
+    @if (activeTab() === 'parent') {
+      <div class="tab-pane animate-fade-in">
+        <div class="pane-title-row">
+          <div class="pane-icon purple-icon">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2">
+              <path
+                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="pane-heading">بيانات التواصل مع ولي الأمر</h3>
+            <p class="pane-subtext">
+              تُستخدم هذه البيانات لإرسال تقارير الحضور والغياب ودرجات الامتحانات الدورية.
+            </p>
+          </div>
+        </div>
+
+        <form (ngSubmit)="onSaveProfile($event)" class="form-grid">
+          <div class="form-field">
+            <label for="parentNameInput" class="field-label">اسم ولي الأمر</label>
+            <input
+              id="parentNameInput"
+              type="text"
+              class="field-input"
+              [(ngModel)]="parentName"
+              name="parentName"
+              required />
+          </div>
+
+          <div class="form-field">
+            <label for="parentPhoneInput" class="field-label">رقم هاتف ولي الأمر (واتساب)</label>
+            <input
+              id="parentPhoneInput"
+              type="tel"
+              class="field-input"
+              [(ngModel)]="parentPhone"
+              name="parentPhone"
+              required />
+          </div>
+
+          <div class="form-field full-width">
+            <label for="parentEmailInput" class="field-label">البريد الإلكتروني لولي الأمر</label>
+            <input
+              id="parentEmailInput"
+              type="email"
+              class="field-input"
+              [(ngModel)]="parentEmail"
+              name="parentEmail"
+              required />
+          </div>
+
+          <div class="form-actions-row">
+            <button type="submit" class="btn-save-primary" [disabled]="saving()">
+              @if (saving()) {
+                <span>جارٍ الحفظ...</span>
+              } @else {
+                <span>حفظ بيانات ولي الأمر</span>
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <!-- Tab 3: Security & Password -->
+    @if (activeTab() === 'security') {
+      <div class="tab-pane animate-fade-in">
+        <div class="pane-title-row">
+          <div class="pane-icon rose-icon">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="pane-heading">تغيير كلمة المرور وإعدادات السرية</h3>
+            <p class="pane-subtext">
+              احرص على استخدام كلمة مرور قوية تحتوي على حروف وأرقام لحماية حسابك التعليمي.
+            </p>
+          </div>
+        </div>
+
+        <form (ngSubmit)="onUpdatePassword()" class="form-grid">
+          <div class="form-field full-width">
+            <label for="currentPassInput" class="field-label">كلمة المرور الحالية</label>
+            <input
+              id="currentPassInput"
+              type="password"
+              class="field-input"
+              placeholder="••••••••"
+              [(ngModel)]="currentPass"
+              name="currentPass"
+              required />
+          </div>
+
+          <div class="form-field">
+            <label for="newPassInput" class="field-label">كلمة المرور الجديدة</label>
+            <input
+              id="newPassInput"
+              type="password"
+              class="field-input"
+              placeholder="••••••••"
+              [(ngModel)]="newPass"
+              name="newPass"
+              required />
+          </div>
+
+          <div class="form-field">
+            <label for="confirmPassInput" class="field-label">تأكيد كلمة المرور الجديدة</label>
+            <input
+              id="confirmPassInput"
+              type="password"
+              class="field-input"
+              placeholder="••••••••"
+              [(ngModel)]="confirmPass"
+              name="confirmPass"
+              required />
+          </div>
+
+          <!-- Password Requirement Badges -->
+          <div class="password-rules-box full-width">
+            <span class="rules-title">شروط كلمة المرور:</span>
+            <div class="rules-list">
+              <span class="rule-tag" [class.valid]="hasMinLength">
+                {{ hasMinLength ? '✓' : '•' }} 8 أحرف على الأقل
+              </span>
+              <span class="rule-tag" [class.valid]="hasUppercase">
+                {{ hasUppercase ? '✓' : '•' }} حرف كبير (A-Z)
+              </span>
+              <span class="rule-tag" [class.valid]="hasNumber">
+                {{ hasNumber ? '✓' : '•' }} رقم واحد على الأقل (0-9)
+              </span>
+              <span class="rule-tag" [class.valid]="isPasswordMatching">
+                {{ isPasswordMatching ? '✓' : '•' }} تطابق كلمتي المرور
+              </span>
+            </div>
+          </div>
+
+          <div class="form-actions-row">
+            <button type="submit" class="btn-save-secondary" [disabled]="saving()">
+              @if (saving()) {
+                <span>جارٍ التحديث...</span>
+              } @else {
+                <span>تغيير كلمة المرور</span>
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+  </div>
+</div>

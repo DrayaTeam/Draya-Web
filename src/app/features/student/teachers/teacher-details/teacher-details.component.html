@@ -1,0 +1,175 @@
+<div class="teacher-details-root animate-fade-in">
+  <!-- Back Button Navigation -->
+  <div class="back-nav-row">
+    <a routerLink="/student/teachers" class="btn-back">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+      <span>الرجوع لقائمة المعلمين</span>
+    </a>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-skeleton shimmer"></div>
+  } @else if (teacher(); as t) {
+    <!-- Profile Bio Header Card -->
+    <div class="teacher-hero-card">
+      <div class="avatar-wrapper">
+        <img [src]="t.avatarUrl" [alt]="t.name" class="teacher-avatar" />
+        <div class="verified-badge" title="معلم موثق">
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <div class="hero-info">
+        <div class="name-badge-row">
+          <h1 class="teacher-name">{{ t.name }}</h1>
+          <span class="subject-badge">{{ t.subject }}</span>
+          <div class="rating-badge">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="#F59E0B"
+              stroke="#F59E0B"
+              stroke-width="1">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            <span>{{ t.rating }}</span>
+          </div>
+        </div>
+
+        <p class="teacher-bio">{{ t.bio }}</p>
+
+        <div class="stats-row">
+          <div class="stat-item">
+            <span class="stat-value">{{ t.studentsCount }}</span>
+            <span class="stat-label">طالب مشترك</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">{{ t.packages.length }}</span>
+            <span class="stat-label">باقات تعليمية</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Packages Section -->
+    <div class="packages-section">
+      <div class="section-title-row">
+        <h2 class="section-title">الباقات الدراسية المتوفرة</h2>
+        <span class="packages-count-tag">{{ t.packages.length }} باقات متاحة</span>
+      </div>
+
+      @if (t.packages.length > 0) {
+        <div class="packages-grid">
+          @for (pkg of t.packages; track pkg.id) {
+            <div
+              class="package-card"
+              role="button"
+              tabindex="0"
+              (click)="onSelectPackage(pkg.id)"
+              (keydown.enter)="onSelectPackage(pkg.id)">
+              <div class="pkg-top-info">
+                <span class="pkg-subject-tag">{{ pkg.subjectName }}</span>
+                <h3 class="pkg-name">{{ pkg.name }}</h3>
+                <div class="pkg-meta-row">
+                  <span class="meta-item">
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2">
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                      <path
+                        d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    <span>{{ pkg.chaptersCount }} فصول</span>
+                  </span>
+                  <span class="meta-item">
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2">
+                      <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    <span>{{ pkg.lessonsCount }} درساً</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="pkg-footer">
+                <div class="price-box">
+                  <span class="price-label">سعر الاشتراك</span>
+                  <span class="price-val">
+                    {{ pkg.price }}
+                    <small>جنيه</small>
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  class="btn-enroll"
+                  (click)="$event.stopPropagation(); onSelectPackage(pkg.id)">
+                  <span>عرض المحتوى والاشتراك</span>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div
+          style="
+            background: #ffffff;
+            border: 1px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 48px 24px;
+            text-align: center;
+            color: #64748b;
+          ">
+          <p style="font-size: 1rem; font-weight: 500; margin: 0">
+            لم يقم المعلم بإنشاء باقات دراسية بعد.
+          </p>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,75 @@
+<div class="student-exams-root animate-fade-in">
+  <!-- Ambient Background Blobs matching Figma -->
+  <div class="ambient-blob blob-top-right"></div>
+  <div class="ambient-blob blob-middle-left"></div>
+
+  <!-- Page Header -->
+  <header class="exams-page-header">
+    <!-- Top Pill Badge -->
+    <div class="center-pill-badge">
+      <svg
+        class="badge-icon"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#FD9A00"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <polygon
+          points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+      </svg>
+      <span>{{ headerInfo().badgeText }}</span>
+    </div>
+
+    <!-- Main Title & Subtitle -->
+    <h1 class="page-heading">{{ headerInfo().mainHeading }}</h1>
+    <p class="page-subtitle">{{ headerInfo().subtitleText }}</p>
+  </header>
+
+  <!-- Filter Pills Bar -->
+  <div class="filter-pills-bar">
+    <button
+      type="button"
+      class="filter-pill-btn"
+      [class.active]="selectedFilter() === 'all'"
+      (click)="setFilter('all')">
+      الكل ({{ examsService.exams().length }})
+    </button>
+
+    <button
+      type="button"
+      class="filter-pill-btn"
+      [class.active]="selectedFilter() === 'available'"
+      (click)="setFilter('available')">
+      متاح للحل الآن 🔥
+    </button>
+
+    <button
+      type="button"
+      class="filter-pill-btn"
+      [class.active]="selectedFilter() === 'scheduled'"
+      (click)="setFilter('scheduled')">
+      مجدول لاحقاً 🕒
+    </button>
+
+    <button
+      type="button"
+      class="filter-pill-btn"
+      [class.active]="selectedFilter() === 'completed'"
+      (click)="setFilter('completed')">
+      مكتمل وحاصل على درجة ✨
+    </button>
+  </div>
+
+  <!-- Exams Cards Grid (2 Cards Row on 1440w desktop, 1 col on 390w mobile) -->
+  <main class="exams-cards-grid" aria-label="قائمة الامتحانات والواجبات المجدولة">
+    @for (exam of exams(); track exam.id) {
+      <draya-exam-card
+        [exam]="exam"
+        (startExam)="onStartExam($event)"
+        (viewResults)="onViewResults($event)" />
+    }
+  </main>
+</div>

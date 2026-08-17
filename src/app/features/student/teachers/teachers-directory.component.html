@@ -1,0 +1,115 @@
+<div class="teachers-directory-root">
+  <!-- Ambient Blurred Background Blobs (Anti-clipping bleeding design) -->
+  <div class="ambient-blob blob-top-right"></div>
+  <div class="ambient-blob blob-bottom-left"></div>
+
+  <div class="page-container">
+    <!-- Header Hero Banner -->
+    <header class="directory-header">
+      <!-- Top Pill Badge -->
+      <div class="featured-badge">
+        <svg
+          class="badge-star-icon"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="#FD9A00"
+          stroke="#FD9A00"
+          stroke-width="1.5">
+          <polygon
+            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+        <span class="badge-text">{{ 'STUDENT.TEACHERS.HEADER_BADGE' | translate }}</span>
+      </div>
+
+      <!-- Main Title -->
+      <h1 class="main-title">{{ 'STUDENT.TEACHERS.HEADER_TITLE' | translate }}</h1>
+
+      <!-- Description Subtitle -->
+      <p class="subtitle">
+        {{ 'STUDENT.TEACHERS.HEADER_SUBTITLE' | translate }}
+      </p>
+    </header>
+
+    <!-- Search & Filter Controls -->
+    <section class="filter-section">
+      <draya-teacher-filter
+        [searchQuery]="searchQuery()"
+        [selectedCategory]="selectedCategory()"
+        [options]="subjectOptions"
+        (searchChange)="onSearchQueryChange($event)"
+        (categoryChange)="onCategoryChange($event)" />
+    </section>
+
+    <!-- Teachers Cards Grid -->
+    <section class="teachers-grid-section" aria-label="قائمة المعلمين">
+      @if (loading()) {
+        <!-- Skeleton Loading Grid -->
+        <div class="teachers-card-grid skeleton-grid">
+          @for (item of skeletonCards; track item) {
+            <div class="teacher-skeleton-card">
+              <!-- Top ambient placeholder -->
+              <div class="skeleton-blob shimmer"></div>
+
+              <!-- Header: Avatar + Details -->
+              <div class="skeleton-header">
+                <div class="skeleton-avatar shimmer"></div>
+                <div class="skeleton-header-info">
+                  <div class="skeleton-name shimmer"></div>
+                  <div class="skeleton-meta-row">
+                    <div class="skeleton-badge shimmer"></div>
+                    <div class="skeleton-rating shimmer"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bio Lines -->
+              <div class="skeleton-bio-row">
+                <div class="skeleton-line shimmer full"></div>
+                <div class="skeleton-line shimmer half"></div>
+              </div>
+
+              <!-- Divider -->
+              <div class="skeleton-divider"></div>
+
+              <!-- Stats Row -->
+              <div class="skeleton-stats-row">
+                <div class="skeleton-stat-pill shimmer"></div>
+                <div class="skeleton-stat-pill shimmer"></div>
+              </div>
+
+              <!-- Action Button -->
+              <div class="skeleton-btn shimmer"></div>
+            </div>
+          }
+        </div>
+      } @else if (filteredTeachers().length > 0) {
+        <div class="teachers-card-grid animate-fade-in">
+          @for (teacher of filteredTeachers(); track teacher.id) {
+            <draya-teacher-card [teacher]="teacher" (viewPackages)="onViewPackages($event)" />
+          }
+        </div>
+      } @else {
+        <!-- Empty Results Fallback -->
+        <div class="empty-results-box animate-fade-in">
+          <div class="empty-icon-circle">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#90A1B9"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </div>
+          <h3 class="empty-title">لم يتم العثور على معلميك المستهدفين</h3>
+          <p class="empty-desc">جرب البحث باسم آخر أو اختيار مادة دراسية أخرى من القائمة أعلاه.</p>
+        </div>
+      }
+    </section>
+  </div>
+</div>

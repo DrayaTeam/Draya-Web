@@ -1,0 +1,173 @@
+<div class="adjustments-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ 'ADMIN.ADJUSTMENTS.TITLE' | translate }}</h1>
+      <p class="page-subtitle">{{ 'ADMIN.ADJUSTMENTS.SUBTITLE' | translate }}</p>
+    </div>
+  </div>
+
+  <!-- Warning Banner -->
+  <div class="warning-banner">
+    <i class="pi pi-exclamation-circle banner-icon"></i>
+    <div class="banner-text">
+      {{ 'ADMIN.ADJUSTMENTS.WARNING' | translate }}
+    </div>
+  </div>
+
+  <!-- Adjustment Form Card -->
+  <div class="form-card">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <!-- 1. Teacher Selector -->
+      <div class="form-group">
+        <label class="form-label" for="teacherId">
+          {{ 'ADMIN.ADJUSTMENTS.TEACHER_LABEL' | translate }}
+          <span class="required">*</span>
+        </label>
+        <select id="teacherId" formControlName="teacherId" class="form-select">
+          <option value="" disabled>
+            @if (loadingTeachers()) {
+              جاري تحميل قائمة المعلمين...
+            } @else if (teachers().length === 0) {
+              لا يوجد معلمون مسجلون حالياً
+            } @else {
+              {{ 'ADMIN.ADJUSTMENTS.TEACHER_PLACEHOLDER' | translate }}
+            }
+          </option>
+          @for (teacher of teachers(); track teacher.id) {
+            <option [value]="teacher.id">{{ teacher.name }} ({{ teacher.email }})</option>
+          }
+        </select>
+        @if (form.get('teacherId')?.touched && form.get('teacherId')?.errors?.['required']) {
+          <span class="form-error">يرجى اختيار المعلّم</span>
+        }
+      </div>
+
+      <!-- 2. Balance Type -->
+      <div class="form-group">
+        <span class="form-label">
+          {{ 'ADMIN.ADJUSTMENTS.BALANCE_TYPE_LABEL' | translate }}
+          <span class="required">*</span>
+        </span>
+        <div class="radio-group">
+          <label
+            class="radio-card"
+            [class.selected]="form.get('balanceType')?.value === WalletBalanceType.Earned">
+            <input type="radio" [value]="WalletBalanceType.Earned" formControlName="balanceType" />
+            <div class="radio-content">
+              <span class="radio-title">{{ 'ADMIN.ADJUSTMENTS.BALANCE_EARNED' | translate }}</span>
+              <span class="radio-desc">الأرباح الناتجة عن اشتراكات الفصول</span>
+            </div>
+          </label>
+
+          <label
+            class="radio-card"
+            [class.selected]="form.get('balanceType')?.value === WalletBalanceType.Purchased">
+            <input
+              type="radio"
+              [value]="WalletBalanceType.Purchased"
+              formControlName="balanceType" />
+            <div class="radio-content">
+              <span class="radio-title">
+                {{ 'ADMIN.ADJUSTMENTS.BALANCE_PURCHASED' | translate }}
+              </span>
+              <span class="radio-desc">الأرصدة المشحونة لاستهلاك الخدمات</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- 3. Adjustment Direction & Amount -->
+      <div class="form-row">
+        <!-- Direction: Add or Deduct -->
+        <div class="form-group flex-1">
+          <span class="form-label">
+            نوع الحركة
+            <span class="required">*</span>
+          </span>
+          <div class="segmented-control">
+            <button
+              type="button"
+              class="segment-btn credit"
+              [class.active]="form.get('adjustmentDirection')?.value === 'credit'"
+              (click)="form.get('adjustmentDirection')?.setValue('credit')">
+              <i class="pi pi-plus"></i>
+              <span>إيداع / إضافة</span>
+            </button>
+            <button
+              type="button"
+              class="segment-btn debit"
+              [class.active]="form.get('adjustmentDirection')?.value === 'debit'"
+              (click)="form.get('adjustmentDirection')?.setValue('debit')">
+              <i class="pi pi-minus"></i>
+              <span>خصم / استقطاع</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Amount -->
+        <div class="form-group flex-1">
+          <label class="form-label" for="amount">
+            {{ 'ADMIN.ADJUSTMENTS.AMOUNT_LABEL' | translate }}
+            <span class="required">*</span>
+          </label>
+          <div class="input-addon-wrap">
+            <input
+              id="amount"
+              type="number"
+              min="1"
+              step="any"
+              formControlName="amount"
+              placeholder="0.00"
+              class="form-input" />
+            <span class="addon-text">{{ 'ADMIN.SHARED.CURRENCY' | translate }}</span>
+          </div>
+          @if (form.get('amount')?.touched && form.get('amount')?.errors?.['required']) {
+            <span class="form-error">يرجى إدخال المبلغ</span>
+          }
+        </div>
+      </div>
+
+      <!-- 4. Reason Textarea -->
+      <div class="form-group">
+        <label class="form-label" for="reason">
+          {{ 'ADMIN.ADJUSTMENTS.REASON_LABEL' | translate }}
+          <span class="required">*</span>
+        </label>
+        <textarea
+          id="reason"
+          rows="3"
+          formControlName="reason"
+          [placeholder]="'ADMIN.ADJUSTMENTS.REASON_PLACEHOLDER' | translate"
+          class="form-textarea"></textarea>
+        @if (form.get('reason')?.touched && form.get('reason')?.errors?.['required']) {
+          <span class="form-error">يرجى إدخال سبب التسوية</span>
+        }
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-actions">
+        <button type="submit" class="submit-btn" [disabled]="form.invalid || isSubmitting()">
+          @if (isSubmitting()) {
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>{{ 'ADMIN.SHARED.LOADING' | translate }}</span>
+          } @else {
+            <i class="pi pi-check"></i>
+            <span>{{ 'ADMIN.ADJUSTMENTS.SUBMIT' | translate }}</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Confirm Adjustment Dialog -->
+  <draya-admin-confirm-dialog
+    [isOpen]="isConfirmOpen()"
+    [titleKey]="'ADMIN.ADJUSTMENTS.CONFIRM_TITLE'"
+    [descriptionKey]="'ADMIN.ADJUSTMENTS.CONFIRM_DESC'"
+    [variant]="'neutral'"
+    [confirmLabelKey]="'ADMIN.ADJUSTMENTS.CONFIRM_SUBMIT'"
+    [cancelLabelKey]="'ADMIN.SHARED.CANCEL'"
+    (confirmed)="onConfirmAdjustment()"
+    (cancelled)="isConfirmOpen.set(false)"></draya-admin-confirm-dialog>
+</div>

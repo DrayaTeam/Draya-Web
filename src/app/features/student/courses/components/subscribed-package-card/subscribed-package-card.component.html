@@ -1,0 +1,119 @@
+<article class="subscribed-card-root">
+  <!-- Top Banner Section (Image + Overlays) -->
+  <div class="banner-image-wrapper">
+    <img
+      [src]="package().bannerImageUrl"
+      [alt]="package().title"
+      class="banner-img"
+      loading="lazy" />
+    <div class="banner-gradient-overlay"></div>
+
+    <!-- Subject Name Tag Pill (Right in RTL) -->
+    <div class="subject-badge-pill">
+      <span>{{ package().subjectName }}</span>
+    </div>
+
+    <!-- Status Active Pill (Left in RTL) -->
+    <div class="status-active-pill">
+      <svg
+        width="12"
+        height="12"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#FFFFFF"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+      <span>{{ package().statusText }}</span>
+    </div>
+
+    <!-- Banner Bottom Text Overlays -->
+    <div class="banner-text-overlay">
+      <h3 class="package-title">{{ package().title }}</h3>
+      <div class="teacher-info-row">
+        <span class="teacher-label">المعلم:</span>
+        <span class="teacher-value">{{ package().teacherName }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Body Section -->
+  <div class="card-body-content">
+    <!-- Academic Progress Numbers Row -->
+    <div class="progress-info-row">
+      <div class="progress-title-group">
+        <svg
+          class="progress-icon"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#009689"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+        </svg>
+        <span class="progress-label">التقدم الدراسي:</span>
+      </div>
+
+      <div class="progress-ratio-value">
+        <span class="ratio-text">
+          {{ package().completedLessons }} / {{ package().totalLessons }} محاضرة ({{
+            package().progressPercent
+          }}%)
+        </span>
+      </div>
+    </div>
+
+    <!-- Progress Bar Track -->
+    <div class="progress-track-bar">
+      <div
+        class="progress-fill-bar"
+        [style.width.%]="package().progressPercent"
+        [style.background]="package().progressGradient"></div>
+    </div>
+
+    <!-- Study Group Box -->
+    <div class="study-group-box">
+      <div class="group-label-group">
+        <svg
+          class="group-icon"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#615FFF"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+        <span class="group-label">المجموعة الدراسية:</span>
+      </div>
+      <span class="group-name-value">{{ package().studyGroupName }}</span>
+    </div>
+
+    <!-- Action Button -->
+    <button type="button" class="btn-continue-package" (click)="onActionClick()">
+      <span>متابعة المحاضرات والامتحانات</span>
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12" />
+        <polyline points="12 19 5 12 12 5" />
+      </svg>
+    </button>
+  </div>
+</article>

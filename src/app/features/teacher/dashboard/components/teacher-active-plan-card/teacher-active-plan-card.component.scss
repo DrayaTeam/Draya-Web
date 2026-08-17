@@ -1,0 +1,75 @@
+:host {
+  display: block;
+  font-family: 'Cairo', system-ui, sans-serif;
+  direction: rtl;
+  height: 100%;
+}
+
+.active-plan-card-root {
+  height: 100%;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.05);
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.card-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .card-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #62748e;
+  }
+
+  .icon-circle-teal {
+    width: 40px;
+    height: 40px;
+    border-radius: 16px;
+    background: #f0fdfa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.card-val-row {
+  margin: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .packages-count {
+    font-size: 1.875rem;
+    font-weight: 900;
+    color: #0f172b;
+    margin: 0;
+  }
+
+  .status-sub {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #009689;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+.btn-manage-sub-link {
+  font-size: 0.78125rem;
+  font-weight: 700;
+  color: #1b6d63;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
