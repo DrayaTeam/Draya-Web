@@ -1,5 +1,4 @@
 <div class="teacher-portal-layout">
-  <draya-connection-status-banner />
   <!-- Mobile Backdrop Overlay -->
   @if (isMobileSidebarOpen()) {
     <div class="mobile-backdrop-overlay" (click)="closeMobileSidebar()" aria-hidden="true"></div>
@@ -12,6 +11,8 @@
 
   <!-- Main Content Container -->
   <div class="teacher-main-viewport">
+    <draya-connection-status-banner />
+
     <!-- Top Mobile App Bar (visible < 1024px) -->
     <header class="mobile-top-bar">
       <button

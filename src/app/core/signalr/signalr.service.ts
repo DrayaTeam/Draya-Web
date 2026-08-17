@@ -42,10 +42,7 @@ export class SignalRService {
 
   /** True when the connection is degraded and the user should be notified. */
   readonly showBanner = computed<boolean>(
-    () =>
-      this._status() === 'Disconnected' ||
-      this._status() === 'Reconnecting' ||
-      this._status() === 'Error',
+    () => this._status() === 'Reconnecting' || this._status() === 'Error',
   );
 
   // ─── Typed event signals ──────────────────────────────────────────────────
@@ -121,10 +118,21 @@ export class SignalRService {
       this._status.set('Connecting');
       await this.connection.start();
       this._status.set('Connected');
-    } catch (err) {
-      this._status.set('Error');
-      console.error('[SignalR] Connection failed:', err); // legitimate: infra error trace
-      throw err;
+    } catch (err: unknown) {
+      // If hub is not mapped on backend (404), stay disconnected gracefully
+      const is404 =
+        err instanceof Error &&
+        (err.message.includes('404') ||
+          (err as { statusCode?: number }).statusCode === 404);
+      if (is404) {
+        this._status.set('Disconnected');
+        console.warn(
+          '[SignalR] Hub endpoint not available on backend, running in offline/polling mode.',
+        );
+      } else {
+        this._status.set('Error');
+        console.error('[SignalR] Connection failed:', err);
+      }
     }
   }
 
