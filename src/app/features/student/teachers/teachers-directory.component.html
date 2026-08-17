@@ -43,8 +43,48 @@
 
     <!-- Teachers Cards Grid -->
     <section class="teachers-grid-section" aria-label="قائمة المعلمين">
-      @if (filteredTeachers().length > 0) {
-        <div class="teachers-card-grid">
+      @if (loading()) {
+        <!-- Skeleton Loading Grid -->
+        <div class="teachers-card-grid skeleton-grid">
+          @for (item of skeletonCards; track item) {
+            <div class="teacher-skeleton-card">
+              <!-- Top ambient placeholder -->
+              <div class="skeleton-blob shimmer"></div>
+
+              <!-- Header: Avatar + Details -->
+              <div class="skeleton-header">
+                <div class="skeleton-avatar shimmer"></div>
+                <div class="skeleton-header-info">
+                  <div class="skeleton-name shimmer"></div>
+                  <div class="skeleton-meta-row">
+                    <div class="skeleton-badge shimmer"></div>
+                    <div class="skeleton-rating shimmer"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bio Lines -->
+              <div class="skeleton-bio-row">
+                <div class="skeleton-line shimmer full"></div>
+                <div class="skeleton-line shimmer half"></div>
+              </div>
+
+              <!-- Divider -->
+              <div class="skeleton-divider"></div>
+
+              <!-- Stats Row -->
+              <div class="skeleton-stats-row">
+                <div class="skeleton-stat-pill shimmer"></div>
+                <div class="skeleton-stat-pill shimmer"></div>
+              </div>
+
+              <!-- Action Button -->
+              <div class="skeleton-btn shimmer"></div>
+            </div>
+          }
+        </div>
+      } @else if (filteredTeachers().length > 0) {
+        <div class="teachers-card-grid animate-fade-in">
           @for (teacher of filteredTeachers(); track teacher.id) {
             <draya-teacher-card [teacher]="teacher" (viewPackages)="onViewPackages($event)" />
           }

@@ -9,6 +9,68 @@
   box-sizing: border-box;
 }
 
+// ── Error Banner ──────────────────────────────────────────────────────────────
+.dashboard-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: #fff1f3;
+  border: 1px solid #fecdd6;
+  color: #be123c;
+  font-size: 0.875rem;
+  font-weight: 600;
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+// ── Loading Skeleton ──────────────────────────────────────────────────────────
+@keyframes shimmer {
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e9eaec 50%, #f3f4f6 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 16px;
+}
+
+.dashboard-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .skeleton-hero {
+    height: 200px;
+    border-radius: 24px;
+  }
+
+  .skeleton-cards-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+
+    .skeleton-card {
+      height: 100px;
+      border-radius: 16px;
+    }
+  }
+
+  .skeleton-course {
+    height: 96px;
+    border-radius: 20px;
+  }
+}
+
 // Ambient Background Blobs
 .ambient-blob {
   position: absolute;

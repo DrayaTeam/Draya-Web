@@ -1,7 +1,7 @@
 // src/app/features/teacher/components/teacher-header/teacher-header.component.ts
 import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../../../features/auth/services/auth.service';
+import { AuthService } from '../../../auth';
 import { SubscriptionService } from '../../../../core/services/subscription.service';
 import { LogoComponent } from '../../../../shared/components/logo/logo.component';
 

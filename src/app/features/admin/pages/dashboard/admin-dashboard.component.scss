@@ -1,0 +1,386 @@
+// Dashboard Page SCSS
+$color-deep-teal: #14453f;
+$color-genoa: #1b6d63;
+$color-iceberg: #ddf5f1;
+$color-iceberg-light: #f0faf8;
+$color-amber: #f59e0b;
+$color-border: #e6eded;
+$color-border-subtle: #f0f4f4;
+$color-surface: #ffffff;
+$color-text-primary: #151b19;
+$color-text-secondary: #525e5a;
+$color-text-muted: #8c9b97;
+
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+// ----------------------------------------------------
+// PAGE HEADER
+// ----------------------------------------------------
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  .header-content {
+    .page-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: $color-text-primary;
+      margin: 0 0 6px;
+      letter-spacing: -0.02em;
+    }
+
+    .page-subtitle {
+      font-size: 13.5px;
+      color: $color-text-secondary;
+      margin: 0;
+      line-height: 1.4;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .btn-refresh {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      background: $color-surface;
+      border: 1px solid $color-border;
+      border-radius: 10px;
+      color: $color-text-secondary;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      min-height: 42px;
+
+      i {
+        font-size: 13px;
+      }
+
+      &:hover:not(:disabled) {
+        background: #f8faf9;
+        color: $color-genoa;
+        border-color: $color-genoa;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    .btn-action-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      background: $color-genoa;
+      color: #ffffff;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.18s ease;
+      box-shadow: 0 4px 12px rgba(27, 109, 99, 0.2);
+      min-height: 42px;
+
+      i {
+        font-size: 13px;
+      }
+
+      &:hover {
+        background: $color-deep-teal;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(27, 109, 99, 0.3);
+      }
+    }
+  }
+}
+
+// ----------------------------------------------------
+// PENDING ALERT BANNER
+// ----------------------------------------------------
+.pending-alert-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  background: linear-gradient(135deg, #fffdfa 0%, #fef3c7 100%);
+  border: 1px solid rgba($color-amber, 0.35);
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.08);
+  gap: 16px;
+  animation: fadeIn 0.3s ease-out;
+
+  .alert-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .alert-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #fde68a;
+    color: #92400e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    border: 1px solid rgba(180, 83, 9, 0.2);
+  }
+
+  .alert-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .alert-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .alert-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #78350f;
+        margin: 0;
+      }
+
+      .urgent-pill {
+        background: #ef4444;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 100px;
+        box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+      }
+    }
+
+    .alert-desc {
+      font-size: 13px;
+      color: #92400e;
+      margin: 0;
+      line-height: 1.4;
+    }
+  }
+
+  .alert-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: #d97706;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(217, 119, 6, 0.25);
+    min-height: 42px;
+
+    &:hover {
+      background: #b45309;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(217, 119, 6, 0.35);
+    }
+
+    i {
+      font-size: 12px;
+      transition: transform 0.18s ease;
+    }
+
+    &:hover i {
+      transform: translateX(-3px);
+    }
+  }
+}
+
+// ----------------------------------------------------
+// SECTION CONTAINER
+// ----------------------------------------------------
+.section-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: $color-text-primary;
+      margin: 0 0 2px;
+    }
+
+    .section-subtitle {
+      font-size: 12.5px;
+      color: $color-text-secondary;
+      margin: 0;
+    }
+
+    .badge-tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: $color-genoa;
+      background: $color-iceberg;
+      padding: 3px 10px;
+      border-radius: 100px;
+      border: 1px solid rgba(27, 109, 99, 0.15);
+    }
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+
+  &.grid-cols-3 {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+// ----------------------------------------------------
+// QUICK NAVIGATION LINKS GRID
+// ----------------------------------------------------
+.quick-links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+
+  .quick-card {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: 14px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+    .quick-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+
+      &.teal {
+        background: #ddf5f1;
+        color: #1b6d63;
+      }
+      &.blue {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+      &.violet {
+        background: #ede9fe;
+        color: #7c3aed;
+      }
+      &.amber {
+        background: #fef3c7;
+        color: #b45309;
+      }
+    }
+
+    .quick-info {
+      flex: 1;
+
+      h4 {
+        font-size: 14px;
+        font-weight: 700;
+        color: $color-text-primary;
+        margin: 0 0 2px;
+      }
+
+      p {
+        font-size: 12px;
+        color: $color-text-muted;
+        margin: 0;
+        line-height: 1.3;
+      }
+    }
+
+    .arrow-icon {
+      font-size: 12px;
+      color: $color-text-muted;
+      transition: all 0.18s ease;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.04);
+      border-color: rgba(27, 109, 99, 0.25);
+
+      .arrow-icon {
+        color: $color-genoa;
+        transform: translateX(-4px);
+      }
+    }
+  }
+}
+
+// ----------------------------------------------------
+// RESPONSIVE
+// ----------------------------------------------------
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .header-actions {
+      width: 100%;
+
+      .btn-refresh,
+      .btn-action-primary {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+  }
+
+  .pending-alert-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+
+    .alert-action-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

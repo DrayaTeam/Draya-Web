@@ -2,7 +2,7 @@
 import { Component, ChangeDetectionStrategy, inject, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthService } from '../../../../features/auth/services/auth.service';
+import { AuthService } from '../../../auth';
 
 export interface NavGroup {
   headerKey: string;

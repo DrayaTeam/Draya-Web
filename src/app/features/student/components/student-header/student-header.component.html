@@ -43,6 +43,7 @@
         باقاتي الدراسية
       </a>
       <a routerLink="/student/exams" routerLinkActive="active" class="nav-item">الامتحانات</a>
+      <a routerLink="/student/channel" routerLinkActive="active" class="nav-item">قناة النقاش</a>
       <a routerLink="/student/reports" routerLinkActive="active" class="nav-item">
         تقاريري ودرجاتي
       </a>
@@ -100,12 +101,12 @@
       </div>
 
       <!-- User Profile -->
-      <div class="user-profile-box">
+      <a routerLink="/student/profile" class="user-profile-box" title="عرض الملف الشخصي">
         <div class="avatar-circle">
-          <span>ط</span>
+          <span>{{ auth.currentUser()?.fullName?.charAt(0) || 'ط' }}</span>
         </div>
-        <span class="user-name">الطالب</span>
-      </div>
+        <span class="user-name">{{ auth.currentUser()?.fullName || 'الملف الشخصي' }}</span>
+      </a>
 
       <!-- Logout -->
       <button
@@ -144,15 +145,15 @@
         <button type="button" (click)="closeMobileMenu()" class="drawer-close-btn">✕</button>
       </div>
 
-      <div class="drawer-profile-banner">
+      <a routerLink="/student/profile" (click)="closeMobileMenu()" class="drawer-profile-banner">
         <div class="avatar-circle">
-          <span>ط</span>
+          <span>{{ auth.currentUser()?.fullName?.charAt(0) || 'ط' }}</span>
         </div>
         <div class="drawer-user-text">
-          <p class="d-name">الطالب</p>
-          <span class="d-role">طالب في منصة درايَة</span>
+          <p class="d-name">{{ auth.currentUser()?.fullName || 'الطالب' }}</p>
+          <span class="d-role">عرض وتعديل الملف الشخصي ⚙️</span>
         </div>
-      </div>
+      </a>
 
       <nav class="drawer-nav-links">
         <a
@@ -182,6 +183,13 @@
           (click)="closeMobileMenu()"
           class="drawer-link">
           📝 الامتحانات
+        </a>
+        <a
+          routerLink="/student/channel"
+          routerLinkActive="active-drawer"
+          (click)="closeMobileMenu()"
+          class="drawer-link">
+          💬 قناة النقاش
         </a>
         <a
           routerLink="/student/reports"

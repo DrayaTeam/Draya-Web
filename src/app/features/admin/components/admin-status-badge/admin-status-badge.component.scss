@@ -1,0 +1,38 @@
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+
+  &.status-active,
+  &.status-paid {
+    background-color: #dcfce7;
+    color: #15803d;
+  }
+
+  &.status-inactive,
+  &.status-cancelled {
+    background-color: #f3f4f6;
+    color: #4b5563;
+  }
+
+  &.status-pending {
+    background-color: #fef3c7;
+    color: #b45309;
+  }
+
+  &.status-approved {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+  }
+
+  &.status-rejected {
+    background-color: #fee2e2;
+    color: #b91c1c;
+  }
+}

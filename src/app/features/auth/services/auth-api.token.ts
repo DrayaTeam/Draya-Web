@@ -19,6 +19,11 @@ export interface IAuthApi {
 
   forgotPassword(email: string): Observable<{ message: string }>;
   resetPassword(payload: { token: string; newPassword: string }): Observable<void>;
+  changePassword(payload: {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  }): Observable<void>;
 }
 
 export const AUTH_API = new InjectionToken<IAuthApi>('AUTH_API', {

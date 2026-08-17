@@ -18,6 +18,7 @@ describe('BookCardComponent', () => {
     fileSizeMb: 8.4,
     fileFormat: 'PDF',
     downloadUrl: '#',
+    chapters: [{ id: 'ch-1', title: 'الفصل الأول' }],
   };
 
   beforeEach(async () => {

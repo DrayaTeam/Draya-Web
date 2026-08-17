@@ -1,0 +1,134 @@
+<div class="settings-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-text">
+      <h1 class="page-title">{{ 'ADMIN.SETTINGS.TITLE' | translate }}</h1>
+      <p class="page-subtitle">{{ 'ADMIN.SETTINGS.SUBTITLE' | translate }}</p>
+    </div>
+    <div class="last-updated-badge">
+      <i class="pi pi-history"></i>
+      <span>
+        {{ 'ADMIN.SETTINGS.LAST_UPDATED' | translate }}: {{ lastUpdated() | date: 'mediumDate' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Settings Form Card -->
+  <div class="settings-card">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <!-- 1. AI Exam Price -->
+      <div class="form-group">
+        <div class="label-block">
+          <label class="form-label" for="aiExamPrice">
+            <span>{{ 'ADMIN.SETTINGS.AI_EXAM_PRICE' | translate }}</span>
+            <span class="required">*</span>
+          </label>
+          <span class="form-hint">
+            تكلفة إنشاء الاختبار الواحد بواسطة الذكاء الاصطناعي للمعلّم بعد نفاد الحصة
+          </span>
+        </div>
+        <div class="input-addon-wrap">
+          <input
+            id="aiExamPrice"
+            type="number"
+            min="0"
+            step="0.5"
+            formControlName="aiExamPrice"
+            class="form-input" />
+          <span class="addon-text">{{ 'ADMIN.SHARED.CURRENCY' | translate }}</span>
+        </div>
+        @if (form.get('aiExamPrice')?.touched && form.get('aiExamPrice')?.errors?.['required']) {
+          <span class="form-error">
+            <i class="pi pi-times-circle"></i>
+            <span>سعر اختبار الذكاء الاصطناعي مطلوب</span>
+          </span>
+        }
+      </div>
+
+      <!-- 2. Free Monthly AI Exam Quota -->
+      <div class="form-group">
+        <div class="label-block">
+          <label class="form-label" for="freeQuota">
+            <span>{{ 'ADMIN.SETTINGS.FREE_QUOTA' | translate }}</span>
+            <span class="required">*</span>
+          </label>
+          <span class="form-hint">{{ 'ADMIN.SETTINGS.FREE_QUOTA_HINT' | translate }}</span>
+        </div>
+        <div class="input-addon-wrap">
+          <input
+            id="freeQuota"
+            type="number"
+            min="0"
+            step="1"
+            formControlName="freeMonthlyAIExamQuota"
+            class="form-input" />
+          <span class="addon-text">اختبار / شهر</span>
+        </div>
+        @if (
+          form.get('freeMonthlyAIExamQuota')?.touched &&
+          form.get('freeMonthlyAIExamQuota')?.errors?.['required']
+        ) {
+          <span class="form-error">
+            <i class="pi pi-times-circle"></i>
+            <span>الحصة الشهرية المجانية مطلوبة</span>
+          </span>
+        }
+      </div>
+
+      <!-- 3. Platform Commission Percentage -->
+      <div class="form-group">
+        <div class="label-block">
+          <label class="form-label" for="commission">
+            <span>{{ 'ADMIN.SETTINGS.COMMISSION_PERCENT' | translate }}</span>
+            <span class="required">*</span>
+          </label>
+          <span class="form-hint">{{ 'ADMIN.SETTINGS.COMMISSION_HINT' | translate }}</span>
+        </div>
+        <div class="input-addon-wrap">
+          <input
+            id="commission"
+            type="number"
+            min="0"
+            max="100"
+            step="0.5"
+            formControlName="platformCommissionPercent"
+            class="form-input" />
+          <span class="addon-text">{{ 'ADMIN.SHARED.PERCENTAGE' | translate }}</span>
+        </div>
+        @if (
+          form.get('platformCommissionPercent')?.touched &&
+          form.get('platformCommissionPercent')?.errors?.['required']
+        ) {
+          <span class="form-error">
+            <i class="pi pi-times-circle"></i>
+            <span>نسبة عمولة المنصة مطلوبة (بين 0 و 100)</span>
+          </span>
+        }
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button type="submit" class="submit-btn" [disabled]="form.invalid || isSaving()">
+          @if (isSaving()) {
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>{{ 'ADMIN.SHARED.LOADING' | translate }}</span>
+          } @else {
+            <i class="pi pi-check"></i>
+            <span>{{ 'ADMIN.SETTINGS.SAVE' | translate }}</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Confirm Save Dialog -->
+  <draya-admin-confirm-dialog
+    [isOpen]="isConfirmOpen()"
+    [titleKey]="'ADMIN.SETTINGS.CONFIRM_TITLE'"
+    [descriptionKey]="'ADMIN.SETTINGS.CONFIRM_DESC'"
+    [variant]="'neutral'"
+    [confirmLabelKey]="'ADMIN.SETTINGS.CONFIRM_SAVE'"
+    [cancelLabelKey]="'ADMIN.SHARED.CANCEL'"
+    (confirmed)="onConfirmSave()"
+    (cancelled)="isConfirmOpen.set(false)"></draya-admin-confirm-dialog>
+</div>

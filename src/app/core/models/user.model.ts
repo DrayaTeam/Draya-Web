@@ -1,4 +1,5 @@
-export type UserRole = 'Teacher' | 'Student' | 'Admin' | 'teacher' | 'student' | 'admin';
+export type UserRole =
+  'Teacher' | 'Student' | 'Admin' | 'SuperAdmin' | 'teacher' | 'student' | 'admin' | 'superadmin';
 
 /**
  * Minimal user object returned by login / register / refresh responses.
@@ -13,6 +14,7 @@ export interface User {
   phone?: string;
   dateOfBirth?: string;
   parentGuardianEmail?: string;
+  profilePictureUrl?: string;
 }
 
 /**
@@ -27,4 +29,5 @@ export interface UserProfile {
   role: UserRole;
   parentGuardianEmail?: string;
   dateOfBirth?: string;
+  profilePictureUrl?: string;
 }

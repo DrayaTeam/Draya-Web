@@ -5,6 +5,9 @@ import { StudentReportsComponent } from './student-reports.component';
 import { ToastService } from '../../../core/services/toast.service';
 import { MessageService } from 'primeng/api';
 
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+
 describe('StudentReportsComponent', () => {
   let component: StudentReportsComponent;
   let fixture: ComponentFixture<StudentReportsComponent>;
@@ -12,7 +15,7 @@ describe('StudentReportsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StudentReportsComponent],
-      providers: [MessageService, ToastService],
+      providers: [provideHttpClient(), provideHttpClientTesting(), MessageService, ToastService],
     }).compileComponents();
 
     fixture = TestBed.createComponent(StudentReportsComponent);

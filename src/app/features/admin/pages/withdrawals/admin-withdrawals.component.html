@@ -1,0 +1,281 @@
+<div class="withdrawals-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-text">
+      <h1 class="page-title">{{ 'ADMIN.WITHDRAWALS.TITLE' | translate }}</h1>
+      <p class="page-subtitle">{{ 'ADMIN.WITHDRAWALS.SUBTITLE' | translate }}</p>
+    </div>
+  </div>
+
+  <!-- Status Tabs Filter -->
+  <div class="tabs-container">
+    @for (tab of statusTabs; track tab.key) {
+      <button
+        class="tab-btn"
+        [class.active]="activeStatusTab() === tab.key"
+        (click)="setTab(tab.key)"
+        type="button">
+        <span>{{ tab.labelKey | translate }}</span>
+        @if (tab.key === 'Pending' && totalCount() > 0 && activeStatusTab() === 'Pending') {
+          <span class="tab-count-badge">{{ totalCount() }}</span>
+        }
+      </button>
+    }
+  </div>
+
+  <!-- Data Table -->
+  <div class="table-card">
+    <draya-admin-data-table
+      [data]="withdrawals()"
+      [columns]="columns()"
+      [loading]="loading()"
+      [totalCount]="totalCount()"
+      [pageSize]="pageSize()"
+      [currentPage]="pageNumber()"
+      (pageChange)="onPageChange($event)"
+      (searchQuery)="onSearch($event)"></draya-admin-data-table>
+  </div>
+
+  <!-- Column Cell Templates -->
+  <!-- 1. Teacher Cell -->
+  <ng-template #teacherTpl let-row>
+    <div
+      class="teacher-cell"
+      (click)="openDetail(row)"
+      (keydown.enter)="openDetail(row)"
+      tabindex="0"
+      role="button">
+      <div class="teacher-avatar">
+        {{ getTeacherInitial(row) }}
+      </div>
+      <div class="teacher-info">
+        <span class="teacher-name">{{ getTeacherName(row) }}</span>
+        @if (getTeacherEmail(row)) {
+          <span class="teacher-email">{{ getTeacherEmail(row) }}</span>
+        }
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- 2. Amount Cell -->
+  <ng-template #amountTpl let-row>
+    <div class="amount-cell">
+      <span class="amount-value">{{ row?.amount | number }}</span>
+      <span class="amount-currency">{{ 'ADMIN.SHARED.CURRENCY' | translate }}</span>
+    </div>
+  </ng-template>
+
+  <!-- 3. Status Cell -->
+  <ng-template #statusTpl let-row>
+    <draya-admin-status-badge [status]="row?.status"></draya-admin-status-badge>
+  </ng-template>
+
+  <!-- 4. Actions Cell -->
+  <ng-template #actionsTpl let-row>
+    <div class="actions-cell">
+      <button
+        class="action-icon-btn view-btn"
+        (click)="openDetail(row)"
+        title="عرض التفاصيل الكاملة"
+        type="button">
+        <i class="pi pi-eye"></i>
+      </button>
+
+      @if (isPending(row?.status)) {
+        <button class="action-btn approve-btn" (click)="promptApprove(row)" type="button">
+          <i class="pi pi-check"></i>
+          <span>{{ 'ADMIN.WITHDRAWALS.ACTION_APPROVE' | translate }}</span>
+        </button>
+        <button class="action-btn reject-btn" (click)="promptReject(row)" type="button">
+          <i class="pi pi-times"></i>
+          <span>{{ 'ADMIN.WITHDRAWALS.ACTION_REJECT' | translate }}</span>
+        </button>
+      }
+
+      @if (isApproved(row?.status)) {
+        <button class="action-btn mark-paid-btn" (click)="promptMarkPaid(row)" type="button">
+          <i class="pi pi-dollar"></i>
+          <span>{{ 'ADMIN.WITHDRAWALS.ACTION_MARK_PAID' | translate }}</span>
+        </button>
+      }
+    </div>
+  </ng-template>
+
+  <!-- Slide-Over Withdrawal Details Drawer -->
+  <draya-admin-slide-over
+    [isOpen]="isDetailOpen()"
+    [title]="'ADMIN.WITHDRAWALS.DETAIL_TITLE' | translate"
+    [width]="'md'"
+    (closed)="closeDetail()">
+    @if (selectedWithdrawal()) {
+      <div class="drawer-body">
+        <!-- Teacher Profile Card -->
+        <div class="detail-card">
+          <div class="detail-header">
+            <div class="detail-avatar">
+              {{ getTeacherInitial(selectedWithdrawal()) }}
+            </div>
+            <div class="detail-title-block">
+              <h3 class="detail-name">{{ getTeacherName(selectedWithdrawal()) }}</h3>
+              @if (getTeacherEmail(selectedWithdrawal())) {
+                <span class="detail-email">{{ getTeacherEmail(selectedWithdrawal()) }}</span>
+              }
+            </div>
+            <draya-admin-status-badge
+              [status]="selectedWithdrawal()?.status"></draya-admin-status-badge>
+          </div>
+        </div>
+
+        <!-- Amount and Info Block -->
+        <div class="detail-summary-card">
+          <div class="summary-item">
+            <span class="summary-label">{{ 'ADMIN.WITHDRAWALS.DETAIL_AMOUNT' | translate }}</span>
+            <span class="summary-value highlight">
+              {{ selectedWithdrawal()?.amount | number }} {{ 'ADMIN.SHARED.CURRENCY' | translate }}
+            </span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">{{ 'ADMIN.WITHDRAWALS.DETAIL_DATE' | translate }}</span>
+            <span class="summary-value">
+              {{ selectedWithdrawal()?.requestedAt | date: 'medium' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Payout Account Card -->
+        @if (getPayoutAccount(selectedWithdrawal()); as acc) {
+          <div class="payout-card">
+            <div class="payout-header">
+              <div class="payout-type-pill">
+                <i
+                  class="pi"
+                  [class.pi-building]="isBankAccount(acc.accountType)"
+                  [class.pi-mobile]="isMobileWallet(acc.accountType)"></i>
+                <span>
+                  {{
+                    (isBankAccount(acc.accountType)
+                      ? 'ADMIN.WITHDRAWALS.PAYOUT_BANK'
+                      : 'ADMIN.WITHDRAWALS.PAYOUT_WALLET'
+                    ) | translate
+                  }}
+                </span>
+              </div>
+              @if (acc.isDefault) {
+                <span class="default-badge">
+                  {{ 'ADMIN.WITHDRAWALS.DETAIL_DEFAULT' | translate }}
+                </span>
+              }
+            </div>
+
+            <div class="payout-details">
+              @if (acc.accountName) {
+                <div class="payout-row">
+                  <span class="label">
+                    {{ 'ADMIN.WITHDRAWALS.DETAIL_ACCOUNT_NAME' | translate }}:
+                  </span>
+                  <span class="value">{{ acc.accountName }}</span>
+                </div>
+              }
+              @if (acc.accountIdentifier) {
+                <div class="payout-row">
+                  <span class="label">
+                    {{ 'ADMIN.WITHDRAWALS.DETAIL_ACCOUNT_ID' | translate }}:
+                  </span>
+                  <span class="value ltr copyable-id font-mono">{{ acc.accountIdentifier }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Rejection / Admin Note if exists -->
+        @if (selectedWithdrawal()?.rejectionReason) {
+          <div class="note-box error-box">
+            <div class="note-header">
+              <i class="pi pi-exclamation-circle"></i>
+              <span class="note-title">سبب الرفض:</span>
+            </div>
+            <p class="note-text">{{ selectedWithdrawal()?.rejectionReason }}</p>
+          </div>
+        }
+
+        @if (selectedWithdrawal()?.adminNote) {
+          <div class="note-box info-box">
+            <div class="note-header">
+              <i class="pi pi-info-circle"></i>
+              <span class="note-title">ملاحظة الدفع:</span>
+            </div>
+            <p class="note-text">{{ selectedWithdrawal()?.adminNote }}</p>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Drawer Footer Actions -->
+    @if (selectedWithdrawal()) {
+      <div footer class="drawer-actions">
+        @if (isPending(selectedWithdrawal()?.status)) {
+          <button
+            class="btn btn-primary"
+            (click)="promptApprove(selectedWithdrawal()!)"
+            type="button">
+            <i class="pi pi-check"></i>
+            <span>{{ 'ADMIN.WITHDRAWALS.ACTION_APPROVE' | translate }}</span>
+          </button>
+          <button
+            class="btn btn-danger"
+            (click)="promptReject(selectedWithdrawal()!)"
+            type="button">
+            <i class="pi pi-times"></i>
+            <span>{{ 'ADMIN.WITHDRAWALS.ACTION_REJECT' | translate }}</span>
+          </button>
+        }
+        @if (isApproved(selectedWithdrawal()?.status)) {
+          <button
+            class="btn btn-success"
+            (click)="promptMarkPaid(selectedWithdrawal()!)"
+            type="button">
+            <i class="pi pi-dollar"></i>
+            <span>{{ 'ADMIN.WITHDRAWALS.ACTION_MARK_PAID' | translate }}</span>
+          </button>
+        }
+        <button class="btn btn-outline" (click)="closeDetail()" type="button">
+          <span>{{ 'ADMIN.SHARED.CANCEL' | translate }}</span>
+        </button>
+      </div>
+    }
+  </draya-admin-slide-over>
+
+  <!-- 1. Approve Confirm Dialog -->
+  <draya-admin-confirm-dialog
+    [isOpen]="confirmApproveOpen()"
+    [titleKey]="'ADMIN.WITHDRAWALS.APPROVE_TITLE'"
+    [descriptionKey]="'ADMIN.WITHDRAWALS.APPROVE_DESC'"
+    [variant]="'neutral'"
+    [confirmLabelKey]="'ADMIN.WITHDRAWALS.APPROVE_CONFIRM'"
+    [cancelLabelKey]="'ADMIN.SHARED.CANCEL'"
+    (confirmed)="onConfirmApprove()"
+    (cancelled)="confirmApproveOpen.set(false)"></draya-admin-confirm-dialog>
+
+  <!-- 2. Reject Confirm Dialog with Reason input -->
+  <draya-admin-confirm-dialog
+    [isOpen]="confirmRejectOpen()"
+    [titleKey]="'ADMIN.WITHDRAWALS.REJECT_TITLE'"
+    [descriptionKey]="'ADMIN.WITHDRAWALS.REJECT_DESC'"
+    [variant]="'danger-with-reason'"
+    [confirmLabelKey]="'ADMIN.WITHDRAWALS.REJECT_CONFIRM'"
+    [cancelLabelKey]="'ADMIN.SHARED.CANCEL'"
+    (confirmed)="onConfirmReject($event)"
+    (cancelled)="confirmRejectOpen.set(false)"></draya-admin-confirm-dialog>
+
+  <!-- 3. Mark Paid Confirm Dialog with optional note -->
+  <draya-admin-confirm-dialog
+    [isOpen]="confirmPaidOpen()"
+    [titleKey]="'ADMIN.WITHDRAWALS.MARK_PAID_TITLE'"
+    [descriptionKey]="'ADMIN.WITHDRAWALS.MARK_PAID_DESC'"
+    [variant]="'neutral'"
+    [confirmLabelKey]="'ADMIN.WITHDRAWALS.MARK_PAID_CONFIRM'"
+    [cancelLabelKey]="'ADMIN.SHARED.CANCEL'"
+    (confirmed)="onConfirmMarkPaid()"
+    (cancelled)="confirmPaidOpen.set(false)"></draya-admin-confirm-dialog>
+</div>

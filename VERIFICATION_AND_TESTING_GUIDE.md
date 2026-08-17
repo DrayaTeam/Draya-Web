@@ -1,6 +1,13 @@
-# دليل التحقق وااختبار شاشات الطالب — درايَة
+# دليل التحقق واختبار شاشات الطالب — درايَة
 
-هذا المستند يوثق الترتيب الدقيق لمنهجية التطبيق والتحقق من الجودة (Standard Quality Verification Workflow) التي تم تنفيذها لبناء واجهات الطالب وفقاً لتصميمات Figma.
+هذا المستند يوثق الترتيب الدقيق لمنهجية التطبيق والتحقق من الجودة (Standard Quality Verification Workflow) التي تم تنفيذها لبناء واجهات الطالب وفقاً لتصميمات Figma، بالإضافة إلى رابط الاستضافة على Vercel.
+
+---
+
+## 🌐 رابط الاستضافة الحية على Vercel (Production Live Deployment)
+
+- 🔗 **رابط الإنتاج المباشر:** [https://draya-lms.vercel.app](https://draya-lms.vercel.app)
+- 📊 **رابط لوحة الفحص (Inspect):** [https://vercel.com/mahmoud1-2mostafas-projects/draya-lms](https://vercel.com/mahmoud1-2mostafas-projects/draya-lms)
 
 ---
 
@@ -32,39 +39,37 @@
    npx ng build
    ```
    - **النتيجة:** ✅ `Application bundle generation complete.` (تم البناء بنجاح وبدون أي أخطاء).
+6. **الرفع والدمج في Git والنشر على Vercel:**
+   ```bash
+   git add .
+   git commit -m "feat(student): implement full student portal screens suite"
+   git push origin feature/student
+   git checkout develop && git merge feature/student && git push origin develop
+   npx vercel --prod --yes
+   ```
+   - **النتيجة:** ✅ `Deployed to production: https://draya-web-pink.vercel.app`
 
 ---
 
 ## 🔍 دليل الاختبار اليدوي للمستخدم (Manual Testing Checklist)
 
 ### 1. شاشة "أداء الامتحان النشط" (`/student/exams/take`):
-افتح الرابط [http://localhost:4200/student/exams/take](http://localhost:4200/student/exams/take) أو اضغط على **"بدء الامتحان"** من قائمة الامتحانات:
-- [ ] **البار العلوي للاختبار:**
-  - [ ] عنوان الامتحان `امتحان الجبر والتباديل والتوافيق — 2026` والمستوى.
-  - [ ] العداد التنازلي المتبقي (`الوقت المتبقي: 44:59`).
-- [ ] **بطاقة السؤال النشط (يمين Screen):**
-  - [ ] عنوان السؤال وشارة المادة `الجبر`.
-  - [ ] خيارات الإجابة التفاعلية (MCQ) مع تحديد الخيار المحدد.
-  - [ ] زر `تعليم السؤال` للمراجعة وتغير لونه إلى الأصفر.
-  - [ ] الأزرار السفلية: `السؤال السابق` و `السؤال التالي` أو `إنهاء وتسليم الامتحان`.
-- [ ] **خريطة الأسئلة (يسار Screen):**
-  - [ ] أزرار الأرقام (1, 2, 3...) مع التأثيرات البصرية للـ Current (داكن + هالة)، Answered (أخضر)، Flagged (أصفر).
-  - [ ] شريط التوضيح (Legend) في الأسفل.
-- [ ] **كارت المراقبة الأمنية:**
-  - [ ] كارت أمني أحمر يحذر من مغادرة التبويب.
+افتح الرابط [https://draya-web-pink.vercel.app/student/exams/take](https://draya-web-pink.vercel.app/student/exams/take):
+- [ ] **البار العلوي للاختبار:** عنوان الامتحان والعداد التنازلي المتبقي.
+- [ ] **بطاقة السؤال النشط:** خيارات الإجابة التفاعلية (MCQ)، زر `تعليم السؤال` للمراجعة، وأزرار التنقل.
+- [ ] **خريطة الأسئلة:** أزرار الأرقام (1, 2, 3...) والتأثيرات البصرية.
+- [ ] **كارت المراقبة الأمنية:** كارت أمني يحذر من مغادرة التبويب.
 
 ---
 
 ### 2. شاشة "نتيجة الامتحان والتحليل بالـ AI" (`/student/exams/exam-1/result`):
-افتح الرابط [http://localhost:4200/student/exams/exam-1/result](http://localhost:4200/student/exams/exam-1/result) أو اضغط **"إنهاء وتسليم الامتحان"**:
-- [ ] **بطاقة النتيجة التقديرية:** النسبة التقديرية الكبيرة وشارة التقدير وتاريخ التسليم.
-- [ ] **بطاقة تحليل الذكاء الاصطناعي:** مهارات التباديل والتوافيق مع دقة الحل ورابط المحاضرة التأسيسية.
-- [ ] **مراجعة الأسئلة والإجابات التفصيلية:**
-  - [ ] السؤال 1: الإجابة الخاطئة، مربع إجابتك باللون الأحمر، ومربع الإجابة الصحيحة باللون الأخضر.
-  - [ ] السؤال 2 و 3: الإجابات الصحيحة باللون الأخضر.
+افتح الرابط [https://draya-web-pink.vercel.app/student/exams/exam-1/result](https://draya-web-pink.vercel.app/student/exams/exam-1/result):
+- [ ] **بطاقة النتيجة التقديرية:** النسبة التقديرية الكبيرة وشارة التقدير.
+- [ ] **بطاقة تحليل الذكاء الاصطناعي:** مهارات التباديل والتوافيق ودقة الحل ورابط المحاضرة التأسيسية.
+- [ ] **مراجعة الأسئلة والإجابات التفصيلية:** كروت مراجعة الأسئلة الصحيحة والخاطئة.
 
 ---
 
 ### 3. شاشة "المكتبة الرقمية" (`/student/library`):
-افتح الرابط [http://localhost:4200/student/library](http://localhost:4200/student/library):
+افتح الرابط [https://draya-web-pink.vercel.app/student/library](https://draya-web-pink.vercel.app/student/library):
 - [ ] مراجعة البحث التفاعلي وتصفية الكتب وجميع كروت الكتب الـ 4.
