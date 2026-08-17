@@ -1,6 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "name": "draya",
   "framework": "angular",
   "buildCommand": "npm run build",
   "outputDirectory": "dist/draya-web/browser",
