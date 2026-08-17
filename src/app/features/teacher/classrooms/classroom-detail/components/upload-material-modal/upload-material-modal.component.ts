@@ -12,11 +12,7 @@ import { MaterialType, ClassroomMaterialDto } from '../../../../../../core/model
 @Component({
   selector: 'draya-upload-material-modal',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    DialogModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, DialogModule],
   templateUrl: './upload-material-modal.component.html',
   styleUrl: './upload-material-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -118,11 +114,13 @@ export class UploadMaterialModalComponent {
         },
         error: (err) => {
           console.error('Upload failed', err);
-          
+
           // Try to extract specific API error messages
           let errorDetail = 'حدث خطأ أثناء رفع المادة التعليمية. يرجى المحاولة مرة أخرى.';
           if (err.error?.error?.details?.length) {
-            errorDetail = err.error.error.details.map((d: { field: string; issue: string }) => `${d.field}: ${d.issue}`).join('\n');
+            errorDetail = err.error.error.details
+              .map((d: { field: string; issue: string }) => `${d.field}: ${d.issue}`)
+              .join('\n');
           } else if (err.error?.error?.message) {
             errorDetail = err.error.error.message;
           }

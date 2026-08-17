@@ -69,7 +69,8 @@
   }
 }
 
-.form-input, .form-select {
+.form-input,
+.form-select {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid var(--draya-surface-300, #d1d5db);
@@ -187,7 +188,9 @@ textarea.form-input {
   }
 }
 
-.mt-2 { margin-top: 8px; }
+.mt-2 {
+  margin-top: 8px;
+}
 
 @keyframes slideUp {
   from {

@@ -1,10 +1,22 @@
 // src/app/features/teacher/wallet/components/payout-accounts/payout-accounts.component.ts
-import { Component, ChangeDetectionStrategy, inject, OnInit, signal, DestroyRef, output } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  OnInit,
+  signal,
+  DestroyRef,
+  output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { WalletService } from '../../../services/wallet.service';
-import { PayoutAccount, AccountType, CreatePayoutAccountRequest } from '../../../../../core/models/wallet.model';
+import {
+  PayoutAccount,
+  AccountType,
+  CreatePayoutAccountRequest,
+} from '../../../../../core/models/wallet.model';
 
 @Component({
   selector: 'draya-payout-accounts',
@@ -13,7 +25,7 @@ import { PayoutAccount, AccountType, CreatePayoutAccountRequest } from '../../..
   templateUrl: './payout-accounts.component.html',
   styleUrl: './payout-accounts.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'block w-full' }
+  host: { class: 'block w-full' },
 })
 export class PayoutAccountsComponent implements OnInit {
   private readonly walletService = inject(WalletService);
@@ -22,8 +34,8 @@ export class PayoutAccountsComponent implements OnInit {
   readonly accounts = signal<PayoutAccount[]>([]);
   readonly isLoading = signal<boolean>(true);
   readonly isAdding = signal<boolean>(false);
-  
-  readonly onWithdrawRequested = output<PayoutAccount>();
+
+  readonly withdrawRequested = output<PayoutAccount>();
 
   // Form State
   newAccountType = signal<AccountType>(AccountType.InstaPay);
@@ -40,34 +52,35 @@ export class PayoutAccountsComponent implements OnInit {
 
   loadAccounts(): void {
     this.isLoading.set(true);
-    this.walletService.getPayoutAccounts().pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: (data) => {
-        this.accounts.set(data);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        console.error('Failed to load payout accounts', err);
-        // Fallback for development UI testing
-        this.accounts.set([
-          {
-            id: '1',
-            teacherId: 't1',
-            accountType: AccountType.InstaPay,
-            accountName: 'Ahmed Instapay',
-            accountIdentifier: '01012345678',
-            isDefault: true,
-            createdAt: new Date().toISOString()
-          }
-        ]);
-        this.isLoading.set(false);
-      }
-    });
+    this.walletService
+      .getPayoutAccounts()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.accounts.set(data);
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          console.error('Failed to load payout accounts', err);
+          // Fallback for development UI testing
+          this.accounts.set([
+            {
+              id: '1',
+              teacherId: 't1',
+              accountType: AccountType.InstaPay,
+              accountName: 'Ahmed Instapay',
+              accountIdentifier: '01012345678',
+              isDefault: true,
+              createdAt: new Date().toISOString(),
+            },
+          ]);
+          this.isLoading.set(false);
+        },
+      });
   }
 
   toggleAddForm(): void {
-    this.isAdding.update(v => !v);
+    this.isAdding.update((v) => !v);
     if (!this.isAdding()) {
       this.resetForm();
     }
@@ -88,45 +101,47 @@ export class PayoutAccountsComponent implements OnInit {
       accountType: this.newAccountType(),
       accountName: this.newAccountName(),
       accountIdentifier: this.newAccountIdentifier(),
-      isDefault: this.accounts().length === 0 // Make default if it's the first one
+      isDefault: this.accounts().length === 0, // Make default if it's the first one
     };
 
-    this.walletService.addPayoutAccount(payload).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: (newAccount) => {
-        this.accounts.update(accs => [...accs, newAccount]);
-        this.toggleAddForm();
-      },
-      error: (err) => {
-        console.error('Failed to add account', err);
-        // Mock success for development
-        const mockAccount: PayoutAccount = {
-          id: Math.random().toString(),
-          teacherId: 't1',
-          ...payload,
-          createdAt: new Date().toISOString()
-        };
-        this.accounts.update(accs => [...accs, mockAccount]);
-        this.toggleAddForm();
-      }
-    });
+    this.walletService
+      .addPayoutAccount(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (newAccount) => {
+          this.accounts.update((accs) => [...accs, newAccount]);
+          this.toggleAddForm();
+        },
+        error: (err) => {
+          console.error('Failed to add account', err);
+          // Mock success for development
+          const mockAccount: PayoutAccount = {
+            id: Math.random().toString(),
+            teacherId: 't1',
+            ...payload,
+            createdAt: new Date().toISOString(),
+          };
+          this.accounts.update((accs) => [...accs, mockAccount]);
+          this.toggleAddForm();
+        },
+      });
   }
 
   deleteAccount(id: string): void {
     if (!confirm('هل أنت متأكد من حذف حساب السحب هذا؟')) return;
-    
-    this.walletService.deletePayoutAccount(id).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: () => {
-        this.accounts.update(accs => accs.filter(a => a.id !== id));
-      },
-      error: (err) => {
-        console.error('Failed to delete account', err);
-        // Mock success
-        this.accounts.update(accs => accs.filter(a => a.id !== id));
-      }
-    });
+
+    this.walletService
+      .deletePayoutAccount(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.accounts.update((accs) => accs.filter((a) => a.id !== id));
+        },
+        error: (err) => {
+          console.error('Failed to delete account', err);
+          // Mock success
+          this.accounts.update((accs) => accs.filter((a) => a.id !== id));
+        },
+      });
   }
 }

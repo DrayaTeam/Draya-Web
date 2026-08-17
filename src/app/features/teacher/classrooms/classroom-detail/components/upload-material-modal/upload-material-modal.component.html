@@ -1,15 +1,14 @@
-<p-dialog 
-  [visible]="isOpen()" 
-  [modal]="true" 
-  [closable]="false" 
-  [draggable]="false" 
-  [resizable]="false" 
+<p-dialog
+  [visible]="isOpen()"
+  [modal]="true"
+  [closable]="false"
+  [draggable]="false"
+  [resizable]="false"
   [showHeader]="false"
   styleClass="draya-headless-dialog"
   [style]="{ width: 'calc(100% - 32px)', maxWidth: '600px', margin: '16px auto' }"
   [contentStyle]="{ padding: '0', borderRadius: '16px', overflow: 'hidden' }"
   (onHide)="cancelUpload.emit()">
-  
   <div class="modal-content" dir="rtl">
     <!-- Header -->
     <div class="modal-header">
@@ -36,15 +35,10 @@
     <!-- Body -->
     <div class="modal-body">
       <form [formGroup]="form" (ngSubmit)="submit()" class="draya-form">
-        
         <!-- Type -->
         <div class="field-group">
           <label for="type">نوع المادة التعليمية</label>
-          <select
-            id="type"
-            formControlName="type"
-            class="form-select"
-            (change)="onTypeChange()">
+          <select id="type" formControlName="type" class="form-select" (change)="onTypeChange()">
             @for (opt of typeOptions; track opt.value) {
               <option [value]="opt.value">{{ opt.label }}</option>
             }
@@ -53,7 +47,10 @@
 
         <!-- Title -->
         <div class="field-group">
-          <label for="title">عنوان المادة <span class="text-red-500">*</span></label>
+          <label for="title">
+            عنوان المادة
+            <span class="text-red-500">*</span>
+          </label>
           <input
             id="title"
             type="text"
@@ -62,9 +59,7 @@
             placeholder="مثال: مذكرة مراجعة الباب الأول"
             [class.has-error]="form.get('title')?.invalid && form.get('title')?.touched" />
           @if (form.get('title')?.invalid && form.get('title')?.touched) {
-            <span class="error-msg">
-              عنوان المادة مطلوب (الحد الأقصى 255 حرف).
-            </span>
+            <span class="error-msg">عنوان المادة مطلوب (الحد الأقصى 255 حرف).</span>
           }
         </div>
 
@@ -80,13 +75,12 @@
 
         <!-- File Upload Section -->
         <div class="field-group mt-2">
-          <label for="fileUpload">ملف {{ currentType === 'PDF' ? 'المستند (PDF/Word/etc)' : 'الفيديو' }} <span class="text-red-500">*</span></label>
+          <label for="fileUpload">
+            ملف {{ currentType === 'PDF' ? 'المستند (PDF/Word/etc)' : 'الفيديو' }}
+            <span class="text-red-500">*</span>
+          </label>
           <div class="file-upload-box" [class.has-error]="fileError()">
-            <input
-              type="file"
-              id="fileUpload"
-              (change)="onFileSelect($event)"
-              class="hidden" />
+            <input type="file" id="fileUpload" (change)="onFileSelect($event)" class="hidden" />
 
             <label for="fileUpload" class="file-upload-label">
               <i class="pi pi-cloud-upload text-primary-600 mb-2 text-3xl"></i>
@@ -107,13 +101,14 @@
             <span class="error-msg">{{ fileError() }}</span>
           }
         </div>
-
       </form>
     </div>
 
     <!-- Footer -->
     <div class="modal-footer">
-      <button class="btn-cancel" (click)="cancelUpload.emit()" [disabled]="isSubmitting()">إلغاء</button>
+      <button class="btn-cancel" (click)="cancelUpload.emit()" [disabled]="isSubmitting()">
+        إلغاء
+      </button>
       <button class="btn-submit" (click)="submit()" [disabled]="isSubmitting()">
         @if (isSubmitting()) {
           <span>جاري الرفع...</span>

@@ -65,22 +65,23 @@ export class TeacherProfileService {
           email: realEmail,
           // DEFENSIVE: backend uses inconsistent field names for the profile picture URL.
           // Check all known variants before falling through to undefined.
-          pictureUrl: (
-            (profile as TeacherProfile & {
-              profilePictureUrl?: string;
-              pictureUrl?: string;
-              profilePicture?: string;
-              avatarUrl?: string;
-              avatar?: string;
-              imageUrl?: string;
-            }).profilePictureUrl ||
+          pictureUrl:
+            (
+              profile as TeacherProfile & {
+                profilePictureUrl?: string;
+                pictureUrl?: string;
+                profilePicture?: string;
+                avatarUrl?: string;
+                avatar?: string;
+                imageUrl?: string;
+              }
+            ).profilePictureUrl ||
             (profile as TeacherProfile & { pictureUrl?: string }).pictureUrl ||
             (profile as TeacherProfile & { profilePicture?: string }).profilePicture ||
             (profile as TeacherProfile & { avatarUrl?: string }).avatarUrl ||
             (profile as TeacherProfile & { avatar?: string }).avatar ||
             (profile as TeacherProfile & { imageUrl?: string }).imageUrl ||
-            undefined
-          ),
+            undefined,
         };
       }),
     );
@@ -110,11 +111,13 @@ export class TeacherProfileService {
   uploadProfilePicture(file: File): Observable<string> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<{profilePictureUrl: string}>(`${this.baseUrl}/profile/picture`, formData).pipe(
-      map(res => {
-        console.log('[DEBUG] POST /profile/picture returned:', res);
-        return res.profilePictureUrl;
-      })
-    );
+    return this.http
+      .post<{ profilePictureUrl: string }>(`${this.baseUrl}/profile/picture`, formData)
+      .pipe(
+        map((res) => {
+          console.log('[DEBUG] POST /profile/picture returned:', res);
+          return res.profilePictureUrl;
+        }),
+      );
   }
 }

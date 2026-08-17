@@ -104,7 +104,8 @@ export class ClassroomDetailComponent implements OnInit {
     if (!current) return;
 
     this.confirmationService.confirm({
-      message: 'إنشاء كود جديد سيُبطل الكود القديم فوراً، ولن يتمكن الطلاب الجدد من استخدامه. هل أنت متأكد؟',
+      message:
+        'إنشاء كود جديد سيُبطل الكود القديم فوراً، ولن يتمكن الطلاب الجدد من استخدامه. هل أنت متأكد؟',
       header: 'إنشاء كود تسجيل جديد',
       icon: 'pi pi-info-circle',
       acceptLabel: 'نعم، إنشاء كود جديد',

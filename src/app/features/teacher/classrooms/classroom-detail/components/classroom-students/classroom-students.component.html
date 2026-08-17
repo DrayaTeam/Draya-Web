@@ -1,6 +1,5 @@
 <!-- src/app/features/teacher/classrooms/classroom-detail/components/classroom-students/classroom-students.component.html -->
 <div class="roster-container">
-
   <!-- Table Header Toolbar -->
   <div class="table-toolbar">
     <div class="toolbar-left">
@@ -29,7 +28,6 @@
       currentPageReportTemplate="عرض {first} إلى {last} من أصل {totalRecords} طالب"
       styleClass="draya-custom-table"
       [tableStyle]="{ 'min-width': '50rem' }">
-      
       <ng-template pTemplate="header">
         <tr>
           <th>الطالب</th>
@@ -59,14 +57,27 @@
             </div>
           </td>
           <td>
-            <div class="status-badge" [ngClass]="student.status === 'Active' ? 'badge-active' : 'badge-inactive'">
+            <div
+              class="status-badge"
+              [ngClass]="student.status === 'Active' ? 'badge-active' : 'badge-inactive'">
               <span class="status-dot"></span>
               {{ student.status === 'Active' ? 'نشط' : student.status }}
             </div>
           </td>
           <td style="text-align: center">
-            <button class="action-btn-danger" (click)="confirmRemoveStudent(student)" title="إزالة الطالب">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <button
+              class="action-btn-danger"
+              (click)="confirmRemoveStudent(student)"
+              title="إزالة الطالب">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
                 <path d="M3 6h18"></path>
                 <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
                 <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
@@ -81,7 +92,15 @@
           <td colspan="4">
             <div class="empty-state">
               <div class="empty-icon-wrap">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg
+                  width="40"
+                  height="40"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                   <circle cx="9" cy="7" r="4"></circle>
                   <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>

@@ -15,7 +15,15 @@
   } @else if (transactions().length === 0) {
     <div class="empty-state">
       <div class="icon-wrapper">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
           <polyline points="14 2 14 8 20 8"></polyline>
           <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -41,8 +49,8 @@
           @for (tx of transactions(); track tx.id) {
             <tr>
               <td class="date-cell">
-                <span class="date">{{ tx.createdAt | date:'dd/MM/yyyy' }}</span>
-                <span class="time">{{ tx.createdAt | date:'shortTime' }}</span>
+                <span class="date">{{ tx.createdAt | date: 'dd/MM/yyyy' }}</span>
+                <span class="time">{{ tx.createdAt | date: 'shortTime' }}</span>
               </td>
               <td>
                 <span class="badge" [ngClass]="getTypeClass(tx.type)">
@@ -55,16 +63,22 @@
               </td>
               <td class="amount-cell">
                 <!-- Highlight positive amounts green, negative amounts red -->
-                <span class="amount-value" [class.text-green-600]="tx.amount > 0" [class.text-red-600]="tx.amount < 0">
-                  <span dir="ltr">{{ tx.amount > 0 ? '+' : '' }}{{ tx.amount }}</span> ج.م
+                <span
+                  class="amount-value"
+                  [class.text-green-600]="tx.amount > 0"
+                  [class.text-red-600]="tx.amount < 0">
+                  <span dir="ltr">{{ tx.amount > 0 ? '+' : '' }}{{ tx.amount }}</span>
+                  ج.م
                 </span>
               </td>
               <td>
                 <span class="balance-type-badge">
-                  @if(tx.balanceType === BalanceType.Earned) {
-                    <span class="dot dot-green"></span> أرباح الكورسات
+                  @if (tx.balanceType === BalanceType.Earned) {
+                    <span class="dot dot-green"></span>
+                    أرباح الكورسات
                   } @else {
-                    <span class="dot dot-purple"></span> رصيد المنصة
+                    <span class="dot dot-purple"></span>
+                    رصيد المنصة
                   }
                 </span>
               </td>
@@ -79,13 +93,37 @@
       <div class="pagination-footer">
         <span class="page-info">صفحة {{ currentPage() }} من {{ totalPages() }}</span>
         <div class="pagination-actions">
-          <button class="btn-icon" (click)="nextPage()" [disabled]="!hasNextPage()" title="الصفحة السابقة">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button
+            class="btn-icon"
+            (click)="nextPage()"
+            [disabled]="!hasNextPage()"
+            title="الصفحة السابقة">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
           </button>
-          <button class="btn-icon" (click)="prevPage()" [disabled]="!hasPrevPage()" title="الصفحة التالية">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button
+            class="btn-icon"
+            (click)="prevPage()"
+            [disabled]="!hasPrevPage()"
+            title="الصفحة التالية">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
               <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
           </button>

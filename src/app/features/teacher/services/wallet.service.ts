@@ -3,14 +3,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { 
-  WalletBalance, 
-  PaginatedResponse, 
+import {
+  WalletBalance,
+  PaginatedResponse,
   WalletTransaction,
   PayoutAccount,
   CreatePayoutAccountRequest,
   Withdrawal,
-  TopupResponse
+  TopupResponse,
 } from '../../../core/models/wallet.model';
 
 @Injectable({ providedIn: 'root' })
@@ -28,8 +28,10 @@ export class WalletService {
     const params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());
-      
-    return this.http.get<PaginatedResponse<WalletTransaction>>(`${this.baseUrl}/transactions`, { params });
+
+    return this.http.get<PaginatedResponse<WalletTransaction>>(`${this.baseUrl}/transactions`, {
+      params,
+    });
   }
 
   /** Retrieves the teacher's payout accounts (e.g. Instapay). */
@@ -62,7 +64,7 @@ export class WalletService {
     const params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());
-      
+
     return this.http.get<PaginatedResponse<Withdrawal>>(`${this.baseUrl}/withdrawals`, { params });
   }
 
@@ -72,4 +74,3 @@ export class WalletService {
     return this.http.post<TopupResponse>(`${this.baseUrl}/topup`, payload);
   }
 }
-

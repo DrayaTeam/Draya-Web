@@ -139,8 +139,7 @@ export class SignalRService {
       // If hub is not mapped on backend (404), stay disconnected gracefully
       const is404 =
         err instanceof Error &&
-        (err.message.includes('404') ||
-          (err as { statusCode?: number }).statusCode === 404);
+        (err.message.includes('404') || (err as { statusCode?: number }).statusCode === 404);
       if (is404) {
         this._status.set('Disconnected');
         console.warn(

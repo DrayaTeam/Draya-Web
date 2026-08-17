@@ -11,12 +11,12 @@ export enum TransactionType {
   Purchased = 1,
   Withdrawal = 2,
   TopUp = 3,
-  Refund = 4
+  Refund = 4,
 }
 
 export enum BalanceType {
   Earned = 0,
-  Purchased = 1
+  Purchased = 1,
 }
 
 export interface WalletTransaction {
@@ -42,7 +42,7 @@ export interface PaginatedResponse<T> {
 export enum AccountType {
   InstaPay = 0,
   BankAccount = 1,
-  MobileWallet = 2
+  MobileWallet = 2,
 }
 
 export interface PayoutAccount {
@@ -66,7 +66,7 @@ export enum WithdrawalStatus {
   Pending = 0,
   Processing = 1,
   Completed = 2,
-  Rejected = 3
+  Rejected = 3,
 }
 
 export interface Withdrawal {
@@ -84,5 +84,3 @@ export interface TopupResponse {
   transactionId: string;
   checkoutUrl: string;
 }
-
-

@@ -1,5 +1,13 @@
 // src/app/features/teacher/wallet/components/withdrawal-modal/withdrawal-modal.component.ts
-import { Component, ChangeDetectionStrategy, input, output, signal, inject, DestroyRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  output,
+  signal,
+  inject,
+  DestroyRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -12,7 +20,7 @@ import { PayoutAccount } from '../../../../../core/models/wallet.model';
   imports: [CommonModule, FormsModule],
   templateUrl: './withdrawal-modal.component.html',
   styleUrl: './withdrawal-modal.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WithdrawalModalComponent {
   private readonly walletService = inject(WalletService);
@@ -22,8 +30,8 @@ export class WithdrawalModalComponent {
   readonly maxAmount = input.required<number>();
   readonly targetAccount = input<PayoutAccount | null>(null);
 
-  readonly onClose = output<void>();
-  readonly onSuccess = output<void>();
+  readonly closed = output<void>();
+  readonly success = output<void>();
 
   // State
   amount = signal<number | null>(null);
@@ -33,40 +41,43 @@ export class WithdrawalModalComponent {
   close(): void {
     this.amount.set(null);
     this.errorMessage.set('');
-    this.onClose.emit();
+    this.closed.emit();
   }
 
   submit(): void {
-    const requestedAmount = this.amount();
-    if (!requestedAmount || requestedAmount <= 0) {
-      this.errorMessage.set('يرجى إدخال مبلغ صحيح.');
+    const val = this.amount();
+    if (!val || val <= 0) {
+      this.errorMessage.set('يرجى إدخال مبلغ صالح.');
       return;
     }
-    if (requestedAmount > this.maxAmount()) {
-      this.errorMessage.set('رصيدك المتاح لا يسمح بسحب هذا المبلغ.');
+
+    if (val > this.maxAmount()) {
+      this.errorMessage.set('المبلغ المطلوب أكبر من الرصيد المتاح.');
+      return;
+    }
+
+    const account = this.targetAccount();
+    if (!account) {
+      this.errorMessage.set('يرجى تحديد حساب السحب.');
       return;
     }
 
     this.isSubmitting.set(true);
     this.errorMessage.set('');
 
-    this.walletService.requestWithdrawal(requestedAmount).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: () => {
-        this.isSubmitting.set(false);
-        this.onSuccess.emit();
-        this.close();
-      },
-      error: (err) => {
-        console.error('Withdrawal failed', err);
-        // Mock success for development
-        setTimeout(() => {
+    this.walletService
+      .requestWithdrawal(val)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
           this.isSubmitting.set(false);
-          this.onSuccess.emit();
+          this.success.emit();
           this.close();
-        }, 1000);
-      }
-    });
+        },
+        error: (err) => {
+          this.isSubmitting.set(false);
+          this.errorMessage.set(err?.message || 'فشل تقديم طلب السحب.');
+        },
+      });
   }
 }

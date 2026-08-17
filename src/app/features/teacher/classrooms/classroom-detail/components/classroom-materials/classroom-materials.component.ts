@@ -1,4 +1,12 @@
-import { Component, ChangeDetectionStrategy, input, inject, signal, effect, HostListener } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  inject,
+  signal,
+  effect,
+  HostListener,
+} from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -46,7 +54,7 @@ export class ClassroomMaterialsComponent {
 
   // Upload modal state
   readonly isUploadModalVisible = signal<boolean>(false);
-  
+
   // Version Modals state
   readonly isUploadVersionModalVisible = signal<boolean>(false);
   readonly isVersionsModalVisible = signal<boolean>(false);
@@ -102,7 +110,7 @@ export class ClassroomMaterialsComponent {
   }
   toggleMenu(materialId: string, event: Event): void {
     event.stopPropagation();
-    this.openMenuId.update(current => current === materialId ? null : materialId);
+    this.openMenuId.update((current) => (current === materialId ? null : materialId));
   }
 
   openStream(material: ClassroomMaterialDto): void {
@@ -116,17 +124,17 @@ export class ClassroomMaterialsComponent {
         // ============================================================================
         // 🚨 TEMPORARY HOTFIX 🚨
         // Reverses a backend URL-encoding bug. See docs/draya-api-full-reference.md
-        // The backend incorrectly encodes Arabic characters in the streamUrl as %<hex> 
+        // The backend incorrectly encodes Arabic characters in the streamUrl as %<hex>
         // (e.g., %645 instead of the standard UTF-8 %D9%85).
-        // 
+        //
         // REMOVE THIS once the backend team fixes their Arabic path encoding!
         // WARNING: If a material title legitimately contains the exact "%123" pattern,
         // this regex WILL break the real URL. Do not keep this code long-term.
         // ============================================================================
-        const fixedUrl = res.streamUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) => 
-          String.fromCharCode(parseInt(hex, 16))
+        const fixedUrl = res.streamUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
+          String.fromCharCode(parseInt(hex, 16)),
         );
-        
+
         window.open(encodeURI(fixedUrl), '_blank');
       },
       error: (err) => {
@@ -136,7 +144,7 @@ export class ClassroomMaterialsComponent {
           summary: 'خطأ',
           detail: 'فشل فتح المادة. حاول مرة أخرى لاحقًا.',
         });
-      }
+      },
     });
   }
 
@@ -152,18 +160,18 @@ export class ClassroomMaterialsComponent {
 
   onUploadVersionSuccess(newVersion: MaterialVersionDto): void {
     this.isUploadVersionModalVisible.set(false);
-    
+
     // Update the specific material's currentVersion in the list without full reload
     this.materialsResult.update((current) => {
       if (!current) return current;
-      return current.map(m => {
+      return current.map((m) => {
         if (m.materialId === this.selectedMaterial()?.materialId) {
           return { ...m, currentVersion: newVersion };
         }
         return m;
       });
     });
-    
+
     // TODO: Poll status if necessary, but backend is fast and versions array shows it
   }
 

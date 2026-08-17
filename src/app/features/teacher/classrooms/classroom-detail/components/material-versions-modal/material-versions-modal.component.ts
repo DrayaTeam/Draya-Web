@@ -1,9 +1,20 @@
-import { Component, ChangeDetectionStrategy, input, output, inject, signal, effect } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  output,
+  inject,
+  signal,
+  effect,
+} from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { finalize } from 'rxjs/operators';
 import { MaterialService } from '../../../../services/material.service';
-import { MaterialVersionDto, ClassroomMaterialDto } from '../../../../../../core/models/material.model';
+import {
+  MaterialVersionDto,
+  ClassroomMaterialDto,
+} from '../../../../../../core/models/material.model';
 
 @Component({
   selector: 'draya-material-versions-modal',
@@ -40,7 +51,8 @@ export class MaterialVersionsModalComponent {
   private loadVersions(materialId: string): void {
     this.isLoading.set(true);
     this.error.set(null);
-    this.materialService.getMaterialVersions(materialId)
+    this.materialService
+      .getMaterialVersions(materialId)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (data) => {
@@ -50,7 +62,7 @@ export class MaterialVersionsModalComponent {
         error: (err) => {
           console.error('Failed to load versions', err);
           this.error.set('حدث خطأ أثناء تحميل سجل الإصدارات.');
-        }
+        },
       });
   }
 

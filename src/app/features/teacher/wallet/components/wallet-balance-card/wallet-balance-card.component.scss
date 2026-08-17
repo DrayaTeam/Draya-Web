@@ -4,7 +4,7 @@
   grid-template-columns: 1fr;
   gap: 16px;
   margin-bottom: 32px;
-  
+
   @media (min-width: 768px) {
     grid-template-columns: 1fr 1fr;
   }
@@ -93,12 +93,12 @@
   border-radius: 6px;
   cursor: pointer;
   transition: all 150ms ease;
-  
+
   &:hover {
     background-color: #f3f4f6;
     color: #111827;
   }
-  
+
   &:active {
     background-color: #e5e7eb;
   }
@@ -109,8 +109,14 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Dark Mode */
@@ -119,19 +125,40 @@
     background-color: #1f2937;
     border-color: #374151;
   }
-  .card-top { border-color: #374151; }
-  .card-label { color: #9ca3af; }
-  .amount { color: #f9fafb; }
-  .currency { color: #9ca3af; }
-  
-  .status-indicator { background-color: rgba(5, 150, 105, 0.2); color: #34d399; }
-  .ai-indicator { background-color: rgba(79, 70, 229, 0.2); color: #818cf8; }
-  
-  .card-bottom { background-color: #111827; }
+  .card-top {
+    border-color: #374151;
+  }
+  .card-label {
+    color: #9ca3af;
+  }
+  .amount {
+    color: #f9fafb;
+  }
+  .currency {
+    color: #9ca3af;
+  }
+
+  .status-indicator {
+    background-color: rgba(5, 150, 105, 0.2);
+    color: #34d399;
+  }
+  .ai-indicator {
+    background-color: rgba(79, 70, 229, 0.2);
+    color: #818cf8;
+  }
+
+  .card-bottom {
+    background-color: #111827;
+  }
   .stripe-btn-outline {
     border-color: #4b5563;
     color: #d1d5db;
-    &:hover { background-color: #374151; color: #f9fafb; }
-    &:active { background-color: #4b5563; }
+    &:hover {
+      background-color: #374151;
+      color: #f9fafb;
+    }
+    &:active {
+      background-color: #4b5563;
+    }
   }
 }

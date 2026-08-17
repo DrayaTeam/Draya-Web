@@ -2,11 +2,18 @@
 @if (isOpen()) {
   <div class="modal-backdrop animate-fade-in" dir="rtl">
     <div class="modal-content bounce-in">
-      
       <div class="modal-header">
         <h2 class="modal-title">شحن رصيد المنصة</h2>
         <button class="close-btn" (click)="close()" aria-label="إغلاق">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
@@ -16,23 +23,34 @@
       <div class="modal-body">
         <div class="info-box mb-6">
           <div class="icon-wrapper">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
               <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
             </svg>
           </div>
           <div>
             <p class="info-title">استخدام الذكاء الاصطناعي</p>
-            <p class="info-desc">استخدم هذا الرصيد للاستفادة من ميزات دراية المتقدمة مثل تصحيح الامتحانات وتوليد الأسئلة.</p>
+            <p class="info-desc">
+              استخدم هذا الرصيد للاستفادة من ميزات دراية المتقدمة مثل تصحيح الامتحانات وتوليد
+              الأسئلة.
+            </p>
           </div>
         </div>
 
         <div class="form-group mb-4">
-          <label>اختر مبلغ الشحن السريع</label>
+          <span class="mb-2 block text-sm font-medium text-gray-700">اختر مبلغ الشحن السريع</span>
           <div class="presets-grid">
             @for (preset of presets; track preset) {
-              <button 
-                type="button" 
-                class="preset-btn" 
+              <button
+                type="button"
+                class="preset-btn"
                 [class.active]="amount() === preset"
                 (click)="setAmount(preset)">
                 {{ preset }} ج.م
@@ -42,14 +60,15 @@
         </div>
 
         <div class="form-group">
-          <label>أو أدخل مبلغاً مخصصاً (ج.م)</label>
-          <input 
-            type="number" 
-            [ngModel]="amount()" 
-            (ngModelChange)="amount.set($event)" 
-            class="form-control amount-input" 
+          <label for="customTopupAmount">أو أدخل مبلغاً مخصصاً (ج.م)</label>
+          <input
+            id="customTopupAmount"
+            type="number"
+            [ngModel]="amount()"
+            (ngModelChange)="amount.set($event)"
+            class="form-control amount-input"
             placeholder="0.00"
-            min="50">
+            min="50" />
         </div>
 
         @if (errorMessage()) {
@@ -62,7 +81,7 @@
       <div class="modal-footer">
         <button class="btn-secondary" (click)="close()" [disabled]="isSubmitting()">إلغاء</button>
         <button class="btn-primary" (click)="submit()" [disabled]="isSubmitting() || !amount()">
-          @if(isSubmitting()) {
+          @if (isSubmitting()) {
             <span class="spinner-sm"></span>
             جاري تحويلك للدفع...
           } @else {
@@ -70,7 +89,6 @@
           }
         </button>
       </div>
-      
     </div>
   </div>
 }

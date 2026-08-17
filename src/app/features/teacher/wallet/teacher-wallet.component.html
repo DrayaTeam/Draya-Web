@@ -13,14 +13,14 @@
   } @else {
     <div class="wallet-content">
       <!-- Top Section: Balances -->
-      <draya-wallet-balance-card 
+      <draya-wallet-balance-card
         [balance]="balance()"
-        (onTopUp)="handleTopUp()"
-        (onWithdraw)="handleWithdraw()">
-      </draya-wallet-balance-card>
+        (topUp)="handleTopUp()"
+        (withdraw)="handleWithdraw()"></draya-wallet-balance-card>
 
       <!-- Middle Section: Payout Accounts (Instapay) -->
-      <draya-payout-accounts (onWithdrawRequested)="handleWithdrawToAccount($event)"></draya-payout-accounts>
+      <draya-payout-accounts
+        (withdrawRequested)="handleWithdrawToAccount($event)"></draya-payout-accounts>
 
       <!-- Bottom Section: Transactions History -->
       <draya-wallet-transactions></draya-wallet-transactions>
@@ -28,17 +28,15 @@
   }
 
   <!-- Withdrawal Modal -->
-  <draya-withdrawal-modal 
-    [isOpen]="isWithdrawalModalOpen()" 
+  <draya-withdrawal-modal
+    [isOpen]="isWithdrawalModalOpen()"
     [maxAmount]="balance()?.availableEarnedBalance ?? 0"
     [targetAccount]="selectedPayoutAccount()"
-    (onClose)="isWithdrawalModalOpen.set(false)"
-    (onSuccess)="onWithdrawalSuccess()">
-  </draya-withdrawal-modal>
+    (closed)="isWithdrawalModalOpen.set(false)"
+    (success)="onWithdrawalSuccess()"></draya-withdrawal-modal>
 
   <!-- Topup Modal -->
-  <draya-topup-modal 
-    [isOpen]="isTopupModalOpen()" 
-    (onClose)="isTopupModalOpen.set(false)">
-  </draya-topup-modal>
+  <draya-topup-modal
+    [isOpen]="isTopupModalOpen()"
+    (closed)="isTopupModalOpen.set(false)"></draya-topup-modal>
 </div>

@@ -90,7 +90,9 @@
   font-family: inherit;
   transition: all 150ms ease;
 
-  &:active { transform: scale(0.97); }
+  &:active {
+    transform: scale(0.97);
+  }
 
   &.hero-btn-outline {
     background: rgba(255, 255, 255, 0.12);
@@ -197,10 +199,22 @@
   justify-content: center;
   flex-shrink: 0;
 
-  &.kpi-teal   { background: #f0fdfa; color: #0d9488; }
-  &.kpi-amber  { background: #fefce8; color: #ca8a04; }
-  &.kpi-green  { background: #f0fdf4; color: #16a34a; }
-  &.kpi-blue   { background: #eff6ff; color: #2563eb; }
+  &.kpi-teal {
+    background: #f0fdfa;
+    color: #0d9488;
+  }
+  &.kpi-amber {
+    background: #fefce8;
+    color: #ca8a04;
+  }
+  &.kpi-green {
+    background: #f0fdf4;
+    color: #16a34a;
+  }
+  &.kpi-blue {
+    background: #eff6ff;
+    color: #2563eb;
+  }
 }
 
 .kpi-text {
@@ -311,7 +325,9 @@
     background: #f5fcfb;
     border-radius: 8px 8px 0 0;
 
-    svg { color: #1b6d63; }
+    svg {
+      color: #1b6d63;
+    }
   }
 
   &.tab-active {
@@ -319,7 +335,9 @@
     border-bottom-color: #1b6d63;
     background: transparent;
 
-    svg { color: #1b6d63; }
+    svg {
+      color: #1b6d63;
+    }
   }
 }
 
@@ -337,7 +355,9 @@
   gap: 16px;
   color: #9ca3af;
 
-  svg { color: #d1d5db; }
+  svg {
+    color: #d1d5db;
+  }
 
   p {
     font-size: 0.9375rem;
@@ -366,7 +386,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .empty-state {
@@ -424,5 +446,7 @@
   text-decoration: none;
   transition: background 150ms ease;
 
-  &:hover { background: #134e48; }
+  &:hover {
+    background: #134e48;
+  }
 }

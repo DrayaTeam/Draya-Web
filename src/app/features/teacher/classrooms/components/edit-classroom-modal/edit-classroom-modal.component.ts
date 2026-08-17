@@ -1,9 +1,31 @@
-import { Component, ChangeDetectionStrategy, input, output, signal, inject, OnInit, effect } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  output,
+  signal,
+  inject,
+  OnInit,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { ClassroomService } from '../../../services/classroom.service';
-import { ClassroomTypeDto, GradeLevelDto, SubjectDto, UpdateClassroomRequest, ClassroomDto } from '../../../../../core/models/classroom.model';
+import {
+  ClassroomTypeDto,
+  GradeLevelDto,
+  SubjectDto,
+  UpdateClassroomRequest,
+  ClassroomDto,
+} from '../../../../../core/models/classroom.model';
 import { ApiError } from '../../../../../core/models/api-error.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
@@ -42,12 +64,12 @@ export class EditClassroomModalComponent implements OnInit {
   readonly updated = output<void>();
 
   form!: FormGroup;
-  
+
   // Lookup Data Signals
   readonly subjects = signal<SubjectDto[]>([]);
   readonly classroomTypes = signal<ClassroomTypeDto[]>([]);
   readonly gradeLevels = signal<GradeLevelDto[]>([]);
-  
+
   // State Signals
   readonly isSubmitting = signal<boolean>(false);
 
@@ -67,16 +89,19 @@ export class EditClassroomModalComponent implements OnInit {
   }
 
   private initForm(): void {
-    this.form = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
-      subjectId: ['', Validators.required],
-      classroomTypeId: ['', Validators.required],
-      gradeLevelId: ['', Validators.required],
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
-      price: [0, [Validators.required, Validators.min(0)]],
-      isActive: [true]
-    }, { validators: dateRangeValidator });
+    this.form = this.fb.group(
+      {
+        name: ['', [Validators.required, Validators.minLength(3)]],
+        subjectId: ['', Validators.required],
+        classroomTypeId: ['', Validators.required],
+        gradeLevelId: ['', Validators.required],
+        startDate: ['', Validators.required],
+        endDate: ['', Validators.required],
+        price: [0, [Validators.required, Validators.min(0)]],
+        isActive: [true],
+      },
+      { validators: dateRangeValidator },
+    );
   }
 
   private loadLookupData(): void {
@@ -84,19 +109,19 @@ export class EditClassroomModalComponent implements OnInit {
       next: (data) => {
         this.subjects.set(data);
         this.patchFormValues();
-      }
+      },
     });
     this.classroomService.getClassroomTypes().subscribe({
       next: (data) => {
         this.classroomTypes.set(data);
         this.patchFormValues();
-      }
+      },
     });
     this.classroomService.getGradeLevels().subscribe({
       next: (data) => {
         this.gradeLevels.set(data);
         this.patchFormValues();
-      }
+      },
     });
   }
 
@@ -105,12 +130,12 @@ export class EditClassroomModalComponent implements OnInit {
     if (!cls || !this.isOpen()) return;
 
     // We must map Names to IDs since ClassroomDto only has names
-    const subject = this.subjects().find(s => s.name === cls.subjectName);
-    const type = this.classroomTypes().find(t => t.name === cls.classroomTypeName);
-    const grade = this.gradeLevels().find(g => g.name === cls.gradeLevelName);
+    const subject = this.subjects().find((s) => s.name === cls.subjectName);
+    const type = this.classroomTypes().find((t) => t.name === cls.classroomTypeName);
+    const grade = this.gradeLevels().find((g) => g.name === cls.gradeLevelName);
 
-    const startStr = cls.startDate ? new Date(cls.startDate).toISOString().slice(0,16) : '';
-    const endStr = cls.endDate ? new Date(cls.endDate).toISOString().slice(0,16) : '';
+    const startStr = cls.startDate ? new Date(cls.startDate).toISOString().slice(0, 16) : '';
+    const endStr = cls.endDate ? new Date(cls.endDate).toISOString().slice(0, 16) : '';
 
     this.form.patchValue({
       name: cls.name,
@@ -120,7 +145,7 @@ export class EditClassroomModalComponent implements OnInit {
       startDate: startStr,
       endDate: endStr,
       price: cls.price,
-      isActive: cls.isActive
+      isActive: cls.isActive,
     });
   }
 
@@ -137,7 +162,7 @@ export class EditClassroomModalComponent implements OnInit {
     this.isSubmitting.set(true);
 
     const formValue = this.form.value;
-    
+
     const payload: UpdateClassroomRequest = {
       subjectId: formValue.subjectId,
       name: formValue.name,
@@ -146,24 +171,25 @@ export class EditClassroomModalComponent implements OnInit {
       startDate: new Date(formValue.startDate).toISOString(),
       endDate: new Date(formValue.endDate).toISOString(),
       price: Number(formValue.price),
-      isActive: formValue.isActive
+      isActive: formValue.isActive,
     };
 
-    this.classroomService.updateClassroom(cls.classroomId, payload).pipe(
-      finalize(() => this.isSubmitting.set(false))
-    ).subscribe({
-      next: () => {
-        this.toastService.success('نجاح', 'تم تعديل بيانات الفصل بنجاح!');
-        this.updated.emit();
-        this.close();
-      },
-      error: (errorRes: HttpErrorResponse) => {
-        const responseBody = errorRes.error as { error: ApiError };
-        const apiError = responseBody?.error;
-        const msg = apiError?.message || 'حدث خطأ أثناء تعديل الفصل. يرجى المحاولة مرة أخرى.';
-        this.toastService.error('خطأ', msg);
-      }
-    });
+    this.classroomService
+      .updateClassroom(cls.classroomId, payload)
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.toastService.success('نجاح', 'تم تعديل بيانات الفصل بنجاح!');
+          this.updated.emit();
+          this.close();
+        },
+        error: (errorRes: HttpErrorResponse) => {
+          const responseBody = errorRes.error as { error: ApiError };
+          const apiError = responseBody?.error;
+          const msg = apiError?.message || 'حدث خطأ أثناء تعديل الفصل. يرجى المحاولة مرة أخرى.';
+          this.toastService.error('خطأ', msg);
+        },
+      });
   }
 
   close(): void {

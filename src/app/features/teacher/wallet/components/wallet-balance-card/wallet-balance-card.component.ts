@@ -10,12 +10,12 @@ import { WalletBalance } from '../../../../../core/models/wallet.model';
   templateUrl: './wallet-balance-card.component.html',
   styleUrl: './wallet-balance-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'block w-full' }
+  host: { class: 'block w-full' },
 })
 export class WalletBalanceCardComponent {
   readonly balance = input.required<WalletBalance | null>();
-  
+
   // Events for buttons that will be implemented in future phases
-  readonly onTopUp = output<void>();
-  readonly onWithdraw = output<void>();
+  readonly topUp = output<void>();
+  readonly withdraw = output<void>();
 }

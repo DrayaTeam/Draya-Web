@@ -3,7 +3,11 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { ClassroomMaterialDto, MaterialVersionDto, MaterialStreamDto } from '../../../core/models/material.model';
+import {
+  ClassroomMaterialDto,
+  MaterialVersionDto,
+  MaterialStreamDto,
+} from '../../../core/models/material.model';
 import { PaginatedResponse } from '../../../core/models/classroom.model';
 
 @Injectable({ providedIn: 'root' })
@@ -29,7 +33,10 @@ export class MaterialService {
 
   /** Uploads a new material via FormData */
   addMaterial(classroomId: string, formData: FormData): Observable<ClassroomMaterialDto> {
-    return this.http.post<ClassroomMaterialDto>(`${this.baseUrl}/${classroomId}/materials`, formData);
+    return this.http.post<ClassroomMaterialDto>(
+      `${this.baseUrl}/${classroomId}/materials`,
+      formData,
+    );
   }
 
   /** Fully removes a material from a classroom */
@@ -39,7 +46,10 @@ export class MaterialService {
 
   /** Uploads a new version to an existing material */
   uploadMaterialVersion(materialId: string, formData: FormData): Observable<MaterialVersionDto> {
-    return this.http.post<MaterialVersionDto>(`${this.materialBaseUrl}/${materialId}/versions`, formData);
+    return this.http.post<MaterialVersionDto>(
+      `${this.materialBaseUrl}/${materialId}/versions`,
+      formData,
+    );
   }
 
   /** Gets the version history for a material */
@@ -48,9 +58,12 @@ export class MaterialService {
   }
 
   /** Polls the status of a specific version */
-  getVersionStatus(materialId: string, versionId: string): Observable<{ versionId: string; parseStatus: string; errorMessage: string | null }> {
+  getVersionStatus(
+    materialId: string,
+    versionId: string,
+  ): Observable<{ versionId: string; parseStatus: string; errorMessage: string | null }> {
     return this.http.get<{ versionId: string; parseStatus: string; errorMessage: string | null }>(
-      `${this.materialBaseUrl}/${materialId}/versions/${versionId}/status`
+      `${this.materialBaseUrl}/${materialId}/versions/${versionId}/status`,
     );
   }
 

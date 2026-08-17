@@ -50,14 +50,18 @@
   border: none;
   font-family: inherit;
 
-  &:active { transform: scale(0.98); }
+  &:active {
+    transform: scale(0.98);
+  }
 }
 
 .btn-primary {
   background-color: #1b6d63;
   color: #ffffff;
 
-  &:hover { background-color: #134e48; }
+  &:hover {
+    background-color: #134e48;
+  }
 }
 
 .btn-outline {
@@ -65,7 +69,9 @@
   color: #1b6d63;
   border: 1px solid #1b6d63;
 
-  &:hover { background-color: #f0fdfa; }
+  &:hover {
+    background-color: #f0fdfa;
+  }
 }
 
 /* ─── Grid & Cards ──────────────────────────────────── */
@@ -75,8 +81,12 @@
   gap: 20px;
   width: 100%;
 
-  @media (max-width: 1024px) { grid-template-columns: repeat(2, 1fr); }
-  @media (max-width: 640px) { grid-template-columns: 1fr; }
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .material-card {
@@ -106,7 +116,9 @@
   justify-content: center;
   flex-shrink: 0;
 
-  i { font-size: 1.5rem; }
+  i {
+    font-size: 1.5rem;
+  }
 
   &.icon-pdf {
     background: linear-gradient(135deg, #fef2f2, #fee2e2);
@@ -152,8 +164,10 @@
   gap: 6px;
   font-size: 0.8125rem;
   color: #64748b;
-  
-  svg { color: #94a3b8; }
+
+  svg {
+    color: #94a3b8;
+  }
 }
 
 .material-actions {
@@ -178,8 +192,10 @@
     background-color: #f1f5f9;
     color: #334155;
   }
-  
-  &:active { transform: scale(0.95); }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 /* ─── Empty State ───────────────────────────────────── */
@@ -212,7 +228,7 @@
     color: #1e293b;
   }
 
-.empty-text {
+  .empty-text {
     margin: 0;
     font-size: 0.9375rem;
     color: #64748b;
@@ -232,7 +248,9 @@
   background: #ffffff;
   border: 1px solid #f1f5f9;
   border-radius: 12px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.08),
+    0 8px 10px -6px rgba(0, 0, 0, 0.04);
   min-width: 180px;
   z-index: 50;
   padding: 6px;
@@ -279,15 +297,19 @@
   &:hover {
     background: #f8fafc;
     color: #111827;
-    
-    i { color: #1b6d63; }
+
+    i {
+      color: #1b6d63;
+    }
   }
 
   &.danger-item {
     color: #ef4444;
-    
-    i { color: #ef4444; }
-    
+
+    i {
+      color: #ef4444;
+    }
+
     &:hover {
       background: #fef2f2;
       color: #dc2626;
