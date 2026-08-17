@@ -39,7 +39,10 @@ export class LoginComponent {
 
   onSubmit(): void {
     // Prevent double-submit by checking loading state
-    if (this.loginForm.invalid || this.loginForm.untouched || this.loading()) return;
+    if (this.loginForm.invalid || this.loading()) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
 
     // Clear old error for clean validation
     this.inlineError.set(null);

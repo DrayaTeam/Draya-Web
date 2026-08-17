@@ -5,6 +5,14 @@
   "outputDirectory": "dist/draya-web/browser",
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "http://draya-api.runasp.net/api/:path*"
+    },
+    {
+      "source": "/hubs/:path*",
+      "destination": "http://draya-api.runasp.net/hubs/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
