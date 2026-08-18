@@ -100,7 +100,7 @@ export class CreateClassroomModalComponent implements OnInit {
       {
         name: ['', [Validators.required, Validators.minLength(3)]],
         subjectId: ['', Validators.required],
-        classroomTypeId: ['', Validators.required],
+        classroomTypeId: [''],
         gradeLevelId: ['', Validators.required],
         startDate: ['', Validators.required],
         endDate: ['', Validators.required],
@@ -116,7 +116,12 @@ export class CreateClassroomModalComponent implements OnInit {
       error: (err) => console.error('Failed to load subjects', err),
     });
     this.classroomService.getClassroomTypes().subscribe({
-      next: (data) => this.classroomTypes.set(data),
+      next: (data) => {
+        this.classroomTypes.set(data);
+        if (data.length > 0 && !this.form.get('classroomTypeId')?.value) {
+          this.form.patchValue({ classroomTypeId: data[0].id });
+        }
+      },
       error: (err) => console.error('Failed to load types', err),
     });
     this.classroomService.getGradeLevels().subscribe({

@@ -41,12 +41,36 @@ export class TeacherProfileComponent implements OnInit {
   readonly isLoading = signal<boolean>(true);
   readonly isSaving = signal<boolean>(false);
   readonly isUploadingPicture = signal<boolean>(false);
+  readonly isChangingPassword = signal<boolean>(false);
+
+  readonly specializationOptions: string[] = [
+    'اللغة العربية',
+    'اللغة الإنجليزية',
+    'اللغة الفرنسية',
+    'الرياضيات',
+    'الفيزياء',
+    'الكيمياء',
+    'الأحياء',
+    'الجيولوجيا',
+    'التاريخ',
+    'الجغرافيا',
+    'الفلسفة والمنطق',
+    'علم النفس والاجتماع',
+    'الحاسب الآلي وتكنولوجيا المعلومات',
+    'التعليم العام',
+  ];
 
   readonly editForm = this.fb.nonNullable.group({
     fullName: ['', [Validators.required, Validators.minLength(3)]],
     phone: [''],
     specialization: [''],
     description: [''],
+  });
+
+  readonly passwordForm = this.fb.nonNullable.group({
+    currentPassword: ['', [Validators.required, Validators.minLength(6)]],
+    newPassword: ['', [Validators.required, Validators.minLength(6)]],
+    confirmPassword: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   ngOnInit(): void {
@@ -206,6 +230,58 @@ export class TeacherProfileComponent implements OnInit {
             severity: 'error',
             summary: 'خطأ',
             detail: 'فشل رفع الصورة الشخصية. يرجى المحاولة مرة أخرى.',
+          });
+        },
+      });
+  }
+
+  onChangePassword(): void {
+    if (this.passwordForm.invalid || this.isChangingPassword()) {
+      this.passwordForm.markAllAsTouched();
+      return;
+    }
+
+    const { currentPassword, newPassword, confirmPassword } = this.passwordForm.getRawValue();
+
+    if (newPassword !== confirmPassword) {
+      this.messageService?.add({
+        severity: 'error',
+        summary: 'تنبيه',
+        detail: 'كلمة المرور الجديدة وتأكيدها غير متطابقين.',
+      });
+      return;
+    }
+
+    this.isChangingPassword.set(true);
+
+    this.auth
+      .changePassword({ currentPassword, newPassword, confirmPassword })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isChangingPassword.set(false)),
+      )
+      .subscribe({
+        next: (res) => {
+          if (res.success) {
+            this.messageService?.add({
+              severity: 'success',
+              summary: 'نجاح',
+              detail: res.message || 'تم تغيير كلمة المرور بنجاح.',
+            });
+            this.passwordForm.reset();
+          } else {
+            this.messageService?.add({
+              severity: 'error',
+              summary: 'خطأ',
+              detail: res.message || 'فشل تغيير كلمة المرور.',
+            });
+          }
+        },
+        error: () => {
+          this.messageService?.add({
+            severity: 'error',
+            summary: 'خطأ',
+            detail: 'حدث خطأ أثناء تغيير كلمة المرور.',
           });
         },
       });

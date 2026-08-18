@@ -118,11 +118,6 @@ export class TeacherSidebarComponent {
       icon: 'wallet',
     },
     {
-      labelKey: 'TEACHER.SIDEBAR.SUBSCRIPTION',
-      link: '/teacher/subscription',
-      icon: 'subscription',
-    },
-    {
       labelKey: 'TEACHER.SIDEBAR.ACCOUNT',
       link: '/teacher/account',
       icon: 'account',

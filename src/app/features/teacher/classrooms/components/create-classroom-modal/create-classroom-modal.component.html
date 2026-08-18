@@ -145,16 +145,13 @@
           <div class="form-group flex-1">
             <label for="classroomTypeId" class="form-label">
               نوع الفصل
-              <span class="required">*</span>
+              <span class="text-xs text-gray-400 font-normal mr-1">(اختياري)</span>
             </label>
             <select
               id="classroomTypeId"
               formControlName="classroomTypeId"
-              class="form-input"
-              [class.error]="
-                form.get('classroomTypeId')?.invalid && form.get('classroomTypeId')?.touched
-              ">
-              <option value="" disabled selected>اختر النوع</option>
+              class="form-input">
+              <option value="" selected>اختر النوع (اختياري)</option>
               @for (type of classroomTypes(); track type.id) {
                 <option [value]="type.id">{{ type.name }}</option>
               }
