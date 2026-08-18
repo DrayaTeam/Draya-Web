@@ -1,0 +1,75 @@
+/* draya-modal unified container design */
+.draya-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #ffffff;
+}
+
+.draya-modal-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.draya-modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.draya-modal-subtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.draya-modal-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 150ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.draya-modal-close:hover {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+/* The uniform container for the content */
+.draya-modal-body {
+  padding: 24px;
+  color: #374151;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  background-color: #ffffff;
+}
+
+/* Footer layout */
+.draya-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb; /* Slight tint to differentiate footer */
+}
+
+/* Ensure PrimeNG dialog overlay styles don't conflict with rounding */
+:host ::ng-deep .p-dialog {
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+:host ::ng-deep .p-dialog .p-dialog-content {
+  border-radius: 16px;
+}

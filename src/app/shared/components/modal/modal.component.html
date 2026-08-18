@@ -1,0 +1,37 @@
+<p-dialog
+  [visible]="isOpen()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="false"
+  [showHeader]="false"
+  [contentStyle]="{ padding: '0', borderRadius: '16px', overflow: 'hidden' }"
+  [style]="{ width: 'calc(100% - 32px)', maxWidth: maxWidthMap[size()], margin: '16px auto' }"
+  styleClass="draya-modal"
+  (onHide)="onHide()">
+  
+  <!-- Custom Header -->
+  <div class="draya-modal-header">
+    <div class="draya-modal-header-text">
+      <h3 class="draya-modal-title">{{ title() }}</h3>
+      @if (subtitle()) {
+        <p class="draya-modal-subtitle">{{ subtitle() }}</p>
+      }
+    </div>
+    <button class="draya-modal-close" (click)="onHide()" aria-label="Close">
+      <i class="pi pi-times"></i>
+    </button>
+  </div>
+  
+  <div class="draya-modal-body">
+    <ng-content></ng-content>
+  </div>
+
+  @if (!hideFooter()) {
+    <ng-template pTemplate="footer">
+      <div class="draya-modal-footer">
+        <ng-content select="[modal-footer]"></ng-content>
+      </div>
+    </ng-template>
+  }
+</p-dialog>

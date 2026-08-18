@@ -222,7 +222,6 @@
       "QUOTA_EXCEEDED_DESC": "لقد استنفدت الحصة المخصصة في خطتك الحالية. يرجى الترقية لمواصلة الاستخدام."
     }
   },
-
   "LANDING": {
     "BRAND": "درايَة",
     "NAVBAR": {
@@ -391,12 +390,6 @@
       "MADE_WITH": "صنع بحب في مصر"
     }
   },
-  "CONNECTION": {
-    "DISCONNECTED": "لا يوجد اتصال — بعض الميزات المباشرة غير متاحة حالياً",
-    "RECONNECTING": "جارٍ إعادة الاتصال بالخادم…",
-    "ERROR": "فشل الاتصال — يُرجى التحقق من اتصالك بالإنترنت",
-    "RETRY": "إعادة المحاولة"
-  },
   "TEACHER": {
     "SIDEBAR": {
       "BRAND_NAME": "درايَة",
@@ -526,6 +519,24 @@
       "REQUIRED_FIELD": "هذا الحقل مطلوب.",
       "CANCEL": "إلغاء",
       "SAVE_CHANGES": "حفظ التغييرات"
+    },
+    "SECTIONS": {
+      "TITLE": "الأقسام",
+      "ADD_SECTION": "إضافة قسم",
+      "EDIT_SECTION": "تعديل القسم",
+      "DELETE_SECTION": "حذف القسم",
+      "EMPTY_TITLE": "لا توجد أقسام بعد",
+      "EMPTY_DESC": "أضف قسمًا أولًا لتنظيم مواد الفصل الدراسي.",
+      "SECTION_EMPTY_MATERIALS": "لا توجد مواد في هذا القسم بعد.",
+      "ADD_MATERIAL": "إضافة مادة",
+      "MATERIAL_COUNT": "مادة",
+      "ORDER_LABEL": "الترتيب",
+      "TITLE_LABEL": "عنوان القسم",
+      "DESCRIPTION_LABEL": "وصف القسم",
+      "CONFIRM_DELETE": "هل أنت متأكد من حذف هذا القسم؟ سيتم حذف جميع مواده.",
+      "CREATE_SUCCESS": "تم إنشاء القسم بنجاح.",
+      "UPDATE_SUCCESS": "تم تحديث القسم بنجاح.",
+      "DELETE_SUCCESS": "تم حذف القسم بنجاح."
     }
   },
   "STUDENT": {

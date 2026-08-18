@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, output, inject, signal, effect } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { DialogModule } from 'primeng/dialog';
+import { ModalComponent } from '../../../../../../shared/components/modal/modal.component';
 import { finalize } from 'rxjs/operators';
 import { MaterialService } from '../../../../services/material.service';
 import { MaterialVersionDto, ClassroomMaterialDto } from '../../../../../../core/models/material.model';
@@ -8,7 +8,7 @@ import { MaterialVersionDto, ClassroomMaterialDto } from '../../../../../../core
 @Component({
   selector: 'draya-material-versions-modal',
   standalone: true,
-  imports: [CommonModule, DatePipe, DialogModule],
+  imports: [CommonModule, DatePipe, ModalComponent],
   templateUrl: './material-versions-modal.component.html',
   styleUrl: './material-versions-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

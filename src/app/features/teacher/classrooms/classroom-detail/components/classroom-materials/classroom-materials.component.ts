@@ -6,15 +6,21 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { finalize } from 'rxjs/operators';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { MaterialService } from '../../../../services/material.service';
+import { SectionService } from '../../../../services/section.service';
 import {
   ClassroomMaterialDto,
   MaterialVersionDto,
 } from '../../../../../../core/models/material.model';
+import { ClassroomSectionDto, SectionMaterialDto } from '../../../../../../core/models/section.model';
+
 import { UploadMaterialModalComponent } from '../upload-material-modal/upload-material-modal.component';
 import { UploadVersionModalComponent } from '../upload-version-modal/upload-version-modal.component';
 import { MaterialVersionsModalComponent } from '../material-versions-modal/material-versions-modal.component';
+import { CreateSectionModalComponent } from '../create-section-modal/create-section-modal.component';
+import { EditSectionModalComponent } from '../edit-section-modal/edit-section-modal.component';
 
 @Component({
   selector: 'draya-classroom-materials',
@@ -26,9 +32,12 @@ import { MaterialVersionsModalComponent } from '../material-versions-modal/mater
     ButtonModule,
     DialogModule,
     TooltipModule,
+    TranslatePipe,
     UploadMaterialModalComponent,
     UploadVersionModalComponent,
     MaterialVersionsModalComponent,
+    CreateSectionModalComponent,
+    EditSectionModalComponent,
   ],
   templateUrl: './classroom-materials.component.html',
   styleUrl: './classroom-materials.component.scss',
@@ -37,23 +46,27 @@ import { MaterialVersionsModalComponent } from '../material-versions-modal/mater
 export class ClassroomMaterialsComponent {
   readonly classroomId = input.required<string>();
 
+  private readonly sectionService = inject(SectionService);
   private readonly materialService = inject(MaterialService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService, { optional: true });
 
-  readonly materialsResult = signal<ClassroomMaterialDto[] | null>(null);
+  readonly sectionsResult = signal<ClassroomSectionDto[] | null>(null);
   readonly isLoading = signal<boolean>(false);
+  readonly expandedSections = signal<Record<string, boolean>>({});
 
-  // Upload modal state
+  // Section Modals
+  readonly isCreateSectionModalVisible = signal<boolean>(false);
+  readonly isEditSectionModalVisible = signal<boolean>(false);
+  readonly selectedSection = signal<ClassroomSectionDto | null>(null);
+
+  // Material Modals
   readonly isUploadModalVisible = signal<boolean>(false);
+  readonly targetSectionIdForUpload = signal<string | null>(null);
   
-  // Version Modals state
   readonly isUploadVersionModalVisible = signal<boolean>(false);
   readonly isVersionsModalVisible = signal<boolean>(false);
   readonly selectedMaterial = signal<ClassroomMaterialDto | null>(null);
-
-  pageNumber = 1;
-  pageSize = 20;
 
   readonly openMenuId = signal<string | null>(null);
 
@@ -66,67 +79,131 @@ export class ClassroomMaterialsComponent {
     effect(() => {
       const id = this.classroomId();
       if (id) {
-        this.pageNumber = 1;
-        this.loadMaterials();
+        this.loadSections();
       }
     });
   }
 
-  loadMaterials(): void {
+  loadSections(): void {
     const id = this.classroomId();
     if (!id) return;
 
     this.isLoading.set(true);
-    this.materialService
-      .getClassroomMaterials(id, this.pageNumber, this.pageSize)
+    this.sectionService
+      .getSections(id)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: (res) => this.materialsResult.set(res.items || []),
+        next: (sections) => {
+          this.sectionsResult.set(sections || []);
+          // Ensure all sections are expanded by default or keep previous state
+          const newExpanded = { ...this.expandedSections() };
+          sections?.forEach(s => {
+            if (newExpanded[s.id] === undefined) {
+              newExpanded[s.id] = true;
+            }
+          });
+          this.expandedSections.set(newExpanded);
+        },
         error: (err) => {
-          console.error('Failed to load materials', err);
-          this.materialsResult.set(null);
+          console.error('Failed to load sections', err);
+          this.sectionsResult.set(null);
         },
       });
   }
 
-  openUploadModal(): void {
+  toggleSection(sectionId: string): void {
+    this.expandedSections.update(current => ({
+      ...current,
+      [sectionId]: !current[sectionId]
+    }));
+  }
+
+  openCreateSectionModal(): void {
+    this.isCreateSectionModalVisible.set(true);
+  }
+
+  onSectionCreated(): void {
+    this.isCreateSectionModalVisible.set(false);
+    this.loadSections();
+  }
+
+  openEditSectionModal(section: ClassroomSectionDto, event: Event): void {
+    event.stopPropagation();
+    this.selectedSection.set(section);
+    this.isEditSectionModalVisible.set(true);
+  }
+
+  onSectionUpdated(): void {
+    this.isEditSectionModalVisible.set(false);
+    this.selectedSection.set(null);
+    this.loadSections();
+  }
+
+  confirmDeleteSection(section: ClassroomSectionDto, event: Event): void {
+    event.stopPropagation();
+    this.confirmationService.confirm({
+      message: 'هل أنت متأكد من حذف هذا القسم؟ سيتم حذف جميع مواده.',
+      header: 'تأكيد الحذف',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'نعم، حذف',
+      rejectLabel: 'إلغاء',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
+      accept: () => {
+        this.deleteSection(section.id);
+      },
+    });
+  }
+
+  private deleteSection(sectionId: string): void {
+    this.sectionService.deleteSection(sectionId).subscribe({
+      next: () => {
+        this.messageService?.add({
+          severity: 'success',
+          summary: 'تم الحذف',
+          detail: 'تم حذف القسم بنجاح.',
+        });
+        this.loadSections();
+      },
+      error: (err) => {
+        console.error('Failed to delete section', err);
+        this.messageService?.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: 'حدث خطأ أثناء حذف القسم.',
+        });
+      }
+    });
+  }
+
+  openUploadModal(sectionId: string, event?: Event): void {
+    if (event) event.stopPropagation();
+    this.targetSectionIdForUpload.set(sectionId);
     this.isUploadModalVisible.set(true);
   }
 
-  onUploadSuccess(dto: ClassroomMaterialDto): void {
+  onUploadSuccess(): void {
     this.isUploadModalVisible.set(false);
-    this.materialsResult.update((current) => {
-      if (!current) return [dto];
-      return [dto, ...current];
-    });
+    this.targetSectionIdForUpload.set(null);
+    this.loadSections();
   }
+
   toggleMenu(materialId: string, event: Event): void {
     event.stopPropagation();
     this.openMenuId.update(current => current === materialId ? null : materialId);
   }
 
-  openStream(material: ClassroomMaterialDto): void {
+  openStream(material: SectionMaterialDto): void {
     this.messageService?.add({
       severity: 'info',
       summary: 'جاري التحميل',
       detail: 'جاري جلب الرابط، يرجى الانتظار...',
     });
-    this.materialService.getMaterialStream(material.materialId).subscribe({
+    this.materialService.getMaterialStream(material.id).subscribe({
       next: (res) => {
-        // ============================================================================
-        // 🚨 TEMPORARY HOTFIX 🚨
-        // Reverses a backend URL-encoding bug. See docs/draya-api-full-reference.md
-        // The backend incorrectly encodes Arabic characters in the streamUrl as %<hex> 
-        // (e.g., %645 instead of the standard UTF-8 %D9%85).
-        // 
-        // REMOVE THIS once the backend team fixes their Arabic path encoding!
-        // WARNING: If a material title legitimately contains the exact "%123" pattern,
-        // this regex WILL break the real URL. Do not keep this code long-term.
-        // ============================================================================
         const fixedUrl = res.streamUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) => 
           String.fromCharCode(parseInt(hex, 16))
         );
-        
         window.open(encodeURI(fixedUrl), '_blank');
       },
       error: (err) => {
@@ -140,34 +217,39 @@ export class ClassroomMaterialsComponent {
     });
   }
 
-  openUploadVersionModal(material: ClassroomMaterialDto): void {
-    this.selectedMaterial.set(material);
+  private mapToClassroomMaterial(material: SectionMaterialDto): ClassroomMaterialDto {
+    return {
+      materialId: material.id,
+      title: material.title,
+      materialType: material.materialType as any,
+      createdAt: material.createdAt,
+      currentVersion: {
+        versionId: '',
+        versionNumber: 1,
+        fileUrl: '',
+        parseStatus: 'Parsed',
+        uploadedAt: material.createdAt,
+        errorMessage: null
+      }
+    };
+  }
+
+  openUploadVersionModal(material: SectionMaterialDto): void {
+    this.selectedMaterial.set(this.mapToClassroomMaterial(material));
     this.isUploadVersionModalVisible.set(true);
   }
 
-  openVersionHistoryModal(material: ClassroomMaterialDto): void {
-    this.selectedMaterial.set(material);
+  openVersionHistoryModal(material: SectionMaterialDto): void {
+    this.selectedMaterial.set(this.mapToClassroomMaterial(material));
     this.isVersionsModalVisible.set(true);
   }
 
-  onUploadVersionSuccess(newVersion: MaterialVersionDto): void {
+  onUploadVersionSuccess(): void {
     this.isUploadVersionModalVisible.set(false);
-    
-    // Update the specific material's currentVersion in the list without full reload
-    this.materialsResult.update((current) => {
-      if (!current) return current;
-      return current.map(m => {
-        if (m.materialId === this.selectedMaterial()?.materialId) {
-          return { ...m, currentVersion: newVersion };
-        }
-        return m;
-      });
-    });
-    
-    // TODO: Poll status if necessary, but backend is fast and versions array shows it
+    this.loadSections();
   }
 
-  confirmDeleteMaterial(material: ClassroomMaterialDto): void {
+  confirmDeleteMaterial(material: SectionMaterialDto): void {
     this.confirmationService.confirm({
       message: `هل أنت متأكد من حذف المادة التعليمية "${material.title}"؟`,
       header: 'تأكيد الحذف',
@@ -177,7 +259,7 @@ export class ClassroomMaterialsComponent {
       acceptButtonStyleClass: 'p-button-danger',
       rejectButtonStyleClass: 'p-button-text',
       accept: () => {
-        this.deleteMaterial(material.materialId);
+        this.deleteMaterial(material.id);
       },
     });
   }
@@ -190,7 +272,7 @@ export class ClassroomMaterialsComponent {
           summary: 'تم الحذف',
           detail: 'تم حذف المادة التعليمية بنجاح.',
         });
-        this.loadMaterials();
+        this.loadSections();
       },
       error: (err) => {
         console.error('Failed to delete material', err);

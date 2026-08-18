@@ -1,68 +1,66 @@
-<p-dialog
-  [visible]="isOpen()"
-  (visibleChange)="onClose()"
-  [modal]="true"
-  [draggable]="false"
-  [resizable]="false"
-  styleClass="draya-dialog"
-  [style]="{ width: '100%', maxWidth: '600px' }"
-  header="سجل الإصدارات">
+<draya-modal
+  title="سجل الإصدارات"
+  [isOpen]="isOpen()"
+  size="md"
+  (modalClosed)="onClose()">
   
-  @if (material(); as mat) {
-    <div class="mb-4 rounded-lg bg-gray-50 p-4">
-      <div class="text-sm text-gray-500">المادة التعليمية:</div>
-      <div class="font-bold text-gray-900">{{ mat.title }}</div>
-    </div>
+  <div>
+    @if (material(); as mat) {
+      <div class="mb-4 rounded-lg bg-gray-50 p-4">
+        <div class="text-sm text-gray-500">المادة التعليمية:</div>
+        <div class="font-bold text-gray-900">{{ mat.title }}</div>
+      </div>
 
-    @if (isLoading()) {
-      <div class="flex flex-col items-center justify-center py-10 text-gray-500">
-        <i class="pi pi-spin pi-spinner text-primary-600 mb-4 text-3xl"></i>
-        <p>جاري تحميل السجل...</p>
-      </div>
-    } @else if (error()) {
-      <div class="rounded-lg bg-red-50 p-4 text-red-600">
-        {{ error() }}
-      </div>
-    } @else {
-      <div class="flex flex-col gap-3">
-        @for (version of versions(); track version.versionId) {
-          <div class="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50">
-            <div class="flex flex-col gap-1">
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-gray-900">إصدار {{ version.versionNumber }}</span>
-                @if (version.versionId === mat.currentVersion.versionId) {
-                  <span class="rounded bg-primary-100 px-2 py-0.5 text-xs font-bold text-primary-700">الحالي</span>
-                }
-              </div>
-              <span class="text-xs text-gray-500">{{ version.uploadedAt | date:'medium' }}</span>
-              
-              <!-- Status Badge -->
-              <div class="mt-1 flex items-center gap-1 text-xs font-bold">
-                @if (version.parseStatus === 'Parsed') {
-                  <span class="text-green-600"><i class="pi pi-check-circle mr-1"></i> تمت المعالجة</span>
-                } @else if (version.parseStatus === 'Pending') {
-                  <span class="text-yellow-600"><i class="pi pi-spin pi-spinner mr-1"></i> قيد المعالجة</span>
-                } @else if (version.parseStatus === 'Failed') {
-                  <span class="text-red-600"><i class="pi pi-times-circle mr-1"></i> فشل</span>
-                  @if (version.errorMessage) {
-                    <span class="text-red-500 font-normal ml-2">({{ version.errorMessage }})</span>
+      @if (isLoading()) {
+        <div class="flex flex-col items-center justify-center py-10 text-gray-500">
+          <i class="pi pi-spin pi-spinner text-primary-600 mb-4 text-3xl"></i>
+          <p>جاري تحميل السجل...</p>
+        </div>
+      } @else if (error()) {
+        <div class="rounded-lg bg-red-50 p-4 text-red-600">
+          {{ error() }}
+        </div>
+      } @else {
+        <div class="flex flex-col gap-3">
+          @for (version of versions(); track version.versionId) {
+            <div class="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50">
+              <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-gray-900">إصدار {{ version.versionNumber }}</span>
+                  @if (version.versionId === mat.currentVersion.versionId) {
+                    <span class="rounded bg-primary-100 px-2 py-0.5 text-xs font-bold text-primary-700">الحالي</span>
                   }
-                } @else {
-                  <span class="text-gray-500">{{ version.parseStatus }}</span>
-                }
+                </div>
+                <span class="text-xs text-gray-500">{{ version.uploadedAt | date:'medium' }}</span>
+                
+                <!-- Status Badge -->
+                <div class="mt-1 flex items-center gap-1 text-xs font-bold">
+                  @if (version.parseStatus === 'Parsed') {
+                    <span class="text-green-600"><i class="pi pi-check-circle mr-1"></i> تمت المعالجة</span>
+                  } @else if (version.parseStatus === 'Pending') {
+                    <span class="text-yellow-600"><i class="pi pi-spin pi-spinner mr-1"></i> قيد المعالجة</span>
+                  } @else if (version.parseStatus === 'Failed') {
+                    <span class="text-red-600"><i class="pi pi-times-circle mr-1"></i> فشل</span>
+                    @if (version.errorMessage) {
+                      <span class="text-red-500 font-normal ml-2">({{ version.errorMessage }})</span>
+                    }
+                  } @else {
+                    <span class="text-gray-500">{{ version.parseStatus }}</span>
+                  }
+                </div>
               </div>
+              
+              <button class="btn-icon-small text-gray-400 cursor-not-allowed opacity-50" title="غير متاح مؤقتًا، جاري العمل على حل المشكلة">
+                <i class="pi pi-download"></i>
+              </button>
             </div>
-            
-            <button class="btn-icon-small text-gray-400 cursor-not-allowed opacity-50" title="غير متاح مؤقتًا، جاري العمل على حل المشكلة">
-              <i class="pi pi-download"></i>
-            </button>
-          </div>
-        }
-      </div>
+          }
+        </div>
+      }
     }
+  </div>
 
-    <div class="mt-6 flex justify-end pt-4 border-t border-gray-200">
-      <button class="btn-primary" (click)="onClose()">إغلاق</button>
-    </div>
-  }
-</p-dialog>
+  <div modal-footer class="flex gap-3">
+    <button class="btn-primary" (click)="onClose()">إغلاق</button>
+  </div>
+</draya-modal>
