@@ -237,8 +237,8 @@
       "TAGLINE": "Smart Academic Learning Platform",
       "TAGLINE_SUB": "Designed for Egyptian Private Tutors & Centers",
       "DESCRIPTION": "Generate exams with AI, detect student knowledge gaps, and share approved parent reports effortlessly.",
-      "CTA_PRIMARY": "Create Your Account",
-      "CTA_SECONDARY": "Explore Features",
+      "CTA_PRIMARY": "Create Account & Start Free",
+      "CTA_SECONDARY": "Explore Features for Free",
       "FLOATING_EXAM": "AI Exam Ready",
       "FLOATING_EXAM_SUB": "20 questions awaiting review",
       "FLOATING_REPORT": "Performance Report",
@@ -376,7 +376,7 @@
     "CTA": {
       "HEADING": "Start Your Smart Learning Journey Today",
       "SUBTEXT": "Join now for free and save precious time with Draya's AI-powered system.",
-      "PRIMARY": "Start Free",
+      "PRIMARY": "Create Your Account",
       "SECONDARY": "Sign In"
     },
     "FOOTER": {

@@ -22,6 +22,11 @@ export const authRoutes: Routes = [
         title: 'Register Teacher — Draya',
       },
       {
+        path: 'register',
+        redirectTo: 'register-teacher',
+        pathMatch: 'full',
+      },
+      {
         path: 'register-student',
         loadComponent: () =>
           import('./pages/register-student/register-student.component').then(
