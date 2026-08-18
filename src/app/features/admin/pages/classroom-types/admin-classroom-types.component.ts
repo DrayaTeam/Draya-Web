@@ -23,10 +23,34 @@ import { ToastService } from '../../../../core/services/toast.service';
 import { finalize } from 'rxjs/operators';
 
 const DEFAULT_CLASSROOM_TYPES: ClassroomTypeDto[] = [
-  { id: '1', name: 'مجموعة سنتر (حضوري)', description: 'فصل دراسي داخل مقر ومجموعات حضورية', isActive: true, createdAt: '2026-01-01T00:00:00Z' },
-  { id: '2', name: 'أونلاين تفاعلي مباشر', description: 'حصص ومحاضرات تفاعلية عبر البث المباشر', isActive: true, createdAt: '2026-01-01T00:00:00Z' },
-  { id: '3', name: 'دروس مسجلة (Self-paced)', description: 'محاضرات ومواد مسجلة متاحة طوال الفصل الدراسي', isActive: true, createdAt: '2026-01-01T00:00:00Z' },
-  { id: '4', name: 'متابعة فردية خاصة (Private)', description: 'متابعة خاصة 1-on-1 واختبارات دورية', isActive: true, createdAt: '2026-01-01T00:00:00Z' },
+  {
+    id: '1',
+    name: 'مجموعة سنتر (حضوري)',
+    description: 'فصل دراسي داخل مقر ومجموعات حضورية',
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: '2',
+    name: 'أونلاين تفاعلي مباشر',
+    description: 'حصص ومحاضرات تفاعلية عبر البث المباشر',
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: '3',
+    name: 'دروس مسجلة (Self-paced)',
+    description: 'محاضرات ومواد مسجلة متاحة طوال الفصل الدراسي',
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: '4',
+    name: 'متابعة فردية خاصة (Private)',
+    description: 'متابعة خاصة 1-on-1 واختبارات دورية',
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
 ];
 
 @Component({

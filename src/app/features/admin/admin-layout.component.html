@@ -13,7 +13,11 @@
   <!-- Sidebar (Right side in RTL) -->
   <aside class="sidebar" [class.mobile-open]="isMobileSidebarOpen()">
     <div class="sidebar-header">
-      <a routerLink="/" class="logo-area" style="text-decoration: none; color: inherit;" title="الرئيسية">
+      <a
+        routerLink="/"
+        class="logo-area"
+        style="text-decoration: none; color: inherit"
+        title="الرئيسية">
         <div class="logo-circle">
           <i class="pi pi-shield"></i>
         </div>
@@ -124,9 +128,13 @@
           type="button"
           (click)="localeService.toggle()"
           [title]="localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'"
-          [attr.aria-label]="localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'"
+          [attr.aria-label]="
+            localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'
+          "
           class="topbar-icon-btn lang-pill">
-          <span class="text-xs font-bold">{{ localeService.locale() === 'ar' ? 'EN' : 'عربي' }}</span>
+          <span class="text-xs font-bold">
+            {{ localeService.locale() === 'ar' ? 'EN' : 'عربي' }}
+          </span>
         </button>
 
         <div class="profile-dropdown-wrapper">
@@ -141,9 +149,14 @@
                 [src]="auth.currentUser()?.profilePictureUrl || auth.currentUser()?.pictureUrl"
                 [alt]="currentUserName()"
                 class="profile-avatar"
-                style="object-fit: cover;"
-                (error)="$any($event.target).style.display = 'none'; fallbackAdminSpan.style.display = 'flex'" />
-              <div #fallbackAdminSpan style="display: none" class="profile-avatar">{{ currentUserInitial() }}</div>
+                style="object-fit: cover"
+                (error)="
+                  $any($event.target).style.display = 'none';
+                  fallbackAdminSpan.style.display = 'flex'
+                " />
+              <div #fallbackAdminSpan style="display: none" class="profile-avatar">
+                {{ currentUserInitial() }}
+              </div>
             } @else {
               <div class="profile-avatar">{{ currentUserInitial() }}</div>
             }
