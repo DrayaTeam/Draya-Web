@@ -114,9 +114,7 @@ export class TeacherDirectoryService extends ApiBaseService {
           }
 
           return teachersList.map((t, idx) => {
-            const realSubject =
-              (t.specialization && t.specialization.trim()) ||
-              'التعليم العام';
+            const realSubject = (t.specialization && t.specialization.trim()) || 'التعليم العام';
 
             const cat = inferCategory(realSubject);
             const styleIdx = idx % CARD_GRADIENTS.length;

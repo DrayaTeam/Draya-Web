@@ -64,7 +64,9 @@
       type="button"
       (click)="localeService.toggle()"
       [title]="localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'"
-      [attr.aria-label]="localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'"
+      [attr.aria-label]="
+        localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'
+      "
       class="nav-icon-btn lang-pill">
       <span class="text-xs font-bold">{{ localeService.locale() === 'ar' ? 'EN' : 'عربي' }}</span>
     </button>
@@ -208,16 +210,10 @@
 
   <!-- Drawer Controls (Theme & Language) -->
   <div class="drawer-controls-row">
-    <button
-      type="button"
-      (click)="themeService.toggleTheme()"
-      class="btn-drawer-action">
+    <button type="button" (click)="themeService.toggleTheme()" class="btn-drawer-action">
       <span>{{ themeService.isDarkMode() ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي' }}</span>
     </button>
-    <button
-      type="button"
-      (click)="localeService.toggle()"
-      class="btn-drawer-action">
+    <button type="button" (click)="localeService.toggle()" class="btn-drawer-action">
       <span>🌐 {{ localeService.locale() === 'ar' ? 'English' : 'العربية' }}</span>
     </button>
   </div>

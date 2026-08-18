@@ -39,9 +39,7 @@
         الرئيسية
       </a>
       <a routerLink="/student/teachers" routerLinkActive="active" class="nav-item">تصفح المعلمين</a>
-      <a routerLink="/student/courses" routerLinkActive="active" class="nav-item">
-        فصولي الدراسية
-      </a>
+      <a routerLink="/student/courses" routerLinkActive="active" class="nav-item">فصولي الدراسية</a>
       <a routerLink="/student/exams" routerLinkActive="active" class="nav-item">الامتحانات</a>
       <a routerLink="/student/channel" routerLinkActive="active" class="nav-item">قناة النقاش</a>
       <a routerLink="/student/reports" routerLinkActive="active" class="nav-item">
@@ -148,7 +146,9 @@
         type="button"
         (click)="localeService.toggle()"
         [title]="localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'"
-        [attr.aria-label]="localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'"
+        [attr.aria-label]="
+          localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'
+        "
         class="icon-btn lang-toggle-btn">
         <span class="text-xs font-bold">{{ localeService.locale() === 'ar' ? 'EN' : 'عربي' }}</span>
       </button>
@@ -287,16 +287,10 @@
       </nav>
 
       <div class="drawer-controls-row">
-        <button
-          type="button"
-          (click)="themeService.toggleTheme()"
-          class="btn-drawer-action">
+        <button type="button" (click)="themeService.toggleTheme()" class="btn-drawer-action">
           <span>{{ themeService.isDarkMode() ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي' }}</span>
         </button>
-        <button
-          type="button"
-          (click)="localeService.toggle()"
-          class="btn-drawer-action">
+        <button type="button" (click)="localeService.toggle()" class="btn-drawer-action">
           <span>🌐 {{ localeService.locale() === 'ar' ? 'English' : 'العربية' }}</span>
         </button>
       </div>

@@ -34,8 +34,6 @@ describe('StudentCoursesComponent', () => {
 
   it('should render page heading and subtitle', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.page-heading')?.textContent).toContain(
-      'فصولي الدراسية النشطة',
-    );
+    expect(compiled.querySelector('.page-heading')?.textContent).toContain('فصولي الدراسية النشطة');
   });
 });
