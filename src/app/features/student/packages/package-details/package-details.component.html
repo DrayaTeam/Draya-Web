@@ -27,7 +27,7 @@
         <div class="hero-tags">
           <span class="subject-tag">{{ p.subject }}</span>
           @if (isEnrolled()) {
-            <span class="enrolled-tag">✓ أنت مشترك في هذه الباقة</span>
+            <span class="enrolled-tag">✓ أنت مشترك في هذا الفصل</span>
           }
         </div>
         <h1 class="pkg-title">{{ p.name }}</h1>
@@ -54,7 +54,7 @@
               stroke-width="2.5">
               <polygon points="5 3 19 12 5 21 5 3"></polygon>
             </svg>
-            <span>الذهاب لباقاتي النشطة</span>
+            <span>الذهاب لفصولي النشطة</span>
           </a>
         } @else {
           <span class="price-title">سعر الاشتراك الشامل</span>
@@ -181,7 +181,7 @@
 
     <!-- Features Included List -->
     <div class="features-card">
-      <h3 class="features-title">ما تشتمل عليه هذه الباقة:</h3>
+      <h3 class="features-title">ما يشتمل عليه هذا الفصل الدراسي:</h3>
       <div class="features-list">
         @for (feat of p.features; track feat) {
           <div class="feature-item">
@@ -195,8 +195,8 @@
     <!-- Chapters & Lessons Syllabus Accordion -->
     <div class="syllabus-section">
       <div class="syllabus-header-row">
-        <h2 class="syllabus-title">محتويات وفهرس الباقة</h2>
-        <span class="syllabus-counter">{{ p.chapters.length }} فصول ومحتويات</span>
+        <h2 class="syllabus-title">محتويات وفهرس الفصل الدراسي</h2>
+        <span class="syllabus-counter">{{ p.chapters.length }} أقسام ومحتويات</span>
       </div>
 
       <div class="chapters-list">
@@ -486,12 +486,12 @@
         <p class="lock-modal-subtitle">
           للوصول إلى محاضرة
           <strong>"{{ selectedLesson()?.title }}"</strong>
-          وجميع المذكرات والاختبارات الدورية، يرجى تفعيل اشتراكك في الباقة.
+          وجميع المذكرات والاختبارات الدورية، يرجى تفعيل اشتراكك في هذا الفصل الدراسي.
         </p>
 
         <div class="lock-actions-wrap">
           <button type="button" class="btn-lock-buy" (click)="onGoToCheckout()">
-            <span>الاشتراك وتفعيل الباقة فوراً ({{ pkg()?.price }} جنيه)</span>
+            <span>الاشتراك وتفعيل الفصل فوراً ({{ pkg()?.price }} جنيه)</span>
             <svg
               width="18"
               height="18"
