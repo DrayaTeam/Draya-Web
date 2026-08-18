@@ -12,6 +12,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../auth/services/auth.service';
 import { LogoComponent } from '../../../../shared/components/logo/logo.component';
 
+import { ThemeService } from '../../../../core/services/theme.service';
+import { LocaleService } from '../../../../core/locale/locale.service';
+
 @Component({
   selector: 'draya-landing-navbar',
   standalone: true,
@@ -22,6 +25,8 @@ import { LogoComponent } from '../../../../shared/components/logo/logo.component
 })
 export class LandingNavbarComponent implements OnInit, OnDestroy {
   protected readonly auth = inject(AuthService);
+  readonly themeService = inject(ThemeService);
+  readonly localeService = inject(LocaleService);
   readonly isAuthenticated = this.auth.isAuthenticated;
 
   readonly dashboardUrl = computed(() => {

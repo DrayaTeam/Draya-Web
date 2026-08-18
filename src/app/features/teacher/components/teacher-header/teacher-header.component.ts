@@ -4,6 +4,9 @@ import { AuthService } from '../../../auth';
 import { SubscriptionService } from '../../../../core/services/subscription.service';
 import { LogoComponent } from '../../../../shared/components/logo/logo.component';
 
+import { ThemeService } from '../../../../core/services/theme.service';
+import { LocaleService } from '../../../../core/locale/locale.service';
+
 @Component({
   selector: 'draya-teacher-header',
   standalone: true,
@@ -16,6 +19,8 @@ import { LogoComponent } from '../../../../shared/components/logo/logo.component
 export class TeacherHeaderComponent {
   protected readonly auth = inject(AuthService);
   protected readonly subscriptionService = inject(SubscriptionService);
+  readonly themeService = inject(ThemeService);
+  readonly localeService = inject(LocaleService);
 
   readonly userDisplayName = computed(() => {
     return this.auth.currentUser()?.fullName || 'المعلم';

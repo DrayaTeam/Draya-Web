@@ -3,6 +3,9 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../auth';
 import { LogoComponent } from '../../../../shared/components/logo/logo.component';
 
+import { ThemeService } from '../../../../core/services/theme.service';
+import { LocaleService } from '../../../../core/locale/locale.service';
+
 @Component({
   selector: 'draya-student-header',
   standalone: true,
@@ -14,6 +17,8 @@ import { LogoComponent } from '../../../../shared/components/logo/logo.component
 })
 export class StudentHeaderComponent {
   protected readonly auth = inject(AuthService);
+  readonly themeService = inject(ThemeService);
+  readonly localeService = inject(LocaleService);
 
   readonly userDisplayName = computed(() => {
     return this.auth.currentUser()?.fullName || 'الطالب';
