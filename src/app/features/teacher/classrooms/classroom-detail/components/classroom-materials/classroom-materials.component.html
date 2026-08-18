@@ -98,7 +98,7 @@
                 </div>
               </div>
               <div class="sh-right" (click)="$event.stopPropagation()">
-                <span class="sh-badge">{{ section.materials.length || 0 }} {{ 'TEACHER.SECTIONS.MATERIAL_COUNT' | translate }}</span>
+                <span class="sh-badge">{{ section.materials?.length || 0 }} {{ 'TEACHER.SECTIONS.MATERIAL_COUNT' | translate }}</span>
                 <button class="sh-action-btn" (click)="openUploadModal(section.id, $event)" title="إضافة مادة">
                   <i class="pi pi-plus"></i>
                 </button>
@@ -114,7 +114,7 @@
             <!-- Section Content (Materials) -->
             @if (expandedSections()[section.id]) {
               <div class="section-content">
-                @if (!section.materials.length) {
+                @if (!section.materials?.length) {
                   <div class="section-empty">
                     <p>{{ 'TEACHER.SECTIONS.SECTION_EMPTY_MATERIALS' | translate }}</p>
                     <button class="btn-outline-sm mt-3" (click)="openUploadModal(section.id)">
@@ -124,7 +124,7 @@
                   </div>
                 } @else {
                   <div class="materials-grid">
-                    @for (material of section.materials; track material.id) {
+                    @for (material of section.materials || []; track material.id) {
                       <div class="material-card">
                         <div
                           class="material-icon"
