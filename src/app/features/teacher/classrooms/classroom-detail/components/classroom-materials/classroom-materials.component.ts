@@ -120,10 +120,14 @@ export class ClassroomMaterialsComponent {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (sections) => {
-          this.sectionsResult.set(sections || []);
+          const mappedSections = (sections || []).map(s => ({
+            ...s,
+            materials: [...(s.documents || []), ...(s.videos || [])]
+          }));
+          this.sectionsResult.set(mappedSections);
           // Ensure all sections are expanded by default or keep previous state
           const newExpanded = { ...this.expandedSections() };
-          sections?.forEach(s => {
+          mappedSections.forEach(s => {
             if (newExpanded[s.id] === undefined) {
               newExpanded[s.id] = true;
             }
@@ -275,6 +279,7 @@ export class ClassroomMaterialsComponent {
   }
 
   private mapToClassroomMaterial(material: SectionMaterialDto): ClassroomMaterialDto {
+    const actualUrl = material.fileUrl || material.videoUrl || '';
     return {
       materialId: material.id,
       title: material.title,
@@ -283,7 +288,7 @@ export class ClassroomMaterialsComponent {
       currentVersion: {
         versionId: '',
         versionNumber: 1,
-        fileUrl: '',
+        fileUrl: actualUrl,
         parseStatus: 'Parsed',
         uploadedAt: material.createdAt,
         errorMessage: null

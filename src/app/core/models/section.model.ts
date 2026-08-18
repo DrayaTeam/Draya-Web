@@ -5,6 +5,7 @@ export interface SectionMaterialDto {
   title: string;
   materialType: 'PDF' | 'Video' | 'Link' | string;
   createdAt: string;
+  fileUrl?: string | null;
   videoUrl?: string | null;
   videoDurationInSeconds?: number | null;
 }
@@ -15,7 +16,10 @@ export interface ClassroomSectionDto {
   description: string | null;
   order: number;
   createdAt: string;
-  materials: SectionMaterialDto[];
+  documents: SectionMaterialDto[];
+  videos: SectionMaterialDto[];
+  exams: any[];
+  materials?: SectionMaterialDto[]; // Virtual property for UI convenience
 }
 
 export interface CreateSectionRequest {
