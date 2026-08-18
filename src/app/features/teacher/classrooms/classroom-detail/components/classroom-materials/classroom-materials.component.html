@@ -131,7 +131,7 @@
                                 [class.active]="getSectionTab(section) === 'videos'"
                                 (click)="setSectionTab(section.id, 'videos')">
                           <i class="pi pi-video"></i> فيديوهات الدرس
-                          <span class="tab-badge">{{section.videos.length}}</span>
+                          <span class="tab-badge">{{section.videos?.length || 0}}</span>
                         </button>
                       }
                       
@@ -140,7 +140,7 @@
                                 [class.active]="getSectionTab(section) === 'documents'"
                                 (click)="setSectionTab(section.id, 'documents')">
                           <i class="pi pi-file-pdf"></i> مذكرات وملفات
-                          <span class="tab-badge">{{section.documents.length}}</span>
+                          <span class="tab-badge">{{section.documents?.length || 0}}</span>
                         </button>
                       }
 
@@ -149,7 +149,7 @@
                                 [class.active]="getSectionTab(section) === 'exams'"
                                 (click)="setSectionTab(section.id, 'exams')">
                           <i class="pi pi-check-square"></i> اختبارات
-                          <span class="tab-badge">{{section.exams.length}}</span>
+                          <span class="tab-badge">{{section.exams?.length || 0}}</span>
                         </button>
                       }
                     </div>
