@@ -1,107 +1,135 @@
 <section id="pricing" class="pricing-section">
   <div class="pricing-container">
-    <!-- Header -->
-    <div class="pricing-header">
-      <span class="pricing-badge">
-        {{ 'LANDING.PRICING.BADGE' | translate }}
-      </span>
-      <h2 class="pricing-heading">
-        {{ 'LANDING.PRICING.HEADING' | translate }}
-      </h2>
-      <p class="pricing-subtitle">
-        {{ 'LANDING.PRICING.SUBTITLE' | translate }}
-      </p>
-    </div>
+    <div class="pricing-showcase-grid">
+      <!-- Right Column: Narrative, Pillars & Action -->
+      <div class="narrative-col">
+        <div class="badge-wrapper">
+          <span class="pricing-badge">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg>
+            {{ 'LANDING.PRICING.BADGE' | translate }}
+          </span>
+        </div>
 
-    <!-- Cards Grid -->
-    <div class="pricing-grid">
-      @for (tier of tiers; track tier.nameKey) {
-        <div
-          class="plan-card"
-          [class.card-featured]="tier.isFeatured"
-          [class.card-enterprise]="tier.isEnterprise"
-          [class.card-standard]="!tier.isFeatured && !tier.isEnterprise">
-          <!-- Top Badge -->
-          @if (tier.badgeKey) {
-            <div
-              class="tier-badge"
-              [class.badge-featured]="tier.isFeatured"
-              [class.badge-enterprise]="tier.isEnterprise">
-              @if (tier.isFeatured) {
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#FDE68A"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="animate-spin-slow">
-                  <path
-                    d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-                </svg>
-              }
-              <span>{{ tier.badgeKey | translate }}</span>
+        <h2 class="pricing-heading">
+          {{ 'LANDING.PRICING.HEADING' | translate }}
+        </h2>
+
+        <p class="pricing-subtitle">
+          {{ 'LANDING.PRICING.SUBTITLE' | translate }}
+        </p>
+
+        <!-- Pillars List -->
+        <div class="pillars-list">
+          @for (pillar of pillars; track pillar.titleKey) {
+            <div class="pillar-item">
+              <div class="pillar-icon-wrap" [class]="'accent-' + pillar.accentColor">
+                <i [class]="pillar.iconClass"></i>
+              </div>
+              <div class="pillar-text">
+                <h3 class="pillar-title">{{ pillar.titleKey | translate }}</h3>
+                <p class="pillar-desc">{{ pillar.descKey | translate }}</p>
+              </div>
             </div>
           }
+        </div>
 
-          <div class="tier-tag">
-            {{ tier.tagKey | translate }}
+        <!-- Action CTAs -->
+        <div class="pricing-cta-group">
+          <a routerLink="/auth/register-teacher" class="btn-primary-action">
+            <span>{{ 'LANDING.PRICING.CTA_TEACHER' | translate }}</span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
+          </a>
+          <a routerLink="/auth/register-student" class="btn-secondary-action">
+            <span>{{ 'LANDING.PRICING.CTA_STUDENT' | translate }}</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Left Column: Visual Comparison & Student Value -->
+      <div class="comparison-col">
+        <!-- Main Comparison Card -->
+        <div class="comparison-card">
+          <!-- Traditional Side (Negative) -->
+          <div class="comparison-block traditional-block">
+            <div class="block-header">
+              <span class="block-badge old-badge">
+                <i class="pi pi-times-circle"></i>
+                {{ 'LANDING.PRICING.COMPARISON.TRADITIONAL_TITLE' | translate }}
+              </span>
+            </div>
+            <ul class="block-points">
+              <li class="point-negative">
+                <span class="bullet-cross">✕</span>
+                <span>{{ 'LANDING.PRICING.COMPARISON.TRADITIONAL_1' | translate }}</span>
+              </li>
+              <li class="point-negative">
+                <span class="bullet-cross">✕</span>
+                <span>{{ 'LANDING.PRICING.COMPARISON.TRADITIONAL_2' | translate }}</span>
+              </li>
+              <li class="point-negative">
+                <span class="bullet-cross">✕</span>
+                <span>{{ 'LANDING.PRICING.COMPARISON.TRADITIONAL_3' | translate }}</span>
+              </li>
+            </ul>
           </div>
 
-          <h3 class="plan-name">
-            {{ tier.nameKey | translate }}
-          </h3>
-
-          <!-- Price Row -->
-          <div class="price-row">
-            <span class="price-amount">
-              {{ tier.priceKey | translate }}
-            </span>
-            <span class="price-unit">
-              {{ tier.unitKey | translate }}
-            </span>
-          </div>
-
-          <p class="plan-subtitle">
-            {{ tier.subKey | translate }}
-          </p>
-
-          <div class="card-divider"></div>
-
-          <!-- Feature List -->
-          <div class="plan-features">
-            @for (f of tier.featureKeys; track f) {
-              <div class="feature-item">
-                <div class="check-icon-wrap">
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-                <span class="feature-label">
-                  {{ f | translate }}
-                </span>
-              </div>
-            }
-          </div>
-
-          <!-- Buttons -->
-          <div class="plan-actions">
-            <a [routerLink]="tier.ctaLink" class="btn-plan-cta">
-              {{ tier.ctaKey | translate }}
-            </a>
+          <!-- Draya Advantage Side (Positive Spotlight) -->
+          <div class="comparison-block draya-block">
+            <div class="block-header">
+              <span class="block-badge draya-badge">
+                <i class="pi pi-check-circle"></i>
+                {{ 'LANDING.PRICING.COMPARISON.DRAYA_TITLE' | translate }}
+              </span>
+            </div>
+            <ul class="block-points">
+              <li class="point-positive">
+                <span class="bullet-check">✓</span>
+                <span>{{ 'LANDING.PRICING.COMPARISON.DRAYA_1' | translate }}</span>
+              </li>
+              <li class="point-positive">
+                <span class="bullet-check">✓</span>
+                <span>{{ 'LANDING.PRICING.COMPARISON.DRAYA_2' | translate }}</span>
+              </li>
+              <li class="point-positive">
+                <span class="bullet-check">✓</span>
+                <span>{{ 'LANDING.PRICING.COMPARISON.DRAYA_3' | translate }}</span>
+              </li>
+            </ul>
           </div>
         </div>
-      }
+
+        <!-- Student Callout Banner -->
+        <div class="student-callout-card">
+          <div class="callout-icon">
+            <i class="pi pi-users"></i>
+          </div>
+          <div class="callout-content">
+            <h4 class="callout-title">{{ 'LANDING.PRICING.STUDENT_NOTE.TITLE' | translate }}</h4>
+            <p class="callout-desc">{{ 'LANDING.PRICING.STUDENT_NOTE.DESC' | translate }}</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
