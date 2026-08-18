@@ -85,8 +85,29 @@ export class ClassroomMaterialsComponent {
   readonly isDeleteMaterialModalOpen = signal<boolean>(false);
   readonly materialToDelete = signal<string | null>(null);
   readonly isUploadVersionModalVisible = signal<boolean>(false);
-  readonly isVersionsModalVisible = signal<boolean>(false);
+  readonly isVersionsModalVisible = signal(false);
   readonly selectedMaterial = signal<ClassroomMaterialDto | null>(null);
+
+  // Category Tabs State
+  readonly activeTabBySection = signal<Record<string, string>>({});
+
+  setSectionTab(sectionId: string, tab: string): void {
+    this.activeTabBySection.update(current => ({
+      ...current,
+      [sectionId]: tab
+    }));
+  }
+
+  getSectionTab(section: any): string {
+    const active = this.activeTabBySection()[section.id];
+    if (active) return active;
+    
+    // Default to the first available category
+    if (section.videos?.length) return 'videos';
+    if (section.documents?.length) return 'documents';
+    if (section.exams?.length) return 'exams';
+    return 'all'; // fallback
+  }
 
   // Inline Preview Modal state
   readonly activePreviewMaterial = signal<ClassroomMaterialDto | null>(null);

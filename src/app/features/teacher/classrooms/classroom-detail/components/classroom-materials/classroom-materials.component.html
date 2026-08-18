@@ -122,53 +122,62 @@
                     </button>
                   </div>
                 } @else {
-                  <div class="materials-layout">
+                  <div class="materials-tabs-layout">
                     
-                    <!-- Videos Category -->
-                    @if (section.videos?.length) {
-                      <div class="material-category">
-                        <div class="category-header video-header">
-                          <div class="category-icon-wrapper"><i class="pi pi-video"></i></div>
-                          <h5 class="category-title">فيديوهات الدرس</h5>
-                          <span class="category-badge">{{ section.videos.length }}</span>
-                        </div>
-                        <div class="materials-grid">
+                    <!-- Segmented Tabs Header -->
+                    <div class="segmented-tabs">
+                      @if (section.videos?.length) {
+                        <button class="segment-tab" 
+                                [class.active]="getSectionTab(section) === 'videos'"
+                                (click)="setSectionTab(section.id, 'videos')">
+                          <i class="pi pi-video"></i> فيديوهات الدرس
+                          <span class="tab-badge">{{section.videos.length}}</span>
+                        </button>
+                      }
+                      
+                      @if (section.documents?.length) {
+                        <button class="segment-tab" 
+                                [class.active]="getSectionTab(section) === 'documents'"
+                                (click)="setSectionTab(section.id, 'documents')">
+                          <i class="pi pi-file-pdf"></i> مذكرات وملفات
+                          <span class="tab-badge">{{section.documents.length}}</span>
+                        </button>
+                      }
+
+                      @if (section.exams?.length) {
+                        <button class="segment-tab" 
+                                [class.active]="getSectionTab(section) === 'exams'"
+                                (click)="setSectionTab(section.id, 'exams')">
+                          <i class="pi pi-check-square"></i> اختبارات
+                          <span class="tab-badge">{{section.exams.length}}</span>
+                        </button>
+                      }
+                    </div>
+
+                    <!-- Tab Content Area -->
+                    <div class="tab-content-area">
+                      @if (getSectionTab(section) === 'videos') {
+                        <div class="materials-list-modern">
                           @for (material of section.videos; track material.id) {
-                            <ng-container *ngTemplateOutlet="materialCard; context: { material: material }"></ng-container>
+                            <ng-container *ngTemplateOutlet="materialRow; context: { material: material }"></ng-container>
                           }
                         </div>
-                      </div>
-                    }
+                      }
 
-                    <!-- Documents Category -->
-                    @if (section.documents?.length) {
-                      <div class="material-category">
-                        <div class="category-header doc-header">
-                          <div class="category-icon-wrapper"><i class="pi pi-file-pdf"></i></div>
-                          <h5 class="category-title">مذكرات وملفات</h5>
-                          <span class="category-badge">{{ section.documents.length }}</span>
-                        </div>
-                        <div class="materials-grid">
+                      @if (getSectionTab(section) === 'documents') {
+                        <div class="materials-list-modern">
                           @for (material of section.documents; track material.id) {
-                            <ng-container *ngTemplateOutlet="materialCard; context: { material: material }"></ng-container>
+                            <ng-container *ngTemplateOutlet="materialRow; context: { material: material }"></ng-container>
                           }
                         </div>
-                      </div>
-                    }
-
-                    <!-- Exams Category (Placeholder for future) -->
-                    @if (section.exams?.length) {
-                      <div class="material-category">
-                        <div class="category-header exam-header">
-                          <div class="category-icon-wrapper"><i class="pi pi-check-square"></i></div>
-                          <h5 class="category-title">اختبارات</h5>
-                          <span class="category-badge">{{ section.exams.length }}</span>
-                        </div>
-                        <div class="materials-grid">
+                      }
+                      
+                      @if (getSectionTab(section) === 'exams') {
+                        <div class="materials-list-modern">
                           <!-- Exams logic will go here -->
                         </div>
-                      </div>
-                    }
+                      }
+                    </div>
 
                   </div>
                 }
@@ -179,17 +188,16 @@
       </div>
     }
   }
-</div>
 
-<!-- Material Card Template -->
-<ng-template #materialCard let-material="material">
-  <div class="material-card modern-card">
+<!-- Material Row Template -->
+<ng-template #materialRow let-material="material">
+  <div class="material-row-modern">
     <div
-      class="material-icon"
+      class="row-icon-wrapper"
       [ngClass]="{
-        'icon-pdf': material.materialType === 'PDF',
-        'icon-video': material.materialType === 'Video',
-        'icon-link': material.materialType === 'Link'
+        'is-pdf': material.materialType === 'PDF',
+        'is-video': material.materialType === 'Video',
+        'is-link': material.materialType === 'Link'
       }">
       <i
         class="pi"
@@ -200,19 +208,26 @@
         }"></i>
     </div>
 
-    <div class="material-content">
-      <h4 class="material-title" [title]="material.title">{{ material.title }}</h4>
-      <div class="material-meta">
+    <div class="row-details flex-1">
+      <h4 class="row-title" [title]="material.title">{{ material.title }}</h4>
+      <div class="row-meta">
         <i class="pi pi-calendar"></i>
         <span>{{ material.createdAt | date: 'dd MMM yyyy' }}</span>
       </div>
     </div>
 
-    <div class="material-actions card-menu-wrapper"
+    <div class="row-actions card-menu-wrapper"
          role="presentation"
          tabindex="-1"
          (click)="$event.stopPropagation()"
          (keydown)="$event.stopPropagation()">
+      
+      <!-- Primary quick action -->
+      <button class="btn-quick-action" (click)="openStream(material); $event.stopPropagation()" title="فتح / تحميل">
+        <i class="pi pi-external-link"></i>
+      </button>
+
+      <!-- 3 dots menu -->
       <button
         class="action-btn-menu"
         (click)="toggleMenu(material.id, $event)"
@@ -223,10 +238,6 @@
 
       @if (openMenuId() === material.id) {
         <div class="custom-dropdown-menu modern-dropdown">
-          <button class="dropdown-item" (click)="openStream(material); toggleMenu(material.id, $event)">
-            <i class="pi pi-external-link"></i>
-            <span class="dropdown-item-label">فتح / تحميل</span>
-          </button>
           <button class="dropdown-item" (click)="openUploadVersionModal(material); toggleMenu(material.id, $event)">
             <i class="pi pi-upload"></i>
             <span class="dropdown-item-label">رفع اصدار جديد</span>
