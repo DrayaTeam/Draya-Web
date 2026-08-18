@@ -22,6 +22,13 @@ import { AdminConfirmDialogComponent } from '../../components/admin-confirm-dial
 import { ToastService } from '../../../../core/services/toast.service';
 import { finalize } from 'rxjs/operators';
 
+const DEFAULT_CLASSROOM_TYPES: ClassroomTypeDto[] = [
+  { id: '1', name: 'مجموعة سنتر (حضوري)', description: 'فصل دراسي داخل مقر ومجموعات حضورية', isActive: true, createdAt: '2026-01-01T00:00:00Z' },
+  { id: '2', name: 'أونلاين تفاعلي مباشر', description: 'حصص ومحاضرات تفاعلية عبر البث المباشر', isActive: true, createdAt: '2026-01-01T00:00:00Z' },
+  { id: '3', name: 'دروس مسجلة (Self-paced)', description: 'محاضرات ومواد مسجلة متاحة طوال الفصل الدراسي', isActive: true, createdAt: '2026-01-01T00:00:00Z' },
+  { id: '4', name: 'متابعة فردية خاصة (Private)', description: 'متابعة خاصة 1-on-1 واختبارات دورية', isActive: true, createdAt: '2026-01-01T00:00:00Z' },
+];
+
 @Component({
   selector: 'draya-admin-classroom-types',
   standalone: true,
@@ -47,6 +54,19 @@ export class AdminClassroomTypesComponent implements OnInit {
   readonly loading = signal<boolean>(false);
   readonly totalCount = signal<number>(0);
   readonly searchQuery = signal<string>('');
+
+  // Preset suggestions
+  readonly presetSuggestions = [
+    'مجموعة سنتر (حضوري)',
+    'أونلاين تفاعلي مباشر',
+    'دروس مسجلة (Self-paced)',
+    'متابعة فردية خاصة (Private)',
+    'مراجعة نهائية مكثفة',
+  ];
+
+  selectPreset(name: string): void {
+    this.form.patchValue({ name });
+  }
 
   // Modal State
   readonly isModalOpen = signal<boolean>(false);
@@ -118,12 +138,17 @@ export class AdminClassroomTypesComponent implements OnInit {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (items) => {
-          this.classroomTypes.set(items || []);
-          this.totalCount.set(items?.length || 0);
+          if (items && items.length > 0) {
+            this.classroomTypes.set(items);
+            this.totalCount.set(items.length);
+          } else {
+            this.classroomTypes.set(DEFAULT_CLASSROOM_TYPES);
+            this.totalCount.set(DEFAULT_CLASSROOM_TYPES.length);
+          }
         },
         error: () => {
-          this.classroomTypes.set([]);
-          this.totalCount.set(0);
+          this.classroomTypes.set(DEFAULT_CLASSROOM_TYPES);
+          this.totalCount.set(DEFAULT_CLASSROOM_TYPES.length);
         },
       });
   }

@@ -222,7 +222,6 @@
       "QUOTA_EXCEEDED_DESC": "You have reached your current plan quota. Please upgrade your subscription to continue."
     }
   },
-
   "LANDING": {
     "BRAND": "Draya",
     "NAVBAR": {
@@ -390,12 +389,6 @@
       "COPY": "All rights reserved to Draya platform.",
       "MADE_WITH": "Made with love in Egypt"
     }
-  },
-  "CONNECTION": {
-    "DISCONNECTED": "No connection — some live features are temporarily unavailable",
-    "RECONNECTING": "Reconnecting to server…",
-    "ERROR": "Connection failed — please check your internet connection",
-    "RETRY": "Retry"
   },
   "TEACHER": {
     "SIDEBAR": {
@@ -774,6 +767,16 @@
       "STATUS_REJECTED": "Rejected",
       "STATUS_PAID": "Paid",
       "STATUS_CANCELLED": "Cancelled"
+    },
+    "STATUS": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "PAID": "Paid",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled",
+      "UNKNOWN": "Unknown"
     }
   }
 }

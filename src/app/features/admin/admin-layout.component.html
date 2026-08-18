@@ -13,7 +13,7 @@
   <!-- Sidebar (Right side in RTL) -->
   <aside class="sidebar" [class.mobile-open]="isMobileSidebarOpen()">
     <div class="sidebar-header">
-      <div class="logo-area">
+      <a routerLink="/" class="logo-area" style="text-decoration: none; color: inherit;" title="الرئيسية">
         <div class="logo-circle">
           <i class="pi pi-shield"></i>
         </div>
@@ -23,7 +23,7 @@
             <p>{{ 'ADMIN.SHELL.BRAND_SUBTITLE' | translate }}</p>
           </div>
         }
-      </div>
+      </a>
       <!-- Close button for mobile -->
       <button
         class="sidebar-close-btn"
@@ -112,7 +112,17 @@
             [attr.aria-expanded]="isProfileMenuOpen()"
             aria-haspopup="true"
             type="button">
-            <div class="profile-avatar">{{ currentUserInitial() }}</div>
+            @if (auth.currentUser()?.profilePictureUrl) {
+              <img
+                [src]="auth.currentUser()?.profilePictureUrl"
+                [alt]="currentUserName()"
+                class="profile-avatar"
+                style="object-fit: cover;"
+                (error)="$any($event.target).style.display = 'none'; fallbackAdminSpan.style.display = 'flex'" />
+              <div #fallbackAdminSpan style="display: none" class="profile-avatar">{{ currentUserInitial() }}</div>
+            } @else {
+              <div class="profile-avatar">{{ currentUserInitial() }}</div>
+            }
             <span class="profile-name">{{ currentUserName() }}</span>
             <i class="pi pi-chevron-down profile-caret" [class.rotated]="isProfileMenuOpen()"></i>
           </button>

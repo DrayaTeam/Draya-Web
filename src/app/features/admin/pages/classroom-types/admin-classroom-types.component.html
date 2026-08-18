@@ -82,8 +82,18 @@
               formControlName="name"
               [placeholder]="'ADMIN.CLASSROOM_TYPES.FORM_NAME_PLACEHOLDER' | translate"
               class="form-input" />
+            <div class="preset-chips-container mt-2 flex flex-wrap gap-1.5">
+              @for (preset of presetSuggestions; track preset) {
+                <button
+                  type="button"
+                  (click)="selectPreset(preset)"
+                  class="preset-chip text-xs px-2.5 py-1 rounded-full border border-gray-200 bg-gray-50 text-gray-700 hover:bg-teal-50 hover:border-teal-300 hover:text-teal-800 transition-colors">
+                  {{ preset }}
+                </button>
+              }
+            </div>
             @if (form.get('name')?.touched && form.get('name')?.errors?.['required']) {
-              <span class="form-error">اسم نوع الفصل مطلوب</span>
+              <span class="form-error">اسم النوع مطلوب</span>
             }
           </div>
 
