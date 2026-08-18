@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
+import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { trigger, transition, style, query, animate, group } from '@angular/animations';
@@ -8,7 +8,7 @@ import { trigger, transition, style, query, animate, group } from '@angular/anim
 @Component({
   selector: 'draya-auth-shell',
   standalone: true,
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, RouterLink, CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block w-full min-h-screen' },
   animations: [
@@ -132,7 +132,9 @@ import { trigger, transition, style, query, animate, group } from '@angular/anim
         </svg>
 
         <!-- Top Right Logo -->
-        <div class="absolute end-10 top-10 flex items-center gap-3">
+        <a
+          routerLink="/"
+          class="absolute end-10 top-10 flex items-center gap-3 transition-opacity hover:opacity-90">
           <span class="text-2xl font-bold">دراية</span>
           <div class="rounded-lg border border-white/30 p-2 text-white">
             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -140,7 +142,7 @@ import { trigger, transition, style, query, animate, group } from '@angular/anim
                 d="M12 3L1 9L5 11.18V17.18L12 21L19 17.18V11.18L21 10.09V17H23V9L12 3ZM18.82 9L12 12.72L5.18 9L12 5.28L18.82 9Z" />
             </svg>
           </div>
-        </div>
+        </a>
 
         <div class="z-10 w-full max-w-lg text-start">
           <div

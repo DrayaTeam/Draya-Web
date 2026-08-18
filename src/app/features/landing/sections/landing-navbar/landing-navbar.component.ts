@@ -1,7 +1,15 @@
-import { Component, ChangeDetectionStrategy, signal, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  signal,
+  computed,
+  inject,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-
+import { AuthService } from '../../../auth/services/auth.service';
 import { LogoComponent } from '../../../../shared/components/logo/logo.component';
 
 @Component({
@@ -13,6 +21,16 @@ import { LogoComponent } from '../../../../shared/components/logo/logo.component
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LandingNavbarComponent implements OnInit, OnDestroy {
+  protected readonly auth = inject(AuthService);
+  readonly isAuthenticated = this.auth.isAuthenticated;
+
+  readonly dashboardUrl = computed(() => {
+    const role = this.auth.currentUser()?.role?.toLowerCase();
+    if (role === 'admin' || role === 'superadmin') return '/admin/dashboard';
+    if (role === 'teacher') return '/teacher/dashboard';
+    return '/student/dashboard';
+  });
+
   readonly scrolled = signal(false);
   readonly mobileMenuOpen = signal(false);
 

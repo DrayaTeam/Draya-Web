@@ -48,26 +48,19 @@
       <!-- Right Form Column (in RTL) -->
       <div class="checkout-form-panel">
         <div class="panel-header">
-          <div class="brand-row">
-            <div class="logo-box">د</div>
-            <span class="brand-text">درايَة</span>
+          <div class="mb-4">
+            <draya-logo size="md" />
           </div>
           <h1 class="checkout-title">إتمام عملية الدفع والاشتراك</h1>
-          <p class="checkout-subtitle">
-            اختر وسيلة الدفع المناسبة وأدخل تفاصيل الفاتورة لتفعيل اشتراكك فوراً.
-          </p>
+          <p class="checkout-subtitle">أدخل تفاصيل بطاقتك البنكية لتفعيل اشتراكك فوراً بأمان.</p>
         </div>
 
-        <!-- Payment Method Selector -->
+        <!-- Payment Method: Card Only -->
         <div class="method-section">
-          <span class="section-label">طريقة الدفع المفضلة</span>
+          <span class="section-label">طريقة الدفع</span>
           <div class="methods-grid">
             <!-- Credit / Debit Card -->
-            <button
-              type="button"
-              (click)="setPaymentMethod('card')"
-              [class.active]="paymentMethod() === 'card'"
-              class="method-btn">
+            <button type="button" class="method-btn active">
               <div class="method-icon-box">
                 <svg
                   width="22"
@@ -87,133 +80,67 @@
                 <span class="method-sub">Visa, Mastercard, Meeza</span>
               </div>
             </button>
-
-            <!-- E-Wallet -->
-            <button
-              type="button"
-              (click)="setPaymentMethod('wallet')"
-              [class.active]="paymentMethod() === 'wallet'"
-              class="method-btn">
-              <div class="method-icon-box">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round">
-                  <path
-                    d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" />
-                  <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" />
-                </svg>
-              </div>
-              <div class="method-text-col">
-                <span class="method-title">محفظة إلكترونية</span>
-                <span class="method-sub">فودافون كاش، إنستاباي، أورنج</span>
-              </div>
-            </button>
           </div>
         </div>
 
         <!-- Payment Input Fields Form -->
         <form (submit)="handlePaymentSubmit($event)" class="payment-fields-form">
-          @if (paymentMethod() === 'card') {
-            <div class="field-group">
-              <label for="card-holder" class="field-label">الاسم المطبوع على البطاقة</label>
+          <div class="field-group">
+            <label for="card-holder" class="field-label">الاسم المطبوع على البطاقة</label>
+            <input
+              id="card-holder"
+              type="text"
+              class="form-control"
+              placeholder="أحمد محمد"
+              [ngModel]="cardHolderName()"
+              (ngModelChange)="cardHolderName.set($event)"
+              name="cardHolder"
+              required />
+          </div>
+
+          <div class="field-group">
+            <label for="card-number" class="field-label">رقم البطاقة الائتمانية</label>
+            <div class="input-with-icon">
               <input
-                id="card-holder"
+                id="card-number"
                 type="text"
                 class="form-control"
-                placeholder="أحمد محمد"
-                [ngModel]="cardHolderName()"
-                (ngModelChange)="cardHolderName.set($event)"
-                name="cardHolder"
+                placeholder="4000 1234 5678 9010"
+                [ngModel]="cardNumber()"
+                (ngModelChange)="cardNumber.set($event)"
+                name="cardNumber"
                 required />
+              <span class="input-badge">Meeza / Visa</span>
             </div>
+          </div>
 
+          <div class="two-cols-row">
             <div class="field-group">
-              <label for="card-number" class="field-label">رقم البطاقة الائتمانية</label>
-              <div class="input-with-icon">
-                <input
-                  id="card-number"
-                  type="text"
-                  class="form-control"
-                  placeholder="4000 1234 5678 9010"
-                  [ngModel]="cardNumber()"
-                  (ngModelChange)="cardNumber.set($event)"
-                  name="cardNumber"
-                  required />
-                <span class="input-badge">Meeza / Visa</span>
-              </div>
-            </div>
-
-            <div class="two-cols-row">
-              <div class="field-group">
-                <label for="card-expiry" class="field-label">تاريخ الانتهاء</label>
-                <input
-                  id="card-expiry"
-                  type="text"
-                  class="form-control"
-                  placeholder="MM/YY"
-                  [ngModel]="cardExpiry()"
-                  (ngModelChange)="cardExpiry.set($event)"
-                  name="cardExpiry"
-                  required />
-              </div>
-              <div class="field-group">
-                <label for="card-cvv" class="field-label">رمز الأمان (CVV)</label>
-                <input
-                  id="card-cvv"
-                  type="password"
-                  maxlength="4"
-                  class="form-control"
-                  placeholder="123"
-                  [ngModel]="cardCvv()"
-                  (ngModelChange)="cardCvv.set($event)"
-                  name="cardCvv"
-                  required />
-              </div>
-            </div>
-          } @else {
-            <div class="field-group">
-              <label for="wallet-phone" class="field-label">
-                رقم الهاتف المحمول المرتبط بالمحفظة
-              </label>
+              <label for="card-expiry" class="field-label">تاريخ الانتهاء</label>
               <input
-                id="wallet-phone"
-                type="tel"
+                id="card-expiry"
+                type="text"
                 class="form-control"
-                placeholder="01012345678"
-                [ngModel]="walletPhone()"
-                (ngModelChange)="walletPhone.set($event)"
-                name="walletPhone"
+                placeholder="MM/YY"
+                [ngModel]="cardExpiry()"
+                (ngModelChange)="cardExpiry.set($event)"
+                name="cardExpiry"
                 required />
             </div>
-
-            <div class="wallet-notice-card">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#D97706"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="shrink-0">
-                <path
-                  d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-                <line x1="12" y1="9" x2="12" y2="13" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-              <p class="notice-text">
-                سيتم إرسال طلب دفع فوري أو رسالة تأكيد نصية (SMS) إلى رقم محفظتك من شريك المدفوعات
-                Paymob لإدخال الرقم السري وتأكيد السداد.
-              </p>
+            <div class="field-group">
+              <label for="card-cvv" class="field-label">رمز الأمان (CVV)</label>
+              <input
+                id="card-cvv"
+                type="password"
+                maxlength="4"
+                class="form-control"
+                placeholder="123"
+                [ngModel]="cardCvv()"
+                (ngModelChange)="cardCvv.set($event)"
+                name="cardCvv"
+                required />
             </div>
-          }
+          </div>
 
           <!-- Submit Button -->
           <button type="submit" [disabled]="isSubmitting()" class="btn-submit-pay">

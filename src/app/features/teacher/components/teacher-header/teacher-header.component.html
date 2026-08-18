@@ -123,12 +123,25 @@
       </div>
 
       <!-- User Profile Box -->
-      <div class="user-profile-box">
-        <div class="avatar-circle">
-          <span>أم</span>
-        </div>
-        <span class="user-name">أحمد محمد</span>
-      </div>
+      <a routerLink="/teacher/profile" class="user-profile-box" title="عرض الملف الشخصي">
+        @if (auth.currentUser()?.profilePictureUrl) {
+          <img
+            [src]="auth.currentUser()?.profilePictureUrl"
+            [alt]="userDisplayName()"
+            class="avatar-img"
+            (error)="
+              $any($event.target).style.display = 'none'; fallbackSpan.style.display = 'flex'
+            " />
+          <div #fallbackSpan style="display: none" class="avatar-circle">
+            <span>{{ userInitials() }}</span>
+          </div>
+        } @else {
+          <div class="avatar-circle">
+            <span>{{ userInitials() }}</span>
+          </div>
+        }
+        <span class="user-name">{{ userDisplayName() }}</span>
+      </a>
 
       <!-- Logout Button -->
       <button
@@ -169,11 +182,11 @@
 
       <div class="drawer-profile-banner">
         <div class="avatar-circle">
-          <span>أم</span>
+          <span>{{ userInitials() }}</span>
         </div>
         <div class="drawer-user-text">
-          <p class="d-name">أحمد محمد</p>
-          <span class="d-role">مدرس رياضيات وثانوية عامة</span>
+          <p class="d-name">{{ userDisplayName() }}</p>
+          <span class="d-role">معلم معتمد</span>
         </div>
       </div>
 
@@ -191,7 +204,7 @@
           routerLinkActive="active-drawer"
           (click)="closeMobileMenu()"
           class="drawer-link">
-          📚 باقاتي الدراسية
+          📚 فصولي الدراسية
         </a>
 
         <a
@@ -216,19 +229,6 @@
           (click)="closeMobileMenu()"
           class="drawer-link">
           📂 المكتبة
-        </a>
-
-        <a
-          routerLink="/teacher/subscription"
-          routerLinkActive="active-drawer"
-          (click)="closeMobileMenu()"
-          class="drawer-link drawer-subscription-link">
-          <span>💳 الاشتراك والاستهلاك</span>
-          @if (isAtLimit()) {
-            <span class="quota-pill-badge pill-danger">تجاوزت الحد</span>
-          } @else if (isNearLimit()) {
-            <span class="quota-pill-badge pill-warning">⚠️ 80%+</span>
-          }
         </a>
       </nav>
 

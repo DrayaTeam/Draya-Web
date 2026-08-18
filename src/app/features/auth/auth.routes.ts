@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
+import { noAuthGuard } from '../../core/auth/auth.guard';
 
 export const authRoutes: Routes = [
   {
     path: '',
+    canActivate: [noAuthGuard],
     loadComponent: () =>
       import('./layout/auth-shell/auth-shell.component').then((m) => m.AuthShellComponent),
     children: [

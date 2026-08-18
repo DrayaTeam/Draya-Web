@@ -200,10 +200,16 @@
   }
 }
 
-.avatar-circle {
+.avatar-circle,
+.avatar-img {
   width: 32px;
   height: 32px;
   border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.avatar-circle {
   background: #ddf5f1;
   color: #1b6d63;
   font-size: 0.75rem;
