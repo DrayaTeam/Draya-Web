@@ -4,24 +4,25 @@
   [draggable]="false"
   [resizable]="false"
   [closable]="false"
-  [showHeader]="false"
-  [contentStyle]="{ padding: '0', borderRadius: '16px', overflow: 'hidden' }"
+  [contentStyle]="{ padding: '0' }"
   [style]="{ width: 'calc(100% - 32px)', maxWidth: maxWidthMap[size()], margin: '16px auto' }"
   styleClass="draya-modal"
   (onHide)="onHide()">
   
   <!-- Custom Header -->
-  <div class="draya-modal-header">
-    <div class="draya-modal-header-text">
-      <h3 class="draya-modal-title">{{ title() }}</h3>
-      @if (subtitle()) {
-        <p class="draya-modal-subtitle">{{ subtitle() }}</p>
-      }
+  <ng-template pTemplate="header">
+    <div class="draya-modal-header w-full">
+      <div class="draya-modal-header-text">
+        <h3 class="draya-modal-title">{{ title() }}</h3>
+        @if (subtitle()) {
+          <p class="draya-modal-subtitle">{{ subtitle() }}</p>
+        }
+      </div>
+      <button class="draya-modal-close" (click)="onHide()" aria-label="Close">
+        <i class="pi pi-times"></i>
+      </button>
     </div>
-    <button class="draya-modal-close" (click)="onHide()" aria-label="Close">
-      <i class="pi pi-times"></i>
-    </button>
-  </div>
+  </ng-template>
   
   <div class="draya-modal-body">
     <ng-content></ng-content>
