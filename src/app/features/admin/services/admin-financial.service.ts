@@ -12,7 +12,9 @@ import {
   AdjustmentRequest,
   PaginatedResponse,
   TeacherSearchResultDto,
+  UpdateAdminProfileRequest,
 } from '../models/admin-financial.model';
+
 
 @Injectable({ providedIn: 'root' })
 export class AdminFinancialService extends ApiBaseService {
@@ -93,8 +95,9 @@ export class AdminFinancialService extends ApiBaseService {
   }
 
   /** PUT /api/v1/admin/profile */
-  updateAdminProfile(request: { fullName?: string; phoneNumber?: string }): Observable<void> {
-    return this.put<void, { fullName?: string; phoneNumber?: string }>('/admin/profile', request);
+  updateAdminProfile(request: UpdateAdminProfileRequest): Observable<void> {
+    return this.put<void, UpdateAdminProfileRequest>('/admin/profile', request);
   }
 }
+
 

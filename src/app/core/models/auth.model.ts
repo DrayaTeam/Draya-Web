@@ -22,8 +22,11 @@ export interface RegisterStudentRequest {
   confirmPassword?: string;
   fullName: string;
   parentGuardianEmail: string;
+  parentGuardianName?: string;
+  parentGuardianPhone?: string;
   dateOfBirth: string;
 }
+
 
 export interface AuthResponse {
   accessToken: string;
