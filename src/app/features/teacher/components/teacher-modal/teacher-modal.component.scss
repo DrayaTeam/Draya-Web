@@ -58,6 +58,7 @@
 .draya-modal-footer {
   display: flex;
   justify-content: flex-end;
+  width: 100%;
   gap: 12px;
   padding: 16px 24px;
   border-top: 1px solid #e5e7eb;
@@ -79,4 +80,6 @@
   padding: 0 !important;
   border-top: none !important;
   background-color: transparent !important;
+  display: block !important;
+  width: 100% !important;
 }
