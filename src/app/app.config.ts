@@ -21,6 +21,7 @@ import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { MessageService } from 'primeng/api';
 import { DirectionService } from './core/services/direction.service';
+import { ThemeService } from './core/services/theme.service';
 import { LocaleService } from './core/locale/locale.service';
 import { GlobalErrorHandler } from './core/errors/global-error-handler';
 
@@ -30,13 +31,17 @@ export const appConfig: ApplicationConfig = {
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
     {
       provide: APP_INITIALIZER,
-      useFactory: (localeService: LocaleService, dirService: DirectionService) => () => {
-        dirService.init();
-        return localeService.init();
-      },
-      deps: [LocaleService, DirectionService],
+      useFactory:
+        (localeService: LocaleService, dirService: DirectionService, themeService: ThemeService) =>
+        () => {
+          themeService.init();
+          dirService.init();
+          return localeService.init();
+        },
+      deps: [LocaleService, DirectionService, ThemeService],
       multi: true,
     },
+
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(appRoutes, withComponentInputBinding()),
     provideHttpClient(withInterceptors([tokenInterceptor, errorInterceptor, loadingInterceptor])),

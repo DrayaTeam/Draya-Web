@@ -25,9 +25,9 @@ const COURSE_BANNERS = [
 export class StudentCoursesService extends ApiBaseService {
   readonly headerInfo = signal<StudentCoursesHeaderInfo>({
     badgeText: 'محتواك المفضل وتحديات التعلم',
-    mainHeading: 'باقاتي الدراسية النشطة',
+    mainHeading: 'فصولي الدراسية النشطة',
     subtitleText:
-      'استعرض باقاتك الأكاديمية النشطة، وتابع المحاضرات والامتحانات المرفقة لكل مادة بحماس.',
+      'استعرض فصولك الأكاديمية النشطة، وتابع المحاضرات والامتحانات المرفقة لكل مادة بحماس.',
   });
 
   private readonly _loading = signal<boolean>(false);
@@ -58,7 +58,7 @@ export class StudentCoursesService extends ApiBaseService {
           this._subscribedPackages.set(
             items.map((c, idx) => ({
               id: c.classroomId,
-              title: c.name || 'باقة دراسية',
+              title: c.name || 'فصل دراسي',
               teacherName: c.gradeLevelName ? `أستاذ ${c.subjectName || ''}` : 'معلم دراية',
               subjectName: c.subjectName || 'المادة الدراسية',
               statusText: c.isActive ? 'سارية ومفعّلة' : 'غير نشطة',

@@ -1,5 +1,6 @@
 .faq-section {
-  background: #ffffff;
+  background: var(--draya-bg-surface, #ffffff);
+  color: var(--draya-text-primary, #151b19);
   padding: 96px clamp(20px, 5vw, 48px);
   border-top: 1px solid var(--draya-border, #dde4e2);
 }
@@ -16,8 +17,8 @@
 
 .faq-badge {
   display: inline-block;
-  background: #e6f3f0;
-  color: #0f4f49;
+  background: var(--draya-primary-100, #e6f3f0);
+  color: var(--draya-primary-700, #0f4f49);
   padding: 6px 16px;
   border-radius: 999px;
   font-size: 0.875rem;
@@ -53,7 +54,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 24px;
-  text-align: right;
+  text-align: start;
   padding: 0;
 }
 

@@ -15,6 +15,7 @@ export interface User {
   dateOfBirth?: string;
   parentGuardianEmail?: string;
   profilePictureUrl?: string;
+  pictureUrl?: string;
 }
 
 /**
@@ -30,4 +31,5 @@ export interface UserProfile {
   parentGuardianEmail?: string;
   dateOfBirth?: string;
   profilePictureUrl?: string;
+  pictureUrl?: string;
 }

@@ -42,3 +42,29 @@ export interface ClassroomDtoPagedResult {
   totalCount: number;
   totalPages: number;
 }
+
+export interface ClassroomFeedbackItemDto {
+  feedbackId: string;
+  studentName?: string;
+  studentAvatarUrl?: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+}
+
+export interface ClassroomFeedbackSummaryDto {
+  averageRating: number;
+  totalCount: number;
+  items?: ClassroomFeedbackItemDto[];
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface SubmitClassroomFeedbackRequest {
+  rating: number;
+  comment?: string;
+}
+

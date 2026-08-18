@@ -7,6 +7,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
 import { AdminFinancialService } from './services/admin-financial.service';
 
+import { ThemeService } from '../../core/services/theme.service';
+import { LocaleService } from '../../core/locale/locale.service';
+
 export interface AdminNavItem {
   labelKey: string;
   link: string;
@@ -28,6 +31,8 @@ export class AdminLayoutComponent {
   private readonly financialService = inject(AdminFinancialService);
   private readonly router = inject(Router);
   private readonly translate = inject(TranslateService);
+  readonly themeService = inject(ThemeService);
+  readonly localeService = inject(LocaleService);
 
   readonly isSidebarCollapsed = signal<boolean>(false);
   readonly isMobileSidebarOpen = signal<boolean>(false);

@@ -1,5 +1,7 @@
-import { Injectable, signal, effect, inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+
+const THEME_KEY = 'theme';
 
 @Injectable({
   providedIn: 'root',
@@ -10,23 +12,34 @@ export class ThemeService {
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
-      const savedTheme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const initialDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+      const savedTheme = localStorage.getItem(THEME_KEY);
+      const initialDark = savedTheme === 'dark';
       this.isDarkMode.set(initialDark);
       this.applyTheme(initialDark);
-
-      effect(() => {
-        const dark = this.isDarkMode();
-        this.applyTheme(dark);
-        localStorage.setItem('theme', dark ? 'dark' : 'light');
-      });
     }
   }
 
   toggleTheme(): void {
-    this.isDarkMode.update((dark) => !dark);
+    const nextDark = !this.isDarkMode();
+    this.setDarkMode(nextDark);
   }
+
+  setDarkMode(dark: boolean): void {
+    this.isDarkMode.set(dark);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light');
+      this.applyTheme(dark);
+    }
+  }
+
+  init(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const savedTheme = localStorage.getItem(THEME_KEY);
+      const initialDark = savedTheme === 'dark';
+      this.setDarkMode(initialDark);
+    }
+  }
+
 
   private applyTheme(dark: boolean): void {
     if (isPlatformBrowser(this.platformId)) {

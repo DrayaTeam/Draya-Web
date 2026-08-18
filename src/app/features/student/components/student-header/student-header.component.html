@@ -39,9 +39,7 @@
         الرئيسية
       </a>
       <a routerLink="/student/teachers" routerLinkActive="active" class="nav-item">تصفح المعلمين</a>
-      <a routerLink="/student/courses" routerLinkActive="active" class="nav-item">
-        باقاتي الدراسية
-      </a>
+      <a routerLink="/student/courses" routerLinkActive="active" class="nav-item">فصولي الدراسية</a>
       <a routerLink="/student/exams" routerLinkActive="active" class="nav-item">الامتحانات</a>
       <a routerLink="/student/channel" routerLinkActive="active" class="nav-item">قناة النقاش</a>
       <a routerLink="/student/reports" routerLinkActive="active" class="nav-item">
@@ -100,12 +98,80 @@
         }
       </div>
 
+      <!-- Theme Switcher -->
+      <button
+        type="button"
+        (click)="themeService.toggleTheme()"
+        [title]="themeService.isDarkMode() ? 'الوضع النهاري' : 'الوضع الليلي'"
+        [attr.aria-label]="themeService.isDarkMode() ? 'الوضع النهاري' : 'الوضع الليلي'"
+        class="icon-btn theme-toggle-btn">
+        @if (themeService.isDarkMode()) {
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="text-amber-400">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </svg>
+        } @else {
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        }
+      </button>
+
+      <!-- Language Switcher -->
+      <button
+        type="button"
+        (click)="localeService.toggle()"
+        [title]="localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'"
+        [attr.aria-label]="
+          localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'
+        "
+        class="icon-btn lang-toggle-btn">
+        <span class="text-xs font-bold">{{ localeService.locale() === 'ar' ? 'EN' : 'عربي' }}</span>
+      </button>
+
       <!-- User Profile -->
       <a routerLink="/student/profile" class="user-profile-box" title="عرض الملف الشخصي">
-        <div class="avatar-circle">
-          <span>{{ auth.currentUser()?.fullName?.charAt(0) || 'ط' }}</span>
-        </div>
-        <span class="user-name">{{ auth.currentUser()?.fullName || 'الملف الشخصي' }}</span>
+        @if (profilePictureUrl()) {
+          <img
+            [src]="profilePictureUrl()"
+            [alt]="userDisplayName()"
+            class="avatar-img"
+            (error)="
+              $any($event.target).style.display = 'none'; fallbackStudentSpan.style.display = 'flex'
+            " />
+          <div #fallbackStudentSpan style="display: none" class="avatar-circle">
+            <span>{{ userInitials() }}</span>
+          </div>
+        } @else {
+          <div class="avatar-circle">
+            <span>{{ userInitials() }}</span>
+          </div>
+        }
+        <span class="user-name">{{ userDisplayName() }}</span>
       </a>
 
       <!-- Logout -->
@@ -146,11 +212,24 @@
       </div>
 
       <a routerLink="/student/profile" (click)="closeMobileMenu()" class="drawer-profile-banner">
-        <div class="avatar-circle">
-          <span>{{ auth.currentUser()?.fullName?.charAt(0) || 'ط' }}</span>
-        </div>
+        @if (profilePictureUrl()) {
+          <img
+            [src]="profilePictureUrl()"
+            [alt]="userDisplayName()"
+            class="avatar-img"
+            (error)="
+              $any($event.target).style.display = 'none'; fallbackDrawerSpan.style.display = 'flex'
+            " />
+          <div #fallbackDrawerSpan style="display: none" class="avatar-circle">
+            <span>{{ userInitials() }}</span>
+          </div>
+        } @else {
+          <div class="avatar-circle">
+            <span>{{ userInitials() }}</span>
+          </div>
+        }
         <div class="drawer-user-text">
-          <p class="d-name">{{ auth.currentUser()?.fullName || 'الطالب' }}</p>
+          <p class="d-name">{{ userDisplayName() }}</p>
           <span class="d-role">عرض وتعديل الملف الشخصي ⚙️</span>
         </div>
       </a>
@@ -175,7 +254,7 @@
           routerLinkActive="active-drawer"
           (click)="closeMobileMenu()"
           class="drawer-link">
-          📚 كورساتي
+          📚 فصولي الدراسية
         </a>
         <a
           routerLink="/student/exams"
@@ -206,6 +285,15 @@
           📂 المكتبة
         </a>
       </nav>
+
+      <div class="drawer-controls-row">
+        <button type="button" (click)="themeService.toggleTheme()" class="btn-drawer-action">
+          <span>{{ themeService.isDarkMode() ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي' }}</span>
+        </button>
+        <button type="button" (click)="localeService.toggle()" class="btn-drawer-action">
+          <span>🌐 {{ localeService.locale() === 'ar' ? 'English' : 'العربية' }}</span>
+        </button>
+      </div>
 
       <div class="drawer-footer">
         <button type="button" (click)="auth.logout(); closeMobileMenu()" class="btn-drawer-logout">

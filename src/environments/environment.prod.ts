@@ -12,4 +12,5 @@ export const environment = {
   // Until then, SignalRService skips the notifications hub connection entirely
   // to prevent red 404 negotiate errors in the browser console.
   enableNotificationsHub: false,
+  enableQaHub: false,
 };

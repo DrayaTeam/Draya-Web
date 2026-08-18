@@ -1,11 +1,10 @@
-// src/app/features/student/exams/active/student-active-exam.component.ts
-
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   OnInit,
   OnDestroy,
+  HostListener,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -34,6 +33,43 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+
+  @HostListener('contextmenu', ['$event'])
+  onContextMenu(event: MouseEvent): void {
+    event.preventDefault();
+    this.toastService.warning('تنبيه أمني ⚠️', 'النقر بالزر الأيمن غير مسموح به أثناء الامتحان.');
+  }
+
+  @HostListener('copy', ['$event'])
+  onCopy(event: ClipboardEvent): void {
+    event.preventDefault();
+    this.toastService.warning('تنبيه أمني ⚠️', 'نسخ أسئلة ومحتوى الامتحان محظور.');
+  }
+
+  @HostListener('cut', ['$event'])
+  onCut(event: ClipboardEvent): void {
+    event.preventDefault();
+  }
+
+  @HostListener('paste', ['$event'])
+  onPaste(event: ClipboardEvent): void {
+    event.preventDefault();
+  }
+
+  @HostListener('keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+    // Block Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+P, Ctrl+U, Ctrl+S
+    if (
+      (event.ctrlKey || event.metaKey) &&
+      ['c', 'v', 'x', 'p', 's', 'u'].includes(event.key.toLowerCase())
+    ) {
+      event.preventDefault();
+      this.toastService.warning('تنبيه أمني ⚠️', 'اختصارات لوحة المفاتيح معطلة أثناء الامتحان.');
+    }
+    if (event.key === 'F12') {
+      event.preventDefault();
+    }
+  }
 
   readonly showSubmitConfirm = signal<boolean>(false);
   private examId = 'exam-1';

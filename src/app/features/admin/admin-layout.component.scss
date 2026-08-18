@@ -1,24 +1,24 @@
 // src/app/features/admin/admin-layout.component.scss
 
-$color-deep-teal: #14453f;
-$color-genoa: #1b6d63;
-$color-iceberg: #ddf5f1;
-$color-iceberg-light: #f0faf8;
-$color-border: #e6eded;
-$color-border-subtle: #f0f4f4;
-$color-surface: #ffffff;
-$color-bg: #f8faf9;
-$color-text-primary: #151b19;
-$color-text-secondary: #525e5a;
-$color-text-muted: #8c9b97;
+$color-deep-teal: var(--draya-primary-900, #14453f);
+$color-genoa: var(--draya-primary-700, #1b6d63);
+$color-iceberg: var(--draya-primary-100, #ddf5f1);
+$color-iceberg-light: var(--draya-primary-50, #f0faf8);
+$color-border: var(--draya-border, #e6eded);
+$color-border-subtle: var(--draya-border, #f0f4f4);
+$color-surface: var(--draya-bg-surface, #ffffff);
+$color-bg: var(--draya-bg-base, #f8faf9);
+$color-text-primary: var(--draya-text-primary, #151b19);
+$color-text-secondary: var(--draya-text-secondary, #525e5a);
+$color-text-muted: var(--draya-text-disabled, #8c9b97);
 $color-danger: #ef4444;
-$color-danger-bg: #fee2e2;
+$color-danger-bg: rgba(239, 68, 68, 0.12);
 
 .admin-layout {
   display: flex;
   min-height: 100vh;
   background-color: $color-bg;
-  direction: rtl;
+  color: $color-text-primary;
   font-family: inherit;
 }
 
@@ -344,6 +344,32 @@ $color-danger-bg: #fee2e2;
     align-items: center;
     gap: 12px;
 
+    .topbar-icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid $color-border;
+      background: $color-surface;
+      color: $color-text-secondary;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.18s ease;
+
+      &:hover {
+        background: $color-iceberg-light;
+        color: $color-genoa;
+        border-color: $color-genoa;
+      }
+
+      &.lang-pill {
+        width: auto;
+        padding: 0 12px;
+      }
+    }
+
     .profile-dropdown-wrapper {
       position: relative;
 
@@ -547,8 +573,13 @@ $color-danger-bg: #fee2e2;
     transform: translateX(100%);
     width: 280px !important;
 
+    [dir='ltr'] &,
+    :host-context([dir='ltr']) & {
+      transform: translateX(-100%);
+    }
+
     &.mobile-open {
-      transform: translateX(0);
+      transform: translateX(0) !important;
     }
 
     .sidebar-header .sidebar-close-btn {

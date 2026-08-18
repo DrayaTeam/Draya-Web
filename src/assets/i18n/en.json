@@ -222,7 +222,6 @@
       "QUOTA_EXCEEDED_DESC": "You have reached your current plan quota. Please upgrade your subscription to continue."
     }
   },
-
   "LANDING": {
     "BRAND": "Draya",
     "NAVBAR": {
@@ -238,8 +237,8 @@
       "TAGLINE": "Smart Academic Learning Platform",
       "TAGLINE_SUB": "Designed for Egyptian Private Tutors & Centers",
       "DESCRIPTION": "Generate exams with AI, detect student knowledge gaps, and share approved parent reports effortlessly.",
-      "CTA_PRIMARY": "Create Your Account",
-      "CTA_SECONDARY": "Explore Features",
+      "CTA_PRIMARY": "Create Account & Start Free",
+      "CTA_SECONDARY": "Explore Features for Free",
       "FLOATING_EXAM": "AI Exam Ready",
       "FLOATING_EXAM_SUB": "20 questions awaiting review",
       "FLOATING_REPORT": "Performance Report",
@@ -300,49 +299,33 @@
       "F3_I3": "All AI content is clearly labeled — never mixed with teacher content"
     },
     "PRICING": {
-      "BADGE": "Plans & Pricing",
-      "HEADING": "Pay Only for What You Need",
-      "MONTHLY": "Monthly Billing",
-      "ANNUAL": "Annual Billing (Save 20%)",
-      "RECOMMENDED": "Recommended 🔥",
-      "DETAILS_CTA": "View full plan details and feature comparison ←",
-      "EGP_MONTH": "EGP / month",
-      "BASIC": {
-        "NAME": "Basic",
-        "PRICE_MONTHLY": "Free",
-        "PRICE_ANNUAL": "Free",
-        "SUB": "For emerging educators",
-        "CTA": "Start Free",
-        "F1": "Up to 50 students",
-        "F2": "2 classrooms max",
-        "F3": "2 study packages",
-        "F4": "Basic performance reports"
+      "BADGE": "Fair Financial Model",
+      "HEADING": "Start Risk-Free — Pay Only When You Succeed",
+      "SUBTITLE": "We eliminated forced monthly subscriptions. On Draya, your entire platform is free to use, and you only share a modest percentage on actual sales.",
+      "PILLARS": {
+        "ZERO_FEES_TITLE": "0 EGP Monthly or Annual Fees",
+        "ZERO_FEES_DESC": "No upfront package costs or mandatory subscriptions. Every core feature is ready right after registration.",
+        "PERCENT_TITLE": "Only 10% Commission on Collection",
+        "PERCENT_DESC": "We only succeed when you do. When a student enrolls, a simple 10% platform fee applies and the rest goes directly to your wallet.",
+        "AI_TITLE": "Free AI Generation Quota",
+        "AI_DESC": "Generate interactive exams and parental performance reports with AI for free, with flexible pay-as-you-go top-ups."
       },
-      "PRO": {
-        "NAME": "Professional",
-        "PRICE_MONTHLY": "499",
-        "PRICE_ANNUAL": "399",
-        "SUB": "EGP / month",
-        "CTA": "Get Started",
-        "F1": "Unlimited students",
-        "F2": "Unlimited classrooms",
-        "F3": "Unlimited packages",
-        "F4": "AI Exam Builder",
-        "F5": "AI Analytics & Parent Reports",
-        "F6": "Priority support"
+      "COMPARISON": {
+        "TRADITIONAL_TITLE": "Traditional Legacy Platforms",
+        "TRADITIONAL_1": "Forced monthly fees (499 - 2000 EGP) paid in advance",
+        "TRADITIONAL_2": "Feature lockouts and student limits unless you upgrade",
+        "TRADITIONAL_3": "Paying subscriptions even during vacations and off-season",
+        "DRAYA_TITLE": "Draya Smart Ecosystem",
+        "DRAYA_1": "0 EGP subscription fee, zero recurring liabilities",
+        "DRAYA_2": "Unlimited students, classrooms, and video lectures for everyone",
+        "DRAYA_3": "Instant wallet payouts to your bank account"
       },
-      "ENTERPRISE": {
-        "NAME": "Enterprise",
-        "PRICE_MONTHLY": "Custom",
-        "PRICE_ANNUAL": "Custom",
-        "SUB": "Contact Sales",
-        "CTA": "Contact Us",
-        "BADGE": "Custom",
-        "F1": "All Professional features",
-        "F2": "White-label branding",
-        "F3": "Custom API integration",
-        "F4": "Dedicated account manager & SLA"
-      }
+      "STUDENT_NOTE": {
+        "TITLE": "What about Students & Parents?",
+        "DESC": "Student accounts are 100% free with zero platform fees. Students only pay the exact price of the classroom or course chosen via direct card payment with full access to lectures and exams."
+      },
+      "CTA_TEACHER": "Register as Teacher & Start Free",
+      "CTA_STUDENT": "Create Student Account"
     },
     "TESTIMONIALS": {
       "BADGE": "Testimonials",
@@ -377,7 +360,7 @@
     "CTA": {
       "HEADING": "Start Your Smart Learning Journey Today",
       "SUBTEXT": "Join now for free and save precious time with Draya's AI-powered system.",
-      "PRIMARY": "Start Free",
+      "PRIMARY": "Create Your Account",
       "SECONDARY": "Sign In"
     },
     "FOOTER": {
@@ -390,12 +373,6 @@
       "COPY": "All rights reserved to Draya platform.",
       "MADE_WITH": "Made with love in Egypt"
     }
-  },
-  "CONNECTION": {
-    "DISCONNECTED": "No connection — some live features are temporarily unavailable",
-    "RECONNECTING": "Reconnecting to server…",
-    "ERROR": "Connection failed — please check your internet connection",
-    "RETRY": "Retry"
   },
   "TEACHER": {
     "SIDEBAR": {
@@ -774,6 +751,16 @@
       "STATUS_REJECTED": "Rejected",
       "STATUS_PAID": "Paid",
       "STATUS_CANCELLED": "Cancelled"
+    },
+    "STATUS": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "PAID": "Paid",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled",
+      "UNKNOWN": "Unknown"
     }
   }
 }

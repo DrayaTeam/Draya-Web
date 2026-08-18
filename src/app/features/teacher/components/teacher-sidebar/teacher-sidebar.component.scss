@@ -1,15 +1,13 @@
 :host {
   display: block;
-  font-family: 'Cairo', system-ui, sans-serif;
-  direction: rtl;
   height: 100%;
 }
 
 .teacher-sidebar-root {
   width: 224px;
   height: 100%;
-  background: #ffffff;
-  border-inline-end: 1px solid #ebefef;
+  background: var(--draya-bg-surface, #ffffff);
+  border-inline-end: 1px solid var(--draya-border, #ebefef);
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -25,8 +23,13 @@
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
     transform: translateX(100%);
 
+    [dir='ltr'] &,
+    :host-context([dir='ltr']) & {
+      transform: translateX(-100%);
+    }
+
     &.mobile-open {
-      transform: translateX(0);
+      transform: translateX(0) !important;
     }
   }
 }
@@ -37,7 +40,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #f8fafc;
+  border-bottom: 1px solid var(--draya-border, #f8fafc);
 }
 
 .brand-info-row {
@@ -196,12 +199,38 @@
 /* Sidebar Footer Area */
 .sidebar-footer-box {
   padding: 14px 10px;
-  border-top: 1px solid #ebefef;
-  background: #ffffff;
+  border-top: 1px solid var(--draya-border, #ebefef);
+  background: var(--draya-bg-surface, #ffffff);
+}
+
+.theme-lang-btn {
+  width: 100%;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  font: inherit;
+  text-align: start;
+
+  &:hover {
+    background: var(--draya-primary-50, #f5fcfb);
+    color: var(--draya-primary-700, #1b6d63);
+
+    .link-icon-wrap {
+      color: var(--draya-primary-700, #1b6d63);
+    }
+  }
 }
 
 .logout-link-btn {
+  width: 100%;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  font: inherit;
+  text-align: start;
+
   &:hover {
     background: #fef2f2;
+    color: #ef4444;
   }
 }

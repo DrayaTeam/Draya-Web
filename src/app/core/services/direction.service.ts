@@ -15,31 +15,45 @@ export class DirectionService {
         this.updateDirection(event.lang);
       });
 
-      this.updateDirection(this.translate.currentLang() || this.translate.fallbackLang() || 'ar');
+      const currentLangValue =
+        typeof this.translate.currentLang === 'function'
+          ? (this.translate.currentLang() as string)
+          : (this.translate.currentLang as unknown as string);
+      const initialLang = currentLangValue || this.translate.getFallbackLang() || 'ar';
+      this.updateDirection(initialLang);
     }
   }
 
-  private updateDirection(lang: string): void {
+  updateDirection(lang: string): void {
     const isRtl = lang === 'ar';
     const dir = isRtl ? 'rtl' : 'ltr';
 
-    document.documentElement.dir = dir;
-    document.documentElement.lang = lang;
+    if (isPlatformBrowser(this.platformId)) {
+      document.documentElement.dir = dir;
+      document.documentElement.lang = lang;
+      document.body.dir = dir;
 
-    const body = document.body;
-    if (isRtl) {
-      body.classList.add('font-cairo');
-      body.classList.remove('font-inter');
-    } else {
-      body.classList.add('font-inter');
-      body.classList.remove('font-cairo');
+      const body = document.body;
+      if (isRtl) {
+        body.classList.add('font-cairo');
+        body.classList.remove('font-inter');
+      } else {
+        body.classList.add('font-inter');
+        body.classList.remove('font-cairo');
+      }
+
+      this.primeNG.ripple.set(true);
     }
-
-    // Align PrimeNG ripple and dynamic states
-    this.primeNG.ripple.set(true);
   }
 
   init(): void {
-    void this.translate.currentLang();
+    if (isPlatformBrowser(this.platformId)) {
+      const currentLangValue =
+        typeof this.translate.currentLang === 'function'
+          ? (this.translate.currentLang() as string)
+          : (this.translate.currentLang as unknown as string);
+      const initialLang = currentLangValue || this.translate.getFallbackLang() || 'ar';
+      this.updateDirection(initialLang);
+    }
   }
 }

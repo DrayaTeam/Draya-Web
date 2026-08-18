@@ -49,6 +49,11 @@ export class StudentProfileService extends ApiBaseService {
   getProfile(): Observable<StudentProfileData> {
     const u = this.auth.currentUser();
     return this.get<UserProfileResponse>('/auth/me').pipe(
+      tap((res) => {
+        if (res?.profilePictureUrl) {
+          this.auth.updateLocalUser({ profilePictureUrl: res.profilePictureUrl });
+        }
+      }),
       map((res) => {
         const name = u?.fullName || res?.fullName || '';
         return {
@@ -86,21 +91,28 @@ export class StudentProfileService extends ApiBaseService {
     if (data.fullName && data.fullName.trim()) {
       payload.fullName = data.fullName.trim();
     }
-    if (
-      data.parentGuardianEmail &&
-      data.parentGuardianEmail.trim() &&
-      data.parentGuardianEmail.includes('@')
-    ) {
+    if (data.parentGuardianEmail && data.parentGuardianEmail.trim()) {
       payload.parentGuardianEmail = data.parentGuardianEmail.trim();
     }
     if (data.dateOfBirth) {
-      payload.dateOfBirth = data.dateOfBirth;
+      try {
+        const d = new Date(data.dateOfBirth);
+        payload.dateOfBirth = !isNaN(d.getTime()) ? d.toISOString() : data.dateOfBirth;
+      } catch {
+        payload.dateOfBirth = data.dateOfBirth;
+      }
     }
 
     return this.put<void, UpdateStudentProfileDto>('/students/profile', payload).pipe(
       tap(() => {
         if (payload.fullName) {
-          this.auth.updateLocalUser({ fullName: payload.fullName });
+          this.auth.updateLocalUser({
+            fullName: payload.fullName,
+            ...(payload.parentGuardianEmail
+              ? { parentGuardianEmail: payload.parentGuardianEmail }
+              : {}),
+            ...(payload.dateOfBirth ? { dateOfBirth: payload.dateOfBirth } : {}),
+          });
         }
       }),
       map(() => ({
@@ -109,19 +121,54 @@ export class StudentProfileService extends ApiBaseService {
       })),
       catchError(
         (err: {
-          error?: { message?: string; title?: string; errors?: Record<string, string[]> };
+          error?: {
+            message?: string;
+            title?: string;
+            details?: unknown;
+            errors?: Record<string, string[]>;
+          };
           status?: number;
         }) => {
           console.error('PUT /students/profile error:', err);
-          if (payload.fullName) {
-            this.auth.updateLocalUser({ fullName: payload.fullName });
+
+          let backendMsg = err?.error?.message || err?.error?.title;
+
+          if (err?.error?.details) {
+            if (Array.isArray(err.error.details)) {
+              const items = err.error.details
+                .map((d: unknown) => {
+                  if (typeof d === 'string') return d;
+                  if (d && typeof d === 'object') {
+                    const obj = d as Record<string, unknown>;
+                    return (
+                      (typeof obj['message'] === 'string' ? obj['message'] : null) ||
+                      (typeof obj['errorMessage'] === 'string' ? obj['errorMessage'] : null) ||
+                      (typeof obj['description'] === 'string' ? obj['description'] : null) ||
+                      (typeof obj['field'] === 'string'
+                        ? `${obj['field']}: ${(obj['message'] as string) || 'قيمة غير صالحة'}`
+                        : null) ||
+                      JSON.stringify(d)
+                    );
+                  }
+                  return String(d);
+                })
+                .filter(Boolean);
+
+              if (items.length > 0) {
+                backendMsg = items.join(' — ');
+              }
+            } else if (typeof err.error.details === 'object') {
+              backendMsg = Object.values(err.error.details as Record<string, unknown>)
+                .flat()
+                .join(' — ');
+            }
+          } else if (err?.error?.errors) {
+            backendMsg = Object.values(err.error.errors).flat().join(' — ');
           }
 
-          const backendMsg =
-            err?.error?.message ||
-            err?.error?.title ||
-            (err?.error?.errors ? Object.values(err.error.errors).flat().join(', ') : null) ||
-            `خطأ من السيرفر (${err?.status || 500}): تعذر حفظ التعديلات في السيرفر.`;
+          if (!backendMsg) {
+            backendMsg = `خطأ من السيرفر (${err?.status || 500}): تعذر حفظ التعديلات في السيرفر.`;
+          }
 
           return of({
             success: false,
@@ -131,6 +178,7 @@ export class StudentProfileService extends ApiBaseService {
       ),
     );
   }
+
 
   /**
    * Uploads student profile avatar to Cloudinary via POST /api/v1/students/profile/picture.
