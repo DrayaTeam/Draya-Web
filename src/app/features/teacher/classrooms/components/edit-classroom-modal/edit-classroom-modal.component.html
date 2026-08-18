@@ -2,9 +2,9 @@
   [isOpen]="isOpen()"
   title="تعديل بيانات الفصل"
   size="md"
-  (modalClose)="close()">
+  (modalClosed)="close()">
   
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="draya-form p-4 flex flex-col gap-4">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="draya-form">
     <!-- Name -->
     <div class="form-group">
       <label for="name">اسم الفصل (مثال: مراجعة نهائية)</label>
@@ -21,7 +21,7 @@
     </div>
 
     <!-- Grade & Type -->
-    <div class="flex gap-4">
+    <div class="flex gap-4 mt-4">
       <div class="form-group flex-1">
         <label for="gradeLevelId">المرحلة الدراسية</label>
         <select
@@ -60,7 +60,7 @@
     </div>
 
     <!-- Subject -->
-    <div class="form-group">
+    <div class="form-group mt-4">
       <label for="subjectId">المادة العلمية</label>
       <select
         id="subjectId"
@@ -77,7 +77,7 @@
     </div>
 
     <!-- Dates -->
-    <div class="flex gap-4">
+    <div class="flex gap-4 mt-4">
       <div class="form-group flex-1">
         <label for="startDate">تاريخ البدء</label>
         <input
@@ -108,7 +108,7 @@
     }
 
     <!-- Price & Active Status -->
-    <div class="flex gap-4 items-center">
+    <div class="flex gap-4 items-center mt-4">
       <div class="form-group flex-1">
         <label for="price">سعر الاشتراك (جنية مصري)</label>
         <div class="relative">
