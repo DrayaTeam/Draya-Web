@@ -6,6 +6,8 @@
   padding: 32px 24px 64px;
   direction: rtl;
   min-height: 100vh;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .ambient-blob {

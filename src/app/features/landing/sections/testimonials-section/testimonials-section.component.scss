@@ -1,5 +1,6 @@
 .testimonials-section {
-  background: #ffffff;
+  background: var(--draya-bg-surface, #ffffff);
+  color: var(--draya-text-primary, #151b19);
   padding: 96px clamp(20px, 5vw, 48px);
 }
 
@@ -49,7 +50,7 @@
 }
 
 .testimonial-card {
-  background: #ffffff;
+  background: var(--draya-bg-base, #ffffff);
   border-radius: 14px;
   border: 1px solid var(--draya-border, #dde4e2);
   padding: 28px 24px;

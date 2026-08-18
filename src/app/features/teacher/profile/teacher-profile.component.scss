@@ -224,6 +224,17 @@
   }
 }
 
+.password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .btn-submit {
+    margin-top: 8px;
+    width: 100%;
+  }
+}
+
 .form-group {
   display: flex;
   flex-direction: column;

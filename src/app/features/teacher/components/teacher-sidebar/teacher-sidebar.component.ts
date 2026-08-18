@@ -3,6 +3,8 @@ import { Component, ChangeDetectionStrategy, inject, input, output } from '@angu
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../auth';
+import { ThemeService } from '../../../../core/services/theme.service';
+import { LocaleService } from '../../../../core/locale/locale.service';
 
 export interface NavGroup {
   headerKey: string;
@@ -38,6 +40,8 @@ export interface NavItem {
 })
 export class TeacherSidebarComponent {
   protected readonly auth = inject(AuthService);
+  readonly themeService = inject(ThemeService);
+  readonly localeService = inject(LocaleService);
 
   readonly isOpenMobile = input<boolean>(false);
   readonly closeMobile = output<void>();
@@ -116,11 +120,6 @@ export class TeacherSidebarComponent {
       labelKey: 'المحفظة المالية', // TODO: Add to i18n
       link: '/teacher/wallet',
       icon: 'wallet',
-    },
-    {
-      labelKey: 'TEACHER.SIDEBAR.SUBSCRIPTION',
-      link: '/teacher/subscription',
-      icon: 'subscription',
     },
     {
       labelKey: 'TEACHER.SIDEBAR.ACCOUNT',

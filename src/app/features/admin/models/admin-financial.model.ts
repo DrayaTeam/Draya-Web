@@ -59,3 +59,10 @@ export interface TeacherSearchResultDto {
   purchasedBalance?: number;
   phone?: string;
 }
+
+export interface UpdateAdminProfileRequest {
+  fullName?: string;
+  email?: string;
+  phoneNumber?: string;
+}
+

@@ -8,10 +8,12 @@ import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/auth.service';
 import { ApiError } from '../../../../core/models/api-error.model';
 
+import { LogoComponent } from '../../../../shared/components/logo/logo.component';
+
 @Component({
   selector: 'app-auth-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterModule, LogoComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login.component.html',
 })

@@ -85,10 +85,67 @@
         </div>
       } @else if (filteredTeachers().length > 0) {
         <div class="teachers-card-grid animate-fade-in">
-          @for (teacher of filteredTeachers(); track teacher.id) {
+          @for (teacher of paginatedTeachers(); track teacher.id) {
             <draya-teacher-card [teacher]="teacher" (viewPackages)="onViewPackages($event)" />
           }
         </div>
+
+        <!-- Pagination Controls -->
+        @if (totalPages() > 1) {
+          <div class="pagination-bar">
+            <button
+              type="button"
+              class="pagination-btn prev-btn"
+              [disabled]="currentPage() === 1"
+              (click)="prevPage()"
+              aria-label="الصفحة السابقة">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+              <span>السابق</span>
+            </button>
+
+            <div class="page-numbers-list">
+              @for (p of pageNumbers(); track p) {
+                <button
+                  type="button"
+                  class="page-num-btn"
+                  [class.active]="currentPage() === p"
+                  (click)="goToPage(p)">
+                  {{ p }}
+                </button>
+              }
+            </div>
+
+            <button
+              type="button"
+              class="pagination-btn next-btn"
+              [disabled]="currentPage() === totalPages()"
+              (click)="nextPage()"
+              aria-label="الصفحة التالية">
+              <span>التالي</span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+          </div>
+        }
       } @else {
         <!-- Empty Results Fallback -->
         <div class="empty-results-box animate-fade-in">

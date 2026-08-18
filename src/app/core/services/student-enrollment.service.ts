@@ -3,7 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable, catchError, forkJoin, map, of } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
 import { TeacherProfile } from '../models/teacher.model';
-import { ClassroomDto, ClassroomDtoPagedResult } from '../models/student-courses.model';
+import {
+  ClassroomDto,
+  ClassroomDtoPagedResult,
+  ClassroomFeedbackItemDto,
+  ClassroomFeedbackSummaryDto,
+  SubmitClassroomFeedbackRequest,
+} from '../models/student-courses.model';
+
 
 export interface ClassroomMaterialDto {
   materialId: string;
@@ -128,7 +135,7 @@ export class StudentEnrollmentService extends ApiBaseService {
   }
 
   /**
-   * Fetches package details and materials directly from API.
+   * Fetches package details, sections, and materials directly from API.
    */
   getPackageDetails(classroomId: string): Observable<PackageDetailsView> {
     return forkJoin({
@@ -148,23 +155,66 @@ export class StudentEnrollmentService extends ApiBaseService {
           }
         | { id?: string; title?: string; name?: string; type?: string; duration?: string }[]
       >(`/classrooms/${classroomId}/materials`).pipe(catchError(() => of(null))),
+      sectionsRes: this.get<
+        | { id?: string; sectionId?: string; title?: string; name?: string; description?: string; order?: number }[]
+        | { items?: { id?: string; sectionId?: string; title?: string; name?: string; description?: string; order?: number }[] }
+      >(`/classrooms/${classroomId}/sections`).pipe(catchError(() => of(null))),
     }).pipe(
-      map(({ classroom, materialsRes }) => {
+      map(({ classroom, materialsRes, sectionsRes }) => {
         let rawMaterials: {
           id?: string;
           materialId?: string;
+          sectionId?: string;
           title?: string;
           name?: string;
           type?: string;
           materialType?: string;
           duration?: string;
           durationText?: string;
+          fileUrl?: string;
+          url?: string;
+          currentVersion?: { fileUrl?: string };
         }[] = [];
         if (Array.isArray(materialsRes)) {
           rawMaterials = materialsRes;
         } else if (materialsRes && 'items' in materialsRes && Array.isArray(materialsRes.items)) {
           rawMaterials = materialsRes.items;
         }
+
+        const mapMaterialToLesson = (
+          m: typeof rawMaterials[0],
+          idx: number,
+          prefix = 'les',
+        ): LessonItem => {
+          const rawType = (m.materialType || m.type || '').toString().toLowerCase();
+          const rawTitle = (m.title || m.name || '').toString().toLowerCase();
+          const isPdf =
+            rawType.includes('pdf') ||
+            rawType.includes('doc') ||
+            rawTitle.endsWith('.pdf') ||
+            rawTitle.endsWith('.doc');
+          const isExam = rawType.includes('exam') || rawType.includes('quiz');
+          const type: 'video' | 'pdf' | 'exam' = isPdf ? 'pdf' : isExam ? 'exam' : 'video';
+
+          const fileUrl =
+            m.currentVersion?.fileUrl ||
+            m.fileUrl ||
+            m.url ||
+            (m.materialId
+              ? `http://draya-api.runasp.net/api/v1/materials/${m.materialId}/stream`
+              : '');
+
+          const durationText =
+            m.durationText || (isPdf ? 'مستند PDF' : isExam ? 'اختبار تدريبي' : 'فيديو تعليمي');
+
+          return {
+            id: m.materialId || m.id || `${prefix}_${idx + 1}`,
+            title: m.title || m.name || `محاضرة ${idx + 1}`,
+            type,
+            duration: durationText,
+            fileUrl,
+          };
+        };
 
         const teacherName = classroom?.gradeLevelName
           ? `أستاذ ${classroom.subjectName || ''}`
@@ -173,52 +223,59 @@ export class StudentEnrollmentService extends ApiBaseService {
         const name = classroom?.name || 'الباقة الدراسية';
         const price = classroom?.price || 0;
 
-        const lessonsList: LessonItem[] = rawMaterials.map(
-          (
-            m: {
-              materialId?: string;
-              id?: string;
-              title?: string;
-              name?: string;
-              type?: string;
-              materialType?: string;
-              durationText?: string;
-              fileUrl?: string;
-              url?: string;
-              currentVersion?: { fileUrl?: string };
-            },
-            idx: number,
-          ) => {
-            const rawType = (m.materialType || m.type || '').toString().toLowerCase();
-            const rawTitle = (m.title || m.name || '').toString().toLowerCase();
-            const isPdf =
-              rawType.includes('pdf') ||
-              rawType.includes('doc') ||
-              rawTitle.endsWith('.pdf') ||
-              rawTitle.endsWith('.doc');
-            const isExam = rawType.includes('exam') || rawType.includes('quiz');
-            const type: 'video' | 'pdf' | 'exam' = isPdf ? 'pdf' : isExam ? 'exam' : 'video';
+        const allLessons: LessonItem[] = rawMaterials.map((m, idx) => mapMaterialToLesson(m, idx));
 
-            const fileUrl =
-              m.currentVersion?.fileUrl ||
-              m.fileUrl ||
-              m.url ||
-              (m.materialId
-                ? `http://draya-api.runasp.net/api/v1/materials/${m.materialId}/stream`
-                : '');
+        // Group into chapters by sections if available
+        let rawSections: {
+          id?: string;
+          sectionId?: string;
+          title?: string;
+          name?: string;
+          description?: string;
+          order?: number;
+          materials?: typeof rawMaterials;
+        }[] = [];
 
-            const durationText =
-              m.durationText || (isPdf ? 'مستند PDF' : isExam ? 'اختبار تدريبي' : 'فيديو تعليمي');
+        if (Array.isArray(sectionsRes)) {
+          rawSections = sectionsRes;
+        } else if (sectionsRes && 'items' in sectionsRes && Array.isArray(sectionsRes.items)) {
+          rawSections = sectionsRes.items;
+        }
+
+        let chapters: ChapterItem[] = [];
+
+        if (rawSections.length > 0) {
+          chapters = rawSections.map((sec, sIdx) => {
+            const secId = sec.id || sec.sectionId || `sec_${sIdx + 1}`;
+            const secTitle = sec.title || sec.name || `الوحدة / القسم ${sIdx + 1}`;
+
+            let secLessons: LessonItem[] = [];
+            if (sec.materials && Array.isArray(sec.materials) && sec.materials.length > 0) {
+              secLessons = sec.materials.map((m, mIdx) => mapMaterialToLesson(m, mIdx, secId));
+            } else if (rawMaterials.some((m) => m.sectionId === secId)) {
+              secLessons = rawMaterials
+                .filter((m) => m.sectionId === secId)
+                .map((m, mIdx) => mapMaterialToLesson(m, mIdx, secId));
+            } else if (sIdx === 0) {
+              // Fallback: assign remaining materials to the first section
+              secLessons = allLessons;
+            }
 
             return {
-              id: m.materialId || m.id || `les_${idx + 1}`,
-              title: m.title || m.name || `محاضرة ${idx + 1}`,
-              type,
-              duration: durationText,
-              fileUrl,
+              id: secId,
+              title: secTitle,
+              lessons: secLessons,
             };
-          },
-        );
+          });
+        } else {
+          chapters = [
+            {
+              id: 'ch_1',
+              title: 'محتوى الباقة والمحاضرات',
+              lessons: allLessons,
+            },
+          ];
+        }
 
         return {
           id: classroomId,
@@ -233,17 +290,23 @@ export class StudentEnrollmentService extends ApiBaseService {
             'امتحانات تدريبية دورية مع تصحيح فوري',
             'قناة نقاش تفاعلية للأسئلة مع المدرس',
           ],
-          chapters: [
-            {
-              id: 'ch_1',
-              title: 'محتوى الباقة والمحاضرات',
-              lessons: lessonsList,
-            },
-          ],
+          chapters,
         };
       }),
     );
   }
+
+  /**
+   * Retrieves sections for a classroom.
+   */
+  getClassroomSections(
+    classroomId: string,
+  ): Observable<{ id?: string; sectionId?: string; title?: string; description?: string }[] | null> {
+    return this.get<{ id?: string; sectionId?: string; title?: string; description?: string }[]>(
+      `/classrooms/${classroomId}/sections`,
+    ).pipe(catchError(() => of(null)));
+  }
+
 
   /**
    * Enrolls student with paper activation code.
@@ -369,4 +432,42 @@ export class StudentEnrollmentService extends ApiBaseService {
       catchError(() => of(false)),
     );
   }
+
+  /**
+   * GET /api/v1/classrooms/{classroomId}/feedback
+   * Retrieves summary and reviews for a classroom.
+   */
+  getClassroomFeedback(
+    classroomId: string,
+    page = 1,
+    pageSize = 10,
+  ): Observable<ClassroomFeedbackSummaryDto | null> {
+    return this.get<ClassroomFeedbackSummaryDto>(
+      `/classrooms/${classroomId}/feedback?page=${page}&pageSize=${pageSize}`,
+    ).pipe(catchError(() => of(null)));
+  }
+
+  /**
+   * POST /api/v1/classrooms/{classroomId}/feedback
+   * Submits a rating (1-5) and optional feedback comment.
+   */
+  submitClassroomFeedback(
+    classroomId: string,
+    req: SubmitClassroomFeedbackRequest,
+  ): Observable<{ success: boolean; data?: ClassroomFeedbackItemDto; message?: string }> {
+    return this.post<ClassroomFeedbackItemDto>(`/classrooms/${classroomId}/feedback`, req).pipe(
+      map((res) => ({
+        success: true,
+        data: res,
+        message: 'شكراً لك! تم إرسال تقييمك بنجاح.',
+      })),
+      catchError((err) =>
+        of({
+          success: false,
+          message: err?.error?.message || err?.error?.title || 'تعذر إرسال التقييم حالياً.',
+        }),
+      ),
+    );
+  }
 }
+

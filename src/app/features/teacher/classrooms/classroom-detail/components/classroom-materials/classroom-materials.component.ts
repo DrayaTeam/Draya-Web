@@ -8,6 +8,7 @@ import {
   HostListener,
 } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ButtonModule } from 'primeng/button';
@@ -23,6 +24,7 @@ import {
   MaterialVersionDto,
 } from '../../../../../../core/models/material.model';
 import { ClassroomSectionDto, SectionMaterialDto } from '../../../../../../core/models/section.model';
+import { resolveMaterialUrl } from '../../../../../../core/services/student-library.service';
 
 import { UploadMaterialModalComponent } from '../upload-material-modal/upload-material-modal.component';
 import { UploadVersionModalComponent } from '../upload-version-modal/upload-version-modal.component';
@@ -62,6 +64,7 @@ export class ClassroomMaterialsComponent {
   private readonly materialService = inject(MaterialService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService, { optional: true });
+  private readonly sanitizer = inject(DomSanitizer);
 
   readonly sectionsResult = signal<ClassroomSectionDto[] | null>(null);
   readonly isLoading = signal<boolean>(false);
@@ -84,6 +87,12 @@ export class ClassroomMaterialsComponent {
   readonly isUploadVersionModalVisible = signal<boolean>(false);
   readonly isVersionsModalVisible = signal<boolean>(false);
   readonly selectedMaterial = signal<ClassroomMaterialDto | null>(null);
+
+  // Inline Preview Modal state
+  readonly activePreviewMaterial = signal<ClassroomMaterialDto | null>(null);
+  readonly activePreviewUrl = signal<string | null>(null);
+  readonly isPreviewLoading = signal<boolean>(false);
+  readonly previewError = signal<string | null>(null);
 
   readonly openMenuId = signal<string | null>(null);
 
@@ -208,37 +217,61 @@ export class ClassroomMaterialsComponent {
   }
 
   openStream(material: SectionMaterialDto): void {
-    this.messageService?.add({
-      severity: 'info',
-      summary: 'جاري التحميل',
-      detail: 'جاري جلب الرابط، يرجى الانتظار...',
-    });
-    this.materialService.getMaterialStream(material.id).subscribe({
+    const fullMaterial = this.mapToClassroomMaterial(material);
+    if (fullMaterial.materialType === 'Link') {
+      if (fullMaterial.currentVersion?.fileUrl) {
+        window.open(fullMaterial.currentVersion.fileUrl, '_blank', 'noopener,noreferrer');
+      }
+      return;
+    }
+
+    this.activePreviewMaterial.set(fullMaterial);
+    this.isPreviewLoading.set(true);
+    this.previewError.set(null);
+    this.activePreviewUrl.set(null);
+
+    this.materialService.getMaterialStream(fullMaterial.materialId).subscribe({
       next: (res) => {
-        // ============================================================================
-        // ⚠️ TEMPORARY HOTFIX ⚠️
-        // Reverses a backend URL-encoding bug. See docs/draya-api-full-reference.md
-        // The backend incorrectly encodes Arabic characters in the streamUrl as %<hex>
-        // (e.g., %645 instead of the standard UTF-8 %D9%85).
-        //
-        // REMOVE THIS once the backend team fixes their Arabic path encoding!
-        // WARNING: If a material title legitimately contains the exact "%123" pattern,
-        // this regex WILL break the real URL. Do not keep this code long-term.
-        // ============================================================================
-        const fixedUrl = res.streamUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
-          String.fromCharCode(parseInt(hex, 16)),
-        );
-        window.open(encodeURI(fixedUrl), '_blank');
+        let fixedUrl = res.streamUrl || fullMaterial.currentVersion?.fileUrl || '';
+        if (fixedUrl) {
+          fixedUrl = fixedUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
+            String.fromCharCode(parseInt(hex, 16)),
+          );
+          this.activePreviewUrl.set(resolveMaterialUrl(fixedUrl));
+        } else {
+          this.previewError.set('لم يتم العثور على رابط مباشر لهذه المادة التعليمية.');
+        }
+        this.isPreviewLoading.set(false);
       },
       error: (err) => {
         console.error('Failed to get stream url', err);
-        this.messageService?.add({
-          severity: 'error',
-          summary: 'خطأ',
-          detail: 'فشل فتح المادة. حاول مرة أخرى لاحقًا.',
-        });
+        const fallbackUrl = fullMaterial.currentVersion?.fileUrl;
+        if (fallbackUrl) {
+          this.activePreviewUrl.set(resolveMaterialUrl(fallbackUrl));
+        } else {
+          this.previewError.set('فشل جلب رابط المادة التعليمية من الخادم.');
+        }
+        this.isPreviewLoading.set(false);
       },
     });
+  }
+
+  closePreview(): void {
+    this.activePreviewMaterial.set(null);
+    this.activePreviewUrl.set(null);
+    this.previewError.set(null);
+    this.isPreviewLoading.set(false);
+  }
+
+  getSafePdfUrl(): SafeResourceUrl {
+    const rawUrl = this.activePreviewUrl() || '';
+    return this.sanitizer.bypassSecurityTrustResourceUrl(rawUrl);
+  }
+
+  onVideoError(): void {
+    this.previewError.set(
+      'تعذر تشغيل الفيديو داخل المشغل المدمج (قد يكون الرابط منتهي الصلاحية أو الصيغة تتطلب مشغل خارجي).',
+    );
   }
 
   private mapToClassroomMaterial(material: SectionMaterialDto): ClassroomMaterialDto {

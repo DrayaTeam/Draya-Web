@@ -37,10 +37,12 @@ const noPureNumericValidator: ValidatorFn = (control: AbstractControl): Validati
   return null;
 };
 
+import { LogoComponent } from '../../../../shared/components/logo/logo.component';
+
 @Component({
   selector: 'app-register-student',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterLink, LogoComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './register-student.component.html',
 })

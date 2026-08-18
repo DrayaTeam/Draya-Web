@@ -196,6 +196,113 @@
       </div>
     }
   }
+
+  <!-- Inline Material Preview Modal (Video & PDF) -->
+  @if (activePreviewMaterial()) {
+    <div
+      class="preview-backdrop"
+      (click)="closePreview()"
+      (keydown.escape)="closePreview()"
+      tabindex="0"
+      role="dialog"
+      aria-modal="true">
+      <div
+        class="preview-container"
+        tabindex="-1"
+        role="document"
+        (click)="$event.stopPropagation()"
+        (keydown)="$event.stopPropagation()"
+        dir="rtl">
+        <!-- Preview Header -->
+        <div class="preview-header">
+          <div class="flex items-center gap-3">
+            <div
+              class="preview-type-icon"
+              [ngClass]="{
+                'icon-pdf': activePreviewMaterial()?.materialType === 'PDF',
+                'icon-video': activePreviewMaterial()?.materialType === 'Video',
+              }">
+              <i
+                class="pi"
+                [ngClass]="{
+                  'pi-file-pdf': activePreviewMaterial()?.materialType === 'PDF',
+                  'pi-video': activePreviewMaterial()?.materialType === 'Video',
+                }"></i>
+            </div>
+            <div>
+              <h3 class="preview-title">{{ activePreviewMaterial()?.title }}</h3>
+              <p class="preview-subtitle">معاينة مباشرة داخل الفصل الدراسي</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            @if (activePreviewUrl()) {
+              <a
+                [href]="activePreviewUrl()"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="preview-action-btn"
+                title="فتح في نافذة منفصلة">
+                <i class="pi pi-external-link text-xs"></i>
+                <span class="text-xs font-semibold">فتح خارجي</span>
+              </a>
+            }
+            <button
+              class="preview-close-btn"
+              (click)="closePreview()"
+              title="إغلاق المعاينة"
+              aria-label="Close Preview">
+              <i class="pi pi-times"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Preview Body -->
+        <div class="preview-body">
+          @if (isPreviewLoading()) {
+            <div class="preview-loading">
+              <i class="pi pi-spin pi-spinner text-primary-600 mb-3 text-3xl"></i>
+              <p>جاري تحضير المادة للمعاينة...</p>
+            </div>
+          } @else if (previewError()) {
+            <div class="preview-error">
+              <i class="pi pi-exclamation-circle mb-2 text-3xl text-amber-500"></i>
+              <p class="font-semibold text-gray-700">{{ previewError() }}</p>
+              @if (activePreviewUrl()) {
+                <a
+                  [href]="activePreviewUrl()"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn-primary mt-4 inline-flex items-center gap-2">
+                  <i class="pi pi-external-link"></i>
+                  تجربة الفتح في نافذة خارجية
+                </a>
+              }
+            </div>
+          } @else if (activePreviewMaterial()?.materialType === 'Video') {
+            <div class="video-wrapper">
+              <video
+                [src]="activePreviewUrl()"
+                controls
+                autoplay
+                playsinline
+                class="preview-video-player"
+                (error)="onVideoError()">
+                متصفحك لا يدعم تشغيل الفيديو المباشر.
+              </video>
+            </div>
+          } @else {
+            <div class="pdf-wrapper">
+              <iframe
+                [src]="getSafePdfUrl()"
+                class="preview-pdf-frame"
+                title="PDF Document Viewer"></iframe>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
 </div>
 
 <draya-teacher-modal

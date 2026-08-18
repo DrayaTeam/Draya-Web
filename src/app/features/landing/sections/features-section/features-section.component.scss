@@ -1,5 +1,6 @@
 .features-section {
-  background: #ffffff;
+  background: var(--draya-bg-surface, #ffffff);
+  color: var(--draya-text-primary, #151b19);
   padding: 96px clamp(20px, 5vw, 48px);
 }
 
@@ -52,12 +53,13 @@
 }
 
 .feature-card {
-  background: #ffffff;
+  background: var(--draya-bg-base, #ffffff);
   border-radius: 14px;
   border: 1px solid var(--draya-border, #dde4e2);
   overflow: hidden;
   cursor: pointer;
   display: flex;
+
   flex-direction: column;
   transition:
     border-color 150ms ease-out,
