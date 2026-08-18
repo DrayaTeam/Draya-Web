@@ -132,10 +132,7 @@
 
           <div class="form-group">
             <label for="specialization">{{ 'TEACHER.PROFILE.SPECIALIZATION' | translate }}</label>
-            <select
-              id="specialization"
-              formControlName="specialization"
-              class="form-control">
+            <select id="specialization" formControlName="specialization" class="form-control">
               <option value="" disabled selected>اختر التخصص أو المادة</option>
               @for (spec of specializationOptions; track spec) {
                 <option [value]="spec">{{ spec }}</option>

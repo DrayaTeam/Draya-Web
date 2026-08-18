@@ -170,7 +170,9 @@
         type="button"
         (click)="localeService.toggle()"
         [title]="localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'"
-        [attr.aria-label]="localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'"
+        [attr.aria-label]="
+          localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'
+        "
         class="icon-btn lang-toggle-btn">
         <span class="text-xs font-bold">{{ localeService.locale() === 'ar' ? 'EN' : 'عربي' }}</span>
       </button>
@@ -235,10 +237,7 @@
 
       <div class="drawer-profile-banner">
         @if (profilePictureUrl()) {
-          <img
-            [src]="profilePictureUrl()"
-            [alt]="userDisplayName()"
-            class="avatar-img" />
+          <img [src]="profilePictureUrl()" [alt]="userDisplayName()" class="avatar-img" />
         } @else {
           <div class="avatar-circle">
             <span>{{ userInitials() }}</span>
@@ -293,16 +292,10 @@
       </nav>
 
       <div class="drawer-controls-row">
-        <button
-          type="button"
-          (click)="themeService.toggleTheme()"
-          class="btn-drawer-action">
+        <button type="button" (click)="themeService.toggleTheme()" class="btn-drawer-action">
           <span>{{ themeService.isDarkMode() ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي' }}</span>
         </button>
-        <button
-          type="button"
-          (click)="localeService.toggle()"
-          class="btn-drawer-action">
+        <button type="button" (click)="localeService.toggle()" class="btn-drawer-action">
           <span>🌐 {{ localeService.locale() === 'ar' ? 'English' : 'العربية' }}</span>
         </button>
       </div>

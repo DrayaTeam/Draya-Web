@@ -145,12 +145,9 @@
           <div class="form-group flex-1">
             <label for="classroomTypeId" class="form-label">
               نوع الفصل
-              <span class="text-xs text-gray-400 font-normal mr-1">(اختياري)</span>
+              <span class="mr-1 text-xs font-normal text-gray-400">(اختياري)</span>
             </label>
-            <select
-              id="classroomTypeId"
-              formControlName="classroomTypeId"
-              class="form-input">
+            <select id="classroomTypeId" formControlName="classroomTypeId" class="form-input">
               <option value="" selected>اختر النوع (اختياري)</option>
               @for (type of classroomTypes(); track type.id) {
                 <option [value]="type.id">{{ type.name }}</option>

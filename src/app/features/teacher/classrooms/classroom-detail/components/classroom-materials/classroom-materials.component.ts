@@ -174,7 +174,9 @@ export class ClassroomMaterialsComponent {
   }
 
   onVideoError(): void {
-    this.previewError.set('تعذر تشغيل الفيديو داخل المشغل المدمج (قد يكون الرابط منتهي الصلاحية أو الصيغة تتطلب مشغل خارجي).');
+    this.previewError.set(
+      'تعذر تشغيل الفيديو داخل المشغل المدمج (قد يكون الرابط منتهي الصلاحية أو الصيغة تتطلب مشغل خارجي).',
+    );
   }
 
   openUploadVersionModal(material: ClassroomMaterialDto): void {
