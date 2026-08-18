@@ -7,7 +7,7 @@ import { finalize } from 'rxjs/operators';
 
 import { MaterialService } from '../../../../services/material.service';
 import { MaterialType, ClassroomMaterialDto } from '../../../../../../core/models/material.model';
-import { ModalComponent } from '../../../../../../shared/components/modal/modal.component';
+import { TeacherModalComponent } from '../../../../components/teacher-modal/teacher-modal.component';
 
 @Component({
   selector: 'draya-upload-material-modal',
@@ -15,7 +15,7 @@ import { ModalComponent } from '../../../../../../shared/components/modal/modal.
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ModalComponent,
+    TeacherModalComponent,
   ],
   templateUrl: './upload-material-modal.component.html',
   styleUrl: './upload-material-modal.component.scss',

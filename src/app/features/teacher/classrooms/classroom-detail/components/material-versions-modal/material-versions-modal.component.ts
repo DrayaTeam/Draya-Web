@@ -8,7 +8,7 @@ import {
   effect,
 } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { ModalComponent } from '../../../../../../shared/components/modal/modal.component';
+import { TeacherModalComponent } from '../../../../components/teacher-modal/teacher-modal.component';
 import { finalize } from 'rxjs/operators';
 import { MaterialService } from '../../../../services/material.service';
 import {
@@ -19,7 +19,7 @@ import {
 @Component({
   selector: 'draya-material-versions-modal',
   standalone: true,
-  imports: [CommonModule, DatePipe, ModalComponent],
+  imports: [CommonModule, DatePipe, TeacherModalComponent],
   templateUrl: './material-versions-modal.component.html',
   styleUrl: './material-versions-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

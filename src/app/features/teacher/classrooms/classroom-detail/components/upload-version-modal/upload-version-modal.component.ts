@@ -6,12 +6,12 @@ import { MessageService } from 'primeng/api';
 import { finalize } from 'rxjs/operators';
 import { MaterialService } from '../../../../services/material.service';
 import { MaterialVersionDto, ClassroomMaterialDto } from '../../../../../../core/models/material.model';
-import { ModalComponent } from '../../../../../../shared/components/modal/modal.component';
+import { TeacherModalComponent } from '../../../../components/teacher-modal/teacher-modal.component';
 
 @Component({
   selector: 'draya-upload-version-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent],
+  imports: [CommonModule, FormsModule, TeacherModalComponent],
   templateUrl: './upload-version-modal.component.html',
   styleUrl: './upload-version-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -7,12 +7,12 @@ import { finalize } from 'rxjs/operators';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SectionService } from '../../../../services/section.service';
 import { ClassroomSectionDto, CreateSectionRequest } from '../../../../../../core/models/section.model';
-import { ModalComponent } from '../../../../../../shared/components/modal/modal.component';
+import { TeacherModalComponent } from '../../../../components/teacher-modal/teacher-modal.component';
 
 @Component({
   selector: 'draya-create-section-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ModalComponent, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, TeacherModalComponent, TranslatePipe],
   templateUrl: './create-section-modal.component.html',
   styleUrl: './create-section-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

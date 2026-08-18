@@ -1,32 +1,55 @@
-import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
+import { Component, Input, Output, EventEmitter, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DialogModule } from 'primeng/dialog';
+import { Dialog } from 'primeng/dialog';
 
 @Component({
-  selector: 'draya-modal',
+  selector: 'app-modal',
   standalone: true,
-  imports: [CommonModule, DialogModule],
-  templateUrl: './modal.component.html',
-  styleUrl: './modal.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, Dialog],
+  template: `
+    <p-dialog
+      [(visible)]="isOpen"
+      [header]="title || ''"
+      [modal]="true"
+      [style]="{ width: '100%', 'max-width': maxWidthMap[size] }"
+      [draggable]="false"
+      [resizable]="false"
+      [closable]="true"
+      (onHide)="onClose()"
+      styleClass="draya-modal">
+      <div class="text-foreground py-4 text-[15px] leading-relaxed">
+        <ng-content></ng-content>
+      </div>
+
+      @if (footerTemplate) {
+        <ng-template pTemplate="footer">
+          <div
+            class="border-border bg-secondary/50 flex justify-end gap-3 rounded-b-xl border-t pt-3">
+            <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
+          </div>
+        </ng-template>
+      }
+    </p-dialog>
+  `,
 })
 export class ModalComponent {
-  readonly isOpen = input.required<boolean>();
-  readonly title = input.required<string>();
-  readonly subtitle = input<string>();
-  readonly size = input<'sm' | 'md' | 'lg' | 'xl'>('md');
-  readonly hideFooter = input<boolean>(false);
+  @Input() isOpen = false;
+  @Input() title?: string;
+  @Input() size: 'sm' | 'md' | 'lg' = 'md';
+  @Input() footerTemplate?: TemplateRef<unknown>;
 
-  readonly modalClosed = output<void>();
+  @Output() isOpenChange = new EventEmitter<boolean>();
+  @Output() modalClose = new EventEmitter<void>();
 
-  readonly maxWidthMap: Record<string, string> = {
-    sm: '400px',
-    md: '500px',
-    lg: '700px',
-    xl: '900px',
+  readonly maxWidthMap = {
+    sm: '440px',
+    md: '600px',
+    lg: '800px',
   };
 
-  onHide(): void {
-    this.modalClosed.emit();
+  onClose(): void {
+    this.isOpen = false;
+    this.isOpenChange.emit(false);
+    this.modalClose.emit();
   }
 }
