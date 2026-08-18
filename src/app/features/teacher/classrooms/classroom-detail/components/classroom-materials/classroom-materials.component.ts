@@ -27,6 +27,8 @@ import { ClassroomSectionDto, SectionMaterialDto } from '../../../../../../core/
 import { UploadMaterialModalComponent } from '../upload-material-modal/upload-material-modal.component';
 import { UploadVersionModalComponent } from '../upload-version-modal/upload-version-modal.component';
 import { MaterialVersionsModalComponent } from '../material-versions-modal/material-versions-modal.component';
+import { TeacherModalComponent } from '../../../../components/teacher-modal/teacher-modal.component'; 
+import { SharedModule } from 'primeng/api';
 import { CreateSectionModalComponent } from '../create-section-modal/create-section-modal.component';
 import { EditSectionModalComponent } from '../edit-section-modal/edit-section-modal.component';
 
@@ -46,6 +48,8 @@ import { EditSectionModalComponent } from '../edit-section-modal/edit-section-mo
     MaterialVersionsModalComponent,
     CreateSectionModalComponent,
     EditSectionModalComponent,
+    TeacherModalComponent,
+    SharedModule,
   ],
   templateUrl: './classroom-materials.component.html',
   styleUrl: './classroom-materials.component.scss',
@@ -73,6 +77,10 @@ export class ClassroomMaterialsComponent {
   readonly targetSectionIdForUpload = signal<string | null>(null);
 
   // Version Modals state
+  readonly isDeleteSectionModalOpen = signal<boolean>(false);
+  readonly sectionToDelete = signal<string | null>(null);
+  readonly isDeleteMaterialModalOpen = signal<boolean>(false);
+  readonly materialToDelete = signal<string | null>(null);
   readonly isUploadVersionModalVisible = signal<boolean>(false);
   readonly isVersionsModalVisible = signal<boolean>(false);
   readonly selectedMaterial = signal<ClassroomMaterialDto | null>(null);
@@ -150,18 +158,15 @@ export class ClassroomMaterialsComponent {
 
   confirmDeleteSection(section: ClassroomSectionDto, event: Event): void {
     event.stopPropagation();
-    this.confirmationService.confirm({
-      message: 'هل أنت متأكد من حذف هذا القسم؟ سيتم حذف جميع مواده.',
-      header: 'تأكيد الحذف',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'نعم، حذف',
-      rejectLabel: 'إلغاء',
-      acceptButtonStyleClass: 'p-button-danger',
-      rejectButtonStyleClass: 'p-button-text',
-      accept: () => {
-        this.deleteSection(section.id);
-      },
-    });
+    this.sectionToDelete.set(section.id);
+    this.isDeleteSectionModalOpen.set(true);
+  }
+  
+  executeDeleteSection(): void {
+    const id = this.sectionToDelete();
+    if (!id) return;
+    this.isDeleteSectionModalOpen.set(false);
+    this.deleteSection(id);
   }
 
   private deleteSection(sectionId: string): void {
@@ -269,18 +274,15 @@ export class ClassroomMaterialsComponent {
   }
 
   confirmDeleteMaterial(material: SectionMaterialDto): void {
-    this.confirmationService.confirm({
-      message: `هل أنت متأكد من حذف المادة التعليمية "${material.title}"؟`,
-      header: 'تأكيد الحذف',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'نعم، حذف',
-      rejectLabel: 'إلغاء',
-      acceptButtonStyleClass: 'p-button-danger',
-      rejectButtonStyleClass: 'p-button-text',
-      accept: () => {
-        this.deleteMaterial(material.id);
-      },
-    });
+    this.materialToDelete.set(material.id);
+    this.isDeleteMaterialModalOpen.set(true);
+  }
+  
+  executeDeleteMaterial(): void {
+    const id = this.materialToDelete();
+    if (!id) return;
+    this.isDeleteMaterialModalOpen.set(false);
+    this.deleteMaterial(id);
   }
 
   private deleteMaterial(materialId: string): void {

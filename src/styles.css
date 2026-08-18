@@ -329,3 +329,51 @@ input[type="reset"] {
   font-size: 0.75rem;
   margin-top: 2px;
 }
+
+/* ── Form Buttons ── */
+.btn-primary {
+  background-color: var(--draya-primary-700, #1b6d63);
+  color: #ffffff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 9999px !important;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 150ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--draya-primary-800, #134e48);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--draya-surface-300, #d1d5db);
+  color: var(--draya-text-700, #374151);
+  padding: 10px 20px;
+  border-radius: 9999px !important;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 150ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-secondary:hover {
+  background-color: var(--draya-surface-100, #f3f4f6);
+}
