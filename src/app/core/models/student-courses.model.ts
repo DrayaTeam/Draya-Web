@@ -68,3 +68,14 @@ export interface SubmitClassroomFeedbackRequest {
   comment?: string;
 }
 
+export interface ClassroomSectionDto {
+  id?: string;
+  sectionId?: string;
+  title: string;
+  description?: string;
+  order?: number;
+  materials?: unknown[];
+}
+
+
+
