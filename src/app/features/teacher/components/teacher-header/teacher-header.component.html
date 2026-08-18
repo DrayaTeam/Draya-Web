@@ -123,10 +123,10 @@
       </div>
 
       <!-- User Profile Box -->
-      <a routerLink="/teacher/profile" class="user-profile-box" title="عرض الملف الشخصي">
-        @if (auth.currentUser()?.profilePictureUrl) {
+      <a routerLink="/teacher/account" class="user-profile-box" title="عرض الملف الشخصي">
+        @if (profilePictureUrl()) {
           <img
-            [src]="auth.currentUser()?.profilePictureUrl"
+            [src]="profilePictureUrl()"
             [alt]="userDisplayName()"
             class="avatar-img"
             (error)="
@@ -181,9 +181,16 @@
       </div>
 
       <div class="drawer-profile-banner">
-        <div class="avatar-circle">
-          <span>{{ userInitials() }}</span>
-        </div>
+        @if (profilePictureUrl()) {
+          <img
+            [src]="profilePictureUrl()"
+            [alt]="userDisplayName()"
+            class="avatar-img" />
+        } @else {
+          <div class="avatar-circle">
+            <span>{{ userInitials() }}</span>
+          </div>
+        }
         <div class="drawer-user-text">
           <p class="d-name">{{ userDisplayName() }}</p>
           <span class="d-role">معلم معتمد</span>

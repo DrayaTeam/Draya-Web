@@ -92,6 +92,13 @@ export class TeacherProfileComponent implements OnInit {
         next: (data) => {
           this._profile.set(data);
           this.resetForm(data);
+          if (data.pictureUrl || data.fullName) {
+            this.auth.updateLocalUser({
+              profilePictureUrl: data.pictureUrl,
+              pictureUrl: data.pictureUrl,
+              fullName: data.fullName || user.fullName,
+            });
+          }
         },
         error: (err) => {
           // Even if the service doesn't catch it, we shouldn't crash the app
@@ -175,6 +182,10 @@ export class TeacherProfileComponent implements OnInit {
             if (!p) return p;
             return { ...p, ...payload };
           });
+
+          this.auth.updateLocalUser({
+            fullName: payload.fullName,
+          });
         },
         error: () => {
           this.messageService?.add({
@@ -219,6 +230,10 @@ export class TeacherProfileComponent implements OnInit {
           if (responseUrl && typeof responseUrl === 'string' && responseUrl.startsWith('http')) {
             // If the POST returns the new image URL directly, update state immediately
             this._profile.update((p) => (p ? { ...p, pictureUrl: responseUrl } : p));
+            this.auth.updateLocalUser({
+              profilePictureUrl: responseUrl,
+              pictureUrl: responseUrl,
+            });
           } else {
             // Otherwise reload profile
             this.loadProfile();

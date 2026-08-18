@@ -112,9 +112,9 @@
             [attr.aria-expanded]="isProfileMenuOpen()"
             aria-haspopup="true"
             type="button">
-            @if (auth.currentUser()?.profilePictureUrl) {
+            @if (auth.currentUser()?.profilePictureUrl || auth.currentUser()?.pictureUrl) {
               <img
-                [src]="auth.currentUser()?.profilePictureUrl"
+                [src]="auth.currentUser()?.profilePictureUrl || auth.currentUser()?.pictureUrl"
                 [alt]="currentUserName()"
                 class="profile-avatar"
                 style="object-fit: cover;"

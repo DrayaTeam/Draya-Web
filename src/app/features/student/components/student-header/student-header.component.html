@@ -102,9 +102,9 @@
 
       <!-- User Profile -->
       <a routerLink="/student/profile" class="user-profile-box" title="عرض الملف الشخصي">
-        @if (auth.currentUser()?.profilePictureUrl) {
+        @if (profilePictureUrl()) {
           <img
-            [src]="auth.currentUser()?.profilePictureUrl"
+            [src]="profilePictureUrl()"
             [alt]="userDisplayName()"
             class="avatar-img"
             (error)="
@@ -159,9 +159,9 @@
       </div>
 
       <a routerLink="/student/profile" (click)="closeMobileMenu()" class="drawer-profile-banner">
-        @if (auth.currentUser()?.profilePictureUrl) {
+        @if (profilePictureUrl()) {
           <img
-            [src]="auth.currentUser()?.profilePictureUrl"
+            [src]="profilePictureUrl()"
             [alt]="userDisplayName()"
             class="avatar-img"
             (error)="

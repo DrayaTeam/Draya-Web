@@ -19,6 +19,11 @@ export class StudentHeaderComponent {
     return this.auth.currentUser()?.fullName || 'الطالب';
   });
 
+  readonly profilePictureUrl = computed(() => {
+    const user = this.auth.currentUser();
+    return user?.profilePictureUrl || user?.pictureUrl || null;
+  });
+
   readonly userInitials = computed(() => {
     const name = this.userDisplayName().trim();
     if (!name) return 'ط';

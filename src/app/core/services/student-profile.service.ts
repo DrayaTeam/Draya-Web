@@ -49,6 +49,11 @@ export class StudentProfileService extends ApiBaseService {
   getProfile(): Observable<StudentProfileData> {
     const u = this.auth.currentUser();
     return this.get<UserProfileResponse>('/auth/me').pipe(
+      tap((res) => {
+        if (res?.profilePictureUrl) {
+          this.auth.updateLocalUser({ profilePictureUrl: res.profilePictureUrl });
+        }
+      }),
       map((res) => {
         const name = u?.fullName || res?.fullName || '';
         return {
