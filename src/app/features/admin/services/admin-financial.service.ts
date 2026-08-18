@@ -91,4 +91,10 @@ export class AdminFinancialService extends ApiBaseService {
     }
     return this.get<TeacherSearchResultDto[]>('/admin/teachers/search', queryParams);
   }
+
+  /** PUT /api/v1/admin/profile */
+  updateAdminProfile(request: { fullName?: string; phoneNumber?: string }): Observable<void> {
+    return this.put<void, { fullName?: string; phoneNumber?: string }>('/admin/profile', request);
+  }
 }
+

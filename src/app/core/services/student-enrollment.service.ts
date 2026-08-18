@@ -3,7 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable, catchError, forkJoin, map, of } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
 import { TeacherProfile } from '../models/teacher.model';
-import { ClassroomDto, ClassroomDtoPagedResult } from '../models/student-courses.model';
+import {
+  ClassroomDto,
+  ClassroomDtoPagedResult,
+  ClassroomFeedbackItemDto,
+  ClassroomFeedbackSummaryDto,
+  SubmitClassroomFeedbackRequest,
+} from '../models/student-courses.model';
+
 
 export interface ClassroomMaterialDto {
   materialId: string;
@@ -369,4 +376,42 @@ export class StudentEnrollmentService extends ApiBaseService {
       catchError(() => of(false)),
     );
   }
+
+  /**
+   * GET /api/v1/classrooms/{classroomId}/feedback
+   * Retrieves summary and reviews for a classroom.
+   */
+  getClassroomFeedback(
+    classroomId: string,
+    page = 1,
+    pageSize = 10,
+  ): Observable<ClassroomFeedbackSummaryDto | null> {
+    return this.get<ClassroomFeedbackSummaryDto>(
+      `/classrooms/${classroomId}/feedback?page=${page}&pageSize=${pageSize}`,
+    ).pipe(catchError(() => of(null)));
+  }
+
+  /**
+   * POST /api/v1/classrooms/{classroomId}/feedback
+   * Submits a rating (1-5) and optional feedback comment.
+   */
+  submitClassroomFeedback(
+    classroomId: string,
+    req: SubmitClassroomFeedbackRequest,
+  ): Observable<{ success: boolean; data?: ClassroomFeedbackItemDto; message?: string }> {
+    return this.post<ClassroomFeedbackItemDto>(`/classrooms/${classroomId}/feedback`, req).pipe(
+      map((res) => ({
+        success: true,
+        data: res,
+        message: 'شكراً لك! تم إرسال تقييمك بنجاح.',
+      })),
+      catchError((err) =>
+        of({
+          success: false,
+          message: err?.error?.message || err?.error?.title || 'تعذر إرسال التقييم حالياً.',
+        }),
+      ),
+    );
+  }
 }
+
