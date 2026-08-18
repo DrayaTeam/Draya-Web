@@ -23,16 +23,18 @@
       <input id="order-edit" type="number" formControlName="order" class="form-control" />
     </div>
 
-    <div modal-footer class="flex gap-3">
+    
+  </form>
+
+  <div modal-footer class="flex gap-3">
       <button type="button" class="btn-outline" (click)="modalClosed.emit()">
         إلغاء
       </button>
-      <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
+      <button type="button" class="btn-primary" (click)="submit()" [disabled]="isSubmitting()">
         @if (isSubmitting()) {
           <i class="pi pi-spinner pi-spin ml-2"></i>
         }
         {{ 'TEACHER.SECTIONS.EDIT_SECTION' | translate }}
       </button>
     </div>
-  </form>
 </draya-teacher-modal>

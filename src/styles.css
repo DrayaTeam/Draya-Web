@@ -359,7 +359,7 @@ input[type="reset"] {
   cursor: not-allowed;
 }
 
-.btn-secondary {
+.btn-outline {
   background: transparent;
   border: 1px solid var(--draya-surface-300, #d1d5db);
   color: var(--draya-text-700, #374151);
@@ -374,6 +374,6 @@ input[type="reset"] {
   justify-content: center;
 }
 
-.btn-secondary:hover {
+.btn-outline:hover {
   background-color: var(--draya-surface-100, #f3f4f6);
 }

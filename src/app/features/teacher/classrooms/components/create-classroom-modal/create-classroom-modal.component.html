@@ -205,8 +205,8 @@
     }
   </form>
 
-  <ng-template pTemplate="footer">
-    <button type="button" class="btn-secondary" (click)="close()">إلغاء</button>
+  <div modal-footer class="flex gap-3">
+    <button type="button" class="btn-outline" (click)="close()">إلغاء</button>
     <button type="button" class="btn-primary" [disabled]="isSubmitting()" (click)="onSubmit()">
       @if (!isSubmitting()) {
         <span>إنشاء فصل</span>
@@ -215,5 +215,5 @@
         <span>جاري الإنشاء...</span>
       }
     </button>
-  </ng-template>
+  </div>
 </draya-teacher-modal>
