@@ -255,6 +255,22 @@ export class ClassroomMaterialsComponent {
     this.previewError.set(null);
     this.activePreviewUrl.set(null);
 
+    // Only videos need the stream API
+    if (fullMaterial.materialType !== 'Video') {
+      let fixedUrl = fullMaterial.currentVersion?.fileUrl || '';
+      if (fixedUrl) {
+        fixedUrl = fixedUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
+          String.fromCharCode(parseInt(hex, 16)),
+        );
+        this.activePreviewUrl.set(resolveMaterialUrl(fixedUrl));
+      } else {
+        this.previewError.set('لم يتم العثور على رابط الملف.');
+      }
+      this.isPreviewLoading.set(false);
+      return;
+    }
+
+    // Videos: Call stream API
     this.materialService.getMaterialStream(fullMaterial.materialId).subscribe({
       next: (res) => {
         let fixedUrl = res.streamUrl || fullMaterial.currentVersion?.fileUrl || '';
@@ -264,17 +280,21 @@ export class ClassroomMaterialsComponent {
           );
           this.activePreviewUrl.set(resolveMaterialUrl(fixedUrl));
         } else {
-          this.previewError.set('لم يتم العثور على رابط مباشر لهذه المادة التعليمية.');
+          this.previewError.set('لم يتم العثور على رابط صالح للعرض.');
         }
         this.isPreviewLoading.set(false);
       },
       error: (err) => {
-        console.error('Failed to get stream url', err);
-        const fallbackUrl = fullMaterial.currentVersion?.fileUrl;
+        console.error('Failed to get stream:', err);
+        // Fallback to raw fileUrl if stream fails
+        let fallbackUrl = fullMaterial.currentVersion?.fileUrl || '';
         if (fallbackUrl) {
+          fallbackUrl = fallbackUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
+            String.fromCharCode(parseInt(hex, 16)),
+          );
           this.activePreviewUrl.set(resolveMaterialUrl(fallbackUrl));
         } else {
-          this.previewError.set('فشل جلب رابط المادة التعليمية من الخادم.');
+          this.previewError.set('فشل في تحميل العرض. الرجاء المحاولة مرة أخرى.');
         }
         this.isPreviewLoading.set(false);
       },
