@@ -263,10 +263,29 @@ export class ClassroomMaterialsComponent {
           String.fromCharCode(parseInt(hex, 16)),
         );
         this.activePreviewUrl.set(resolveMaterialUrl(fixedUrl));
+        this.isPreviewLoading.set(false);
       } else {
-        this.previewError.set('لم يتم العثور على رابط الملف.');
+        // Fallback: fetch versions directly if CQRS sync delayed the URL
+        this.materialService.getMaterialVersions(fullMaterial.materialId).subscribe({
+          next: (versions) => {
+            const latest = versions && versions.length > 0 ? versions[versions.length - 1] : null;
+            if (latest && latest.fileUrl) {
+              let fetchedUrl = latest.fileUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
+                String.fromCharCode(parseInt(hex, 16)),
+              );
+              this.activePreviewUrl.set(resolveMaterialUrl(fetchedUrl));
+            } else {
+              this.previewError.set('جاري معالجة الملف، أو لم يتم العثور على رابط.');
+            }
+            this.isPreviewLoading.set(false);
+          },
+          error: (err) => {
+            console.error('Failed to fetch versions', err);
+            this.previewError.set('لم يتم العثور على رابط الملف.');
+            this.isPreviewLoading.set(false);
+          }
+        });
       }
-      this.isPreviewLoading.set(false);
       return;
     }
 
