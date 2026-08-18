@@ -274,7 +274,6 @@
 
   body {
     @apply bg-background text-foreground;
-    direction: rtl;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* Force Western Arabic (Latin) numerals in RTL context */

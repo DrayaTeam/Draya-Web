@@ -1,7 +1,7 @@
 .pricing-section {
   background: var(--draya-bg-secondary, #f8fbfa);
+  color: var(--draya-text-primary, #151b19);
   padding: 100px clamp(20px, 5vw, 48px);
-  direction: rtl;
   position: relative;
   overflow: hidden;
 }

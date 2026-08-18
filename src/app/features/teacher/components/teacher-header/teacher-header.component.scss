@@ -269,10 +269,10 @@
 .mobile-drawer {
   position: fixed;
   top: 0;
-  right: 0;
+  inset-inline-end: 0;
   bottom: 0;
   width: 290px;
-  background: #ffffff;
+  background: var(--draya-bg-surface, #ffffff);
   z-index: 160;
   box-shadow: -4px 0 24px rgba(0, 0, 0, 0.06);
   display: flex;

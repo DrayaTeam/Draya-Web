@@ -255,6 +255,35 @@
       }
 
       <li>
+        <button
+          type="button"
+          (click)="themeService.toggleTheme()"
+          class="nav-link-item theme-lang-btn">
+          <div class="link-icon-wrap">
+            @if (themeService.isDarkMode()) {
+              <span class="text-amber-400">☀️</span>
+            } @else {
+              <span>🌙</span>
+            }
+          </div>
+          <span class="link-label">
+            {{ themeService.isDarkMode() ? 'الوضع النهاري' : 'الوضع الليلي' }}
+          </span>
+        </button>
+      </li>
+
+      <li>
+        <button type="button" (click)="localeService.toggle()" class="nav-link-item theme-lang-btn">
+          <div class="link-icon-wrap">
+            <span>🌐</span>
+          </div>
+          <span class="link-label">
+            {{ localeService.locale() === 'ar' ? 'English' : 'العربية' }}
+          </span>
+        </button>
+      </li>
+
+      <li>
         <button type="button" (click)="handleLogout()" class="nav-link-item logout-link-btn">
           <div class="link-icon-wrap text-red-500">
             <svg
