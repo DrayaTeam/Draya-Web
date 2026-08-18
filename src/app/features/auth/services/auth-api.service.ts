@@ -82,6 +82,10 @@ export class AuthApiService implements IAuthApi {
     return this.http.post<void>(`${this.baseUrl}/reset-password`, payload);
   }
 
+  acceptInvite(payload: { token: string; newPassword: string }): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/accept-invite`, payload);
+  }
+
   changePassword(payload: {
     currentPassword: string;
     newPassword: string;

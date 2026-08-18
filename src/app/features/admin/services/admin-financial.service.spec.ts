@@ -91,4 +91,17 @@ describe('AdminFinancialService', () => {
     expect(req.request.method).toBe('GET');
     req.flush({ platformCommissionPercent: 15 });
   });
+
+  it('should search teachers with query', () => {
+    service.searchTeachers('ahmed').subscribe((res) => {
+      expect(res.length).toBe(1);
+      expect(res[0].name).toBe('Ahmed');
+    });
+
+    const req = httpMock.expectOne(
+      (r) => r.url.endsWith('/admin/teachers/search') && r.params.get('q') === 'ahmed',
+    );
+    expect(req.request.method).toBe('GET');
+    req.flush([{ id: 't-1', name: 'Ahmed', email: 'ahmed@test.com', earnedBalance: 100 }]);
+  });
 });

@@ -202,17 +202,19 @@ export class StudentPaymentCallbackComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Countdown for auto-redirect
-    this.timerInterval = setInterval(() => {
-      const current = this.countdownSeconds();
-      if (current > 1) {
-        this.countdownSeconds.set(current - 1);
-        this.cdr.markForCheck();
-      } else {
-        clearInterval(this.timerInterval);
-        this.navigateAfterPayment();
-      }
-    }, 1000);
+    // Countdown for auto-redirect (students only, teachers choose manually)
+    if (!isTeacherUser) {
+      this.timerInterval = setInterval(() => {
+        const current = this.countdownSeconds();
+        if (current > 1) {
+          this.countdownSeconds.set(current - 1);
+          this.cdr.markForCheck();
+        } else {
+          clearInterval(this.timerInterval);
+          this.navigateAfterPayment();
+        }
+      }, 1000);
+    }
   }
 
   private markAsFailed(reasonMsg: string): void {
@@ -258,7 +260,7 @@ export class StudentPaymentCallbackComponent implements OnInit, OnDestroy {
 
   private navigateAfterPayment(): void {
     if (this.isTeacher()) {
-      this.router.navigate(['/teacher/dashboard']);
+      this.router.navigate(['/teacher/wallet']);
     } else {
       const clsId = this.targetClassroomId();
       if (clsId) {

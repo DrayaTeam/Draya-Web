@@ -54,10 +54,25 @@
       "></draya-admin-status-badge>
   </ng-template>
 
+  <!-- Created At Column Template -->
+  <ng-template #createdAtTpl let-row>
+    <span class="created-at-text">
+      {{ row?.createdAt ? (row.createdAt | date: 'yyyy/MM/dd') : '—' }}
+    </span>
+  </ng-template>
+
   <!-- Actions Column Template -->
   <ng-template #actionsTpl let-row>
     <div class="actions-cell">
       @if (!row?.isCurrentUser) {
+        <button
+          class="action-btn resend-btn"
+          (click)="onResendInvite(row)"
+          type="button"
+          title="إعادة إرسال رابط الدعوة">
+          <i class="pi pi-send"></i>
+          <span>إعادة إرسال الدعوة</span>
+        </button>
         <button
           class="action-btn"
           [class.deactivate-btn]="row?.isActive"

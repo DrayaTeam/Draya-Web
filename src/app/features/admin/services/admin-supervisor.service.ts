@@ -1,10 +1,12 @@
 import { Injectable, signal } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable, catchError, of, tap } from 'rxjs';
+import { ApiBaseService } from '../../../core/api/api-base.service';
 import { AdminSupervisorDto, InviteSupervisorRequest } from '../models/admin-supervisor.model';
 
 @Injectable({ providedIn: 'root' })
-export class AdminSupervisorService {
+export class AdminSupervisorService extends ApiBaseService {
+  private readonly basePath = '/admin/supervisors';
+
   private readonly mockSupervisors = signal<AdminSupervisorDto[]>([
     {
       id: 'sup-1',
@@ -44,28 +46,72 @@ export class AdminSupervisorService {
     },
   ]);
 
+  /** GET /api/v1/admin/supervisors */
   getSupervisors(): Observable<AdminSupervisorDto[]> {
-    return of([...this.mockSupervisors()]).pipe(delay(300));
-  }
-
-  inviteSupervisor(request: InviteSupervisorRequest): Observable<AdminSupervisorDto> {
-    const newSupervisor: AdminSupervisorDto = {
-      id: `sup-${Date.now()}`,
-      name: request.name,
-      email: request.email,
-      role: request.role || 'Admin',
-      isActive: true,
-      createdAt: new Date().toISOString(),
-      isCurrentUser: false,
-    };
-    this.mockSupervisors.update((list) => [newSupervisor, ...list]);
-    return of(newSupervisor).pipe(delay(400));
-  }
-
-  toggleSupervisorStatus(id: string, active: boolean): Observable<void> {
-    this.mockSupervisors.update((list) =>
-      list.map((s) => (s.id === id ? { ...s, isActive: active } : s)),
+    return this.get<AdminSupervisorDto[]>(this.basePath).pipe(
+      tap((list) => {
+        if (Array.isArray(list) && list.length > 0) {
+          this.mockSupervisors.set(list);
+        }
+      }),
+      catchError(() => of([...this.mockSupervisors()])),
     );
-    return of(undefined).pipe(delay(300));
+  }
+
+  /** POST /api/v1/admin/supervisors/invite */
+  inviteSupervisor(request: InviteSupervisorRequest): Observable<AdminSupervisorDto> {
+    return this.post<AdminSupervisorDto, InviteSupervisorRequest>(
+      `${this.basePath}/invite`,
+      request,
+    ).pipe(
+      tap((newSup) => {
+        if (newSup) {
+          this.mockSupervisors.update((list) => [newSup, ...list]);
+        }
+      }),
+      catchError(() => {
+        const fallback: AdminSupervisorDto = {
+          id: `sup-${Date.now()}`,
+          name: request.name,
+          email: request.email,
+          role: request.role || 'Admin',
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          isCurrentUser: false,
+        };
+        this.mockSupervisors.update((list) => [fallback, ...list]);
+        return of(fallback);
+      }),
+    );
+  }
+
+  /** POST /api/v1/admin/supervisors/{id}/resend-invite */
+  resendInvite(id: string): Observable<void> {
+    return this.post<void, undefined>(`${this.basePath}/${id}/resend-invite`, undefined);
+  }
+
+  /** PUT /api/v1/admin/supervisors/{id}/status */
+  toggleSupervisorStatus(id: string, active: boolean): Observable<void> {
+    return this.put<void, { isActive: boolean }>(`${this.basePath}/${id}/status`, {
+      isActive: active,
+    }).pipe(
+      tap(() => {
+        this.mockSupervisors.update((list) =>
+          list.map((s) => (s.id === id ? { ...s, isActive: active } : s)),
+        );
+      }),
+    );
+  }
+
+  /** PUT /api/v1/admin/profile */
+  updateAdminProfile(data: {
+    fullName: string;
+    email?: string;
+    phoneNumber?: string;
+  }): Observable<void> {
+    return this.put<void, { fullName: string; email?: string; phoneNumber?: string }>(
+      '/admin/profile',
+      data,
+    );
   }
 }

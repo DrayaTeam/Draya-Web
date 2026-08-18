@@ -107,15 +107,19 @@
   color: #111827;
   margin: 0 0 24px 0;
 
-  :global(.dark) & { color: #f9fafb; }
+  :global(.dark) & {
+    color: #f9fafb;
+  }
 }
 
 .divider {
   height: 1px;
   background: #f1f5f9;
   margin: 32px 0;
-  
-  :global(.dark) & { background: #374151; }
+
+  :global(.dark) & {
+    background: #374151;
+  }
 }
 
 /* ─── Avatar Section ─────────────────────────────────── */
@@ -188,7 +192,9 @@
     font-weight: 800;
     color: #111827;
     margin: 0 0 8px 0;
-    :global(.dark) & { color: #f9fafb; }
+    :global(.dark) & {
+      color: #f9fafb;
+    }
   }
 
   .teacher-role-badge {
@@ -234,10 +240,14 @@
     font-weight: 700;
     color: #475569;
 
-    :global(.dark) & { color: #d1d5db; }
+    :global(.dark) & {
+      color: #d1d5db;
+    }
   }
 
-  .text-red { color: #ef4444; }
+  .text-red {
+    color: #ef4444;
+  }
 
   .form-control {
     width: 100%;
@@ -262,7 +272,9 @@
       outline: none;
     }
 
-    &.is-invalid { border-color: #ef4444; }
+    &.is-invalid {
+      border-color: #ef4444;
+    }
 
     &.disabled-input {
       background-color: #f1f5f9;
@@ -307,7 +319,9 @@
       box-shadow: 0 4px 12px rgba(27, 109, 99, 0.3);
     }
 
-    &:active:not(:disabled) { transform: scale(0.98); }
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+    }
 
     &:disabled {
       opacity: 0.6;
@@ -353,7 +367,9 @@
   background: #f8fafc;
   border-radius: 16px;
 
-  :global(.dark) & { background: #374151; }
+  :global(.dark) & {
+    background: #374151;
+  }
 
   .setting-text {
     flex: 1;
@@ -366,7 +382,9 @@
     color: #1e293b;
     margin: 0 0 4px 0;
 
-    :global(.dark) & { color: #f3f4f6; }
+    :global(.dark) & {
+      color: #f3f4f6;
+    }
   }
 
   .setting-desc {
@@ -391,14 +409,20 @@
 
     &:checked + .switch-slider {
       background: #1e293b; /* Dark bg when dark mode is ON */
-      
+
       &::before {
         transform: translateX(-24px); /* RTL toggle */
         background: #ffffff;
       }
 
-      .sun-icon { opacity: 0; transform: scale(0.5); }
-      .moon-icon { opacity: 1; transform: scale(1); }
+      .sun-icon {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      .moon-icon {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
   }
 
@@ -427,7 +451,7 @@
       border-radius: 50%;
       transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 2;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
   }
 
@@ -483,7 +507,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .animate-fade-in {
@@ -491,6 +517,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -44,6 +44,18 @@
           </select>
           <i class="pi pi-chevron-down select-caret"></i>
         </div>
+        @if (selectedTeacher(); as teacher) {
+          <div class="teacher-balances-summary">
+            <div class="balance-item earned">
+              <span class="bal-label">رصيد الأرباح الحالي:</span>
+              <span class="bal-val">{{ teacher.earnedBalance ?? 0 | number: '1.2-2' }} ج.م</span>
+            </div>
+            <div class="balance-item purchased">
+              <span class="bal-label">رصيد الخدمات المشحون:</span>
+              <span class="bal-val">{{ teacher.purchasedBalance ?? 0 | number: '1.2-2' }} ج.م</span>
+            </div>
+          </div>
+        }
         @if (form.get('teacherId')?.touched && form.get('teacherId')?.errors?.['required']) {
           <span class="form-error">
             <i class="pi pi-times-circle"></i>

@@ -179,8 +179,6 @@
   }
 }
 
-
-
 .card-menu-wrapper {
   position: relative;
   flex-shrink: 0;
@@ -200,7 +198,8 @@
   border-radius: 8px;
   transition: all 150ms ease;
 
-  &:hover, &[aria-expanded="true"] {
+  &:hover,
+  &[aria-expanded='true'] {
     background-color: var(--draya-surface-100, #f3f4f6);
     color: var(--draya-text-600, #4b5563);
   }
@@ -214,7 +213,9 @@
   background: #ffffff;
   border: 1px solid #f1f5f9;
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
   padding: 6px;
   z-index: 200;
   animation: dropdownIn 150ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -321,7 +322,9 @@
   border-radius: 16px;
   border: 1px solid #f1f5f9;
   overflow: hidden;
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 
   &:hover {

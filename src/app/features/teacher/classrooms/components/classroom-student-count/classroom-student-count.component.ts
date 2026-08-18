@@ -19,9 +19,9 @@ import { catchError, of } from 'rxjs';
 export class ClassroomStudentCountComponent {
   readonly classroomId = input.required<string>();
   readonly fallbackCount = input<number>(0);
-  
+
   private readonly classroomService = inject(ClassroomService);
-  
+
   readonly count = signal<number>(0);
   readonly isLoading = signal<boolean>(false);
 
@@ -37,17 +37,20 @@ export class ClassroomStudentCountComponent {
   private fetchCount(id: string): void {
     this.isLoading.set(true);
     // Request just 1 item to minimize payload size, we only care about totalCount
-    this.classroomService.getClassroomStudents(id, 1, 1).pipe(
-      catchError(() => {
-        // Fallback to the DTO count if the request fails
-        this.count.set(this.fallbackCount());
-        return of(null);
-      })
-    ).subscribe(res => {
-      if (res) {
-        this.count.set(res.totalCount);
-      }
-      this.isLoading.set(false);
-    });
+    this.classroomService
+      .getClassroomStudents(id, 1, 1)
+      .pipe(
+        catchError(() => {
+          // Fallback to the DTO count if the request fails
+          this.count.set(this.fallbackCount());
+          return of(null);
+        }),
+      )
+      .subscribe((res) => {
+        if (res) {
+          this.count.set(res.totalCount);
+        }
+        this.isLoading.set(false);
+      });
   }
 }

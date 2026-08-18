@@ -169,7 +169,7 @@ export class TeacherProfileComponent implements OnInit {
     }
 
     const file = input.files[0];
-    
+
     // Optional: add file size/type validation here if needed
     // if (file.size > 5 * 1024 * 1024) { ... }
 
@@ -182,7 +182,7 @@ export class TeacherProfileComponent implements OnInit {
           this.isUploadingPicture.set(false);
           // Clear the input value so the same file can be selected again if needed
           input.value = '';
-        })
+        }),
       )
       .subscribe({
         next: (responseUrl) => {
@@ -191,10 +191,10 @@ export class TeacherProfileComponent implements OnInit {
             summary: 'نجاح',
             detail: 'تم تحديث الصورة الشخصية بنجاح.',
           });
-          
+
           if (responseUrl && typeof responseUrl === 'string' && responseUrl.startsWith('http')) {
             // If the POST returns the new image URL directly, update state immediately
-            this._profile.update(p => p ? { ...p, pictureUrl: responseUrl } : p);
+            this._profile.update((p) => (p ? { ...p, pictureUrl: responseUrl } : p));
           } else {
             // Otherwise reload profile
             this.loadProfile();

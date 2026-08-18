@@ -7,7 +7,7 @@ import {
   QuestionDto,
   QuestionDetailsDto,
   QuestionReplyDto,
-  QuestionFilters
+  QuestionFilters,
 } from '../../../core/models/qa.model';
 import { PaginatedResponse } from '../../../core/models/classroom.model';
 
@@ -17,7 +17,10 @@ export class QaService {
   private readonly baseUrl = `${environment.apiBaseUrl}/classrooms`;
 
   /** Retrieves a paginated list of questions for a classroom */
-  getQuestions(classroomId: string, filters: QuestionFilters): Observable<PaginatedResponse<QuestionDto>> {
+  getQuestions(
+    classroomId: string,
+    filters: QuestionFilters,
+  ): Observable<PaginatedResponse<QuestionDto>> {
     let params = new HttpParams()
       .set('page', filters.pageNumber.toString())
       .set('pageSize', filters.pageSize.toString());
@@ -29,12 +32,17 @@ export class QaService {
       params = params.set('filterBy', filters.filterBy);
     }
 
-    return this.http.get<PaginatedResponse<QuestionDto>>(`${this.baseUrl}/${classroomId}/questions`, { params });
+    return this.http.get<PaginatedResponse<QuestionDto>>(
+      `${this.baseUrl}/${classroomId}/questions`,
+      { params },
+    );
   }
 
   /** Retrieves a specific question with its replies */
   getQuestionDetails(classroomId: string, questionId: string): Observable<QuestionDetailsDto> {
-    return this.http.get<QuestionDetailsDto>(`${this.baseUrl}/${classroomId}/questions/${questionId}`);
+    return this.http.get<QuestionDetailsDto>(
+      `${this.baseUrl}/${classroomId}/questions/${questionId}`,
+    );
   }
 
   /** Posts a new question to the classroom */
@@ -44,7 +52,9 @@ export class QaService {
 
   /** Updates an existing question */
   updateQuestion(classroomId: string, questionId: string, content: string): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/${classroomId}/questions/${questionId}`, { content });
+    return this.http.put<void>(`${this.baseUrl}/${classroomId}/questions/${questionId}`, {
+      content,
+    });
   }
 
   /** Deletes an existing question */
@@ -53,26 +63,50 @@ export class QaService {
   }
 
   /** Posts a new question with an image attachment */
-  createQuestionWithPhoto(classroomId: string, content: string, file: File): Observable<QuestionDto> {
+  createQuestionWithPhoto(
+    classroomId: string,
+    content: string,
+    file: File,
+  ): Observable<QuestionDto> {
     const formData = new FormData();
     formData.append('content', content);
     formData.append('file', file);
-    return this.http.post<QuestionDto>(`${this.baseUrl}/${classroomId}/questions/with-photo`, formData);
+    return this.http.post<QuestionDto>(
+      `${this.baseUrl}/${classroomId}/questions/with-photo`,
+      formData,
+    );
   }
 
   /** Posts a reply to an existing question */
-  createReply(classroomId: string, questionId: string, content: string): Observable<QuestionReplyDto> {
-    return this.http.post<QuestionReplyDto>(`${this.baseUrl}/${classroomId}/questions/${questionId}/replies`, { content });
+  createReply(
+    classroomId: string,
+    questionId: string,
+    content: string,
+  ): Observable<QuestionReplyDto> {
+    return this.http.post<QuestionReplyDto>(
+      `${this.baseUrl}/${classroomId}/questions/${questionId}/replies`,
+      { content },
+    );
   }
 
   /** Updates an existing reply */
-  updateReply(classroomId: string, questionId: string, replyId: string, content: string): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/${classroomId}/questions/${questionId}/replies/${replyId}`, { content });
+  updateReply(
+    classroomId: string,
+    questionId: string,
+    replyId: string,
+    content: string,
+  ): Observable<void> {
+    return this.http.put<void>(
+      `${this.baseUrl}/${classroomId}/questions/${questionId}/replies/${replyId}`,
+      { content },
+    );
   }
 
   /** Deletes an existing reply */
   deleteReply(classroomId: string, questionId: string, replyId: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${classroomId}/questions/${questionId}/replies/${replyId}`);
+    return this.http.delete<void>(
+      `${this.baseUrl}/${classroomId}/questions/${questionId}/replies/${replyId}`,
+    );
   }
 
   /** Posts a reply with an image attachment */

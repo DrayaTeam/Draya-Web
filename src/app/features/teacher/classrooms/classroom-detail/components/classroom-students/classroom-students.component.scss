@@ -45,8 +45,10 @@
   border-radius: 10px;
   color: #94a3b8;
   font-size: 0.875rem;
-  
-  i { font-size: 0.875rem; }
+
+  i {
+    font-size: 0.875rem;
+  }
 }
 
 /* ─── Table Card ────────────────────────────────────── */
@@ -78,9 +80,13 @@
 
   .p-datatable-tbody > tr {
     transition: background-color 150ms ease;
-    
-    &:nth-child(even) { background: #fafaf9; }
-    &:hover { background: #f0fdfa; }
+
+    &:nth-child(even) {
+      background: #fafaf9;
+    }
+    &:hover {
+      background: #f0fdfa;
+    }
 
     > td {
       padding: 16px 24px;
@@ -96,8 +102,14 @@
     padding: 16px;
     border-radius: 0 0 16px 16px;
 
-    .p-paginator-current { color: #64748b; }
-    .p-paginator-page, .p-paginator-next, .p-paginator-prev, .p-paginator-first, .p-paginator-last {
+    .p-paginator-current {
+      color: #64748b;
+    }
+    .p-paginator-page,
+    .p-paginator-next,
+    .p-paginator-prev,
+    .p-paginator-first,
+    .p-paginator-last {
       color: #64748b;
       border-radius: 8px;
       &.p-highlight {
@@ -147,8 +159,11 @@
   gap: 8px;
   color: #64748b;
   font-size: 0.875rem;
-  
-  i { color: #94a3b8; font-size: 0.8rem; }
+
+  i {
+    color: #94a3b8;
+    font-size: 0.8rem;
+  }
 }
 
 .status-badge {
@@ -171,16 +186,20 @@
     background: #f0fdf4;
     color: #16a34a;
     border-color: #bbf7d0;
-    
-    .status-dot { background: #22c55e; }
+
+    .status-dot {
+      background: #22c55e;
+    }
   }
 
   &.badge-inactive {
     background: #fef2f2;
     color: #dc2626;
     border-color: #fecaca;
-    
-    .status-dot { background: #ef4444; }
+
+    .status-dot {
+      background: #ef4444;
+    }
   }
 }
 
@@ -203,7 +222,9 @@
     border-color: #fca5a5;
   }
 
-  &:active { transform: scale(0.95); }
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 /* ─── Empty State ───────────────────────────────────── */

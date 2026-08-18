@@ -1,0 +1,192 @@
+<!-- src/app/features/teacher/wallet/components/payout-accounts/payout-accounts.component.html -->
+<div class="payout-container" dir="rtl">
+  <div class="section-header">
+    <div class="header-titles">
+      <h2 class="section-title">حسابات السحب (Instapay)</h2>
+      <p class="section-subtitle">إدارة الحسابات التي تستقبل عليها أرباحك.</p>
+    </div>
+
+    @if (!isAdding()) {
+      <button class="btn-primary-sm" (click)="toggleAddForm()">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        إضافة حساب جديد
+      </button>
+    }
+  </div>
+
+  <!-- Add Account Form -->
+  @if (isAdding()) {
+    <div class="add-account-form animate-fade-in">
+      <h3 class="form-title">إضافة حساب سحب جديد</h3>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="accountTypeSelect">نوع الحساب</label>
+          <select
+            id="accountTypeSelect"
+            [ngModel]="newAccountType()"
+            (ngModelChange)="newAccountType.set($event)"
+            class="form-control">
+            <option [value]="AccountType.InstaPay">إنستاباي (Instapay)</option>
+            <option [value]="AccountType.BankAccount">حساب بنكي</option>
+            <option [value]="AccountType.MobileWallet">محفظة إلكترونية</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="accountNameInput">الاسم (كما يظهر في الحساب)</label>
+          <input
+            id="accountNameInput"
+            type="text"
+            [ngModel]="newAccountName()"
+            (ngModelChange)="newAccountName.set($event)"
+            class="form-control"
+            placeholder="مثال: أحمد محمد" />
+        </div>
+
+        <div class="form-group">
+          <label for="accountIdentifierInput">المعرف (رقم الهاتف أو عنوان إنستاباي)</label>
+          <input
+            id="accountIdentifierInput"
+            type="text"
+            [ngModel]="newAccountIdentifier()"
+            (ngModelChange)="newAccountIdentifier.set($event)"
+            class="form-control"
+            placeholder="010XXXXXXXX"
+            dir="ltr" />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-secondary" (click)="toggleAddForm()" [disabled]="isSubmitting()">
+          إلغاء
+        </button>
+        <button
+          class="btn-primary"
+          (click)="submitNewAccount()"
+          [disabled]="isSubmitting() || !newAccountName() || !newAccountIdentifier()">
+          @if (isSubmitting()) {
+            <span class="spinner-sm"></span>
+          } @else {
+            حفظ الحساب
+          }
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Accounts List -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+    </div>
+  } @else if (accounts().length === 0 && !isAdding()) {
+    <div class="empty-state">
+      <div class="icon-wrapper">
+        <svg
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="2" y1="10" x2="22" y2="10"></line>
+        </svg>
+      </div>
+      <p>لم تقم بإضافة أي حسابات سحب بعد.</p>
+      <button class="btn-text mt-2" (click)="toggleAddForm()">إضافة حساب الآن</button>
+    </div>
+  } @else {
+    <div class="accounts-list">
+      @for (account of accounts(); track account.id) {
+        <div class="account-card">
+          <div class="account-info">
+            <div
+              class="account-icon"
+              [ngClass]="{
+                'bg-purple-100 text-purple-700': account.accountType === AccountType.InstaPay,
+                'bg-blue-100 text-blue-700': account.accountType === AccountType.BankAccount,
+              }">
+              @if (account.accountType === AccountType.InstaPay) {
+                <!-- Instapay Icon -->
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                  <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                </svg>
+              } @else {
+                <!-- Bank Icon -->
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
+                  <line x1="2" y1="10" x2="22" y2="10"></line>
+                </svg>
+              }
+            </div>
+            <div class="account-details">
+              <h4 class="account-name">{{ account.accountName }}</h4>
+              <span class="account-id" dir="ltr">{{ account.accountIdentifier }}</span>
+              @if (account.isDefault) {
+                <span class="badge-default">الحساب الأساسي</span>
+              }
+            </div>
+          </div>
+          <div class="account-actions">
+            <!-- Used to select this account for withdrawal -->
+            <button
+              class="btn-secondary-sm"
+              (click)="withdrawRequested.emit(account)">
+              طلب سحب
+            </button>
+            <button
+              class="btn-icon text-red-500"
+              (click)="deleteAccount(account.id)"
+              title="حذف الحساب">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path
+                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -11,6 +11,7 @@ import {
   PlatformSettingsDto,
   AdjustmentRequest,
   PaginatedResponse,
+  TeacherSearchResultDto,
 } from '../models/admin-financial.model';
 
 @Injectable({ providedIn: 'root' })
@@ -80,5 +81,14 @@ export class AdminFinancialService extends ApiBaseService {
     return this.get<
       { userId?: string; id?: string; fullName?: string; name?: string; email?: string }[]
     >('/teachers');
+  }
+
+  /** GET /api/v1/admin/teachers/search?q={query} */
+  searchTeachers(query?: string): Observable<TeacherSearchResultDto[]> {
+    const queryParams: Record<string, string> = {};
+    if (query && query.trim()) {
+      queryParams['q'] = query.trim();
+    }
+    return this.get<TeacherSearchResultDto[]>('/admin/teachers/search', queryParams);
   }
 }

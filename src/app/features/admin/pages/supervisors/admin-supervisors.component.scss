@@ -135,6 +135,15 @@ $color-success: #15803d;
   }
 }
 
+.created-at-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-text-secondary;
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+  display: inline-block;
+}
+
 .actions-cell {
   display: flex;
   align-items: center;
@@ -153,6 +162,18 @@ $color-success: #15803d;
   cursor: pointer;
   transition: all 0.15s ease;
   min-height: 32px;
+
+  &.resend-btn {
+    background: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid rgba(3, 105, 161, 0.2);
+    margin-inline-end: 8px;
+
+    &:hover {
+      background: #bae6fd;
+      box-shadow: 0 2px 6px rgba(3, 105, 161, 0.15);
+    }
+  }
 
   &.deactivate-btn {
     background: #fee2e2;

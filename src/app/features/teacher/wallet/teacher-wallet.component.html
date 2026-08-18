@@ -1,0 +1,42 @@
+<!-- src/app/features/teacher/wallet/teacher-wallet.component.html -->
+<div class="wallet-container animate-fade-in" dir="rtl">
+  <div class="page-header">
+    <h1 class="page-title">المحفظة المالية</h1>
+    <p class="page-subtitle">إدارة أرباحك، سحب الأموال، وشحن رصيد المنصة.</p>
+  </div>
+
+  @if (isLoadingBalance()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>جاري تحميل بيانات المحفظة...</p>
+    </div>
+  } @else {
+    <div class="wallet-content">
+      <!-- Top Section: Balances -->
+      <draya-wallet-balance-card
+        [balance]="balance()"
+        (topUp)="handleTopUp()"
+        (withdraw)="handleWithdraw()"></draya-wallet-balance-card>
+
+      <!-- Middle Section: Payout Accounts (Instapay) -->
+      <draya-payout-accounts
+        (withdrawRequested)="handleWithdrawToAccount($event)"></draya-payout-accounts>
+
+      <!-- Bottom Section: Transactions History -->
+      <draya-wallet-transactions></draya-wallet-transactions>
+    </div>
+  }
+
+  <!-- Withdrawal Modal -->
+  <draya-withdrawal-modal
+    [isOpen]="isWithdrawalModalOpen()"
+    [maxAmount]="balance()?.availableEarnedBalance ?? 0"
+    [targetAccount]="selectedPayoutAccount()"
+    (closed)="isWithdrawalModalOpen.set(false)"
+    (success)="onWithdrawalSuccess()"></draya-withdrawal-modal>
+
+  <!-- Topup Modal -->
+  <draya-topup-modal
+    [isOpen]="isTopupModalOpen()"
+    (closed)="isTopupModalOpen.set(false)"></draya-topup-modal>
+</div>

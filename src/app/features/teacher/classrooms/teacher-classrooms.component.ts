@@ -1,5 +1,13 @@
 // src/app/features/teacher/classrooms/teacher-classrooms.component.ts
-import { Component, ChangeDetectionStrategy, signal, inject, OnInit, effect, computed } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  signal,
+  inject,
+  OnInit,
+  effect,
+  computed,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -23,7 +31,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     CreateClassroomModalComponent,
     ClassroomStudentCountComponent,
     EditClassroomModalComponent,
-    ConfirmDialogModule
+    ConfirmDialogModule,
   ],
   providers: [ConfirmationService],
   templateUrl: './teacher-classrooms.component.html',
@@ -45,7 +53,7 @@ export class TeacherClassroomsComponent implements OnInit {
 
   toggleMenu(classroomId: string, event: MouseEvent): void {
     event.stopPropagation();
-    this.openMenuId.update(current => current === classroomId ? null : classroomId);
+    this.openMenuId.update((current) => (current === classroomId ? null : classroomId));
   }
 
   closeMenu(): void {
@@ -63,14 +71,15 @@ export class TeacherClassroomsComponent implements OnInit {
   readonly filteredClassrooms = computed(() => {
     const result = this.classroomsResult();
     if (!result || !result.items) return [];
-    
+
     const term = this.searchTerm().trim().toLowerCase();
     if (!term) return result.items;
-    
-    return result.items.filter(c => 
-      c.name.toLowerCase().includes(term) || 
-      c.subjectName.toLowerCase().includes(term) || 
-      c.gradeLevelName.toLowerCase().includes(term)
+
+    return result.items.filter(
+      (c) =>
+        c.name.toLowerCase().includes(term) ||
+        c.subjectName.toLowerCase().includes(term) ||
+        c.gradeLevelName.toLowerCase().includes(term),
     );
   });
 
@@ -183,29 +192,35 @@ export class TeacherClassroomsComponent implements OnInit {
 
   private reactivateClassroom(classroom: ClassroomDto): void {
     // To reactivate, we use the PUT update endpoint and set isActive to true
-    this.classroomService.updateClassroom(classroom.classroomId, {
-      name: classroom.name,
-      subjectId: '00000000-0000-0000-0000-000000000000', // We might need the full IDs, but we only have names in DTO. 
-      // ACTUALLY wait! If we don't have subjectId, classroomTypeId, gradeLevelId, we can't reliably PUT.
-      // So reactivation from list might fail if the user doesn't just use the Edit Modal.
-      // For now, let's just open the edit modal if they want to reactivate!
-      classroomTypeId: '00000000-0000-0000-0000-000000000000',
-      gradeLevelId: '00000000-0000-0000-0000-000000000000',
-      startDate: classroom.startDate,
-      endDate: classroom.endDate,
-      price: classroom.price,
-      isActive: true
-    }).subscribe({
-      next: () => {
-        this.messageService?.add({ severity: 'success', summary: 'نجاح', detail: 'تم التفعيل' });
-        this.classroomService.loadClassrooms();
-      },
-      error: () => {
-        // If it fails, instruct them to use Edit
-        this.messageService?.add({ severity: 'warn', summary: 'تنبيه', detail: 'يرجى استخدام زر "تعديل" لتفعيل المرحلة لتحديث بياناتها.' });
-        this.selectedClassroomForEdit.set(classroom);
-        this.isEditModalOpen.set(true);
-      }
-    });
+    this.classroomService
+      .updateClassroom(classroom.classroomId, {
+        name: classroom.name,
+        subjectId: '00000000-0000-0000-0000-000000000000', // We might need the full IDs, but we only have names in DTO.
+        // ACTUALLY wait! If we don't have subjectId, classroomTypeId, gradeLevelId, we can't reliably PUT.
+        // So reactivation from list might fail if the user doesn't just use the Edit Modal.
+        // For now, let's just open the edit modal if they want to reactivate!
+        classroomTypeId: '00000000-0000-0000-0000-000000000000',
+        gradeLevelId: '00000000-0000-0000-0000-000000000000',
+        startDate: classroom.startDate,
+        endDate: classroom.endDate,
+        price: classroom.price,
+        isActive: true,
+      })
+      .subscribe({
+        next: () => {
+          this.messageService?.add({ severity: 'success', summary: 'نجاح', detail: 'تم التفعيل' });
+          this.classroomService.loadClassrooms();
+        },
+        error: () => {
+          // If it fails, instruct them to use Edit
+          this.messageService?.add({
+            severity: 'warn',
+            summary: 'تنبيه',
+            detail: 'يرجى استخدام زر "تعديل" لتفعيل المرحلة لتحديث بياناتها.',
+          });
+          this.selectedClassroomForEdit.set(classroom);
+          this.isEditModalOpen.set(true);
+        },
+      });
   }
 }
