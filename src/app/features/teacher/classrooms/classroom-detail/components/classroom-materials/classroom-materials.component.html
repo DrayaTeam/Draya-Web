@@ -113,80 +113,63 @@
 
             <!-- Section Content (Materials) -->
             @if (expandedSections()[section.id]) {
-              <div class="section-content">
-                @if (!section.materials?.length) {
+              <div class="section-content modern-section-content">
+                @if (!section.documents?.length && !section.videos?.length && !section.exams?.length) {
                   <div class="section-empty">
                     <p>{{ 'TEACHER.SECTIONS.SECTION_EMPTY_MATERIALS' | translate }}</p>
                     <button class="btn-outline-sm mt-3" (click)="openUploadModal(section.id)">
-                      <i class="pi pi-plus ml-1"></i>
-                      {{ 'TEACHER.SECTIONS.ADD_MATERIAL' | translate }}
+                      <i class="pi pi-plus"></i> {{ 'TEACHER.SECTIONS.ADD_MATERIAL' | translate }}
                     </button>
                   </div>
                 } @else {
-                  <div class="materials-grid">
-                    @for (material of section.materials || []; track material.id) {
-                      <div class="material-card">
-                        <div
-                          class="material-icon"
-                          [ngClass]="{
-                            'icon-pdf': material.materialType === 'PDF',
-                            'icon-video': material.materialType === 'Video',
-                            'icon-link': material.materialType === 'Link'
-                          }">
-                          <i
-                            class="pi"
-                            [ngClass]="{
-                              'pi-file-pdf': material.materialType === 'PDF',
-                              'pi-video': material.materialType === 'Video',
-                              'pi-link': material.materialType === 'Link'
-                            }"></i>
+                  <div class="materials-layout">
+                    
+                    <!-- Videos Category -->
+                    @if (section.videos?.length) {
+                      <div class="material-category">
+                        <div class="category-header video-header">
+                          <div class="category-icon-wrapper"><i class="pi pi-video"></i></div>
+                          <h5 class="category-title">فيديوهات الدرس</h5>
+                          <span class="category-badge">{{ section.videos.length }}</span>
                         </div>
-
-                        <div class="material-content">
-                          <h4 class="material-title" [title]="material.title">{{ material.title }}</h4>
-                          <div class="material-meta">
-                            <i class="pi pi-calendar"></i>
-                            <span>{{ material.createdAt | date: 'dd MMM yyyy' }}</span>
-                          </div>
-                        </div>
-
-                        <div class="material-actions card-menu-wrapper"
-                             role="presentation"
-                             tabindex="-1"
-                             (click)="$event.stopPropagation()"
-                             (keydown)="$event.stopPropagation()">
-                          <button
-                            class="action-btn-menu"
-                            (click)="toggleMenu(material.id, $event)"
-                            [attr.aria-expanded]="openMenuId() === material.id"
-                            title="خيارات">
-                            <i class="pi pi-ellipsis-v"></i>
-                          </button>
-
-                          @if (openMenuId() === material.id) {
-                            <div class="custom-dropdown-menu">
-                              <button class="dropdown-item" (click)="openStream(material); toggleMenu(material.id, $event)">
-                                <i class="pi pi-external-link"></i>
-                                <span class="dropdown-item-label">فتح / تحميل</span>
-                              </button>
-                              <button class="dropdown-item" (click)="openUploadVersionModal(material); toggleMenu(material.id, $event)">
-                                <i class="pi pi-upload"></i>
-                                <span class="dropdown-item-label">تحديث المادة</span>
-                              </button>
-                              <button class="dropdown-item" (click)="openVersionHistoryModal(material); toggleMenu(material.id, $event)">
-                                <i class="pi pi-history"></i>
-                                <span class="dropdown-item-label">سجل الإصدارات</span>
-                              </button>
-                              <div class="dropdown-divider"></div>
-                              <button class="dropdown-item danger-item" (click)="confirmDeleteMaterial(material); toggleMenu(material.id, $event)">
-                                <i class="pi pi-trash"></i>
-                                <span class="dropdown-item-label">حذف المادة</span>
-                              </button>
-                            </div>
+                        <div class="materials-grid">
+                          @for (material of section.videos; track material.id) {
+                            <ng-container *ngTemplateOutlet="materialCard; context: { material: material }"></ng-container>
                           }
                         </div>
                       </div>
                     }
+
+                    <!-- Documents Category -->
+                    @if (section.documents?.length) {
+                      <div class="material-category">
+                        <div class="category-header doc-header">
+                          <div class="category-icon-wrapper"><i class="pi pi-file-pdf"></i></div>
+                          <h5 class="category-title">مذكرات وملفات</h5>
+                          <span class="category-badge">{{ section.documents.length }}</span>
+                        </div>
+                        <div class="materials-grid">
+                          @for (material of section.documents; track material.id) {
+                            <ng-container *ngTemplateOutlet="materialCard; context: { material: material }"></ng-container>
+                          }
+                        </div>
+                      </div>
+                    }
+
+                    <!-- Exams Category (Placeholder for future) -->
+                    @if (section.exams?.length) {
+                      <div class="material-category">
+                        <div class="category-header exam-header">
+                          <div class="category-icon-wrapper"><i class="pi pi-check-square"></i></div>
+                          <h5 class="category-title">اختبارات</h5>
+                          <span class="category-badge">{{ section.exams.length }}</span>
+                        </div>
+                        <div class="materials-grid">
+                          <!-- Exams logic will go here -->
+                        </div>
+                      </div>
+                    }
+
                   </div>
                 }
               </div>
@@ -196,6 +179,72 @@
       </div>
     }
   }
+</div>
+
+<!-- Material Card Template -->
+<ng-template #materialCard let-material="material">
+  <div class="material-card modern-card">
+    <div
+      class="material-icon"
+      [ngClass]="{
+        'icon-pdf': material.materialType === 'PDF',
+        'icon-video': material.materialType === 'Video',
+        'icon-link': material.materialType === 'Link'
+      }">
+      <i
+        class="pi"
+        [ngClass]="{
+          'pi-file-pdf': material.materialType === 'PDF',
+          'pi-video': material.materialType === 'Video',
+          'pi-link': material.materialType === 'Link'
+        }"></i>
+    </div>
+
+    <div class="material-content">
+      <h4 class="material-title" [title]="material.title">{{ material.title }}</h4>
+      <div class="material-meta">
+        <i class="pi pi-calendar"></i>
+        <span>{{ material.createdAt | date: 'dd MMM yyyy' }}</span>
+      </div>
+    </div>
+
+    <div class="material-actions card-menu-wrapper"
+         role="presentation"
+         tabindex="-1"
+         (click)="$event.stopPropagation()"
+         (keydown)="$event.stopPropagation()">
+      <button
+        class="action-btn-menu"
+        (click)="toggleMenu(material.id, $event)"
+        [attr.aria-expanded]="openMenuId() === material.id"
+        title="خيارات">
+        <i class="pi pi-ellipsis-v"></i>
+      </button>
+
+      @if (openMenuId() === material.id) {
+        <div class="custom-dropdown-menu modern-dropdown">
+          <button class="dropdown-item" (click)="openStream(material); toggleMenu(material.id, $event)">
+            <i class="pi pi-external-link"></i>
+            <span class="dropdown-item-label">فتح / تحميل</span>
+          </button>
+          <button class="dropdown-item" (click)="openUploadVersionModal(material); toggleMenu(material.id, $event)">
+            <i class="pi pi-upload"></i>
+            <span class="dropdown-item-label">رفع اصدار جديد</span>
+          </button>
+          <button class="dropdown-item" (click)="openVersionHistoryModal(material); toggleMenu(material.id, $event)">
+            <i class="pi pi-history"></i>
+            <span class="dropdown-item-label">تاريخ الاصدارات</span>
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item text-red-600 hover:bg-red-50" (click)="confirmDeleteMaterial(material); toggleMenu(material.id, $event)">
+            <i class="pi pi-trash"></i>
+            <span class="dropdown-item-label">حذف المادة</span>
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</ng-template>
 
   <!-- Inline Material Preview Modal (Video & PDF) -->
   @if (activePreviewMaterial()) {
@@ -303,7 +352,6 @@
       </div>
     </div>
   }
-</div>
 
 <draya-teacher-modal
   [isOpen]="isDeleteSectionModalOpen()"
