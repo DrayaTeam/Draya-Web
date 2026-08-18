@@ -54,6 +54,10 @@ export class StudentQaChannelService extends ApiBaseService {
   // ==========================================
 
   async startSignalRConnection(): Promise<void> {
+    if (!environment.enableQaHub) {
+      return;
+    }
+
     if (this.hubConnection && this.hubConnection.state === signalR.HubConnectionState.Connected) {
       return;
     }
