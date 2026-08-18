@@ -62,6 +62,7 @@
   padding: 16px 24px;
   border-top: 1px solid #e5e7eb;
   background-color: #f9fafb; /* Slight tint to differentiate footer */
+  border-radius: 0 0 16px 16px;
 }
 
 /* Ensure PrimeNG dialog overlay styles don't conflict with rounding */
@@ -72,4 +73,10 @@
 
 :host ::ng-deep .p-dialog .p-dialog-content {
   border-radius: 16px;
+}
+
+:host ::ng-deep .p-dialog .p-dialog-footer {
+  padding: 0 !important;
+  border-top: none !important;
+  background-color: transparent !important;
 }
