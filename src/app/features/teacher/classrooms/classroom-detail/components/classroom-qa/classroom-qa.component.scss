@@ -29,6 +29,11 @@
   > * {
     padding-inline: 24px;
   }
+
+  // Footer gets extra bottom padding
+  > *:last-child {
+    padding-bottom: 20px;
+  }
 }
 
 .teacher-post-banner {
