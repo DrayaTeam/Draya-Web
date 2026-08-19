@@ -133,6 +133,7 @@ export class ClassroomService {
     const f = this._filters();
     const params = new URLSearchParams();
     params.set('pageNumber', f.pageNumber.toString());
+    params.set('page', f.pageNumber.toString());
     params.set('pageSize', f.pageSize.toString());
 
     if (f.gradeLevelId) {
