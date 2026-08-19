@@ -197,6 +197,24 @@
 
   <!-- Sidebar Footer Area -->
   <div class="sidebar-footer-box">
+    <!-- Teacher Profile Mini Card -->
+    <a [routerLink]="'/teacher/account'" (click)="handleLinkClick()" class="teacher-profile-card">
+      <div class="teacher-profile-avatar">
+        @if (auth.currentUser()?.profilePictureUrl || auth.currentUser()?.pictureUrl) {
+          <img
+            [src]="auth.currentUser()?.profilePictureUrl || auth.currentUser()?.pictureUrl"
+            alt="صورة المعلم"
+            class="h-full w-full object-cover" />
+        } @else {
+          <span>{{ (auth.currentUser()?.fullName || 'م').trim().charAt(0) }}</span>
+        }
+      </div>
+      <div class="teacher-profile-info">
+        <span class="teacher-profile-name">{{ auth.currentUser()?.fullName || 'المعلم' }}</span>
+        <span class="teacher-profile-sub">عرض الملف الشخصي ←</span>
+      </div>
+    </a>
+
     <ul class="footer-items-list">
       @for (fItem of footerNavItems; track fItem.link) {
         <li>

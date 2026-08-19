@@ -71,8 +71,17 @@
     <div class="animate-fade-in-up rounded-3xl border border-gray-200 bg-white p-5 transition-all">
       <div class="flex gap-4">
         <div
-          class="from-primary-50 to-primary-100 text-primary-600 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white bg-gradient-to-br shadow-sm">
-          <i class="pi pi-user text-xl"></i>
+          class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-white shadow-sm"
+          [class.bg-gradient-to-br]="!currentUserPictureUrl()"
+          [class.from-primary-50]="!currentUserPictureUrl()"
+          [class.to-primary-100]="!currentUserPictureUrl()"
+          [class.text-primary-600]="!currentUserPictureUrl()"
+          style="background: linear-gradient(135deg, #1b6d63 0%, #0f4f49 100%); color: white;">
+          @if (currentUserPictureUrl()) {
+            <img [src]="currentUserPictureUrl()!" alt="" class="h-full w-full object-cover" />
+          } @else {
+            <span class="text-sm font-bold">{{ currentUserInitial() }}</span>
+          }
         </div>
         <div class="flex flex-1 flex-col gap-3">
           <textarea
