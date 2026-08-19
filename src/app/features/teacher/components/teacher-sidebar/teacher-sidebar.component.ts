@@ -57,11 +57,6 @@ export class TeacherSidebarComponent {
           exact: true,
         },
         {
-          labelKey: 'TEACHER.SIDEBAR.PACKAGES',
-          link: '/teacher/packages',
-          icon: 'packages',
-        },
-        {
           labelKey: 'TEACHER.SIDEBAR.CLASSROOMS',
           link: '/teacher/classrooms',
           icon: 'classrooms',
