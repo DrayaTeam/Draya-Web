@@ -62,7 +62,7 @@ export class WithdrawalModalComponent {
         this.errorMessage.set('');
         this.selectedAccountId.set(null);
       }
-    }, { allowSignalWrites: true });
+    });
   }
 
   loadAccounts(): void {
