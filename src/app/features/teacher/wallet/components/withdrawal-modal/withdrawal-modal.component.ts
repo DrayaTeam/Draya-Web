@@ -7,6 +7,8 @@ import {
   signal,
   inject,
   DestroyRef,
+  effect,
+  computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -37,10 +39,51 @@ export class WithdrawalModalComponent {
   amount = signal<number | null>(null);
   isSubmitting = signal<boolean>(false);
   errorMessage = signal<string>('');
+  
+  // Accounts State
+  accounts = signal<PayoutAccount[]>([]);
+  isLoadingAccounts = signal<boolean>(false);
+  selectedAccountId = signal<string | null>(null);
+
+  // The effectively chosen account
+  activeAccount = computed(() => {
+    if (this.targetAccount()) return this.targetAccount();
+    if (this.selectedAccountId()) {
+      return this.accounts().find(a => a.id === this.selectedAccountId()) || null;
+    }
+    return this.accounts().find(a => a.isDefault) || this.accounts()[0] || null;
+  });
+
+  constructor() {
+    effect(() => {
+      if (this.isOpen()) {
+        this.loadAccounts();
+        this.amount.set(null);
+        this.errorMessage.set('');
+        this.selectedAccountId.set(null);
+      }
+    }, { allowSignalWrites: true });
+  }
+
+  loadAccounts(): void {
+    if (this.targetAccount()) return; // No need to load if parent passed one
+    
+    this.isLoadingAccounts.set(true);
+    this.walletService.getPayoutAccounts()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.accounts.set(data);
+          this.isLoadingAccounts.set(false);
+        },
+        error: () => {
+          this.isLoadingAccounts.set(false);
+          // Just fail silently for now, activeAccount will be null
+        }
+      });
+  }
 
   close(): void {
-    this.amount.set(null);
-    this.errorMessage.set('');
     this.closed.emit();
   }
 
@@ -52,13 +95,13 @@ export class WithdrawalModalComponent {
     }
 
     if (val > this.maxAmount()) {
-      this.errorMessage.set('المبلغ المطلوب أكبر من الرصيد المتاح.');
+      this.errorMessage.set('المبلغ المطلوب أكبر من رصيدك المتاح.');
       return;
     }
 
-    const account = this.targetAccount();
+    const account = this.activeAccount();
     if (!account) {
-      this.errorMessage.set('يرجى تحديد حساب السحب.');
+      this.errorMessage.set('يرجى تحديد حساب السحب أو إضافة حساب جديد أولاً.');
       return;
     }
 
@@ -76,7 +119,7 @@ export class WithdrawalModalComponent {
         },
         error: (err) => {
           this.isSubmitting.set(false);
-          this.errorMessage.set(err?.message || 'فشل تقديم طلب السحب.');
+          this.errorMessage.set(err?.message || 'حدث خطأ أثناء طلب السحب.');
         },
       });
   }
