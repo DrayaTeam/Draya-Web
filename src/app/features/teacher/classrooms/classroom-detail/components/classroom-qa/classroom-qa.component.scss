@@ -2,6 +2,67 @@
   display: block;
 }
 
+/* ─── Teacher Announcement Post Card ─────────────── */
+.teacher-post-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(27, 109, 99, 0.03) 0%, #ffffff 55%);
+  border: 1.5px solid rgba(27, 109, 99, 0.22) !important;
+  box-shadow: 0 4px 24px rgba(27, 109, 99, 0.07), 0 1px 3px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  padding: 0 !important;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background: linear-gradient(180deg, #1b6d63 0%, #0f4f49 100%);
+  }
+
+  &:hover {
+    box-shadow: 0 6px_30px rgba(27, 109, 99, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  // All direct children (banner, header, content, footer) need inner padding
+  > * {
+    padding-inline: 24px;
+  }
+}
+
+.teacher-post-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 10px;
+  padding-inline: 24px;
+  background: rgba(27, 109, 99, 0.06);
+  border-bottom: 1px solid rgba(27, 109, 99, 0.1);
+  margin-bottom: 4px;
+}
+
+.teacher-post-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0f4f49;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+
+  svg {
+    color: #1b6d63;
+  }
+}
+
+.teacher-post-avatar {
+  background: linear-gradient(135deg, #1b6d63 0%, #0f4f49 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(27, 109, 99, 0.35);
+}
+
 /* ─── Pill Toggle Groups ─────────────────────────── */
 .qa-pill-group {
   display: flex;
