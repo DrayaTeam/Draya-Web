@@ -524,6 +524,143 @@
   }
 }
 
+/* =============================================
+   NEW: Pill-Style Pagination Design
+   ============================================= */
+.pagination-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 36px;
+  padding: 0 16px;
+}
+
+.pagination-info-text {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #94a3b8;
+  letter-spacing: 0.01em;
+}
+
+.pagination-pill {
+  display: inline-flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+  padding: 4px;
+  gap: 2px;
+}
+
+.pg-divider {
+  width: 1px;
+  height: 20px;
+  background: #e2e8f0;
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+
+.pg-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  &.pg-arrow {
+    width: 34px;
+    height: 34px;
+    color: #64748b;
+
+    &:hover:not(:disabled) {
+      background: #f1f5f9;
+      color: #1b6d63;
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+  }
+
+  &.pg-num {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 8px;
+    color: #475569;
+
+    &:hover:not(.pg-active) {
+      background: #f1f5f9;
+      color: #1b6d63;
+    }
+
+    &.pg-active {
+      background: linear-gradient(
+        135deg,
+        #1b6d63 0%,
+        #0f4f49 100%
+      );
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(27, 109, 99, 0.4);
+    }
+  }
+
+  &:active:not(:disabled):not(.pg-active) {
+    transform: scale(0.93);
+  }
+}
+
+/* Dark mode for pill */
+:host-context(.dark) .pagination-pill {
+  background: var(--draya-surface-800, #1f2937);
+  border-color: var(--draya-surface-700, #374151);
+
+  .pg-divider {
+    background: var(--draya-surface-600, #4b5563);
+  }
+
+  .pg-btn.pg-arrow {
+    color: var(--draya-text-400, #9ca3af);
+
+    &:hover:not(:disabled) {
+      background: var(--draya-surface-700, #374151);
+      color: var(--draya-primary-300, #83d1c7);
+    }
+  }
+
+  .pg-btn.pg-num {
+    color: var(--draya-text-300, #d1d5db);
+
+    &:hover:not(.pg-active) {
+      background: var(--draya-surface-700, #374151);
+      color: var(--draya-primary-300, #83d1c7);
+    }
+
+    &.pg-active {
+      background: linear-gradient(135deg, #1b6d63 0%, #0f4f49 100%);
+      color: #ffffff;
+    }
+  }
+}
+
+:host-context(.dark) .pagination-info-text {
+  color: var(--draya-text-500, #6b7280);
+}
+
+/* =============================================
+   Legacy Pagination (kept for compat)
+   ============================================= */
+
 /* Pagination */
 .pagination {
   display: flex;
