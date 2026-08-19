@@ -1,0 +1,19 @@
+/* src/app/features/teacher/channel/teacher-channel.component.scss */
+.channel-page-container {
+  padding: 24px;
+  min-height: calc(100vh - 80px);
+}
+
+.spinner-border {
+  border-right-color: transparent;
+}
+
+.classroom-qa-wrapper {
+  margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+  .channel-page-container {
+    padding: 16px;
+  }
+}

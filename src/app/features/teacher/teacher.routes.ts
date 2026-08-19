@@ -59,10 +59,10 @@ export const teacherRoutes: Routes = [
       {
         path: 'channel',
         loadComponent: () =>
-          import('./placeholder/teacher-placeholder.component').then(
-            (m) => m.TeacherPlaceholderComponent,
+          import('./channel/teacher-channel.component').then(
+            (m) => m.TeacherChannelComponent,
           ),
-        title: 'قناة الإعلانات — درايَة',
+        title: 'الأسئلة والنقاش',
       },
       {
         path: 'feedback',
