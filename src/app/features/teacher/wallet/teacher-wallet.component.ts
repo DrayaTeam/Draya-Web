@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MessageService } from 'primeng/api';
 import { WalletService } from '../services/wallet.service';
 import { WalletBalance, PayoutAccount } from '../../../core/models/wallet.model';
 import { WalletBalanceCardComponent } from './components/wallet-balance-card/wallet-balance-card.component';
@@ -35,6 +36,7 @@ import { WalletTransactionsComponent } from './components/wallet-transactions/wa
 })
 export class TeacherWalletComponent implements OnInit {
   private readonly walletService = inject(WalletService);
+  private readonly messageService = inject(MessageService, { optional: true });
   private readonly destroyRef = inject(DestroyRef);
 
   readonly balance = signal<WalletBalance | null>(null);
@@ -80,7 +82,11 @@ export class TeacherWalletComponent implements OnInit {
 
   handleWithdraw(): void {
     if (!this.balance() || this.balance()!.availableEarnedBalance <= 0) {
-      alert('ليس لديك رصيد متاح للسحب حالياً.');
+      this.messageService?.add({
+        severity: 'error',
+        summary: 'عذراً',
+        detail: 'ليس لديك رصيد أرباح متاح للسحب.',
+      });
       return;
     }
     // If they click withdraw from the main card, open modal without a specific account yet
@@ -90,7 +96,11 @@ export class TeacherWalletComponent implements OnInit {
 
   handleWithdrawToAccount(account: PayoutAccount): void {
     if (!this.balance() || this.balance()!.availableEarnedBalance <= 0) {
-      alert('ليس لديك رصيد متاح للسحب حالياً.');
+      this.messageService?.add({
+        severity: 'error',
+        summary: 'عذراً',
+        detail: 'ليس لديك رصيد أرباح متاح للسحب.',
+      });
       return;
     }
     this.selectedPayoutAccount.set(account);
@@ -100,6 +110,10 @@ export class TeacherWalletComponent implements OnInit {
   onWithdrawalSuccess(): void {
     // Reload balance after successful withdrawal
     this.loadBalance();
-    alert('تم تقديم طلب السحب بنجاح. سيتم المراجعة من قبل الإدارة.');
+    this.messageService?.add({
+      severity: 'success',
+      summary: 'عملية ناجحة',
+      detail: 'تم تقديم طلب السحب بنجاح. سيتم المراجعة من قبل الإدارة.',
+    });
   }
 }
