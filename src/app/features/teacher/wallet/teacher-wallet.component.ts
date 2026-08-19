@@ -6,10 +6,11 @@ import {
   OnInit,
   signal,
   DestroyRef,
+  ViewChild
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MessageService } from 'primeng/api';
+import { ToastService } from '../../../core/services/toast.service';
 import { WalletService } from '../services/wallet.service';
 import { WalletBalance, PayoutAccount } from '../../../core/models/wallet.model';
 import { WalletBalanceCardComponent } from './components/wallet-balance-card/wallet-balance-card.component';
@@ -37,7 +38,9 @@ import { WalletTransactionsComponent } from './components/wallet-transactions/wa
 export class TeacherWalletComponent implements OnInit {
   private readonly walletService = inject(WalletService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
+
+  @ViewChild(WalletTransactionsComponent) transactionsComponent!: WalletTransactionsComponent;
 
   readonly balance = signal<WalletBalance | null>(null);
   readonly isLoadingBalance = signal<boolean>(true);
@@ -51,6 +54,7 @@ export class TeacherWalletComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadBalance();
+    if (this.transactionsComponent) this.transactionsComponent.loadTransactions(1);
   }
 
   loadBalance(): void {
@@ -82,7 +86,7 @@ export class TeacherWalletComponent implements OnInit {
 
   handleWithdraw(): void {
     if (!this.balance() || this.balance()!.availableEarnedBalance <= 0) {
-      this.messageService.add({ severity: 'warn', summary: 'عفواً', detail: 'ليس لديك رصيد متاح للسحب حالياً.' });
+      this.toastService.warning('عفواً', 'ليس لديك رصيد متاح للسحب حالياً.');
       return;
     }
     // If they click withdraw from the main card, open modal without a specific account yet
@@ -92,7 +96,7 @@ export class TeacherWalletComponent implements OnInit {
 
   handleWithdrawToAccount(account: PayoutAccount): void {
     if (!this.balance() || this.balance()!.availableEarnedBalance <= 0) {
-      this.messageService.add({ severity: 'warn', summary: 'عفواً', detail: 'ليس لديك رصيد متاح للسحب حالياً.' });
+      this.toastService.warning('عفواً', 'ليس لديك رصيد متاح للسحب حالياً.');
       return;
     }
     this.selectedPayoutAccount.set(account);
@@ -100,12 +104,11 @@ export class TeacherWalletComponent implements OnInit {
   }
 
   onWithdrawalSuccess(): void {
-    // Reload balance after successful withdrawal
+    // Reload balance and transactions after successful withdrawal
     this.loadBalance();
-    this.messageService.add({ 
-      severity: 'success', 
-      summary: 'نجاح', 
-      detail: 'تم تقديم طلب السحب بنجاح. سيتم المراجعة من قبل الإدارة.' 
-    });
+    if (this.transactionsComponent) {
+      this.transactionsComponent.loadTransactions(1);
+    }
+    this.toastService.success('نجاح', 'تم تقديم طلب السحب بنجاح. سيتم المراجعة من قبل الإدارة.');
   }
 }
