@@ -64,3 +64,88 @@
     }
   }
 }
+
+/* ─── Teacher Answer Card ─────────────────────────── */
+.teacher-answer-card {
+  position: relative;
+  border-radius: 16px;
+  border: 1.5px solid rgba(27, 109, 99, 0.25);
+  background: linear-gradient(135deg, rgba(27, 109, 99, 0.04) 0%, rgba(255, 255, 255, 0.98) 60%);
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(27, 109, 99, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 200ms ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #1b6d63 0%, #0f4f49 100%);
+    border-radius: 0 0 0 16px;
+  }
+
+  &:hover {
+    box-shadow: 0 4px 20px rgba(27, 109, 99, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+}
+
+.teacher-answer-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px 8px;
+  background: rgba(27, 109, 99, 0.06);
+  border-bottom: 1px solid rgba(27, 109, 99, 0.1);
+}
+
+.teacher-answer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0f4f49;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+
+  svg {
+    color: #1b6d63;
+  }
+}
+
+.teacher-answer-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px 0;
+}
+
+.teacher-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1b6d63 0%, #0f4f49 100%);
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(27, 109, 99, 0.3);
+}
+
+.teacher-answer-content {
+  margin: 12px 18px 16px;
+  padding: 0;
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  color: #1e3a39;
+  white-space: pre-wrap;
+  font-weight: 500;
+}
+
