@@ -47,21 +47,11 @@
         @for (c of classrooms(); track c.classroomId) {
           <button
             type="button"
-            class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 flex items-center gap-2 border active:scale-[0.98]"
-            [class.bg-primary-700]="selectedClassroomId() === c.classroomId"
-            [class.text-white]="selectedClassroomId() === c.classroomId"
-            [class.border-primary-700]="selectedClassroomId() === c.classroomId"
-            [class.bg-white]="selectedClassroomId() !== c.classroomId"
-            [class.text-gray-700]="selectedClassroomId() !== c.classroomId"
-            [class.border-gray-200]="selectedClassroomId() !== c.classroomId"
-            [class.hover:bg-gray-50]="selectedClassroomId() !== c.classroomId"
-            [class.dark:bg-gray-900]="selectedClassroomId() !== c.classroomId"
-            [class.dark:text-gray-200]="selectedClassroomId() !== c.classroomId"
-            [class.dark:border-gray-700]="selectedClassroomId() !== c.classroomId"
-            [class.dark:hover:bg-gray-950]="selectedClassroomId() !== c.classroomId"
+            class="classroom-pill"
+            [class.active]="selectedClassroomId() === c.classroomId"
             (click)="selectClassroom(c.classroomId)">
-            <span class="w-2 h-2 rounded-full" [class.bg-white]="selectedClassroomId() === c.classroomId" [class.bg-primary-500]="selectedClassroomId() !== c.classroomId"></span>
-            <span>{{ c.name }}</span>
+            <span class="pill-dot"></span>
+            <span class="pill-text">{{ c.name }}</span>
           </button>
         }
       </div>

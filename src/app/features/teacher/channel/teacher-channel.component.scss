@@ -12,6 +12,95 @@
   margin-top: 24px;
 }
 
+/* Classroom Selector Pills (consistent with student Q&A layout) */
+.classroom-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: 1px solid var(--draya-border, #e2e8f0);
+  background: var(--draya-bg-muted, #f8fafc);
+  color: var(--draya-text-secondary, #475569);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  flex-shrink: 0;
+  transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  .pill-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #94a3b8;
+    transition: all 150ms ease;
+  }
+
+  .pill-text {
+    line-height: 1;
+  }
+
+  &:hover:not(.active) {
+    background: var(--draya-primary-50, #f5fcfb);
+    border-color: var(--draya-primary-300, #83d1c7);
+    color: var(--draya-primary-700, #1b6d63);
+    transform: translateY(-1px);
+
+    .pill-dot {
+      background: var(--draya-primary-500, #2d9b8a);
+    }
+  }
+
+  &:active:not(.active) {
+    transform: scale(0.97);
+  }
+
+  &.active {
+    background: linear-gradient(
+      135deg,
+      var(--draya-primary-700, #1b6d63) 0%,
+      var(--draya-primary-900, #0f4f49) 100%
+    );
+    border-color: var(--draya-primary-700, #1b6d63);
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 4px 14px -2px rgba(27, 109, 99, 0.4);
+    transform: scale(1.02);
+
+    .pill-dot {
+      background: #4ade80;
+      box-shadow: 0 0 6px rgba(74, 222, 128, 0.8);
+    }
+  }
+}
+
+/* Dark Mode Support */
+:host-context(.dark) {
+  .classroom-pill {
+    background: var(--draya-surface-800, #1e293b);
+    border-color: var(--draya-surface-700, #334155);
+    color: var(--draya-text-secondary, #94a3b8);
+
+    &:hover:not(.active) {
+      background: var(--draya-primary-950, #0c2b28);
+      border-color: var(--draya-primary-800, #134e48);
+      color: var(--draya-primary-300, #83d1c7);
+    }
+
+    &.active {
+      background: linear-gradient(
+        135deg,
+        var(--draya-primary-700, #1b6d63) 0%,
+        var(--draya-primary-850, #0f4f49) 100%
+      );
+      border-color: var(--draya-primary-700, #1b6d63);
+      color: #ffffff;
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .channel-page-container {
     padding: 16px;
