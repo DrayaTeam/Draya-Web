@@ -55,8 +55,8 @@ export class WalletService {
   }
 
   /** Requests a withdrawal of the earned balance. */
-  requestWithdrawal(amount: number): Observable<Withdrawal> {
-    return this.http.post<Withdrawal>(`${this.baseUrl}/withdrawals`, { amount });
+  requestWithdrawal(amount: number, payoutAccountId: string): Observable<Withdrawal> {
+    return this.http.post<Withdrawal>(`${this.baseUrl}/withdrawals`, { amount, payoutAccountId });
   }
 
   /** Retrieves the teacher's withdrawal history. */

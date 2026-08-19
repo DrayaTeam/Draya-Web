@@ -109,7 +109,7 @@ export class WithdrawalModalComponent {
     this.errorMessage.set('');
 
     this.walletService
-      .requestWithdrawal(val)
+      .requestWithdrawal(val, account.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
