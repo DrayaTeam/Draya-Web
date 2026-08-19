@@ -14,7 +14,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
-import { finalize } from 'rxjs/operators';
+import { finalize, takeUntil, switchMap, filter } from 'rxjs/operators';
+import { Subject, timer } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { MaterialService } from '../../../../services/material.service';
@@ -113,7 +114,9 @@ export class ClassroomMaterialsComponent {
   readonly activePreviewMaterial = signal<ClassroomMaterialDto | null>(null);
   readonly activePreviewUrl = signal<string | null>(null);
   readonly isPreviewLoading = signal<boolean>(false);
+  readonly isProcessing = signal<boolean>(false);
   readonly previewError = signal<string | null>(null);
+  private cancelPolling$ = new Subject<void>();
 
   readonly openMenuId = signal<string | null>(null);
 
@@ -129,6 +132,17 @@ export class ClassroomMaterialsComponent {
         this.loadSections();
       }
     });
+  }
+
+  ngOnInit(): void {
+    if (this.classroomId()) {
+      this.loadSections();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.cancelPolling$.next();
+    this.cancelPolling$.complete();
   }
 
   loadSections(): void {
@@ -252,79 +266,100 @@ export class ClassroomMaterialsComponent {
 
     this.activePreviewMaterial.set(fullMaterial);
     this.isPreviewLoading.set(true);
+    this.isProcessing.set(false);
     this.previewError.set(null);
     this.activePreviewUrl.set(null);
 
-    // Only videos need the stream API
-    if (fullMaterial.materialType !== 'Video') {
-      let fixedUrl = fullMaterial.currentVersion?.fileUrl || '';
-      if (fixedUrl) {
-        fixedUrl = fixedUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
-          String.fromCharCode(parseInt(hex, 16)),
-        );
-        this.activePreviewUrl.set(resolveMaterialUrl(fixedUrl));
-        this.isPreviewLoading.set(false);
-      } else {
-        // Fallback: fetch versions directly if CQRS sync delayed the URL
-        this.materialService.getMaterialVersions(fullMaterial.materialId).subscribe({
-          next: (versions) => {
-            const latest = versions && versions.length > 0 ? versions[versions.length - 1] : null;
-            if (latest && latest.fileUrl) {
-              let fetchedUrl = latest.fileUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
-                String.fromCharCode(parseInt(hex, 16)),
-              );
-              this.activePreviewUrl.set(resolveMaterialUrl(fetchedUrl));
-            } else {
-              this.previewError.set('جاري معالجة الملف، أو لم يتم العثور على رابط.');
-            }
+    // Cancel any existing polling
+    this.cancelPolling$.next();
+
+    // 1. If it's a Video, we must use getMaterialStream API
+    if (fullMaterial.materialType === 'Video') {
+      this.materialService.getMaterialStream(fullMaterial.materialId).subscribe({
+        next: (res) => {
+          let fixedUrl = res.streamUrl || fullMaterial.currentVersion?.fileUrl || '';
+          if (fixedUrl) {
+            fixedUrl = fixedUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
+              String.fromCharCode(parseInt(hex, 16)),
+            );
+            this.activePreviewUrl.set(resolveMaterialUrl(fixedUrl));
             this.isPreviewLoading.set(false);
-          },
-          error: (err) => {
-            console.error('Failed to fetch versions', err);
-            this.previewError.set('لم يتم العثور على رابط الملف.');
-            this.isPreviewLoading.set(false);
+          } else {
+            // Video has no URL yet -> poll versions
+            this.pollForReadyMaterial(fullMaterial.materialId);
           }
-        });
-      }
+        },
+        error: (err) => {
+          console.error('Failed to get stream:', err);
+          let fallbackUrl = fullMaterial.currentVersion?.fileUrl || '';
+          if (fallbackUrl) {
+            fallbackUrl = fallbackUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
+              String.fromCharCode(parseInt(hex, 16)),
+            );
+            this.activePreviewUrl.set(resolveMaterialUrl(fallbackUrl));
+            this.isPreviewLoading.set(false);
+          } else {
+            this.pollForReadyMaterial(fullMaterial.materialId);
+          }
+        },
+      });
       return;
     }
 
-    // Videos: Call stream API
-    this.materialService.getMaterialStream(fullMaterial.materialId).subscribe({
-      next: (res) => {
-        let fixedUrl = res.streamUrl || fullMaterial.currentVersion?.fileUrl || '';
-        if (fixedUrl) {
-          fixedUrl = fixedUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
+    // 2. If it's a PDF/Document, bypass stream API
+    let fixedUrl = fullMaterial.currentVersion?.fileUrl || '';
+    if (fixedUrl) {
+      fixedUrl = fixedUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
+        String.fromCharCode(parseInt(hex, 16)),
+      );
+      this.activePreviewUrl.set(resolveMaterialUrl(fixedUrl));
+      this.isPreviewLoading.set(false);
+    } else {
+      // PDF has no URL yet -> poll versions
+      this.pollForReadyMaterial(fullMaterial.materialId);
+    }
+  }
+
+  private pollForReadyMaterial(materialId: string): void {
+    this.isPreviewLoading.set(false);
+    this.isProcessing.set(true);
+    
+    // Poll every 3 seconds
+    timer(0, 3000).pipe(
+      takeUntil(this.cancelPolling$),
+      switchMap(() => this.materialService.getMaterialVersions(materialId))
+    ).subscribe({
+      next: (versions) => {
+        const latest = versions && versions.length > 0 ? versions[versions.length - 1] : null;
+        if (latest && latest.fileUrl) {
+          // Yay! The cloud has finished processing and we have a URL!
+          this.isProcessing.set(false);
+          let fetchedUrl = latest.fileUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
             String.fromCharCode(parseInt(hex, 16)),
           );
-          this.activePreviewUrl.set(resolveMaterialUrl(fixedUrl));
-        } else {
-          this.previewError.set('لم يتم العثور على رابط صالح للعرض.');
+          this.activePreviewUrl.set(resolveMaterialUrl(fetchedUrl));
+          // Stop polling since we found it
+          this.cancelPolling$.next();
         }
-        this.isPreviewLoading.set(false);
+        // If not found yet, it will just poll again in 3 seconds.
       },
       error: (err) => {
-        console.error('Failed to get stream:', err);
-        // Fallback to raw fileUrl if stream fails
-        let fallbackUrl = fullMaterial.currentVersion?.fileUrl || '';
-        if (fallbackUrl) {
-          fallbackUrl = fallbackUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
-            String.fromCharCode(parseInt(hex, 16)),
-          );
-          this.activePreviewUrl.set(resolveMaterialUrl(fallbackUrl));
-        } else {
-          this.previewError.set('فشل في تحميل العرض. الرجاء المحاولة مرة أخرى.');
-        }
-        this.isPreviewLoading.set(false);
-      },
+        console.error('Polling failed', err);
+        // If there's an actual network failure, stop polling and show error
+        this.isProcessing.set(false);
+        this.previewError.set('فشل في تحميل العرض. الرجاء المحاولة مرة أخرى.');
+        this.cancelPolling$.next();
+      }
     });
   }
 
   closePreview(): void {
+    this.cancelPolling$.next();
     this.activePreviewMaterial.set(null);
     this.activePreviewUrl.set(null);
     this.previewError.set(null);
     this.isPreviewLoading.set(false);
+    this.isProcessing.set(false);
   }
 
   getSafePdfUrl(): SafeResourceUrl {

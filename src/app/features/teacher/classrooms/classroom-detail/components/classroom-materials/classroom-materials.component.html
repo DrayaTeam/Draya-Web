@@ -324,6 +324,13 @@
               <i class="pi pi-spin pi-spinner text-primary-600 mb-3 text-3xl"></i>
               <p>جاري تحضير المادة للمعاينة...</p>
             </div>
+                    } @else if (isProcessing()) {
+            <div class="preview-processing">
+              <i class="pi pi-cloud-upload text-primary-600 mb-3 text-4xl" style="animation: bounce 2s infinite;"></i>
+              <p class="font-bold text-gray-800 text-lg">جاري معالجة الملف وتجهيزه للعرض</p>
+              <p class="text-sm text-gray-500 mt-1">يرجى الانتظار بضع ثوانٍ...</p>
+              <i class="pi pi-spin pi-spinner mt-4 text-primary-500"></i>
+            </div>
           } @else if (previewError()) {
             <div class="preview-error">
               <i class="pi pi-exclamation-circle mb-2 text-3xl text-amber-500"></i>

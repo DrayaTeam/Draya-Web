@@ -936,3 +936,8 @@ html.dark .dropdown-item {
 html.dark .dropdown-item.text-red-600:hover {
   background: rgba(220, 38, 38, 0.1) !important;
 }
+
+.preview-processing { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 300px; text-align: center; background: #f8fafc; border-radius: 12px; margin: 1rem; }
+html.dark .preview-processing { background: #1e293b; }
+html.dark .preview-processing .text-gray-800 { color: #f1f5f9; }
+html.dark .preview-processing .text-gray-500 { color: #94a3b8; }
