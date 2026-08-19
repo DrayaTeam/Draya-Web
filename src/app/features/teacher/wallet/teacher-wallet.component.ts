@@ -36,8 +36,8 @@ import { WalletTransactionsComponent } from './components/wallet-transactions/wa
 })
 export class TeacherWalletComponent implements OnInit {
   private readonly walletService = inject(WalletService);
-  private readonly messageService = inject(MessageService, { optional: true });
   private readonly destroyRef = inject(DestroyRef);
+  private readonly messageService = inject(MessageService);
 
   readonly balance = signal<WalletBalance | null>(null);
   readonly isLoadingBalance = signal<boolean>(true);
@@ -82,11 +82,7 @@ export class TeacherWalletComponent implements OnInit {
 
   handleWithdraw(): void {
     if (!this.balance() || this.balance()!.availableEarnedBalance <= 0) {
-      this.messageService?.add({
-        severity: 'error',
-        summary: 'عذراً',
-        detail: 'ليس لديك رصيد أرباح متاح للسحب.',
-      });
+      this.messageService.add({ severity: 'warn', summary: 'عفواً', detail: 'ليس لديك رصيد متاح للسحب حالياً.' });
       return;
     }
     // If they click withdraw from the main card, open modal without a specific account yet
@@ -96,11 +92,7 @@ export class TeacherWalletComponent implements OnInit {
 
   handleWithdrawToAccount(account: PayoutAccount): void {
     if (!this.balance() || this.balance()!.availableEarnedBalance <= 0) {
-      this.messageService?.add({
-        severity: 'error',
-        summary: 'عذراً',
-        detail: 'ليس لديك رصيد أرباح متاح للسحب.',
-      });
+      this.messageService.add({ severity: 'warn', summary: 'عفواً', detail: 'ليس لديك رصيد متاح للسحب حالياً.' });
       return;
     }
     this.selectedPayoutAccount.set(account);
@@ -110,10 +102,10 @@ export class TeacherWalletComponent implements OnInit {
   onWithdrawalSuccess(): void {
     // Reload balance after successful withdrawal
     this.loadBalance();
-    this.messageService?.add({
-      severity: 'success',
-      summary: 'عملية ناجحة',
-      detail: 'تم تقديم طلب السحب بنجاح. سيتم المراجعة من قبل الإدارة.',
+    this.messageService.add({ 
+      severity: 'success', 
+      summary: 'نجاح', 
+      detail: 'تم تقديم طلب السحب بنجاح. سيتم المراجعة من قبل الإدارة.' 
     });
   }
 }
