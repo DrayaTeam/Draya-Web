@@ -8,7 +8,6 @@ import {
   AttemptResultResponseDto,
   ExamQuestion,
   ExamResultReport,
-  StartAttemptResponseDto,
   StudentExamDto,
   SubmitAttemptRequestDto,
   SubmitAttemptResponseDto,
@@ -153,83 +152,59 @@ export class StudentExamTakingService extends ApiBaseService {
   readonly violations = signal<number>(0);
 
   /**
-   * Starts or loads a live exam attempt session from the backend.
-   * Calls POST /api/v1/attempts/start and falls back to GET /api/v1/students/exams/{id}.
+   * Loads real exam questions and details from the database.
+   * Calls GET /api/v1/students/exams/{id} and falls back to GET /api/v1/exams/{id}.
    */
   loadExamSession(examId: string): Observable<boolean> {
     this.isLoading.set(true);
     this.currentExamId.set(examId);
 
-    // Call POST /api/v1/attempts/start
-    return this.post<StartAttemptResponseDto>('/attempts/start', { examId }).pipe(
-      tap((res) => {
+    return this.get<StudentExamDto>(`/students/exams/${examId}`).pipe(
+      catchError(() => this.get<StudentExamDto>(`/exams/${examId}`)),
+      tap((exam) => {
         this.isLoading.set(false);
-        const attemptId = res?.attemptId || res?.id || `attempt_${Date.now()}`;
-        this.currentAttemptId.set(attemptId);
-
-        if (res?.examTitle || res?.title) {
-          this.examTitle.set(res.examTitle || res.title || 'امتحان تفاعلي');
+        if (exam?.title) {
+          this.examTitle.set(exam.title);
+        }
+        if (exam?.topic) {
+          this.examLevelText.set(`الموضوع: ${exam.topic} · بيئة اختبار تفاعلية مؤمنة`);
         }
 
-        if (res?.questions && Array.isArray(res.questions) && res.questions.length > 0) {
-          const mapped: ExamQuestion[] = res.questions.map((q, idx) => ({
-            id: q.id,
-            index: idx + 1,
-            text: q.text || `سؤال ${idx + 1}`,
-            subjectTag: q.type || 'عام',
-            isFlagged: false,
-            selectedOptionId: undefined,
-            options: (q.options || []).map((o, optIdx) => ({
-              id: o.id || `opt_${optIdx + 1}`,
-              text: o.text || `خيار ${optIdx + 1}`,
-            })),
-          }));
+        if (exam?.questions && Array.isArray(exam.questions) && exam.questions.length > 0) {
+          const mapped: ExamQuestion[] = exam.questions.map((q, idx) => {
+            const rawOptions = (q.options || []) as {
+              id?: string;
+              text?: string;
+              isCorrect?: boolean;
+            }[];
+            const correctOpt = rawOptions.find((o) => o.isCorrect);
+
+            return {
+              id: q.id || `q_${idx + 1}`,
+              index: idx + 1,
+              text: q.text || `سؤال رقم ${idx + 1}`,
+              subjectTag: q.type || q.difficulty || exam.topic || 'اختيار من متعدد',
+              isFlagged: false,
+              selectedOptionId: undefined,
+              correctOptionId: correctOpt?.id || rawOptions[0]?.id || undefined,
+              options: rawOptions.map((o, optIdx) => ({
+                id: o.id || `opt_${optIdx + 1}`,
+                text: o.text || `الخيار ${optIdx + 1}`,
+              })),
+            };
+          });
+
           this.questions.set(mapped);
-        }
-
-        if (res?.expiresAt) {
-          const remainingMs = new Date(res.expiresAt).getTime() - Date.now();
-          const remainingSec = Math.max(10, Math.floor(remainingMs / 1000));
-          this.remainingSeconds.set(remainingSec);
-        } else if (res?.durationMinutes) {
-          this.remainingSeconds.set(res.durationMinutes * 60);
+          this.currentQuestionIndex.set(0);
         }
 
         this.startTimer();
       }),
       map(() => true),
       catchError(() => {
-        // Fallback: try GET /api/v1/students/exams/{id}
-        return this.get<StudentExamDto>(`/students/exams/${examId}`).pipe(
-          tap((exam) => {
-            this.isLoading.set(false);
-            if (exam?.title) {
-              this.examTitle.set(exam.title);
-            }
-            if (exam?.questions && Array.isArray(exam.questions) && exam.questions.length > 0) {
-              const mapped: ExamQuestion[] = exam.questions.map((q, idx) => ({
-                id: q.id,
-                index: idx + 1,
-                text: q.text || `سؤال ${idx + 1}`,
-                subjectTag: q.type || 'عام',
-                isFlagged: false,
-                selectedOptionId: undefined,
-                options: (q.options || []).map((o, optIdx) => ({
-                  id: o.id || `opt_${optIdx + 1}`,
-                  text: o.text || `خيار ${optIdx + 1}`,
-                })),
-              }));
-              this.questions.set(mapped);
-            }
-            this.startTimer();
-          }),
-          map(() => true),
-          catchError(() => {
-            this.isLoading.set(false);
-            this.startTimer();
-            return of(false);
-          }),
-        );
+        this.isLoading.set(false);
+        this.startTimer();
+        return of(false);
       }),
     );
   }
@@ -329,6 +304,26 @@ export class StudentExamTakingService extends ApiBaseService {
     else if (finalScore >= 65) gradeLabel = 'جيد جداً 👍';
     else if (finalScore >= 50) gradeLabel = 'مقبول — يحتاج مراجعة';
 
+    const wrongQuestions = reviewQuestions.filter((q) => !q.isCorrect);
+    const dynamicWeaknessTopics =
+      wrongQuestions.length > 0
+        ? wrongQuestions.slice(0, 3).map((q, idx) => ({
+            id: `w${idx + 1}`,
+            title: `مراجعة: ${q.questionText.length > 50 ? q.questionText.slice(0, 50) + '...' : q.questionText}`,
+            accuracyPercentage: Math.max(0, Math.round(finalScore * 0.6)),
+            aiTip: `تم اختيار "${q.studentAnswerText}" — يوصى بمراجعة المفاهيم المتعلقة بهذا السؤال لتعزيز الفهم.`,
+            reviewLectureUrl: '/student/courses',
+          }))
+        : [
+            {
+              id: 'w1',
+              title: `إتقان مفاهيم ${this.examTitle()}`,
+              accuracyPercentage: 100,
+              aiTip: 'أداء استثنائي! تم الإجابة على جميع الأسئلة بصورة نموذجية ودقيقة.',
+              reviewLectureUrl: '/student/courses',
+            },
+          ];
+
     const targetAttemptId = customAttemptId || this.currentAttemptId() || `att_${Date.now()}`;
 
     this.examResult.set({
@@ -343,22 +338,7 @@ export class StudentExamTakingService extends ApiBaseService {
         month: 'long',
         year: 'numeric',
       }),
-      weaknessTopics: [
-        {
-          id: 'w1',
-          title: 'التباديل وحساب المضاريب',
-          accuracyPercentage: finalScore < 50 ? 33 : 75,
-          aiTip: 'أخطاء متكررة في فهم قيم ن الممكنة لمضروب العدد والتباديل.',
-          reviewLectureUrl: '/student/courses',
-        },
-        {
-          id: 'w2',
-          title: 'التوافيق وحل مسائل اللجان المشتركة',
-          accuracyPercentage: finalScore < 50 ? 40 : 80,
-          aiTip: 'راجع الفرق بين التباديل والتوافيق في سياق الاختيار العشوائي بدون ترتيب.',
-          reviewLectureUrl: '/student/courses',
-        },
-      ],
+      weaknessTopics: dynamicWeaknessTopics,
       reviewQuestions,
     });
 
