@@ -77,11 +77,11 @@ test.describe('Admin Module E2E Flow', () => {
     await expect(page.locator('h1.page-title')).toBeVisible({ timeout: 15000 });
     await expect(page.locator('h1.page-title')).toContainText('أنواع الفصول');
 
-    const addBtn = page.locator('.add-btn, button:has-text("إضافة نوع فصل جديد")');
+    const addBtn = page.locator('button.add-btn');
     await expect(addBtn.first()).toBeVisible({ timeout: 10000 });
-    await addBtn.first().click({ force: true });
+    await addBtn.first().click();
 
-    await expect(page.locator('.modal-card, .dialog-card')).toBeVisible();
+    await expect(page.locator('.modal-card')).toBeVisible({ timeout: 10000 });
   });
 
   test('should render grade levels page and allow open modal', async ({ page }) => {
