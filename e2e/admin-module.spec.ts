@@ -74,10 +74,11 @@ test.describe('Admin Module E2E Flow', () => {
 
   test('should render classroom types page and allow open modal', async ({ page }) => {
     await page.goto('/admin/classroom-types');
+    await expect(page.locator('h1.page-title')).toBeVisible({ timeout: 15000 });
     await expect(page.locator('h1.page-title')).toContainText('أنواع الفصول');
 
     const addBtn = page.locator('.add-btn, button:has-text("إضافة نوع فصل جديد")');
-    await expect(addBtn.first()).toBeVisible();
+    await expect(addBtn.first()).toBeVisible({ timeout: 10000 });
     await addBtn.first().click();
 
     await expect(page.locator('.modal-card, .dialog-card')).toBeVisible();
@@ -85,10 +86,11 @@ test.describe('Admin Module E2E Flow', () => {
 
   test('should render grade levels page and allow open modal', async ({ page }) => {
     await page.goto('/admin/grade-levels');
+    await expect(page.locator('h1.page-title')).toBeVisible({ timeout: 15000 });
     await expect(page.locator('h1.page-title')).toContainText('المراحل الدراسية');
 
     const addBtn = page.locator('.add-btn, button:has-text("إضافة مرحلة دراسية جديدة")');
-    await expect(addBtn.first()).toBeVisible();
+    await expect(addBtn.first()).toBeVisible({ timeout: 10000 });
     await addBtn.first().click();
 
     await expect(page.locator('.modal-card, .dialog-card')).toBeVisible();

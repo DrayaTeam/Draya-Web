@@ -10,6 +10,7 @@ import {
   ClassroomFeedbackSummaryDto,
   SubmitClassroomFeedbackRequest,
 } from '../models/student-courses.model';
+import { StudentExamDto } from '../models/student-exam-taking.model';
 
 export interface ClassroomMaterialDto {
   materialId: string;
@@ -174,8 +175,20 @@ export class StudentEnrollmentService extends ApiBaseService {
             }[];
           }
       >(`/classrooms/${classroomId}/sections`).pipe(catchError(() => of(null))),
+      examsRes: this.get<
+        | StudentExamDto[]
+        | { items?: StudentExamDto[] }
+        | {
+            id?: string;
+            examId?: string;
+            title?: string;
+            topic?: string;
+            sectionId?: string;
+            questions?: unknown[];
+          }[]
+      >(`/exams?classroomId=${classroomId}`).pipe(catchError(() => of(null))),
     }).pipe(
-      map(({ classroom, materialsRes, sectionsRes }) => {
+      map(({ classroom, materialsRes, sectionsRes, examsRes }) => {
         let rawMaterials: {
           id?: string;
           materialId?: string;
@@ -194,6 +207,20 @@ export class StudentEnrollmentService extends ApiBaseService {
           rawMaterials = materialsRes;
         } else if (materialsRes && 'items' in materialsRes && Array.isArray(materialsRes.items)) {
           rawMaterials = materialsRes.items;
+        }
+
+        let rawExams: {
+          id?: string;
+          examId?: string;
+          sectionId?: string;
+          title?: string;
+          topic?: string;
+          questions?: unknown[];
+        }[] = [];
+        if (Array.isArray(examsRes)) {
+          rawExams = examsRes;
+        } else if (examsRes && 'items' in examsRes && Array.isArray(examsRes.items)) {
+          rawExams = examsRes.items;
         }
 
         const mapMaterialToLesson = (
@@ -231,6 +258,26 @@ export class StudentEnrollmentService extends ApiBaseService {
           };
         };
 
+        const mapExamToLesson = (
+          e: (typeof rawExams)[0],
+          idx: number,
+          prefix = 'exam',
+        ): LessonItem => {
+          const examId = e.examId || e.id || `${prefix}_${idx + 1}`;
+          const examTitle =
+            e.title || (e.topic ? `اختبار: ${e.topic}` : `امتحان إلكتروني ${idx + 1}`);
+          const qCount = e.questions?.length;
+          const durationText = qCount ? `${qCount} أسئلة · اختبار إلكتروني` : 'اختبار إلكتروني تفاعلي';
+
+          return {
+            id: examId,
+            title: examTitle,
+            type: 'exam',
+            duration: durationText,
+            fileUrl: `/student/exams/${examId}/take`,
+          };
+        };
+
         const teacherName = classroom?.gradeLevelName
           ? `أستاذ ${classroom.subjectName || ''}`
           : 'معلم دراية';
@@ -264,17 +311,28 @@ export class StudentEnrollmentService extends ApiBaseService {
             const secId = sec.id || sec.sectionId || `sec_${sIdx + 1}`;
             const secTitle = sec.title || sec.name || `الوحدة / القسم ${sIdx + 1}`;
 
-            let secLessons: LessonItem[] = [];
+            let secMaterials: LessonItem[] = [];
             if (sec.materials && Array.isArray(sec.materials) && sec.materials.length > 0) {
-              secLessons = sec.materials.map((m, mIdx) => mapMaterialToLesson(m, mIdx, secId));
+              secMaterials = sec.materials.map((m, mIdx) => mapMaterialToLesson(m, mIdx, secId));
             } else if (rawMaterials.some((m) => m.sectionId === secId)) {
-              secLessons = rawMaterials
+              secMaterials = rawMaterials
                 .filter((m) => m.sectionId === secId)
                 .map((m, mIdx) => mapMaterialToLesson(m, mIdx, secId));
-            } else if (sIdx === 0) {
-              // Fallback: assign remaining materials to the first section
-              secLessons = allLessons;
+            } else if (sIdx === 0 && !rawMaterials.some((m) => !!m.sectionId)) {
+              secMaterials = allLessons;
             }
+
+            // Merge exams belonging to this section (or attach to section 0 if sectionId is not set)
+            let secExams: LessonItem[] = [];
+            if (rawExams.some((e) => e.sectionId === secId)) {
+              secExams = rawExams
+                .filter((e) => e.sectionId === secId)
+                .map((e, eIdx) => mapExamToLesson(e, eIdx, secId));
+            } else if (sIdx === 0 && !rawExams.some((e) => !!e.sectionId)) {
+              secExams = rawExams.map((e, eIdx) => mapExamToLesson(e, eIdx, secId));
+            }
+
+            const secLessons: LessonItem[] = [...secMaterials, ...secExams];
 
             return {
               id: secId,
@@ -283,11 +341,12 @@ export class StudentEnrollmentService extends ApiBaseService {
             };
           });
         } else {
+          const allExams: LessonItem[] = rawExams.map((e, idx) => mapExamToLesson(e, idx));
           chapters = [
             {
               id: 'ch_1',
               title: 'محتوى الباقة والمحاضرات',
-              lessons: allLessons,
+              lessons: [...allLessons, ...allExams],
             },
           ];
         }

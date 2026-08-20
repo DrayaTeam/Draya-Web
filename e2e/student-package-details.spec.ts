@@ -1,4 +1,4 @@
-﻿import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { setupStudentAuth } from './helpers/auth.helper';
 
 test.describe('Student Package Details & Feedback E2E Flow', () => {
@@ -31,6 +31,14 @@ test.describe('Student Package Details & Feedback E2E Flow', () => {
     });
 
     await page.route('**/api/v1/classrooms/pkg_1/sections*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ items: [] }),
+      });
+    });
+
+    await page.route('**/api/v1/exams*', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',

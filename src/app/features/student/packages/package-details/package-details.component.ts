@@ -224,7 +224,11 @@ export class PackageDetailsComponent implements OnInit {
     if (this.isEnrolled()) {
       if (lesson.type === 'exam') {
         this.toast.info('اختبار تدريبي', `جارٍ الانتقال للامتحان: ${lesson.title}`);
-        this.router.navigate(['/student/exams']);
+        if (lesson.id && !lesson.id.startsWith('les_') && !lesson.id.startsWith('exam_')) {
+          this.router.navigate(['/student/exams', lesson.id, 'take']);
+        } else {
+          this.router.navigate(['/student/exams']);
+        }
         return;
       }
       // Open lesson viewer modal
