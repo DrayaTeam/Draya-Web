@@ -1,4 +1,4 @@
-﻿# 📝 Notes for Backend Developers (Draya API)
+# 📝 Notes for Backend Developers (Draya API)
 
 This document tracks backend API improvements, missing DTO fields, or behavioral discrepancies identified during frontend integration.
 
@@ -121,6 +121,24 @@ public class UpdateStudentProfileRequest
 
 ### 💡 Recommendation for Backend Team
 - Establish a SignalR hub at /hubs/notifications and REST endpoint GET /api/v1/notifications returning { id, title, message, type, read, createdAt } with PUT /api/v1/notifications/{id}/read to mark as seen.
+
+## 📌 Note 11: Fix 403 Forbidden on GET /api/v1/exams for Student Role (or provide GET /api/v1/students/exams)
+
+### 🔍 Issue Description
+- Currently, when an enrolled student navigates to `/student/exams`, the frontend calls `GET /api/v1/exams` to retrieve their upcoming, scheduled, and active exams.
+- The ASP.NET Core backend rejects the request with **`403 (Forbidden)`** because the `ExamsController` currently enforces `[Authorize(Roles = "Teacher")]` on the entire controller or on `GET /api/v1/exams`.
+
+### 💡 Recommendation for Backend Team
+- Either update `GET /api/v1/exams` authorization to:
+  ```csharp
+  [Authorize(Roles = "Teacher,Student")]
+  ```
+  and when `User.IsInRole("Student")`, automatically filter exams to only those belonging to the student's enrolled classrooms (`ClassroomEnrollments`).
+- OR provide a dedicated student endpoint:
+  ```http
+  GET /api/v1/students/exams?page=1&pageSize=10
+  ```
+  returning the list of exams available to the authenticated student.
 
 ---
 *Last updated: 2026-08-20 by Frontend Team*
