@@ -26,17 +26,17 @@ npx ng lint
 ```
 *Rule: 0 errors and 0 warnings allowed.*
 
-### Step B: Console Log & Runtime Error Inspection
-Inspect browser runtime console outputs and terminal logs during navigation and interaction. Ensure:
-- Zero unhandled `console.error` messages.
-- Zero unhandled Promise rejections or uncaught exceptions.
-- Zero unresolved Angular expression / template binding runtime warnings.
-
-### Step C: Code Formatting
+### Step B: Code Formatting
 Format all modified/created files using Prettier:
 ```bash
 npx prettier --write "src/**/*.{ts,html,scss,json}"
 ```
+
+### Step C: Console Log & Runtime Error Inspection
+Inspect browser runtime console outputs and terminal logs during navigation and interaction. Ensure:
+- Zero unhandled `console.error` messages.
+- Zero unhandled Promise rejections or uncaught exceptions.
+- Zero unresolved Angular expression / template binding runtime warnings.
 
 ### Step D: Unit Testing
 Execute Karma/Jasmine unit tests for isolated component logic and service methods (employing `/unit-testing-test-generate`):
@@ -44,6 +44,7 @@ Execute Karma/Jasmine unit tests for isolated component logic and service method
 npx ng test --watch=false
 ```
 *Rule: 100% of test specs must pass.*
+
 
 ### Step E: Integration Testing
 Verify component-to-service integration, state synchronization, HTTP communication with `provideHttpClientTesting()`, and routing triggers.
