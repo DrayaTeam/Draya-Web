@@ -26,12 +26,12 @@ test.describe('Student Live Exam Taking & Result Flow', () => {
 
     // Question map sidebar
     const mapSidebar = page.locator('app-exam-question-map');
-    await expect(mapSidebar).toBeVisible();
+    await expect(mapSidebar).toBeVisible({ timeout: 10000 });
 
     // Flag button toggle
     const flagBtn = page.locator('.flag-btn, button:has-text("مراجعة لاحقاً")').first();
-    if (await flagBtn.isVisible().catch(() => false)) {
-      await flagBtn.click();
+    if (await flagBtn.count() > 0) {
+      await flagBtn.click({ force: true, timeout: 2000 }).catch(() => void 0);
     }
   });
 

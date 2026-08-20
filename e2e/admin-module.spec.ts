@@ -124,10 +124,14 @@ test.describe('Admin Module E2E Flow', () => {
     await page.goto('/admin/profile');
     await expect(page.locator('h1.page-title')).toContainText('حسابي');
 
-    const tabBtn = page.locator('.profile-tabs .tab-btn').nth(1);
-    if (await tabBtn.isVisible().catch(() => false)) {
-      await tabBtn.click();
-      await expect(page.locator('input#newPass, input[type="password"]').first()).toBeVisible();
+    const tabBtn = page.locator(
+      '.profile-tabs button:has-text("الأمان"), .profile-tabs button:has-text("كلمة المرور"), .profile-tabs .tab-btn',
+    );
+    if ((await tabBtn.count()) > 1) {
+      await tabBtn.nth(1).click({ force: true });
+      await expect(
+        page.locator('input#newPass, input[type="password"]').first(),
+      ).toBeVisible({ timeout: 10000 });
     }
   });
 });

@@ -22,6 +22,10 @@ export interface StudentCoursesHeaderInfo {
 export interface ClassroomDto {
   classroomId: string;
   teacherId: string;
+  teacherName?: string;
+  teacherAvatarUrl?: string;
+  materialsCount?: number;
+  studentProgress?: number;
   subjectName?: string;
   name?: string;
   enrollmentCode?: string;

@@ -114,4 +114,39 @@ export class AdminSupervisorService extends ApiBaseService {
       data,
     );
   }
+
+  /** GET /api/v1/admin/students */
+  getStudents(params?: {
+    searchTerm?: string;
+    page?: number;
+    pageSize?: number;
+  }): Observable<AdminStudentPagedResponse> {
+    const queryParams: Record<string, string | number> = {};
+    if (params?.searchTerm && params.searchTerm.trim()) {
+      queryParams['searchTerm'] = params.searchTerm.trim();
+    }
+    if (params?.page) queryParams['page'] = params.page;
+    if (params?.pageSize) queryParams['pageSize'] = params.pageSize;
+    return this.get<AdminStudentPagedResponse>('/admin/students', queryParams);
+  }
+}
+
+export interface AdminStudentSearchResultDto {
+  userId: string;
+  fullName: string;
+  email: string;
+  parentGuardianEmail?: string;
+  parentGuardianName?: string;
+  parentGuardianPhone?: string;
+  dateOfBirth?: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface AdminStudentPagedResponse {
+  items: AdminStudentSearchResultDto[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
 }

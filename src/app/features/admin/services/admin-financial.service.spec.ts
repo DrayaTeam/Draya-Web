@@ -119,4 +119,30 @@ describe('AdminFinancialService', () => {
     expect(req.request.method).toBe('POST');
     req.flush(null);
   });
+
+  it('should get financial adjustments audit records with query params', () => {
+    service.getAdjustments({ teacherId: 't-123', pageNumber: 1, pageSize: 10 }).subscribe((res) => {
+      expect(res.items.length).toBe(1);
+      expect(res.items[0].transactionId).toBe('tx-1');
+    });
+
+    const req = httpMock.expectOne((r) => r.url.endsWith('/admin/financial/adjustments'));
+    expect(req.request.method).toBe('GET');
+    expect(req.request.params.get('teacherId')).toBe('t-123');
+    req.flush({
+      items: [
+        {
+          transactionId: 'tx-1',
+          teacherId: 't-123',
+          amount: 500,
+          balanceType: 'Earned',
+          description: 'Bonus',
+          createdAt: '2026-08-20T00:00:00Z',
+        },
+      ],
+      totalCount: 1,
+      pageNumber: 1,
+      pageSize: 10,
+    });
+  });
 });

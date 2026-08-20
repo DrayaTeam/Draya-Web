@@ -59,13 +59,16 @@ export class StudentCoursesService extends ApiBaseService {
             items.map((c, idx) => ({
               id: c.classroomId,
               title: c.name || 'فصل دراسي',
-              teacherName: c.gradeLevelName ? `أستاذ ${c.subjectName || ''}` : 'معلم دراية',
+              teacherName:
+                c.teacherName || (c.gradeLevelName ? `أستاذ ${c.subjectName || ''}` : 'معلم دراية'),
               subjectName: c.subjectName || 'المادة الدراسية',
               statusText: c.isActive ? 'سارية ومفعّلة' : 'غير نشطة',
               isActive: c.isActive,
-              completedLessons: 0,
-              totalLessons: 10,
-              progressPercent: 0,
+              completedLessons: Math.round(
+                ((c.studentProgress ?? 0) / 100) * (c.materialsCount ?? 10),
+              ),
+              totalLessons: c.materialsCount ?? 10,
+              progressPercent: c.studentProgress ?? 0,
               studyGroupName: c.classroomTypeName
                 ? `${c.classroomTypeName} - ${c.gradeLevelName || ''}`
                 : 'مجموعة دراسية',

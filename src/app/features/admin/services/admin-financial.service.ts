@@ -10,6 +10,7 @@ import {
   WithdrawalDto,
   PlatformSettingsDto,
   AdjustmentRequest,
+  AdjustmentAuditItemDto,
   PaginatedResponse,
   TeacherSearchResultDto,
   UpdateAdminProfileRequest,
@@ -55,6 +56,22 @@ export class AdminFinancialService extends ApiBaseService {
     return this.post<void, { adminNote?: string }>(`${this.basePath}/withdrawals/${id}/mark-paid`, {
       adminNote,
     });
+  }
+
+  /** GET /api/v1/admin/financial/adjustments */
+  getAdjustments(params?: {
+    teacherId?: string;
+    pageNumber?: number;
+    pageSize?: number;
+  }): Observable<PaginatedResponse<AdjustmentAuditItemDto>> {
+    const queryParams: Record<string, string | number> = {};
+    if (params?.teacherId) queryParams['teacherId'] = params.teacherId;
+    if (params?.pageNumber) queryParams['pageNumber'] = params.pageNumber;
+    if (params?.pageSize) queryParams['pageSize'] = params.pageSize;
+    return this.get<PaginatedResponse<AdjustmentAuditItemDto>>(
+      `${this.basePath}/adjustments`,
+      queryParams,
+    );
   }
 
   /** POST /api/v1/admin/financial/adjustments */

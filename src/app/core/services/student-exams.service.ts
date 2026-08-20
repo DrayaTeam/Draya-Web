@@ -75,7 +75,7 @@ export class StudentExamsService extends ApiBaseService {
   });
 
   /**
-   * Loads the student's scheduled and active exams from GET /api/v1/exams.
+   * Loads the student's scheduled and active exams from GET /api/v1/students/exams.
    */
   loadExams(classroomId?: string, page = 1, pageSize = 20): void {
     this.loading.set(true);
@@ -84,7 +84,7 @@ export class StudentExamsService extends ApiBaseService {
       params['classroomId'] = classroomId;
     }
 
-    this.get<ExamDto[] | { items: ExamDto[] }>('/exams', params)
+    this.get<ExamDto[] | { items: ExamDto[] }>('/students/exams', params)
       .pipe(
         tap((res) => {
           this.loading.set(false);
