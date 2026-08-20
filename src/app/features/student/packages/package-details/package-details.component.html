@@ -606,28 +606,6 @@
           } @else if (selectedLesson()?.type === 'pdf') {
             <div class="pdf-viewer-modal-frame">
               @if (selectedLesson()?.fileUrl) {
-<<<<<<< Updated upstream
-                <iframe
-                  [src]="getSafeUrl(selectedLesson()?.fileUrl)"
-                  class="pdf-embedded-iframe"
-                  title="عارض المذكرة"></iframe>
-                <div class="pdf-modal-footer-bar">
-                  <span class="pdf-lesson-title">📄 {{ selectedLesson()?.title }}</span>
-                  <a [href]="selectedLesson()?.fileUrl" download class="btn-pdf-download-pill">
-                    <span>تحميل المذكرة</span>
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                      <polyline points="7 10 12 15 17 10"></polyline>
-                      <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                  </a>
-=======
                 <div class="pdf-modal-toolbar">
                   <div class="pdf-toolbar-title">
                     <span class="pdf-badge-tag">PDF</span>
@@ -658,8 +636,8 @@
                   <iframe
                     [src]="getSafeUrl(selectedLesson()?.fileUrl)"
                     class="pdf-embedded-iframe"
-                    title="عارض المذكرة"></iframe>
->>>>>>> Stashed changes
+                    title="عارض المذكرة">
+                  </iframe>
                 </div>
               } @else {
                 <div class="no-pdf-content-box">
