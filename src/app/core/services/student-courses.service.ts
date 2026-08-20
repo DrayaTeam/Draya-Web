@@ -15,12 +15,6 @@ const COURSE_GRADIENTS = [
   'linear-gradient(90deg, #FF6B35 0%, #F7C59F 100%)',
 ];
 
-const COURSE_BANNERS = [
-  'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=800&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=800&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?q=80&w=800&auto=format&fit=crop',
-];
-
 @Injectable({ providedIn: 'root' })
 export class StudentCoursesService extends ApiBaseService {
   readonly headerInfo = signal<StudentCoursesHeaderInfo>({
@@ -84,7 +78,7 @@ export class StudentCoursesService extends ApiBaseService {
                 studyGroupName: c.classroomTypeName
                   ? `${c.classroomTypeName} - ${c.gradeLevelName || ''}`
                   : 'مجموعة دراسية',
-                bannerImageUrl: COURSE_BANNERS[idx % COURSE_BANNERS.length],
+                bannerImageUrl: c.imageUrl || 'assets/images/default-classroom.svg',
                 progressGradient: COURSE_GRADIENTS[idx % COURSE_GRADIENTS.length],
               };
             }),

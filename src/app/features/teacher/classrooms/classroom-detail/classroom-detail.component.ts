@@ -48,6 +48,14 @@ export class ClassroomDetailComponent implements OnInit {
   readonly isDeactivateModalOpen = signal<boolean>(false);
   readonly isUploadingImage = signal<boolean>(false);
   readonly activeTab = signal<number>(0);
+  readonly defaultCover = 'assets/images/default-classroom.svg';
+
+  onCoverImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target && !target.src.includes('default-classroom.svg')) {
+      target.src = this.defaultCover;
+    }
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');

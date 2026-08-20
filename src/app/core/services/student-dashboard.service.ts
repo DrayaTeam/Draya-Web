@@ -147,7 +147,7 @@ export class StudentDashboardService extends ApiBaseService {
                       completedLessons: isNaN(completedLessons) ? 0 : completedLessons,
                       totalLessons: isNaN(totalLessons) || totalLessons === 0 ? 1 : totalLessons,
                       progressPercent: isNaN(progressPercent) ? 0 : progressPercent,
-                      thumbnailUrl: c.imageUrl || '',
+                      thumbnailUrl: c.imageUrl || 'assets/images/default-classroom.svg',
                     };
                   })
                 : fallback.enrolledCourses,

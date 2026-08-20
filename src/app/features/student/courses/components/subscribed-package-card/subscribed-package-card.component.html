@@ -2,10 +2,11 @@
   <!-- Top Banner Section (Image + Overlays) -->
   <div class="banner-image-wrapper">
     <img
-      [src]="package().bannerImageUrl"
+      [src]="package().bannerImageUrl || defaultBanner"
       [alt]="package().title"
       class="banner-img"
-      loading="lazy" />
+      loading="lazy"
+      (error)="onImageError($event)" />
     <div class="banner-gradient-overlay"></div>
 
     <!-- Subject Name Tag Pill (Right in RTL) -->
