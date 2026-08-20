@@ -192,165 +192,366 @@
       </div>
     </div>
 
-    <!-- Chapters & Lessons Syllabus Accordion -->
-    <div class="syllabus-section">
-      <div class="syllabus-header-row">
-        <h2 class="syllabus-title">محتويات وفهرس الفصل الدراسي</h2>
-        <span class="syllabus-counter">{{ p.chapters.length }} أقسام ومحتويات</span>
-      </div>
+    <!-- Tabs Navigation Bar (Curriculum vs Feedback) -->
+    <div class="package-tabs-bar" role="tablist">
+      <button
+        type="button"
+        role="tab"
+        class="pkg-tab-btn"
+        [class.active]="activeTab() === 'curriculum'"
+        [attr.aria-selected]="activeTab() === 'curriculum'"
+        (click)="selectTab('curriculum')">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2">
+          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
+          <path d="M6 6h10"></path>
+          <path d="M6 10h10"></path>
+        </svg>
+        <span>محتوى وفهرس الفصل</span>
+        <span class="tab-badge">{{ p.chapters.length }}</span>
+      </button>
 
-      <div class="chapters-list">
-        @for (ch of p.chapters; track ch.id) {
-          <div class="chapter-card" [class.is-expanded]="isChapterExpanded(ch.id)">
-            <!-- Chapter Accordion Header -->
-            <button
-              type="button"
-              class="chapter-header-btn"
-              (click)="toggleChapter(ch.id)"
-              [attr.aria-expanded]="isChapterExpanded(ch.id)">
-              <div class="chapter-header-right">
-                <div class="chapter-badge-icon">
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2">
-                    <path
-                      d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
-                    <path d="M6 6h10"></path>
-                    <path d="M6 10h10"></path>
-                  </svg>
-                </div>
-                <div class="chapter-title-wrap">
-                  <h3 class="chapter-heading">{{ ch.title }}</h3>
-                  <span class="chapter-lessons-count">{{ ch.lessons.length }} عناصر دراسية</span>
-                </div>
-              </div>
+      <button
+        type="button"
+        role="tab"
+        class="pkg-tab-btn"
+        [class.active]="activeTab() === 'feedback'"
+        [attr.aria-selected]="activeTab() === 'feedback'"
+        (click)="selectTab('feedback')">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2">
+          <polygon
+            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+        <span>التقييمات والمراجعات</span>
+        @if (feedbackSummary(); as fs) {
+          <span class="tab-badge rating-badge">
+            ⭐ {{ fs.averageRating }} ({{ fs.totalCount }})
+          </span>
+        }
+      </button>
+    </div>
 
-              <div class="chapter-header-left">
-                <span class="toggle-hint">
-                  {{ isChapterExpanded(ch.id) ? 'إخفاء المحتوى' : 'عرض المحتوى' }}
-                </span>
-                <div class="chevron-icon" [class.rotate-180]="isChapterExpanded(ch.id)">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </div>
-              </div>
-            </button>
+    <!-- TAB 1: Chapters & Lessons Syllabus Accordion -->
+    @if (activeTab() === 'curriculum') {
+      <div class="syllabus-section animate-fade-in">
+        <div class="syllabus-header-row">
+          <h2 class="syllabus-title">محتويات وفهرس الفصل الدراسي</h2>
+          <span class="syllabus-counter">{{ p.chapters.length }} أقسام ومحتويات</span>
+        </div>
 
-            <!-- Collapsible Lessons List Body -->
-            @if (isChapterExpanded(ch.id)) {
-              <div class="lessons-list animate-slide-down">
-                @for (les of ch.lessons; track les.id) {
-                  <div
-                    class="lesson-row"
-                    role="button"
-                    tabindex="0"
-                    [class.enrolled-active]="isEnrolled()"
-                    [class.pdf-row]="les.type === 'pdf'"
-                    (click)="onSelectLesson(les)"
-                    (keydown.enter)="onSelectLesson(les)">
-                    <div class="lesson-left">
-                      <div
-                        class="lesson-icon"
-                        [class.video-icon]="les.type === 'video'"
-                        [class.pdf-icon]="les.type === 'pdf'"
-                        [class.exam-icon]="les.type === 'exam'">
-                        @if (les.type === 'video') {
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2.5">
-                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                          </svg>
-                        } @else if (les.type === 'pdf') {
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2.5">
-                            <path
-                              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                          </svg>
+        <div class="chapters-list">
+          @for (ch of p.chapters; track ch.id) {
+            <div class="chapter-card" [class.is-expanded]="isChapterExpanded(ch.id)">
+              <!-- Chapter Accordion Header -->
+              <button
+                type="button"
+                class="chapter-header-btn"
+                (click)="toggleChapter(ch.id)"
+                [attr.aria-expanded]="isChapterExpanded(ch.id)">
+                <div class="chapter-header-right">
+                  <div class="chapter-badge-icon">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2">
+                      <path
+                        d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
+                      <path d="M6 6h10"></path>
+                      <path d="M6 10h10"></path>
+                    </svg>
+                  </div>
+                  <div class="chapter-title-wrap">
+                    <h3 class="chapter-heading">{{ ch.title }}</h3>
+                    <span class="chapter-lessons-count">{{ ch.lessons.length }} عناصر دراسية</span>
+                  </div>
+                </div>
+
+                <div class="chapter-header-left">
+                  <span class="toggle-hint">
+                    {{ isChapterExpanded(ch.id) ? 'إخفاء المحتوى' : 'عرض المحتوى' }}
+                  </span>
+                  <div class="chevron-icon" [class.rotate-180]="isChapterExpanded(ch.id)">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </div>
+                </div>
+              </button>
+
+              <!-- Collapsible Lessons List Body -->
+              @if (isChapterExpanded(ch.id)) {
+                <div class="lessons-list animate-slide-down">
+                  @for (les of ch.lessons; track les.id) {
+                    <div
+                      class="lesson-row"
+                      role="button"
+                      tabindex="0"
+                      [class.enrolled-active]="isEnrolled()"
+                      [class.pdf-row]="les.type === 'pdf'"
+                      (click)="onSelectLesson(les)"
+                      (keydown.enter)="onSelectLesson(les)">
+                      <div class="lesson-left">
+                        <div
+                          class="lesson-icon"
+                          [class.video-icon]="les.type === 'video'"
+                          [class.pdf-icon]="les.type === 'pdf'"
+                          [class.exam-icon]="les.type === 'exam'">
+                          @if (les.type === 'video') {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2.5">
+                              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                          } @else if (les.type === 'pdf') {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2.5">
+                              <path
+                                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                              <polyline points="14 2 14 8 20 8"></polyline>
+                              <line x1="16" y1="13" x2="8" y2="13"></line>
+                              <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                          } @else {
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2.5">
+                              <path
+                                d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                            </svg>
+                          }
+                        </div>
+                        <div class="lesson-meta-wrap">
+                          <span class="lesson-title">{{ les.title }}</span>
+                          <span class="lesson-type-badge">
+                            {{
+                              les.type === 'pdf'
+                                ? 'مذكرة PDF'
+                                : les.type === 'exam'
+                                  ? 'اختبار'
+                                  : 'محاضرة فيديو'
+                            }}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="lesson-right">
+                        @if (les.duration) {
+                          <span class="lesson-duration">{{ les.duration }}</span>
+                        }
+                        @if (isEnrolled()) {
+                          <span class="play-hint">
+                            {{ les.type === 'pdf' ? 'معاينة وتحميل 📄' : 'مشاهدة الآن ▶' }}
+                          </span>
                         } @else {
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2.5">
-                            <path
-                              d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                          </svg>
+                          <span class="lock-pill" title="مغلق — يلزم تفعيل الباقة">
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2.5">
+                              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <span>مغلق</span>
+                          </span>
                         }
                       </div>
-                      <div class="lesson-meta-wrap">
-                        <span class="lesson-title">{{ les.title }}</span>
-                        <span class="lesson-type-badge">
-                          {{
-                            les.type === 'pdf'
-                              ? 'مذكرة PDF'
-                              : les.type === 'exam'
-                                ? 'اختبار'
-                                : 'محاضرة فيديو'
-                          }}
-                        </span>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- TAB 2: Feedback & Student Ratings Section -->
+    @if (activeTab() === 'feedback') {
+      <div class="feedback-tab-section animate-fade-in">
+        <!-- Overview Rating Summary Banner -->
+        <div class="feedback-summary-card">
+          <div class="overall-score-box">
+            <span class="huge-score">{{ feedbackSummary()?.averageRating || '5.0' }}</span>
+            <div class="stars-gold-row">
+              <span>★</span>
+              <span>★</span>
+              <span>★</span>
+              <span>★</span>
+              <span>★</span>
+            </div>
+            <span class="total-reviews-label">
+              بناءً على {{ feedbackSummary()?.totalCount || feedbackItems().length }} تقييم معتمد
+            </span>
+          </div>
+
+          <div class="score-breakdown-box">
+            <div class="score-bar-row">
+              <span class="star-count-label">5 نجوم</span>
+              <div class="progress-track"><div class="progress-fill" style="width: 88%"></div></div>
+              <span class="pct-label">88%</span>
+            </div>
+            <div class="score-bar-row">
+              <span class="star-count-label">4 نجوم</span>
+              <div class="progress-track"><div class="progress-fill" style="width: 10%"></div></div>
+              <span class="pct-label">10%</span>
+            </div>
+            <div class="score-bar-row">
+              <span class="star-count-label">3 نجوم</span>
+              <div class="progress-track"><div class="progress-fill" style="width: 2%"></div></div>
+              <span class="pct-label">2%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Feedback Box (For Enrolled Students) -->
+        @if (isEnrolled()) {
+          <div class="submit-feedback-card">
+            <h3 class="submit-feedback-title">شاركنا رأيك في هذا الفصل الدراسي</h3>
+            <p class="submit-feedback-subtitle">
+              تقييمك يساعد زملاءك الطلاب ويحفز المعلم على تقديم الأفضل دائماً.
+            </p>
+
+            <div class="rating-picker-row">
+              <span class="picker-label">اختر التقييم بالنجوم:</span>
+              <div class="stars-picker" (mouseleave)="setHoverRating(0)">
+                @for (star of [1, 2, 3, 4, 5]; track star) {
+                  <button
+                    type="button"
+                    class="star-pick-btn"
+                    [class.active]="star <= (hoverRating() || selectedRating())"
+                    (mouseenter)="setHoverRating(star)"
+                    (click)="setRating(star)"
+                    [attr.aria-label]="star + ' نجوم'">
+                    ★
+                  </button>
+                }
+              </div>
+              <span class="rating-status-text">
+                {{
+                  selectedRating() === 5
+                    ? 'ممتاز جداً 🌟'
+                    : selectedRating() === 4
+                      ? 'جيد جداً 👍'
+                      : selectedRating() === 3
+                        ? 'جيد'
+                        : 'مقبول'
+                }}
+              </span>
+            </div>
+
+            <div class="feedback-textarea-wrap">
+              <label for="feedbackCommentInput" class="sr-only">رأيك أو تعليقك:</label>
+              <textarea
+                id="feedbackCommentInput"
+                class="feedback-textarea"
+                rows="3"
+                placeholder="اكتب انطباعك عن الشرح، جودة المذكرات، وسهولة الامتحانات التدريبية..."
+                [value]="feedbackComment()"
+                (input)="feedbackComment.set($any($event.target).value)"></textarea>
+            </div>
+
+            <div class="submit-feedback-actions">
+              <button
+                type="button"
+                class="btn-send-feedback"
+                [disabled]="submittingFeedback()"
+                (click)="submitFeedback()">
+                @if (submittingFeedback()) {
+                  <span>جارٍ الحفظ...</span>
+                } @else {
+                  <span>إرسال التقييم 🚀</span>
+                }
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Feedback Reviews List -->
+        <div class="feedback-reviews-feed">
+          <h3 class="reviews-feed-title">آراء ومراجعات الطلاب</h3>
+
+          @if (loadingFeedback()) {
+            <div class="loading-box">
+              <div class="spinner"></div>
+              <span>جارٍ تحميل التقييمات...</span>
+            </div>
+          } @else {
+            <div class="reviews-grid">
+              @for (fb of feedbackItems(); track fb.feedbackId) {
+                <div class="review-card">
+                  <div class="review-card-header">
+                    <div class="reviewer-info">
+                      <div class="reviewer-avatar">
+                        {{ fb.studentName ? fb.studentName.charAt(0) : 'ط' }}
+                      </div>
+                      <div>
+                        <strong class="reviewer-name">{{ fb.studentName || 'طالب متميز' }}</strong>
+                        <span class="review-date">{{ fb.createdAt | date: 'mediumDate' }}</span>
                       </div>
                     </div>
 
-                    <div class="lesson-right">
-                      @if (les.duration) {
-                        <span class="lesson-duration">{{ les.duration }}</span>
-                      }
-                      @if (isEnrolled()) {
-                        <span class="play-hint">
-                          {{ les.type === 'pdf' ? 'معاينة وتحميل 📄' : 'مشاهدة الآن ▶' }}
-                        </span>
-                      } @else {
-                        <span class="lock-pill" title="مغلق — يلزم تفعيل الباقة">
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2.5">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                          </svg>
-                          <span>مغلق</span>
+                    <div class="review-stars-pill">
+                      @for (s of [1, 2, 3, 4, 5]; track s) {
+                        <span [class.gold-star]="s <= fb.rating" [class.gray-star]="s > fb.rating">
+                          ★
                         </span>
                       }
                     </div>
                   </div>
-                }
-              </div>
-            }
-          </div>
-        }
+
+                  @if (fb.comment) {
+                    <p class="review-comment-text">{{ fb.comment }}</p>
+                  }
+                </div>
+              } @empty {
+                <div class="empty-reviews-box">
+                  <p>لا توجد تقييمات مسجلة بعد لهذا الفصل الدراسي.</p>
+                </div>
+              }
+            </div>
+          }
+        </div>
       </div>
-    </div>
+    }
   }
 
   <!-- Active Lesson Viewer Modal (For Enrolled Students) -->
