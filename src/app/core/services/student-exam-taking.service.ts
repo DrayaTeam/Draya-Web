@@ -1,15 +1,17 @@
 // src/app/core/services/student-exam-taking.service.ts
 
 import { Injectable, computed, signal } from '@angular/core';
-import { Observable, catchError, map, of, switchMap, tap } from 'rxjs';
+import { Observable, catchError, map, of, tap } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
 import {
   AnswerSubmissionDto,
+  AttemptResultResponseDto,
   ExamQuestion,
   ExamResultReport,
   StartAttemptResponseDto,
   StudentExamDto,
   SubmitAttemptRequestDto,
+  SubmitAttemptResponseDto,
 } from '../models/student-exam-taking.model';
 
 const DEFAULT_QUESTIONS: ExamQuestion[] = [
@@ -360,23 +362,18 @@ export class StudentExamTakingService extends ApiBaseService {
       reviewQuestions,
     });
 
-    // Fire backend submission and trigger AI grading if targetAttemptId exists
+    // Fire backend submission if targetAttemptId exists
     if (targetAttemptId) {
       const payload: SubmitAttemptRequestDto = {
+        idempotencyKey: `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
         answers: questionsList.map((q): AnswerSubmissionDto => ({
           examQuestionId: q.id,
-          selectedOptionId: q.selectedOptionId,
+          selectedOptionId: q.selectedOptionId || undefined,
+          answerText: q.selectedOptionId ? '' : undefined,
         })),
       };
-      this.post<unknown>(`/attempts/${targetAttemptId}/submit`, payload)
-        .pipe(
-          switchMap(() =>
-            this.post<unknown>(`/attempts/${targetAttemptId}/grade`, {
-              attemptId: targetAttemptId,
-            }).pipe(catchError(() => of(null))),
-          ),
-          catchError(() => of(null)),
-        )
+      this.post<SubmitAttemptResponseDto>(`/attempts/${targetAttemptId}/submit`, payload)
+        .pipe(catchError(() => of(null)))
         .subscribe({
           next: () => void 0,
           error: () => void 0,
@@ -390,18 +387,13 @@ export class StudentExamTakingService extends ApiBaseService {
    * Fetches attempt grading results from GET /api/v1/attempts/{attemptId}/results.
    */
   fetchAttemptResults(attemptId: string): Observable<ExamResultReport | null> {
-    return this.get<{
-      attemptId?: string;
-      score?: number;
-      totalScore?: number;
-      percentage?: number;
-      isPassed?: boolean;
-      scorePercentage?: number;
-      gradeLabel?: string;
-    }>(`/attempts/${attemptId}/results`).pipe(
+    return this.get<AttemptResultResponseDto>(`/attempts/${attemptId}/results`).pipe(
       map((res) => {
         if (!res) return null;
-        const pct = res.percentage ?? res.scorePercentage ?? res.score ?? 50;
+        const score = res.finalScore ?? 50;
+        const total = res.answers?.length ? res.answers.length : 100;
+        const pct = Math.min(100, Math.round((score / total) * 100)) || Math.round(score);
+
         let gradeLabel = 'مقبول — يحتاج مراجعة';
         if (pct >= 85) gradeLabel = 'ممتاز جداً 🌟';
         else if (pct >= 65) gradeLabel = 'جيد جداً 👍';
@@ -411,8 +403,17 @@ export class StudentExamTakingService extends ApiBaseService {
           ...this.examResult(),
           attemptId,
           scorePercentage: pct,
-          gradeLabel: res.gradeLabel || gradeLabel,
-          isPassed: res.isPassed ?? pct >= 50,
+          studentScore: score,
+          totalScore: total,
+          gradeLabel,
+          isPassed: pct >= 50,
+          submittedAt: res.submittedAt
+            ? new Date(res.submittedAt).toLocaleDateString('ar-EG', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              })
+            : this.examResult().submittedAt,
         };
         this.examResult.set(updated);
         return updated;

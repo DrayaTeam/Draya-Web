@@ -15,6 +15,48 @@ export interface SubmitAttemptRequestDto {
   idempotencyKey?: string;
 }
 
+export interface SubmitAttemptResponseDto {
+  gradingJobId: string;
+  message?: string;
+}
+
+export interface GradingJobStatusDto {
+  id: string;
+  studentExamAttemptId?: string;
+  status: 'Pending' | 'Grading' | 'Completed' | 'CompletedWithWarning' | 'Failed';
+  createdAt?: string;
+  completedAt?: string;
+  errorMessage?: string;
+}
+
+export interface AnswerGradingResultDto {
+  score: number;
+  maxScore: number;
+  confidenceScore?: number | null;
+  isAiGraded: boolean;
+  needsTeacherReview: boolean;
+  rationale?: string | null;
+  teacherOverrideScore?: number | null;
+}
+
+export interface AttemptAnswerResultDto {
+  answerId: string;
+  examQuestionId: string;
+  answerText?: string;
+  selectedOptionId?: string | null;
+  gradingResult?: AnswerGradingResultDto;
+}
+
+export interface AttemptResultResponseDto {
+  attemptId: string;
+  examId: string;
+  isSubmitted: boolean;
+  submittedAt: string;
+  finalScore: number;
+  needsTeacherReview: boolean;
+  answers: AttemptAnswerResultDto[];
+}
+
 export interface StudentExamQuestionOptionDto {
   id: string;
   text?: string;
