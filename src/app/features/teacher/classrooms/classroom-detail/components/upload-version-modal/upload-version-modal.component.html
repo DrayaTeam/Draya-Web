@@ -1,90 +1,72 @@
-<p-dialog
-  [visible]="isOpen()"
-  (visibleChange)="onCancel()"
-  [modal]="true"
-  [draggable]="false"
-  [resizable]="false"
-  styleClass="draya-headless-dialog"
-  [style]="{ width: 'calc(100% - 32px)', maxWidth: '500px', margin: '16px auto' }"
-  [contentStyle]="{ padding: '0', borderRadius: '16px', overflow: 'hidden' }"
-  header="تحديث المادة التعليمية"
-  [closable]="!isSubmitting()">
-  @if (material(); as mat) {
-    <div class="mb-4 rounded-lg bg-gray-50 p-4">
-      <div class="text-sm text-gray-500">المادة الحالية:</div>
-      <div class="font-bold text-gray-900">{{ mat.title }}</div>
-      <div class="text-xs text-gray-400">
-        الإصدار الحالي: {{ mat.currentVersion.versionNumber || 1 }}
+<draya-teacher-modal
+  title="تحديث المادة التعليمية"
+  [isOpen]="isOpen()"
+  size="md"
+  (modalClosed)="onCancel()">
+  
+  <div>
+    @if (material(); as mat) {
+      <div class="mb-4 rounded-lg bg-gray-50 p-4">
+        <div class="text-sm text-gray-500">المادة الحالية:</div>
+        <div class="font-bold text-gray-900">{{ mat.title }}</div>
+        <div class="text-xs text-gray-400">الإصدار الحالي: {{ mat.currentVersion.versionNumber || 1 }}</div>
       </div>
-    </div>
 
-    <div class="mb-6 flex flex-col gap-4">
-      @if (mat.materialType === 'PDF' || mat.materialType === 'Video') {
-        <div class="form-group">
-          <label for="new-file-input" class="form-label font-bold text-gray-700">
-            اختر الملف الجديد
-          </label>
-          <div class="file-upload-wrapper mt-2">
-            <input
-              id="new-file-input"
-              type="file"
-              class="hidden"
-              #fileInput
-              (change)="onFileSelect($event)"
-              [disabled]="isSubmitting()" />
-            <button
-              type="button"
-              class="btn-outline w-full flex-col justify-center border-dashed py-8 hover:bg-gray-50"
-              (click)="fileInput.click()"
-              [disabled]="isSubmitting()">
-              <i class="pi pi-upload mb-2 text-2xl text-gray-400"></i>
-              <span class="block font-bold">
-                {{ selectedFile() ? selectedFile()!.name : 'اضغط لاختيار ملف' }}
-              </span>
-              <span class="mt-1 block text-sm text-gray-500">الحد الأقصى 200 ميجابايت</span>
-            </button>
+      <div class="mb-6 flex flex-col gap-4">
+        @if (mat.materialType === 'PDF' || mat.materialType === 'Video') {
+          <div class="form-group">
+            <label for="new-file-input" class="form-label font-bold text-gray-700">اختر الملف الجديد</label>
+            <div class="file-upload-wrapper mt-2">
+              <input
+                id="new-file-input"
+                type="file"
+                class="hidden"
+                #fileInput
+                (change)="onFileSelect($event)"
+                [disabled]="isSubmitting()" />
+              <button
+                type="button"
+                class="btn-outline w-full flex-col justify-center border-dashed py-8 hover:bg-gray-50"
+                (click)="fileInput.click()"
+                [disabled]="isSubmitting()">
+                <i class="pi pi-upload mb-2 text-2xl text-gray-400"></i>
+                <span class="block font-bold">{{ selectedFile() ? selectedFile()!.name : 'اضغط لاختيار ملف' }}</span>
+                <span class="mt-1 block text-sm text-gray-500">الحد الأقصى 200 ميجابايت</span>
+              </button>
+            </div>
           </div>
-        </div>
-      } @else {
-        <div class="form-group">
-          <label for="new-url-input" class="form-label font-bold text-gray-700">
-            الرابط الجديد
-          </label>
-          <input
-            id="new-url-input"
-            type="url"
-            class="draya-input mt-2 w-full"
-            [(ngModel)]="linkUrl"
-            placeholder="https://..."
-            [disabled]="isSubmitting()" />
-        </div>
-      }
-
-      @if (fileError()) {
-        <div class="mt-2 flex items-center gap-2 text-sm font-bold text-red-500">
-          <i class="pi pi-exclamation-circle"></i>
-          {{ fileError() }}
-        </div>
-      }
-    </div>
-
-    <div class="flex justify-end gap-3 border-t border-gray-200 pt-4">
-      <button class="btn-outline" (click)="onCancel()" [disabled]="isSubmitting()">إلغاء</button>
-      <button
-        class="btn-primary"
-        (click)="submit()"
-        [disabled]="
-          isSubmitting() ||
-          (mat.materialType !== 'Link' && !selectedFile()) ||
-          (mat.materialType === 'Link' && !linkUrl())
-        ">
-        @if (isSubmitting()) {
-          <i class="pi pi-spin pi-spinner ml-2"></i>
-          جاري الرفع...
         } @else {
-          تحديث المادة
+          <div class="form-group">
+            <label for="new-url-input" class="form-label font-bold text-gray-700">الرابط الجديد</label>
+            <input
+              id="new-url-input"
+              type="url"
+              class="form-control mt-2"
+              [(ngModel)]="linkUrl"
+              placeholder="https://..."
+              [disabled]="isSubmitting()" />
+          </div>
         }
-      </button>
-    </div>
-  }
-</p-dialog>
+
+        @if (fileError()) {
+          <div class="text-sm font-bold text-red-500 flex items-center gap-2 mt-2">
+            <i class="pi pi-exclamation-circle"></i>
+            {{ fileError() }}
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <div modal-footer class="flex gap-3">
+    <button class="btn-outline" (click)="onCancel()" [disabled]="isSubmitting()">إلغاء</button>
+    <button class="btn-primary" (click)="submit()" [disabled]="isSubmitting() || (material()?.materialType !== 'Link' && !selectedFile()) || (material()?.materialType === 'Link' && !linkUrl())">
+      @if (isSubmitting()) {
+        <i class="pi pi-spin pi-spinner ml-2"></i>
+        جاري الرفع...
+      } @else {
+        تحديث المادة
+      }
+    </button>
+  </div>
+</draya-teacher-modal>

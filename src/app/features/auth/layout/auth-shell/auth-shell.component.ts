@@ -14,14 +14,10 @@ import { trigger, transition, style, query, animate, group } from '@angular/anim
   animations: [
     trigger('routeTransition', [
       transition('* <=> *', [
-        query(
+          query(
           ':enter, :leave',
           [
             style({
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
               opacity: 1,
             }),
           ],
@@ -44,12 +40,22 @@ import { trigger, transition, style, query, animate, group } from '@angular/anim
     ]),
   ],
   template: `
+    <style>
+      .auth-route-wrapper {
+        display: grid;
+        grid-template-columns: 100%;
+      }
+      .auth-route-wrapper > * {
+        grid-column: 1;
+        grid-row: 1;
+      }
+    </style>
     <div class="relative flex min-h-screen w-full flex-col overflow-hidden bg-white lg:block">
       <!-- Form Side -->
       <div
         class="relative z-10 flex flex-col overflow-y-auto bg-white px-6 py-8 transition-all duration-700 ease-in-out lg:absolute lg:top-0 lg:bottom-0 lg:w-1/2 lg:px-16 xl:px-24"
         [ngClass]="isLogin() ? 'lg:start-0' : 'lg:start-1/2'">
-        <div class="relative m-auto w-full py-8" [@routeTransition]="getRouteAnimationData(outlet)">
+        <div class="auth-route-wrapper relative m-auto w-full py-8" [@routeTransition]="getRouteAnimationData(outlet)">
           <router-outlet #outlet="outlet"></router-outlet>
         </div>
       </div>

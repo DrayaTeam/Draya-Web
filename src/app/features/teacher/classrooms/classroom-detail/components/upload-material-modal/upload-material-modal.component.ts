@@ -2,24 +2,28 @@
 import { Component, ChangeDetectionStrategy, input, output, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DialogModule } from 'primeng/dialog';
 import { MessageService } from 'primeng/api';
 import { finalize } from 'rxjs/operators';
 
 import { MaterialService } from '../../../../services/material.service';
 import { MaterialType, ClassroomMaterialDto } from '../../../../../../core/models/material.model';
+import { TeacherModalComponent } from '../../../../components/teacher-modal/teacher-modal.component';
 
 @Component({
   selector: 'draya-upload-material-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DialogModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TeacherModalComponent,
+  ],
   templateUrl: './upload-material-modal.component.html',
   styleUrl: './upload-material-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadMaterialModalComponent {
   readonly isOpen = input<boolean>(false);
-  readonly classroomId = input.required<string>();
+  readonly sectionId = input.required<string>();
   readonly uploadSuccess = output<ClassroomMaterialDto>();
   readonly cancelUpload = output<void>();
 
@@ -101,7 +105,7 @@ export class UploadMaterialModalComponent {
     }
 
     this.materialService
-      .addMaterial(this.classroomId(), formData)
+      .addMaterialToSection(this.sectionId(), formData)
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: (dto: ClassroomMaterialDto) => {
@@ -114,13 +118,11 @@ export class UploadMaterialModalComponent {
         },
         error: (err) => {
           console.error('Upload failed', err);
-
+          
           // Try to extract specific API error messages
           let errorDetail = 'حدث خطأ أثناء رفع المادة التعليمية. يرجى المحاولة مرة أخرى.';
           if (err.error?.error?.details?.length) {
-            errorDetail = err.error.error.details
-              .map((d: { field: string; issue: string }) => `${d.field}: ${d.issue}`)
-              .join('\n');
+            errorDetail = err.error.error.details.map((d: { field: string; issue: string }) => `${d.field}: ${d.issue}`).join('\n');
           } else if (err.error?.error?.message) {
             errorDetail = err.error.error.message;
           }

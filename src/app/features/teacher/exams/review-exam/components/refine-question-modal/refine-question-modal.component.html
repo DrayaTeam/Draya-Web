@@ -1,0 +1,50 @@
+@if (isOpen()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm animate-fade-in" (click)="closeModal()"></div>
+    
+    <!-- Modal -->
+    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-slide-up">
+      <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="text-xl font-bold text-gray-900">تحسين السؤال بالذكاء الاصطناعي</h3>
+        <button (click)="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 transition-colors">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <div class="p-6">
+        <div class="mb-6 p-4 bg-gray-50 rounded-xl text-gray-700 text-sm">
+          <span class="font-bold block mb-1">السؤال الحالي:</span>
+          {{ question()?.text }}
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="form-group mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">تعليمات التحسين</label>
+            <textarea formControlName="instruction" rows="4" 
+                      placeholder="مثال: اجعل السؤال أصعب، أو بسّط اللغة المستخدمة..." 
+                      class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#1B6D63] focus:border-transparent outline-none transition-all resize-none"></textarea>
+            @if (form.controls.instruction.touched && form.controls.instruction.invalid) {
+              <p class="text-red-500 text-xs mt-1">يرجى كتابة تعليمات واضحة للذكاء الاصطناعي</p>
+            }
+          </div>
+
+          <div class="flex justify-end gap-3">
+            <button type="button" (click)="closeModal()" [disabled]="isSubmitting()" class="px-5 py-2.5 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition-colors">
+              إلغاء
+            </button>
+            <button type="submit" [disabled]="form.invalid || isSubmitting()" class="px-6 py-2.5 bg-[#7C3AED] text-white rounded-xl font-medium hover:bg-purple-800 disabled:opacity-50 transition-colors flex items-center gap-2">
+              @if (isSubmitting()) {
+                <i class="pi pi-spinner pi-spin"></i>
+                جاري التحسين...
+              } @else {
+                <i class="pi pi-sparkles"></i>
+                تحسين السؤال
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}

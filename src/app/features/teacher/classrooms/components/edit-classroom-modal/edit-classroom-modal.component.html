@@ -1,181 +1,147 @@
-<p-dialog
-  [visible]="isOpen()"
-  [modal]="true"
-  [closable]="false"
-  [draggable]="false"
-  [resizable]="false"
-  [showHeader]="false"
-  styleClass="draya-headless-dialog"
-  [style]="{ width: '100%', maxWidth: '600px' }"
-  [contentStyle]="{ padding: '0', borderRadius: '16px', overflow: 'hidden' }"
-  (onHide)="close()">
-  <div class="modal-content" dir="rtl">
-    <!-- Header -->
-    <div class="modal-header">
-      <div>
-        <h2 class="modal-title">تعديل بيانات الفصل</h2>
-        <p class="modal-subtitle">قم بتحديث بيانات وموعد هذا الفصل الدراسي</p>
-      </div>
-      <button class="close-btn" (click)="close()" aria-label="Close modal">
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
+<draya-teacher-modal
+  [isOpen]="isOpen()"
+  title="تعديل بيانات الفصل"
+  size="md"
+  (modalClosed)="close()">
+  
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="draya-form">
+    <!-- Name -->
+    <div class="form-group">
+      <label for="name">اسم الفصل (مثال: مراجعة نهائية)</label>
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+        class="form-control"
+        placeholder="أدخل اسم الفصل"
+        [class.has-error]="form.get('name')?.invalid && form.get('name')?.touched" />
+      @if (form.get('name')?.invalid && form.get('name')?.touched) {
+        <span class="error-text">اسم الفصل يجب أن يكون 3 حروف على الأقل</span>
+      }
     </div>
 
-    <!-- Body -->
-    <div class="modal-body">
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="draya-form">
-        <!-- Name -->
-        <div class="field-group">
-          <label for="name">اسم الفصل (مثل: مراجعة أكتوبر)</label>
-          <input
-            id="name"
-            type="text"
-            formControlName="name"
-            class="form-input"
-            placeholder="أدخل اسم الفصل"
-            [class.has-error]="form.get('name')?.invalid && form.get('name')?.touched" />
-          @if (form.get('name')?.invalid && form.get('name')?.touched) {
-            <span class="error-msg">اسم الفصل مطلوب ويجب أن يكون 3 أحرف على الأقل</span>
+    <!-- Grade & Type -->
+    <div class="flex gap-4 mt-4">
+      <div class="form-group flex-1">
+        <label for="gradeLevelId">المرحلة الدراسية</label>
+        <select
+          id="gradeLevelId"
+          formControlName="gradeLevelId"
+          class="form-control"
+          [class.has-error]="
+            form.get('gradeLevelId')?.invalid && form.get('gradeLevelId')?.touched
+          ">
+          <option value="" disabled selected>اختر المرحلة</option>
+          @for (grade of gradeLevels(); track grade.id) {
+            <option [value]="grade.id">
+              {{ grade.name }}
+            </option>
           }
-        </div>
+        </select>
+      </div>
 
-        <!-- Grade & Type -->
-        <div class="form-row">
-          <div class="field-group">
-            <label for="gradeLevelId">المرحلة الدراسية</label>
-            <select
-              id="gradeLevelId"
-              formControlName="gradeLevelId"
-              class="form-select"
-              [class.has-error]="
-                form.get('gradeLevelId')?.invalid && form.get('gradeLevelId')?.touched
-              ">
-              <option value="" disabled selected>اختر المرحلة</option>
-              @for (grade of gradeLevels(); track grade.id) {
-                <option [value]="grade.id">
-                  {{ grade.name }}
-                </option>
-              }
-            </select>
-          </div>
-
-          <div class="field-group">
-            <label for="classroomTypeId">نوع الفصل</label>
-            <select
-              id="classroomTypeId"
-              formControlName="classroomTypeId"
-              class="form-select"
-              [class.has-error]="
-                form.get('classroomTypeId')?.invalid && form.get('classroomTypeId')?.touched
-              ">
-              <option value="" disabled selected>اختر النوع</option>
-              @for (type of classroomTypes(); track type.id) {
-                <option [value]="type.id">
-                  {{ type.name }}
-                </option>
-              }
-            </select>
-          </div>
-        </div>
-
-        <!-- Subject -->
-        <div class="field-group">
-          <label for="subjectId">المادة العلمية</label>
-          <select
-            id="subjectId"
-            formControlName="subjectId"
-            class="form-select"
-            [class.has-error]="form.get('subjectId')?.invalid && form.get('subjectId')?.touched">
-            <option value="" disabled selected>اختر المادة</option>
-            @for (sub of subjects(); track sub.id) {
-              <option [value]="sub.id">
-                {{ sub.name }}
-              </option>
-            }
-          </select>
-        </div>
-
-        <!-- Dates -->
-        <div class="form-row">
-          <div class="field-group">
-            <label for="startDate">تاريخ البدء</label>
-            <input
-              id="startDate"
-              type="datetime-local"
-              formControlName="startDate"
-              class="form-input"
-              [class.has-error]="
-                form.get('startDate')?.invalid && form.get('startDate')?.touched
-              " />
-          </div>
-
-          <div class="field-group">
-            <label for="endDate">تاريخ الانتهاء</label>
-            <input
-              id="endDate"
-              type="datetime-local"
-              formControlName="endDate"
-              class="form-input"
-              [class.has-error]="form.get('endDate')?.invalid && form.get('endDate')?.touched" />
-          </div>
-        </div>
-        @if (
-          form.hasError('dateRangeInvalid') &&
-          (form.get('startDate')?.touched || form.get('endDate')?.touched)
-        ) {
-          <span class="error-msg">يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء.</span>
-        }
-
-        <!-- Price & Active Status -->
-        <div class="form-row mt-4">
-          <div class="field-group">
-            <label for="price">سعر الاشتراك (جنيه مصري)</label>
-            <div class="input-with-icon">
-              <input
-                id="price"
-                type="number"
-                min="0"
-                formControlName="price"
-                class="form-input"
-                placeholder="0"
-                [class.has-error]="form.get('price')?.invalid && form.get('price')?.touched" />
-              <span class="input-icon">ج.م</span>
-            </div>
-          </div>
-
-          <div class="field-group toggle-group mt-6 pt-2">
-            <label class="toggle-container">
-              <input type="checkbox" formControlName="isActive" />
-              <span class="toggle-slider"></span>
-              <span class="toggle-label ms-2 font-medium">تفعيل الفصل الدراسي</span>
-            </label>
-          </div>
-        </div>
-      </form>
+      <div class="form-group flex-1">
+        <label for="classroomTypeId">نوع الفصل</label>
+        <select
+          id="classroomTypeId"
+          formControlName="classroomTypeId"
+          class="form-control"
+          [class.has-error]="
+            form.get('classroomTypeId')?.invalid && form.get('classroomTypeId')?.touched
+          ">
+          <option value="" disabled selected>اختر النوع</option>
+          @for (type of classroomTypes(); track type.id) {
+            <option [value]="type.id">
+              {{ type.name }}
+            </option>
+          }
+        </select>
+      </div>
     </div>
 
-    <!-- Footer -->
-    <div class="modal-footer">
-      <button class="btn-cancel" (click)="close()" [disabled]="isSubmitting()">إلغاء</button>
-      <button class="btn-submit" (click)="onSubmit()" [disabled]="isSubmitting()">
-        @if (isSubmitting()) {
-          <span>جاري الحفظ...</span>
+    <!-- Subject -->
+    <div class="form-group mt-4">
+      <label for="subjectId">المادة العلمية</label>
+      <select
+        id="subjectId"
+        formControlName="subjectId"
+        class="form-control"
+        [class.has-error]="form.get('subjectId')?.invalid && form.get('subjectId')?.touched">
+        <option value="" disabled selected>اختر المادة</option>
+        @for (sub of subjects(); track sub.id) {
+          <option [value]="sub.id">
+            {{ sub.name }}
+          </option>
         }
-        @if (!isSubmitting()) {
-          <span>حفظ التعديلات</span>
-        }
-      </button>
+      </select>
     </div>
+
+    <!-- Dates -->
+    <div class="flex gap-4 mt-4">
+      <div class="form-group flex-1">
+        <label for="startDate">تاريخ البدء</label>
+        <input
+          id="startDate"
+          type="datetime-local"
+          formControlName="startDate"
+          class="form-control"
+          [class.has-error]="
+            form.get('startDate')?.invalid && form.get('startDate')?.touched
+          " />
+      </div>
+
+      <div class="form-group flex-1">
+        <label for="endDate">تاريخ الانتهاء</label>
+        <input
+          id="endDate"
+          type="datetime-local"
+          formControlName="endDate"
+          class="form-control"
+          [class.has-error]="form.get('endDate')?.invalid && form.get('endDate')?.touched" />
+      </div>
+    </div>
+    @if (
+      form.hasError('dateRangeInvalid') &&
+      (form.get('startDate')?.touched || form.get('endDate')?.touched)
+    ) {
+      <span class="error-text">يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء.</span>
+    }
+
+    <!-- Price & Active Status -->
+    <div class="flex gap-4 items-center mt-4">
+      <div class="form-group flex-1">
+        <label for="price">سعر الاشتراك (جنية مصري)</label>
+        <div class="relative">
+          <input
+            id="price"
+            type="number"
+            min="0"
+            formControlName="price"
+            class="form-control pe-10"
+            placeholder="0"
+            [class.has-error]="form.get('price')?.invalid && form.get('price')?.touched" />
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">ج.م</span>
+        </div>
+      </div>
+
+      <div class="form-group flex-1 mt-6">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" formControlName="isActive" class="w-4 h-4 text-primary-600 rounded" />
+          <span class="font-medium text-gray-700">تفعيل قبول الطلاب</span>
+        </label>
+      </div>
+    </div>
+  </form>
+
+  <div modal-footer class="flex gap-3">
+    <button type="button" class="btn-outline" (click)="close()">إلغاء</button>
+    <button type="button" class="btn-primary" [disabled]="isSubmitting()" (click)="onSubmit()">
+      @if (!isSubmitting()) {
+        <span>حفظ التعديلات</span>
+      }
+      @if (isSubmitting()) {
+        <span>يتم الحفظ...</span>
+      }
+    </button>
   </div>
-</p-dialog>
+</draya-teacher-modal>

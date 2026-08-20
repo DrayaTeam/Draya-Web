@@ -59,8 +59,17 @@ function parseApiError(err: HttpErrorResponse): ApiError {
   // Empty-body 401 (logout, /auth/me bad token, etc.)
   if (!wrapper || typeof wrapper !== 'object') {
     if (err.status === HttpStatusCode.Unauthorized) {
-      return { code: 'SESSION_EXPIRED', message: 'انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.' };
+      return { code: 'SESSION_EXPIRED', message: 'انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى.' };
     }
+    
+    // Check for standard ASP.NET Core ProblemDetails
+    if (err.error && typeof err.error === 'object' && err.error.title) {
+      return {
+        code: `HTTP_${err.status}`,
+        message: err.error.detail || err.error.title
+      };
+    }
+
     return {
       code: `HTTP_${err.status}`,
       message: err.message ?? 'An unexpected error occurred.',

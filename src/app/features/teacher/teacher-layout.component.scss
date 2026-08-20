@@ -76,3 +76,10 @@
   box-sizing: border-box;
   padding-bottom: 100px; /* Extra padding to guarantee scroll clearance */
 }
+
+
+@media (min-width: 1024px) {
+  .portal-router-content {
+    padding-top: 72px;
+  }
+}

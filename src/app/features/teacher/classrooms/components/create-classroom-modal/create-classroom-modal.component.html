@@ -1,252 +1,246 @@
-<!-- src/app/features/teacher/classrooms/components/create-classroom-modal/create-classroom-modal.component.html -->
-@if (isOpen()) {
-  <div
-    class="modal-backdrop"
-    (click)="$event.target === $event.currentTarget && close()"
-    (keydown.enter)="$event.target === $event.currentTarget && close()"
-    tabindex="0">
-    <div class="modal-container" dir="rtl">
-      <div class="modal-header">
-        <div class="header-icon">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-          </svg>
-        </div>
-        <div class="header-text">
-          <h2 class="modal-title">إنشاء فصل دراسي جديد</h2>
-          <p class="modal-subtitle">أدخل تفاصيل الفصل الجديد لتمكين الطلاب من الانضمام إليه.</p>
-        </div>
-        <button class="close-btn" (click)="close()">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
+<draya-teacher-modal
+  [isOpen]="isOpen()"
+  title="إضافة فصل جديد"
+  size="md"
+  (modalClosed)="close()">
+  
+  <form class="draya-form" [formGroup]="form">
+    
+    <!-- Cover Image Box -->
+    <div class="form-group">
+      <label class="form-label">صورة الغلاف (اختياري)</label>
+      <div class="image-upload-box" [class.has-image]="!!imagePreview()">
+        @if (imagePreview()) {
+          <img [src]="imagePreview()" alt="Preview" class="cover-preview" />
+          <button type="button" class="remove-img-btn" (click)="removeImage()" title="إزالة الصورة">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        } @else {
+          <div class="upload-placeholder" (click)="fileInput.click()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            <span>انقر لاختيار صورة الغلاف</span>
+          </div>
+        }
+        <input #fileInput type="file" accept="image/jpeg, image/png, image/webp" class="hidden" (change)="onImageSelected($event)" />
       </div>
+    </div>
 
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="modal-body">
-        <!-- Name -->
-        <div class="form-group">
-          <label for="name" class="form-label">
-            اسم الفصل
+    <!-- Name Row -->
+    <div class="form-group">
+      <label for="name" class="form-label">
+        اسم الفصل
+        <span class="required">*</span>
+      </label>
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+        class="form-control"
+        placeholder="مثال: مراجعة نهائية لغة عربية"
+        [class.has-error]="form.get('name')?.invalid && form.get('name')?.touched" />
+      @if (form.get('name')?.hasError('minlength') && form.get('name')?.touched) {
+        <div class="error-text">اسم الفصل يجب أن يكون 3 حروف على الأقل.</div>
+      }
+    </div>
+
+    <!-- Subject & Grade Row -->
+    <div class="flex gap-4 mt-4">
+      <!-- Subject -->
+      <div class="form-group flex-1">
+        <div class="mb-1 flex items-center justify-between">
+          <label for="subjectId" class="form-label !mb-0">
+            المادة
             <span class="required">*</span>
           </label>
-          <input
-            id="name"
-            type="text"
-            formControlName="name"
-            class="form-input"
-            placeholder="مثال: مجموعة أ - فيزياء للثانوية العامة"
-            [class.error]="form.get('name')?.invalid && form.get('name')?.touched" />
-          @if (form.get('name')?.hasError('minlength') && form.get('name')?.touched) {
-            <div class="error-text">اسم الفصل يجب أن يكون 3 أحرف على الأقل.</div>
+          @if (!isCreatingSubject()) {
+            <button
+              type="button"
+              class="text-primary-600 hover:text-primary-800 text-xs font-medium"
+              (click)="toggleNewSubjectMode()">
+              + إضافة مادة جديدة
+            </button>
+          }
+          @if (isCreatingSubject()) {
+            <button
+              type="button"
+              class="text-xs font-medium text-gray-500 hover:text-gray-700"
+              (click)="toggleNewSubjectMode()">
+              إلغاء
+            </button>
           }
         </div>
 
-        <!-- Subject & Grade Row -->
-        <div class="form-row">
-          <!-- Subject -->
-          <div class="form-group flex-1">
-            <div class="mb-1 flex items-center justify-between">
-              <label for="subjectId" class="form-label !mb-0">
-                المادة
-                <span class="required">*</span>
-              </label>
-              @if (!isCreatingSubject()) {
-                <button
-                  type="button"
-                  class="text-primary-600 hover:text-primary-800 text-xs font-medium"
-                  (click)="toggleNewSubjectMode()">
-                  + إضافة مادة جديدة
-                </button>
-              }
-              @if (isCreatingSubject()) {
-                <button
-                  type="button"
-                  class="text-xs font-medium text-gray-500 hover:text-gray-700"
-                  (click)="toggleNewSubjectMode()">
-                  إلغاء
-                </button>
-              }
-            </div>
-
-            @if (!isCreatingSubject()) {
-              <select
-                id="subjectId"
-                formControlName="subjectId"
-                class="form-input"
-                [class.error]="form.get('subjectId')?.invalid && form.get('subjectId')?.touched">
-                <option value="" disabled selected>اختر المادة</option>
-                @for (subject of subjects(); track subject.id) {
-                  <option [value]="subject.id">{{ subject.name }}</option>
-                }
-              </select>
+        @if (!isCreatingSubject()) {
+          <select
+            id="subjectId"
+            formControlName="subjectId"
+            class="form-control"
+            [class.has-error]="form.get('subjectId')?.invalid && form.get('subjectId')?.touched">
+            <option value="" disabled selected>اختر المادة</option>
+            @for (subject of subjects(); track subject.id) {
+              <option [value]="subject.id">{{ subject.name }}</option>
             }
-
-            @if (isCreatingSubject()) {
-              <div class="flex gap-2">
-                <input
-                  type="text"
-                  class="form-input flex-1"
-                  placeholder="اسم المادة الجديدة"
-                  [formControl]="newSubjectControl" />
-                <button
-                  type="button"
-                  class="add-btn"
-                  (click)="createNewSubject()"
-                  [disabled]="newSubjectControl.invalid || isCreatingSubjectLoading()">
-                  {{ isCreatingSubjectLoading() ? '...' : 'إضافة' }}
-                </button>
-              </div>
-            }
-          </div>
-
-          <!-- Grade Level -->
-          <div class="form-group flex-1">
-            <label for="gradeLevelId" class="form-label">
-              الصف الدراسي
-              <span class="required">*</span>
-            </label>
-            <select
-              id="gradeLevelId"
-              formControlName="gradeLevelId"
-              class="form-input"
-              [class.error]="
-                form.get('gradeLevelId')?.invalid && form.get('gradeLevelId')?.touched
-              ">
-              <option value="" disabled selected>اختر الصف</option>
-              @for (grade of gradeLevels(); track grade.id) {
-                <option [value]="grade.id">{{ grade.name }}</option>
-              }
-            </select>
-          </div>
-        </div>
-
-        <!-- Type & Price Row -->
-        <div class="form-row">
-          <!-- Classroom Type -->
-          <div class="form-group flex-1">
-            <label for="classroomTypeId" class="form-label">
-              نوع الفصل
-              <span class="mr-1 text-xs font-normal text-gray-400">(اختياري)</span>
-            </label>
-            <select id="classroomTypeId" formControlName="classroomTypeId" class="form-input">
-              <option value="" selected>اختر النوع (اختياري)</option>
-              @for (type of classroomTypes(); track type.id) {
-                <option [value]="type.id">{{ type.name }}</option>
-              }
-            </select>
-          </div>
-
-          <!-- Price -->
-          <div class="form-group flex-1">
-            <label for="price" class="form-label">
-              سعر الاشتراك (ج.م)
-              <span class="required">*</span>
-            </label>
-            <input
-              id="price"
-              type="number"
-              formControlName="price"
-              class="form-input"
-              placeholder="0 للمجاني"
-              min="0"
-              [class.error]="form.get('price')?.invalid && form.get('price')?.touched" />
-          </div>
-        </div>
-
-        <!-- Dates Row -->
-        <div class="form-row">
-          <div class="form-group flex-1">
-            <label for="startDate" class="form-label">
-              تاريخ البداية
-              <span class="required">*</span>
-            </label>
-            <input
-              #startDateInput
-              id="startDate"
-              type="date"
-              formControlName="startDate"
-              class="form-input"
-              [class.error]="form.get('startDate')?.invalid && form.get('startDate')?.touched"
-              (click)="startDateInput.showPicker()" />
-          </div>
-          <div class="form-group flex-1">
-            <label for="endDate" class="form-label">
-              تاريخ النهاية
-              <span class="required">*</span>
-            </label>
-            <input
-              #endDateInput
-              id="endDate"
-              type="date"
-              formControlName="endDate"
-              class="form-input"
-              [class.error]="form.get('endDate')?.invalid && form.get('endDate')?.touched"
-              (click)="endDateInput.showPicker()" />
-          </div>
-        </div>
-
-        <!-- Date Error Message -->
-        @if (
-          form.errors?.['dateRangeInvalid'] &&
-          (form.get('startDate')?.touched || form.get('endDate')?.touched)
-        ) {
-          <div class="error-text">تاريخ النهاية يجب أن يكون بعد تاريخ البداية.</div>
+          </select>
         }
 
-        <!-- Quota Error Alert -->
-        @if (quotaError()) {
-          <div class="quota-error-alert">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-            <div>
-              <strong>تعذر الإنشاء:</strong>
-              {{ quotaError() }}
-            </div>
+        @if (isCreatingSubject()) {
+          <div class="flex gap-2">
+            <input
+              type="text"
+              class="form-control flex-1"
+              placeholder="اسم المادة الجديدة"
+              [formControl]="newSubjectControl" />
+            <button
+              type="button"
+              class="add-btn"
+              (click)="createNewSubject()"
+              [disabled]="newSubjectControl.invalid || isCreatingSubjectLoading()">
+              {{ isCreatingSubjectLoading() ? '...' : 'إضافة' }}
+            </button>
           </div>
         }
+      </div>
 
-        <div class="modal-footer">
-          <button type="button" class="cancel-btn" (click)="close()">إلغاء</button>
-          <button type="button" class="submit-btn" [disabled]="isSubmitting()" (click)="onSubmit()">
-            @if (!isSubmitting()) {
-              <span>إنشاء الفصل</span>
-            }
-            @if (isSubmitting()) {
-              <span>جاري الإنشاء...</span>
-            }
-          </button>
-        </div>
-      </form>
+      <!-- Grade Level -->
+      <div class="form-group flex-1">
+        <label for="gradeLevelId" class="form-label">
+          الصف الدراسي
+          <span class="required">*</span>
+        </label>
+        <select
+          id="gradeLevelId"
+          formControlName="gradeLevelId"
+          class="form-control"
+          [class.has-error]="
+            form.get('gradeLevelId')?.invalid && form.get('gradeLevelId')?.touched
+          ">
+          <option value="" disabled selected>اختر الصف</option>
+          @for (grade of gradeLevels(); track grade.id) {
+            <option [value]="grade.id">{{ grade.name }}</option>
+          }
+        </select>
+      </div>
     </div>
+
+    <!-- Type & Price Row -->
+    <div class="flex gap-4 mt-4">
+      <!-- Classroom Type -->
+      <div class="form-group flex-1">
+        <label for="classroomTypeId" class="form-label">
+          نوع الفصل
+          <span class="text-xs text-gray-400 font-normal mr-1">(اختياري)</span>
+        </label>
+        <select
+          id="classroomTypeId"
+          formControlName="classroomTypeId"
+          class="form-control"
+          [class.has-error]="
+            form.get('classroomTypeId')?.invalid && form.get('classroomTypeId')?.touched
+          ">
+          <option value="" selected>اختر النوع (اختياري)</option>
+          @for (type of classroomTypes(); track type.id) {
+            <option [value]="type.id">{{ type.name }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Price -->
+      <div class="form-group flex-1">
+        <label for="price" class="form-label">
+          سعر الاشتراك (ج.م)
+          <span class="required">*</span>
+        </label>
+        <input
+          id="price"
+          type="number"
+          formControlName="price"
+          class="form-control"
+          placeholder="0 مجاناً"
+          min="0"
+          [class.has-error]="form.get('price')?.invalid && form.get('price')?.touched" />
+      </div>
+    </div>
+
+    <!-- Dates Row -->
+    <div class="flex gap-4 mt-4">
+      <div class="form-group flex-1">
+        <label for="startDate" class="form-label">
+          تاريخ البداية
+          <span class="required">*</span>
+        </label>
+        <input
+          #startDateInput
+          id="startDate"
+          type="datetime-local"
+          formControlName="startDate"
+          class="form-control"
+          [class.has-error]="form.get('startDate')?.invalid && form.get('startDate')?.touched"
+          (click)="startDateInput.showPicker()" />
+      </div>
+      <div class="form-group flex-1">
+        <label for="endDate" class="form-label">
+          تاريخ النهاية
+          <span class="required">*</span>
+        </label>
+        <input
+          #endDateInput
+          id="endDate"
+          type="datetime-local"
+          formControlName="endDate"
+          class="form-control"
+          [class.has-error]="form.get('endDate')?.invalid && form.get('endDate')?.touched"
+          (click)="endDateInput.showPicker()" />
+      </div>
+    </div>
+
+    <!-- Date Error Message -->
+    @if (
+      form.errors?.['dateRangeInvalid'] &&
+      (form.get('startDate')?.touched || form.get('endDate')?.touched)
+    ) {
+      <div class="error-text">تاريخ النهاية يجب أن يكون بعد تاريخ البداية.</div>
+    }
+
+    <!-- Quota Error Alert -->
+    @if (quotaError()) {
+      <div class="quota-error-alert">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div>
+          <strong>خطأ:</strong>
+          {{ quotaError() }}
+        </div>
+      </div>
+    }
+  </form>
+
+  <div modal-footer class="flex gap-3">
+    <button type="button" class="btn-outline" (click)="close()">إلغاء</button>
+    <button type="button" class="btn-primary" [disabled]="isSubmitting()" (click)="onSubmit()">
+      @if (!isSubmitting()) {
+        <span>إنشاء فصل</span>
+      }
+      @if (isSubmitting()) {
+        <span>جاري الإنشاء...</span>
+      }
+    </button>
   </div>
-}
+</draya-teacher-modal>

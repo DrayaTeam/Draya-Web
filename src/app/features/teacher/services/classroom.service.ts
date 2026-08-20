@@ -74,7 +74,7 @@ export class ClassroomService {
   }
 
   /** Creates a new classroom */
-  createClassroom(payload: CreateClassroomRequest): Observable<ClassroomDto> {
+  createClassroom(payload: import('../../../core/models/classroom.model').CreateClassroomRequest): Observable<ClassroomDto> {
     return this.http.post<ClassroomDto>(this.baseUrl, payload);
   }
 
@@ -133,6 +133,7 @@ export class ClassroomService {
     const f = this._filters();
     const params = new URLSearchParams();
     params.set('pageNumber', f.pageNumber.toString());
+    params.set('page', f.pageNumber.toString());
     params.set('pageSize', f.pageSize.toString());
 
     if (f.gradeLevelId) {
@@ -148,12 +149,19 @@ export class ClassroomService {
       next: (res) => {
         this._classroomsResult.set(res);
         this._isLoading.set(false);
-      },
-      error: (err) => {
-        console.error('Failed to load classrooms', err);
-        this._classroomsResult.set(null);
-        this._isLoading.set(false);
-      },
+      }
     });
+  }
+
+  /** Retrieve all classrooms for the logged-in teacher without updating internal signals */
+  getTeacherClassrooms(page = 1, size = 100): Observable<ClassroomDtoPagedResult> {
+    return this.http.get<ClassroomDtoPagedResult>(`${this.baseUrl}?pageNumber=${page}&pageSize=${size}`);
+  }
+
+  /** Upload a cover image for a classroom */
+  uploadClassroomImage(classroomId: string, file: File): Observable<{ imageUrl: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ imageUrl: string }>(`${this.baseUrl}/${classroomId}/image`, formData);
   }
 }

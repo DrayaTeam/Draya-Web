@@ -1,204 +1,27 @@
-.modal-content {
-  background-color: var(--draya-surface-0, #ffffff);
-  width: 100%;
-  animation: slideUp 200ms cubic-bezier(0.16, 1, 0.3, 1);
-  display: flex;
-  flex-direction: column;
-  max-height: 90vh;
-}
-
-.modal-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 24px;
-  border-bottom: 1px solid var(--draya-surface-200, #e5e7eb);
-}
-
-.modal-title {
-  margin: 0 0 4px 0;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--draya-text-900, #111827);
-}
-
-.modal-subtitle {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--draya-text-500, #6b7280);
-}
-
-.close-btn {
-  background: transparent;
-  border: none;
-  color: var(--draya-text-400, #9ca3af);
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 6px;
-  transition: all 150ms ease;
-
-  &:hover {
-    background-color: var(--draya-surface-100, #f3f4f6);
-    color: var(--draya-text-700, #374151);
-  }
-}
-
-.modal-body {
-  padding: 24px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-.draya-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.field-group {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-
-  label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--draya-text-700, #374151);
-    margin-bottom: 8px;
-  }
-}
-
-.form-input,
-.form-select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--draya-surface-300, #d1d5db);
-  border-radius: 8px;
-  font-size: 0.875rem;
-  color: var(--draya-text-900, #111827);
-  background-color: var(--draya-surface-0, #ffffff);
-  transition: all 150ms ease;
-  outline: none;
-  font-family: inherit;
-
-  &:focus {
-    border-color: var(--draya-primary-500, #2e9e91);
-    box-shadow: 0 0 0 2px rgba(46, 158, 145, 0.2);
-  }
-
-  &.has-error {
-    border-color: #ef4444;
-    &:focus {
-      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
-    }
-  }
-}
-
-textarea.form-input {
-  min-height: 100px;
-  resize: vertical;
-}
-
-.error-msg {
-  font-size: 0.75rem;
-  color: #ef4444;
-  margin-top: 4px;
-}
-
-/* File Upload Box */
 .file-upload-box {
-  border: 2px dashed var(--draya-surface-300, #d1d5db);
+  border: 2px dashed #d1d5db;
   border-radius: 12px;
-  background-color: var(--draya-surface-50, #f9fafb);
-  transition: all 150ms ease;
-  overflow: hidden;
-
-  &:hover {
-    border-color: var(--draya-primary-500, #2e9e91);
-    background-color: var(--draya-primary-50, #f0fdfa);
-  }
+  background-color: #f9fafb;
+  transition: all 200ms ease;
 
   &.has-error {
     border-color: #ef4444;
     background-color: #fef2f2;
   }
-}
 
-.file-upload-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 32px 16px;
-  cursor: pointer;
-  width: 100%;
-  height: 100%;
-  margin: 0 !important;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding: 24px;
-  border-top: 1px solid var(--draya-surface-200, #e5e7eb);
-}
-
-.btn-cancel {
-  background: transparent;
-  border: 1px solid var(--draya-surface-300, #d1d5db);
-  color: var(--draya-text-700, #374151);
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 150ms ease;
-
-  &:hover {
-    background-color: var(--draya-surface-100, #f3f4f6);
-  }
-}
-
-.btn-submit {
-  background-color: var(--draya-primary-700, #1b6d63);
-  color: #ffffff;
-  border: none;
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 150ms ease;
-  display: flex;
-  align-items: center;
-
-  &:hover:not(:disabled) {
-    background-color: var(--draya-primary-800, #134e48);
+  &:hover:not(.has-error) {
+    border-color: #1b6d63;
+    background-color: #f0fdfa;
   }
 
-  &:active:not(:disabled) {
-    transform: scale(0.98);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
-
-.mt-2 {
-  margin-top: 8px;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+  .file-upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
   }
 }

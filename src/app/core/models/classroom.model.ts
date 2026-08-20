@@ -34,6 +34,7 @@ export interface ClassroomDto {
   startDate: string;
   endDate: string;
   price: number;
+  imageUrl?: string;
 }
 
 export interface CreateClassroomRequest {

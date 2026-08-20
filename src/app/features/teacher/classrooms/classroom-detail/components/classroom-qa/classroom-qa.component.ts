@@ -21,6 +21,7 @@ import {
 } from '../../../../../../core/models/qa.model';
 import { ApiError } from '../../../../../../core/models/api-error.model';
 import { MessageService } from 'primeng/api';
+import { AuthService } from '../../../../../../features/auth';
 
 @Component({
   selector: 'draya-classroom-qa',
@@ -35,6 +36,18 @@ export class ClassroomQaComponent {
 
   private readonly qaService = inject(QaService);
   private readonly messageService = inject(MessageService, { optional: true });
+  private readonly auth = inject(AuthService);
+
+  readonly currentUserPictureUrl = computed(() => {
+    const user = this.auth.currentUser();
+    return user?.profilePictureUrl || user?.pictureUrl || null;
+  });
+
+  readonly currentUserInitial = computed(() => {
+    const name = this.auth.currentUser()?.fullName || '';
+    return name.trim().charAt(0) || 'م';
+  });
+
 
   readonly questions = signal<QuestionDto[]>([]);
   readonly isLoading = signal<boolean>(false);

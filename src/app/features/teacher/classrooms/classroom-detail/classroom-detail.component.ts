@@ -7,7 +7,10 @@ import { ClassroomService } from '../../services/classroom.service';
 import { ClassroomStudentsComponent } from './components/classroom-students/classroom-students.component';
 import { ClassroomMaterialsComponent } from './components/classroom-materials/classroom-materials.component';
 import { ClassroomQaComponent } from './components/classroom-qa/classroom-qa.component';
+import { ClassroomExamsComponent } from './components/classroom-exams/classroom-exams.component';
 import { EditClassroomModalComponent } from '../components/edit-classroom-modal/edit-classroom-modal.component';
+import { TeacherModalComponent } from '../../components/teacher-modal/teacher-modal.component'; 
+import { SharedModule } from 'primeng/api';
 
 @Component({
   selector: 'draya-classroom-detail',
@@ -19,7 +22,10 @@ import { EditClassroomModalComponent } from '../components/edit-classroom-modal/
     ClassroomStudentsComponent,
     ClassroomMaterialsComponent,
     ClassroomQaComponent,
+    ClassroomExamsComponent,
     EditClassroomModalComponent,
+    TeacherModalComponent,
+    SharedModule,
   ],
   providers: [ConfirmationService],
   templateUrl: './classroom-detail.component.html',
@@ -38,6 +44,9 @@ export class ClassroomDetailComponent implements OnInit {
   readonly isLoading = this.classroomService.isLoading;
   readonly hasError = signal<boolean>(false);
   readonly isEditModalOpen = signal<boolean>(false);
+  readonly isRegenerateModalOpen = signal<boolean>(false);
+  readonly isDeactivateModalOpen = signal<boolean>(false);
+  readonly isUploadingImage = signal<boolean>(false);
   readonly activeTab = signal<number>(0);
 
   ngOnInit(): void {
@@ -63,19 +72,14 @@ export class ClassroomDetailComponent implements OnInit {
   confirmDeactivateClassroom(): void {
     const current = this.classroom();
     if (!current) return;
-
-    this.confirmationService.confirm({
-      message: 'سيتم إخفاء الفصل عن الطلاب الجدد، لكنه سيبقى في قائمتك. هل تريد الاستمرار؟',
-      header: 'تعطيل الفصل',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'نعم، قم بالتعطيل',
-      rejectLabel: 'إلغاء',
-      acceptButtonStyleClass: 'p-button-danger',
-      rejectButtonStyleClass: 'p-button-text',
-      accept: () => {
-        this.deactivateClassroom(current.classroomId);
-      },
-    });
+    this.isDeactivateModalOpen.set(true);
+  }
+  
+  executeDeactivateClassroom(): void {
+    const current = this.classroom();
+    if (!current) return;
+    this.isDeactivateModalOpen.set(false);
+    this.deactivateClassroom(current.classroomId);
   }
 
   private deactivateClassroom(id: string): void {
@@ -102,20 +106,14 @@ export class ClassroomDetailComponent implements OnInit {
   confirmRegenerateCode(): void {
     const current = this.classroom();
     if (!current) return;
-
-    this.confirmationService.confirm({
-      message:
-        'إنشاء كود جديد سيُبطل الكود القديم فوراً، ولن يتمكن الطلاب الجدد من استخدامه. هل أنت متأكد؟',
-      header: 'إنشاء كود تسجيل جديد',
-      icon: 'pi pi-info-circle',
-      acceptLabel: 'نعم، إنشاء كود جديد',
-      rejectLabel: 'إلغاء',
-      acceptButtonStyleClass: 'p-button-primary',
-      rejectButtonStyleClass: 'p-button-text',
-      accept: () => {
-        this.regenerateCode(current.classroomId);
-      },
-    });
+    this.isRegenerateModalOpen.set(true);
+  }
+  
+  executeRegenerateCode(): void {
+    const current = this.classroom();
+    if (!current) return;
+    this.isRegenerateModalOpen.set(false);
+    this.regenerateCode(current.classroomId);
   }
 
   private regenerateCode(id: string): void {
@@ -135,6 +133,28 @@ export class ClassroomDetailComponent implements OnInit {
           summary: 'خطأ',
           detail: 'حدث خطأ أثناء إنشاء كود جديد.',
         });
+      },
+    });
+  }
+
+  onCoverImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file || !this.classroom()?.classroomId) return;
+
+    this.isUploadingImage.set(true);
+    this.classroomService.uploadClassroomImage(this.classroom()!.classroomId, file).subscribe({
+      next: (res) => {
+        this.classroomService.setActiveClassroom({ ...this.classroom()!, imageUrl: res.imageUrl });
+        this.messageService?.add({ severity: 'success', summary: 'تم', detail: 'تم تحديث صورة الغلاف بنجاح.' });
+        this.isUploadingImage.set(false);
+        input.value = '';
+      },
+      error: (err) => {
+        console.error('Failed to upload classroom image', err);
+        this.messageService?.add({ severity: 'error', summary: 'خطأ', detail: 'فشل رفع الصورة. حاول مرة أخرى.' });
+        this.isUploadingImage.set(false);
+        input.value = '';
       },
     });
   }

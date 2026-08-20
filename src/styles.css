@@ -16,11 +16,11 @@ svg {
 }
 
 /* Force cursor pointer on all buttons */
-button,
-[role='button'],
-input[type='button'],
-input[type='submit'],
-input[type='reset'] {
+button, 
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
   cursor: pointer;
 }
 
@@ -175,9 +175,7 @@ input[type='reset'] {
   padding: 0.5rem !important;
   border-radius: 12px !important;
   background: #ffffff !important;
-  box-shadow:
-    0 10px 25px -5px rgba(0, 0, 0, 0.1),
-    0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
   border: 1px solid #f1f5f9 !important;
 }
 
@@ -239,6 +237,147 @@ input[type='reset'] {
 .draya-action-menu .p-menuitem-link:hover .p-menuitem-icon {
   color: #1b6d63 !important;
 }
+
+
+/* %% Shared Modal Forms & Buttons %% */
+.draya-form {
+  width: 100%;
+}
+
+.draya-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.draya-form .form-group label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.draya-form .form-group label.required::after {
+  content: '*';
+  color: #ef4444;
+  margin-right: 4px;
+}
+
+.draya-form .form-control {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: all 150ms ease;
+  width: 100%;
+  font-family: inherit;
+}
+
+.draya-form .form-control:focus {
+  outline: none;
+  border-color: #1b6d63;
+  box-shadow: 0 0 0 2px rgba(27, 109, 99, 0.1);
+}
+
+.draya-form .error-text {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+
+/* ── Shared Modal Forms & Buttons ── */
+.draya-form {
+  width: 100%;
+}
+
+.draya-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.draya-form .form-group label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.draya-form .form-group label.required::after {
+  content: '*';
+  color: #ef4444;
+  margin-right: 4px;
+}
+
+.draya-form .form-control {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: all 150ms ease;
+  width: 100%;
+  font-family: inherit;
+}
+
+.draya-form .form-control:focus {
+  outline: none;
+  border-color: #1b6d63;
+  box-shadow: 0 0 0 2px rgba(27, 109, 99, 0.1);
+}
+
+.draya-form .error-text {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+/* ── Form Buttons ── */
+.btn-primary {
+  background-color: var(--draya-primary-700, #1b6d63);
+  color: #ffffff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 9999px !important;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 150ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--draya-primary-800, #134e48);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--draya-surface-300, #d1d5db);
+  color: var(--draya-text-700, #374151);
+  padding: 10px 20px;
+  border-radius: 9999px !important;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 150ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-outline:hover {
+  background-color: var(--draya-surface-100, #f3f4f6);
+}
+
 
 /* ── Global RTL & LTR Cascading Controls ── */
 html[dir='ltr'] {

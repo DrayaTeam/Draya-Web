@@ -9,6 +9,8 @@ import {
   effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TeacherModalComponent } from '../../../components/teacher-modal/teacher-modal.component';
+import { SharedModule } from 'primeng/api';
 import {
   FormBuilder,
   FormGroup,
@@ -48,7 +50,7 @@ function dateRangeValidator(control: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'draya-edit-classroom-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DialogModule],
+  imports: [CommonModule, ReactiveFormsModule, TeacherModalComponent, SharedModule],
   templateUrl: './edit-classroom-modal.component.html',
   styleUrl: './edit-classroom-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

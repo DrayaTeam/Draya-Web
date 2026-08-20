@@ -39,6 +39,11 @@ export class MaterialService {
     );
   }
 
+  /** Uploads a new material to a specific section via FormData */
+  addMaterialToSection(sectionId: string, formData: FormData): Observable<any> {
+    return this.http.post<any>(`${environment.apiBaseUrl}/sections/${sectionId}/materials`, formData);
+  }
+
   /** Fully removes a material from a classroom */
   removeMaterial(materialId: string): Observable<void> {
     return this.http.delete<void>(`${this.materialBaseUrl}/${materialId}`);

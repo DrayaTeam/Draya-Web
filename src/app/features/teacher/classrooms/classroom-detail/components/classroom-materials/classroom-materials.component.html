@@ -1,45 +1,58 @@
 <div class="materials-container relative">
-  <!-- Upload Modal -->
-  <draya-upload-material-modal
-    [isOpen]="isUploadModalVisible()"
+  <!-- Create Section Modal -->
+  <draya-create-section-modal
+    [isOpen]="isCreateSectionModalVisible()"
     [classroomId]="classroomId()"
-    (uploadSuccess)="onUploadSuccess($event)"
-    (cancelUpload)="isUploadModalVisible.set(false)"></draya-upload-material-modal>
+    (sectionCreated)="onSectionCreated()"
+    (modalClosed)="isCreateSectionModalVisible.set(false)">
+  </draya-create-section-modal>
+
+  <!-- Edit Section Modal -->
+  <draya-edit-section-modal
+    [isOpen]="isEditSectionModalVisible()"
+    [section]="selectedSection()"
+    (sectionUpdated)="onSectionUpdated()"
+    (modalClosed)="isEditSectionModalVisible.set(false)">
+  </draya-edit-section-modal>
+
+  <!-- Upload Material Modal -->
+  @if (targetSectionIdForUpload()) {
+    <draya-upload-material-modal
+      [isOpen]="isUploadModalVisible()"
+      [sectionId]="targetSectionIdForUpload()!"
+      (uploadSuccess)="onUploadSuccess()"
+      (cancelUpload)="isUploadModalVisible.set(false)">
+    </draya-upload-material-modal>
+  }
 
   <!-- Upload Version Modal -->
   <draya-upload-version-modal
     [isOpen]="isUploadVersionModalVisible()"
     [material]="selectedMaterial()"
-    (uploadSuccess)="onUploadVersionSuccess($event)"
-    (cancelUpload)="isUploadVersionModalVisible.set(false)"></draya-upload-version-modal>
+    (uploadSuccess)="onUploadVersionSuccess()"
+    (cancelUpload)="isUploadVersionModalVisible.set(false)">
+  </draya-upload-version-modal>
 
   <!-- Material Versions Modal -->
   <draya-material-versions-modal
     [isOpen]="isVersionsModalVisible()"
     [material]="selectedMaterial()"
-    (closeModal)="isVersionsModalVisible.set(false)"></draya-material-versions-modal>
+    (closeModal)="isVersionsModalVisible.set(false)">
+  </draya-material-versions-modal>
 
   <!-- Header Section -->
   <div class="materials-toolbar">
     <div class="toolbar-left">
-      <h3 class="toolbar-title">قائمة المواد التعليمية</h3>
-      <span class="toolbar-badge">{{ materialsResult()?.length ?? 0 }} مادة</span>
+      <h3 class="toolbar-title">{{ 'TEACHER.SECTIONS.TITLE' | translate }}</h3>
+      <span class="toolbar-badge">{{ sectionsResult()?.length ?? 0 }} أجزاء</span>
     </div>
     <div class="toolbar-right">
-      <button class="btn-primary" (click)="openUploadModal()">
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.5"
-          stroke-linecap="round"
-          stroke-linejoin="round">
+      <button class="btn-primary" (click)="openCreateSectionModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-        إضافة مادة
+        {{ 'TEACHER.SECTIONS.ADD_SECTION' | translate }}
       </button>
     </div>
   </div>
@@ -48,141 +61,201 @@
   @if (isLoading()) {
     <div class="flex flex-col items-center justify-center py-16 text-gray-500">
       <i class="pi pi-spin pi-spinner text-primary-600 mb-4 text-4xl"></i>
-      <p>جاري تحميل المواد التعليمية...</p>
+      <p>جاري تحميل الأقسام...</p>
     </div>
   } @else {
     <!-- Empty State -->
-    @if (!materialsResult()?.length) {
+    @if (!sectionsResult()?.length) {
       <div class="empty-state">
         <div class="empty-icon-wrap">
-          <svg
-            width="40"
-            height="40"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round">
-            <path
-              d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
           </svg>
         </div>
-        <h4 class="empty-title">لا توجد مواد تعليمية</h4>
-        <p class="empty-text">قم برفع أول مادة تعليمية ليتمكن الطلاب من الوصول إليها.</p>
-        <button class="btn-primary" (click)="openUploadModal()" style="margin-top: 24px">
-          إضافة مادة الآن
+        <h4 class="empty-title">{{ 'TEACHER.SECTIONS.EMPTY_TITLE' | translate }}</h4>
+        <p class="empty-text">{{ 'TEACHER.SECTIONS.EMPTY_DESC' | translate }}</p>
+        <button class="btn-primary mt-6" (click)="openCreateSectionModal()">
+          {{ 'TEACHER.SECTIONS.ADD_SECTION' | translate }}
         </button>
       </div>
     } @else {
-      <!-- Grid Layout -->
-      <div class="materials-grid">
-        @for (material of materialsResult(); track material.materialId) {
-          <div class="material-card">
-            <div
-              class="material-icon"
-              [ngClass]="{
-                'icon-pdf': material.materialType === 'PDF',
-                'icon-video': material.materialType === 'Video',
-                'icon-link': material.materialType === 'Link',
-              }">
-              <i
-                class="pi"
-                [ngClass]="{
-                  'pi-file-pdf': material.materialType === 'PDF',
-                  'pi-video': material.materialType === 'Video',
-                  'pi-link': material.materialType === 'Link',
-                }"></i>
-            </div>
-
-            <div class="material-content">
-              <h4 class="material-title" [title]="material.title">{{ material.title }}</h4>
-              <div class="material-meta">
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="16" y1="2" x2="16" y2="6"></line>
-                  <line x1="8" y1="2" x2="8" y2="6"></line>
-                  <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-                <span>{{ material.createdAt | date: 'dd MMM yyyy' }}</span>
+      <!-- Sections List (Accordion Style) -->
+      <div class="sections-list">
+        @for (section of sectionsResult(); track section.id) {
+          <div class="section-card" [class.is-expanded]="expandedSections()[section.id]">
+            
+            <!-- Section Header -->
+            <div class="section-header" (click)="toggleSection(section.id)">
+              <div class="sh-left">
+                <button class="sh-toggle-btn">
+                  <i class="pi" [ngClass]="expandedSections()[section.id] ? 'pi-chevron-down' : 'pi-chevron-left'"></i>
+                </button>
+                <div class="sh-info">
+                  <h4 class="sh-title">{{ section.title }}</h4>
+                  @if (section.description) {
+                    <p class="sh-desc">{{ section.description }}</p>
+                  }
+                </div>
+              </div>
+              <div class="sh-right" (click)="$event.stopPropagation()">
+                <span class="sh-badge">{{ section.materials?.length || 0 }} {{ 'TEACHER.SECTIONS.MATERIAL_COUNT' | translate }}</span>
+                <button class="sh-action-btn" (click)="openUploadModal(section.id, $event)" title="إضافة مادة">
+                  <i class="pi pi-plus"></i>
+                </button>
+                <button class="sh-action-btn edit-btn" (click)="openEditSectionModal(section, $event)" title="تعديل القسم">
+                  <i class="pi pi-pencil"></i>
+                </button>
+                <button class="sh-action-btn delete-btn" (click)="confirmDeleteSection(section, $event)" title="حذف القسم">
+                  <i class="pi pi-trash"></i>
+                </button>
               </div>
             </div>
 
-            <div
-              class="material-actions card-menu-wrapper"
-              role="presentation"
-              tabindex="-1"
-              (click)="$event.stopPropagation()"
-              (keydown)="$event.stopPropagation()">
-              <button
-                class="action-btn-menu"
-                (click)="toggleMenu(material.materialId, $event)"
-                [attr.aria-expanded]="openMenuId() === material.materialId"
-                title="خيارات">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="1"></circle>
-                  <circle cx="12" cy="5" r="1"></circle>
-                  <circle cx="12" cy="19" r="1"></circle>
-                </svg>
-              </button>
+            <!-- Section Content (Materials) -->
+            @if (expandedSections()[section.id]) {
+              <div class="section-content modern-section-content">
+                @if (!section.documents?.length && !section.videos?.length && !section.exams?.length) {
+                  <div class="section-empty">
+                    <p>{{ 'TEACHER.SECTIONS.SECTION_EMPTY_MATERIALS' | translate }}</p>
+                    <button class="btn-outline-sm mt-3" (click)="openUploadModal(section.id)">
+                      <i class="pi pi-plus"></i> {{ 'TEACHER.SECTIONS.ADD_MATERIAL' | translate }}
+                    </button>
+                  </div>
+                } @else {
+                  <div class="materials-tabs-layout">
+                    
+                    <!-- Segmented Tabs Header -->
+                    <div class="segmented-tabs">
+                      @if (section.videos?.length) {
+                        <button class="segment-tab" 
+                                [class.active]="getSectionTab(section) === 'videos'"
+                                (click)="setSectionTab(section.id, 'videos')">
+                          <i class="pi pi-video"></i> فيديوهات الدرس
+                          <span class="tab-badge">{{section.videos?.length || 0}}</span>
+                        </button>
+                      }
+                      
+                      @if (section.documents?.length) {
+                        <button class="segment-tab" 
+                                [class.active]="getSectionTab(section) === 'documents'"
+                                (click)="setSectionTab(section.id, 'documents')">
+                          <i class="pi pi-file-pdf"></i> مذكرات وملفات
+                          <span class="tab-badge">{{section.documents?.length || 0}}</span>
+                        </button>
+                      }
 
-              @if (openMenuId() === material.materialId) {
-                <div class="custom-dropdown-menu">
-                  <button
-                    class="dropdown-item"
-                    (click)="openStream(material); toggleMenu(material.materialId, $event)">
-                    <i class="pi pi-external-link"></i>
-                    <span class="dropdown-item-label">فتح / تحميل</span>
-                  </button>
-                  <button
-                    class="dropdown-item"
-                    (click)="
-                      openUploadVersionModal(material); toggleMenu(material.materialId, $event)
-                    ">
-                    <i class="pi pi-upload"></i>
-                    <span class="dropdown-item-label">تحديث المادة</span>
-                  </button>
-                  <button
-                    class="dropdown-item"
-                    (click)="
-                      openVersionHistoryModal(material); toggleMenu(material.materialId, $event)
-                    ">
-                    <i class="pi pi-history"></i>
-                    <span class="dropdown-item-label">سجل الإصدارات</span>
-                  </button>
-                  <div class="dropdown-divider"></div>
-                  <button
-                    class="dropdown-item danger-item"
-                    (click)="
-                      confirmDeleteMaterial(material); toggleMenu(material.materialId, $event)
-                    ">
-                    <i class="pi pi-trash"></i>
-                    <span class="dropdown-item-label">حذف المادة</span>
-                  </button>
-                </div>
-              }
-            </div>
+                      @if (section.exams?.length) {
+                        <button class="segment-tab" 
+                                [class.active]="getSectionTab(section) === 'exams'"
+                                (click)="setSectionTab(section.id, 'exams')">
+                          <i class="pi pi-check-square"></i> اختبارات
+                          <span class="tab-badge">{{section.exams?.length || 0}}</span>
+                        </button>
+                      }
+                    </div>
+
+                    <!-- Tab Content Area -->
+                    <div class="tab-content-area">
+                      @if (getSectionTab(section) === 'videos') {
+                        <div class="materials-list-modern">
+                          @for (material of section.videos; track material.id) {
+                            <ng-container *ngTemplateOutlet="materialRow; context: { material: material }"></ng-container>
+                          }
+                        </div>
+                      }
+
+                      @if (getSectionTab(section) === 'documents') {
+                        <div class="materials-list-modern">
+                          @for (material of section.documents; track material.id) {
+                            <ng-container *ngTemplateOutlet="materialRow; context: { material: material }"></ng-container>
+                          }
+                        </div>
+                      }
+                      
+                      @if (getSectionTab(section) === 'exams') {
+                        <div class="materials-list-modern">
+                          <!-- Exams logic will go here -->
+                        </div>
+                      }
+                    </div>
+
+                  </div>
+                }
+              </div>
+            }
           </div>
         }
       </div>
     }
   }
+
+<!-- Material Row Template -->
+<ng-template #materialRow let-material="material">
+  <div class="material-row-modern">
+    <div
+      class="row-icon-wrapper"
+      [ngClass]="{
+        'is-pdf': material.materialType === 'PDF',
+        'is-video': material.materialType === 'Video',
+        'is-link': material.materialType === 'Link'
+      }">
+      <i
+        class="pi"
+        [ngClass]="{
+          'pi-file-pdf': material.materialType === 'PDF',
+          'pi-video': material.materialType === 'Video',
+          'pi-link': material.materialType === 'Link'
+        }"></i>
+    </div>
+
+    <div class="row-details flex-1">
+      <h4 class="row-title" [title]="material.title">{{ material.title }}</h4>
+      <div class="row-meta">
+        <i class="pi pi-calendar"></i>
+        <span>{{ material.createdAt | date: 'dd MMM yyyy' }}</span>
+      </div>
+    </div>
+
+    <div class="row-actions card-menu-wrapper"
+         role="presentation"
+         tabindex="-1"
+         (click)="$event.stopPropagation()"
+         (keydown)="$event.stopPropagation()">
+      
+      <!-- Primary quick action -->
+      <button class="btn-quick-action" (click)="openStream(material); $event.stopPropagation()" title="فتح / تحميل">
+        <i class="pi pi-external-link"></i>
+      </button>
+
+      <!-- 3 dots menu -->
+      <button
+        class="action-btn-menu"
+        (click)="toggleMenu(material.id, $event)"
+        [attr.aria-expanded]="openMenuId() === material.id"
+        title="خيارات">
+        <i class="pi pi-ellipsis-v"></i>
+      </button>
+
+      @if (openMenuId() === material.id) {
+        <div class="custom-dropdown-menu modern-dropdown">
+          <button class="dropdown-item" (click)="openUploadVersionModal(material); toggleMenu(material.id, $event)">
+            <i class="pi pi-upload"></i>
+            <span class="dropdown-item-label">رفع اصدار جديد</span>
+          </button>
+          <button class="dropdown-item" (click)="openVersionHistoryModal(material); toggleMenu(material.id, $event)">
+            <i class="pi pi-history"></i>
+            <span class="dropdown-item-label">تاريخ الاصدارات</span>
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item text-red-600 hover:bg-red-50" (click)="confirmDeleteMaterial(material); toggleMenu(material.id, $event)">
+            <i class="pi pi-trash"></i>
+            <span class="dropdown-item-label">حذف المادة</span>
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</ng-template>
 
   <!-- Inline Material Preview Modal (Video & PDF) -->
   @if (activePreviewMaterial()) {
@@ -251,6 +324,13 @@
               <i class="pi pi-spin pi-spinner text-primary-600 mb-3 text-3xl"></i>
               <p>جاري تحضير المادة للمعاينة...</p>
             </div>
+                    } @else if (isProcessing()) {
+            <div class="preview-processing">
+              <i class="pi pi-cloud-upload text-primary-600 mb-3 text-4xl" style="animation: bounce 2s infinite;"></i>
+              <p class="font-bold text-gray-800 text-lg">جاري معالجة الملف وتجهيزه للعرض</p>
+              <p class="text-sm text-gray-500 mt-1">يرجى الانتظار بضع ثوانٍ...</p>
+              <i class="pi pi-spin pi-spinner mt-4 text-primary-500"></i>
+            </div>
           } @else if (previewError()) {
             <div class="preview-error">
               <i class="pi pi-exclamation-circle mb-2 text-3xl text-amber-500"></i>
@@ -290,4 +370,29 @@
       </div>
     </div>
   }
-</div>
+
+<draya-teacher-modal
+  [isOpen]="isDeleteSectionModalOpen()"
+  title="تأكيد الحذف"
+  (modalClosed)="isDeleteSectionModalOpen.set(false)">
+  <div class="draya-form p-4">
+    <p class="text-gray-700 mb-4">هل أنت متأكد من أنك تريد حذف هذا القسم؟ سيتم حذف جميع المواد التعليمية بداخله.</p>
+  </div>
+  <div modal-footer class="flex gap-3">
+    <button class="btn-outline" (click)="isDeleteSectionModalOpen.set(false)">إلغاء</button>
+    <button class="btn-primary bg-red-600 hover:bg-red-700 border-none" (click)="executeDeleteSection()">نعم، احذف</button>
+  </div>
+</draya-teacher-modal>
+
+<draya-teacher-modal
+  [isOpen]="isDeleteMaterialModalOpen()"
+  title="تأكيد الحذف"
+  (modalClosed)="isDeleteMaterialModalOpen.set(false)">
+  <div class="draya-form p-4">
+    <p class="text-gray-700 mb-4">هل أنت متأكد من أنك تريد حذف هذه المادة؟</p>
+  </div>
+  <div modal-footer class="flex gap-3">
+    <button class="btn-outline" (click)="isDeleteMaterialModalOpen.set(false)">إلغاء</button>
+    <button class="btn-primary bg-red-600 hover:bg-red-700 border-none" (click)="executeDeleteMaterial()">نعم، احذف</button>
+  </div>
+</draya-teacher-modal>

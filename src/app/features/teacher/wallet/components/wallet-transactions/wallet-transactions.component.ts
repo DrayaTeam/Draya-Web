@@ -142,4 +142,13 @@ export class WalletTransactionsComponent implements OnInit {
         return 'badge-gray';
     }
   }
+
+  getEffectiveAmount(tx: WalletTransaction): number {
+    // Force withdrawals and purchases to be negative deductions
+    if (tx.type === TransactionType.Withdrawal || tx.type === TransactionType.Purchased) {
+      return -Math.abs(tx.amount);
+    }
+    // Force earnings and top-ups to be positive additions
+    return Math.abs(tx.amount);
+  }
 }
