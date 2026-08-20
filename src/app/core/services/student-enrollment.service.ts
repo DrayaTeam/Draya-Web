@@ -154,28 +154,26 @@ export class StudentEnrollmentService extends ApiBaseService {
           }
         | { id?: string; title?: string; name?: string; type?: string; duration?: string }[]
       >(`/classrooms/${classroomId}/materials`).pipe(catchError(() => of(null))),
-      sectionsRes: this.http
-        .get<
-          | {
+      sectionsRes: this.get<
+        | {
+            id?: string;
+            sectionId?: string;
+            title?: string;
+            name?: string;
+            description?: string;
+            order?: number;
+          }[]
+        | {
+            items?: {
               id?: string;
               sectionId?: string;
               title?: string;
               name?: string;
               description?: string;
               order?: number;
-            }[]
-          | {
-              items?: {
-                id?: string;
-                sectionId?: string;
-                title?: string;
-                name?: string;
-                description?: string;
-                order?: number;
-              }[];
-            }
-        >(`/api/classrooms/${classroomId}/sections`)
-        .pipe(catchError(() => of(null))),
+            }[];
+          }
+      >(`/classrooms/${classroomId}/sections`).pipe(catchError(() => of(null))),
     }).pipe(
       map(({ classroom, materialsRes, sectionsRes }) => {
         let rawMaterials: {
