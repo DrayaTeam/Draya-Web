@@ -178,15 +178,19 @@ export class StudentExamTakingService extends ApiBaseService {
               isCorrect?: boolean;
             }[];
             const correctOpt = rawOptions.find((o) => o.isCorrect);
+            const questionType =
+              q.type || (rawOptions.length > 0 ? 'MultipleChoice' : 'Essay');
 
             return {
               id: q.id || `q_${idx + 1}`,
               index: idx + 1,
               text: q.text || `سؤال رقم ${idx + 1}`,
-              subjectTag: q.type || q.difficulty || exam.topic || 'اختيار من متعدد',
+              type: questionType,
+              subjectTag: q.type || q.difficulty || exam.topic || (questionType === 'Essay' ? 'مقالي' : 'اختيار من متعدد'),
               isFlagged: false,
               selectedOptionId: undefined,
-              correctOptionId: correctOpt?.id || rawOptions[0]?.id || undefined,
+              answerText: undefined,
+              correctOptionId: correctOpt?.id || (questionType === 'Essay' ? undefined : rawOptions[0]?.id),
               options: rawOptions.map((o, optIdx) => ({
                 id: o.id || `opt_${optIdx + 1}`,
                 text: o.text || `الخيار ${optIdx + 1}`,
@@ -244,6 +248,12 @@ export class StudentExamTakingService extends ApiBaseService {
     );
   }
 
+  setAnswerText(questionId: string, text: string): void {
+    this.questions.update((list) =>
+      list.map((q) => (q.id === questionId ? { ...q, answerText: text } : q)),
+    );
+  }
+
   toggleFlagQuestion(questionId: string): void {
     this.questions.update((list) =>
       list.map((q) => (q.id === questionId ? { ...q, isFlagged: !q.isFlagged } : q)),
@@ -280,11 +290,21 @@ export class StudentExamTakingService extends ApiBaseService {
     let correctCount = 0;
 
     const reviewQuestions = questionsList.map((q) => {
-      const isCorrect = q.correctOptionId ? q.selectedOptionId === q.correctOptionId : true;
+      const isEssay =
+        (q.type || '').toLowerCase().includes('essay') || (q.options || []).length === 0;
+      const isCorrect = isEssay
+        ? !!(q.answerText && q.answerText.trim().length > 0)
+        : q.correctOptionId
+          ? q.selectedOptionId === q.correctOptionId
+          : true;
       if (isCorrect) correctCount++;
 
-      const chosen = q.options.find((o) => o.id === q.selectedOptionId)?.text || 'لم يتم الإجابة';
-      const correct = q.options.find((o) => o.id === q.correctOptionId)?.text || chosen;
+      const chosen = isEssay
+        ? q.answerText?.trim() || 'لم يتم إدخال إجابة'
+        : q.options.find((o) => o.id === q.selectedOptionId)?.text || 'لم يتم الإجابة';
+      const correct = isEssay
+        ? 'تخضع للتصحيح والتقييم'
+        : q.options.find((o) => o.id === q.correctOptionId)?.text || chosen;
 
       return {
         questionIndex: q.index,
@@ -349,7 +369,7 @@ export class StudentExamTakingService extends ApiBaseService {
         answers: questionsList.map((q): AnswerSubmissionDto => ({
           examQuestionId: q.id,
           selectedOptionId: q.selectedOptionId || undefined,
-          answerText: q.selectedOptionId ? '' : undefined,
+          answerText: q.answerText || (q.selectedOptionId ? undefined : ''),
         })),
       };
       this.post<SubmitAttemptResponseDto>(`/attempts/${targetAttemptId}/submit`, payload)

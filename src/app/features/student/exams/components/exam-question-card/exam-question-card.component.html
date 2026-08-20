@@ -31,23 +31,53 @@
     {{ question().text }}
   </h2>
 
-  <!-- Options List -->
-  <div class="options-list">
-    @for (opt of question().options; track opt.id) {
-      <button
-        type="button"
-        class="option-item"
-        [class.selected]="question().selectedOptionId === opt.id"
-        (click)="onSelect(opt.id)">
-        <span class="radio-indicator">
-          @if (question().selectedOptionId === opt.id) {
-            <span class="radio-inner-dot"></span>
-          }
+  <!-- Question Answer Area (Essay vs MCQ) -->
+  @if (isEssay()) {
+    <div class="essay-answer-container">
+      <div class="essay-header-row">
+        <label for="essay-answer-textarea" class="essay-label">
+          <svg class="essay-label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          <span>اكتب إجابتك النموذجية بالتفصيل:</span>
+        </label>
+        <span class="essay-badge">إجابة مقالية ✍️</span>
+      </div>
+
+      <textarea
+        id="essay-answer-textarea"
+        class="essay-textarea"
+        rows="8"
+        placeholder="اكتب إجابتك هنا بدقة ووضوح..."
+        [value]="question().answerText || ''"
+        (input)="onTextInput($event)"></textarea>
+
+      <div class="essay-meta-bar">
+        <span class="essay-hint">💡 سيتم تصحيح وتقييم إجابتك المقالية تلقائياً أو عبر معلم المادة.</span>
+        <span class="char-count">
+          <strong>{{ (question().answerText || '').length }}</strong> حرف
         </span>
-        <span class="option-text">{{ opt.text }}</span>
-      </button>
-    }
-  </div>
+      </div>
+    </div>
+  } @else {
+    <!-- Options List -->
+    <div class="options-list">
+      @for (opt of question().options; track opt.id) {
+        <button
+          type="button"
+          class="option-item"
+          [class.selected]="question().selectedOptionId === opt.id"
+          (click)="onSelect(opt.id)">
+          <span class="radio-indicator">
+            @if (question().selectedOptionId === opt.id) {
+              <span class="radio-inner-dot"></span>
+            }
+          </span>
+          <span class="option-text">{{ opt.text }}</span>
+        </button>
+      }
+    </div>
+  }
 
   <!-- Card Navigation Footer -->
   <div class="card-footer">

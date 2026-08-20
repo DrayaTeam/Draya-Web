@@ -42,6 +42,7 @@
         [isFirstQuestion]="examService.isFirstQuestion()"
         [isLastQuestion]="examService.isLastQuestion()"
         (selectOption)="onSelectOption($event)"
+        (updateAnswerText)="onUpdateAnswerText($event)"
         (toggleFlag)="onToggleFlag($event)"
         (nextQuestion)="onNextQuestion()"
         (prevQuestion)="onPrevQuestion()"

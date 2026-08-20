@@ -120,6 +120,10 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
     this.examService.selectOption(event.questionId, event.optionId);
   }
 
+  onUpdateAnswerText(event: { questionId: string; text: string }): void {
+    this.examService.setAnswerText(event.questionId, event.text);
+  }
+
   onToggleFlag(questionId: string): void {
     this.examService.toggleFlagQuestion(questionId);
     this.toastService.info('تحديث المراجعة', 'تم تعديل علامة المراجعة للسؤال.');

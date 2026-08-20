@@ -102,8 +102,10 @@ export interface ExamQuestion {
   readonly index: number;
   readonly text: string;
   readonly subjectTag: string;
+  readonly type?: string;
   readonly options: readonly ExamQuestionOption[];
   readonly selectedOptionId?: string;
+  readonly answerText?: string;
   readonly correctOptionId?: string;
   readonly isFlagged?: boolean;
 }
