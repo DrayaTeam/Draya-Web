@@ -701,6 +701,11 @@
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   border: 1px solid #e2e8f0;
+  transition: max-width 0.2s ease-in-out;
+
+  &.modal-large {
+    max-width: 980px;
+  }
 
   .modal-header {
     display: flex;
@@ -817,6 +822,7 @@
       background: #f8fafc;
       border: 1px solid #e2e8f0;
 
+<<<<<<< Updated upstream
       .pdf-embedded-iframe {
         width: 100%;
         height: 60vh;
@@ -856,6 +862,75 @@
             background: #115e59;
             transform: translateY(-1px);
           }
+=======
+      .pdf-modal-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 18px;
+        background: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+
+        .pdf-toolbar-title {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+
+          .pdf-badge-tag {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #ef4444;
+            background: #fee2e2;
+            padding: 2px 8px;
+            border-radius: 6px;
+          }
+
+          .pdf-filename {
+            font-size: 0.9375rem;
+            font-weight: 800;
+            color: #0f172a;
+          }
+        }
+
+        .pdf-toolbar-actions {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+
+          .btn-toolbar-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            background: #0f766e;
+            color: #ffffff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+
+            &:hover {
+              background: #115e59;
+              transform: translateY(-1px);
+            }
+          }
+        }
+      }
+
+      .pdf-iframe-wrapper {
+        width: 100%;
+        height: 65vh;
+        min-height: 500px;
+        background: #525659;
+
+        .pdf-embedded-iframe {
+          width: 100%;
+          height: 100%;
+          min-height: 500px;
+          border: none;
+          display: block;
+>>>>>>> Stashed changes
         }
       }
 

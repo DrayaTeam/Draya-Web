@@ -565,7 +565,9 @@
         (click)="closeModal()"
         (keydown.escape)="closeModal()"></div>
 
-      <div class="lesson-modal-card animate-scale-up">
+      <div
+        class="lesson-modal-card animate-scale-up"
+        [class.modal-large]="selectedLesson()?.type === 'pdf'">
         <!-- Modal Header -->
         <div class="modal-header">
           <div class="modal-title-group">
@@ -604,6 +606,7 @@
           } @else if (selectedLesson()?.type === 'pdf') {
             <div class="pdf-viewer-modal-frame">
               @if (selectedLesson()?.fileUrl) {
+<<<<<<< Updated upstream
                 <iframe
                   [src]="getSafeUrl(selectedLesson()?.fileUrl)"
                   class="pdf-embedded-iframe"
@@ -624,6 +627,39 @@
                       <line x1="12" y1="15" x2="12" y2="3"></line>
                     </svg>
                   </a>
+=======
+                <div class="pdf-modal-toolbar">
+                  <div class="pdf-toolbar-title">
+                    <span class="pdf-badge-tag">PDF</span>
+                    <span class="pdf-filename">{{ selectedLesson()?.title }}</span>
+                  </div>
+                  <div class="pdf-toolbar-actions">
+                    <a
+                      [href]="selectedLesson()?.fileUrl"
+                      download
+                      class="btn-toolbar-download"
+                      title="تحميل المذكرة">
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                      </svg>
+                      <span>تحميل المذكرة</span>
+                    </a>
+                  </div>
+                </div>
+                <div class="pdf-iframe-wrapper">
+                  <iframe
+                    [src]="getSafeUrl(selectedLesson()?.fileUrl)"
+                    class="pdf-embedded-iframe"
+                    title="عارض المذكرة"></iframe>
+>>>>>>> Stashed changes
                 </div>
               } @else {
                 <div class="no-pdf-content-box">
