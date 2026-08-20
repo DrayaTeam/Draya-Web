@@ -77,7 +77,10 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.examId = this.route.snapshot.paramMap.get('id') || 'exam-1';
-    this.examService.loadExamSession(this.examId).subscribe();
+    this.examService.loadExamSession(this.examId).subscribe({
+      next: () => void 0,
+      error: () => void 0,
+    });
 
     // Anti-cheating tab-switching listener
     this.visibilityListener = () => {

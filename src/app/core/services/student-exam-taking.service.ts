@@ -370,7 +370,10 @@ export class StudentExamTakingService extends ApiBaseService {
       };
       this.post<unknown>(`/attempts/${targetAttemptId}/submit`, payload)
         .pipe(catchError(() => of(null)))
-        .subscribe();
+        .subscribe({
+          next: () => void 0,
+          error: () => void 0,
+        });
     }
 
     return finalScore;

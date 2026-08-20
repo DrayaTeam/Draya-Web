@@ -27,7 +27,10 @@ export class StudentExamResultComponent implements OnInit {
   ngOnInit(): void {
     const attemptIdParam = this.route.snapshot.queryParams['attemptId'];
     if (attemptIdParam) {
-      this.examService.fetchAttemptResults(attemptIdParam).subscribe();
+      this.examService.fetchAttemptResults(attemptIdParam).subscribe({
+        next: () => void 0,
+        error: () => void 0,
+      });
     }
 
     const scoreParam = this.route.snapshot.queryParams['score'];

@@ -26,23 +26,29 @@ npx ng lint
 ```
 *Rule: 0 errors and 0 warnings allowed.*
 
-### Step B: Code Formatting
+### Step B: Console Log & Runtime Error Inspection
+Inspect browser runtime console outputs and terminal logs during navigation and interaction. Ensure:
+- Zero unhandled `console.error` messages.
+- Zero unhandled Promise rejections or uncaught exceptions.
+- Zero unresolved Angular expression / template binding runtime warnings.
+
+### Step C: Code Formatting
 Format all modified/created files using Prettier:
 ```bash
 npx prettier --write "src/**/*.{ts,html,scss,json}"
 ```
 
-### Step C: Unit Testing
+### Step D: Unit Testing
 Execute Karma/Jasmine unit tests for isolated component logic and service methods (employing `/unit-testing-test-generate`):
 ```bash
 npx ng test --watch=false
 ```
 *Rule: 100% of test specs must pass.*
 
-### Step D: Integration Testing
+### Step E: Integration Testing
 Verify component-to-service integration, state synchronization, HTTP communication with `provideHttpClientTesting()`, and routing triggers.
 
-### Step E: End-to-End (E2E) Browser Testing (Playwright)
+### Step F: End-to-End (E2E) Browser Testing (Playwright)
 Run Playwright browser automation tests (leveraging skills `/playwright-skill`, `/go-playwright`, `/e2e-testing`, `/e2e-testing-patterns`) against the local dev environment (`http://localhost:4200`):
 ```bash
 npx playwright test e2e/<feature-name>.spec.ts
@@ -51,12 +57,13 @@ npx playwright test e2e/<feature-name>.spec.ts
 - **Mobile Viewport:** 390x844 / 375x667
 - Verify real DOM rendering, dynamic signals updates, form submissions, navigation, and visual feedback.
 
-### Step F: Production Build Verification
+### Step G: Production Build Verification
 Compile the full production bundle to ensure zero TypeScript, SCSS budget, or template compilation errors:
 ```bash
 npx ng build --configuration=production
 ```
 *Rule: Must exit with code 0 (`Application bundle generation complete`).*
+
 
 ---
 

@@ -138,7 +138,10 @@ export class AuthService {
           this.router.navigate(['/auth/login']);
         }),
       )
-      .subscribe();
+      .subscribe({
+        next: () => void 0,
+        error: () => void 0,
+      });
   }
 
   refreshToken(token: string): Observable<AuthResponse> {
