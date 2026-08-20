@@ -98,10 +98,25 @@ describe('AdminFinancialService', () => {
       expect(res[0].name).toBe('Ahmed');
     });
 
-    const req = httpMock.expectOne(
-      (r) => r.url.endsWith('/admin/teachers/search') && r.params.get('q') === 'ahmed',
-    );
+    const req = httpMock.expectOne((r) => r.url.endsWith('/admin/teachers/search'));
     expect(req.request.method).toBe('GET');
-    req.flush([{ id: 't-1', name: 'Ahmed', email: 'ahmed@test.com', earnedBalance: 100 }]);
+    expect(req.request.params.get('q')).toBe('ahmed');
+    req.flush([
+      {
+        id: '1',
+        name: 'Ahmed',
+        fullName: 'Ahmed',
+        email: 'a@a.com',
+        earnedBalance: 100,
+        purchasedBalance: 50,
+      },
+    ]);
+  });
+
+  it('should refund payment transaction', () => {
+    service.refundPaymentTransaction('pay-123').subscribe();
+    const req = httpMock.expectOne((r) => r.url.endsWith('/payments/pay-123/refund'));
+    expect(req.request.method).toBe('POST');
+    req.flush(null);
   });
 });

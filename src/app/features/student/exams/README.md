@@ -1,6 +1,7 @@
 ﻿# Student Live Exam Attempt Engine & Results Diagnostics
 
 ## 1. Feature Overview
+
 The Live Exam Attempt Engine provides students with an interactive, real-time testing experience with anti-cheating security safeguards, live countdown timer synchronization with server expiration timestamps, question flagging, and detailed AI-powered diagnostics for exam performance.
 
 - **Target Route(s):**
@@ -11,6 +12,7 @@ The Live Exam Attempt Engine provides students with an interactive, real-time te
 ---
 
 ## 2. Component Architecture
+
 - **Components:**
   - StudentActiveExamComponent: Master exam container managing timer, fullscreen security guards, and submit confirmation.
   - ExamQuestionCardComponent: Presentational component rendering question text, multiple-choice options, and navigation buttons.
@@ -21,11 +23,12 @@ The Live Exam Attempt Engine provides students with an interactive, real-time te
   - ExamQuestionReviewCardComponent: Accordion review of student answers vs correct answers with explanations.
 
 - **State Management:**
-  - StudentExamTakingService: Central Angular Signals store managing questions, currentQuestionIndex, 	imeRemainingSeconds, isSubmitted, and currentAttemptId.
+  - StudentExamTakingService: Central Angular Signals store managing questions, currentQuestionIndex, imeRemainingSeconds, isSubmitted, and currentAttemptId.
 
 ---
 
 ## 3. Backend API Contracts & DTOs
+
 - POST /api/v1/attempts/start: Starts or resumes an active exam attempt session.
   - Request: StartAttemptRequestDto { examId: string }
   - Response: StartAttemptResponseDto { attemptId, examTitle, durationMinutes, startedAt, expiresAt, questions }
@@ -37,6 +40,7 @@ The Live Exam Attempt Engine provides students with an interactive, real-time te
 ---
 
 ## 4. Testing Matrix
+
 - **Unit & Integration Tests:**
   - student-exam-taking.service.spec.ts (State mutations, question navigation, option selection, HTTP mocking).
   - student-active-exam.component.spec.ts (Component initialization, timer, and DOM mapping).

@@ -97,4 +97,9 @@ export class AdminFinancialService extends ApiBaseService {
   updateAdminProfile(request: UpdateAdminProfileRequest): Observable<void> {
     return this.put<void, UpdateAdminProfileRequest>('/admin/profile', request);
   }
+
+  /** POST /api/v1/payments/{id}/refund */
+  refundPaymentTransaction(paymentId: string): Observable<void> {
+    return this.post<void, undefined>(`/payments/${paymentId}/refund`, undefined);
+  }
 }

@@ -34,5 +34,26 @@ export interface AuthResponse {
   user: User;
 }
 
+export interface AcceptInviteRequest {
+  email?: string;
+  token: string;
+  password?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+  fullName?: string;
+  phone?: string;
+}
+
+export interface PasswordResetRequest {
+  email: string;
+}
+
+export interface PasswordResetConfirmationRequest {
+  email?: string;
+  token: string;
+  newPassword: string;
+  confirmPassword?: string;
+}
+
 // Re-export UserProfile so callers can import from auth.model as before
 export type { UserProfile };

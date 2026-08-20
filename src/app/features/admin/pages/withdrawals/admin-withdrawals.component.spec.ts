@@ -38,6 +38,7 @@ describe('AdminWithdrawalsComponent', () => {
       'approveWithdrawal',
       'rejectWithdrawal',
       'markWithdrawalPaid',
+      'refundPaymentTransaction',
     ]);
     toastSpy = jasmine.createSpyObj('ToastService', ['success', 'error', 'info', 'warning']);
 
@@ -47,6 +48,7 @@ describe('AdminWithdrawalsComponent', () => {
     financialServiceSpy.approveWithdrawal.and.returnValue(of(void 0));
     financialServiceSpy.rejectWithdrawal.and.returnValue(of(void 0));
     financialServiceSpy.markWithdrawalPaid.and.returnValue(of(void 0));
+    financialServiceSpy.refundPaymentTransaction.and.returnValue(of(void 0));
 
     await TestBed.configureTestingModule({
       imports: [AdminWithdrawalsComponent],
@@ -131,6 +133,18 @@ describe('AdminWithdrawalsComponent', () => {
     );
     expect(toastSpy.success).toHaveBeenCalledWith('ADMIN.WITHDRAWALS.SUCCESS_PAID');
     expect(component.confirmPaidOpen()).toBeFalse();
+  });
+
+  it('should handle refund payment transaction flow successfully', () => {
+    component.promptRefund(mockWithdrawal);
+    expect(component.confirmRefundOpen()).toBeTrue();
+
+    component.onConfirmRefund();
+    expect(financialServiceSpy.refundPaymentTransaction).toHaveBeenCalledWith('w-1');
+    expect(toastSpy.success).toHaveBeenCalledWith(
+      'تم استرجاع المعاملة المالية بنجاح وإعادتها لحساب المعلم/المستخدم.',
+    );
+    expect(component.confirmRefundOpen()).toBeFalse();
   });
 
   it('should handle API errors gracefully during approval', () => {

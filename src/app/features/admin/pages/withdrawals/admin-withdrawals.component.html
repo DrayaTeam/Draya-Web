@@ -239,6 +239,19 @@
             <span>{{ 'ADMIN.WITHDRAWALS.ACTION_MARK_PAID' | translate }}</span>
           </button>
         }
+        @if (
+          selectedWithdrawal()?.status === WithdrawalStatus.Paid ||
+          selectedWithdrawal()?.status === WithdrawalStatus.Approved
+        ) {
+          <button
+            class="btn btn-danger"
+            (click)="promptRefund(selectedWithdrawal()!)"
+            type="button"
+            title="استرجاع المعاملة المالية">
+            <i class="pi pi-replay"></i>
+            <span>استرجاع المعاملة (Refund)</span>
+          </button>
+        }
         <button class="btn btn-outline" (click)="closeDetail()" type="button">
           <span>{{ 'ADMIN.SHARED.CANCEL' | translate }}</span>
         </button>
@@ -278,4 +291,15 @@
     [cancelLabelKey]="'ADMIN.SHARED.CANCEL'"
     (confirmed)="onConfirmMarkPaid()"
     (cancelled)="confirmPaidOpen.set(false)"></draya-admin-confirm-dialog>
+
+  <!-- 4. Refund Confirm Dialog -->
+  <draya-admin-confirm-dialog
+    [isOpen]="confirmRefundOpen()"
+    [titleKey]="'تأكيد استرجاع المعاملة المالية'"
+    [descriptionKey]="'هل أنت متأكد من رغبتك في استرجاع هذه المعاملة؟ سيتم التراجع عن تحويل المبلغ وتحديث السجلات المالية للمعلم.'"
+    [variant]="'danger'"
+    [confirmLabelKey]="'استرجاع المعاملة (Confirm Refund)'"
+    [cancelLabelKey]="'ADMIN.SHARED.CANCEL'"
+    (confirmed)="onConfirmRefund()"
+    (cancelled)="confirmRefundOpen.set(false)"></draya-admin-confirm-dialog>
 </div>

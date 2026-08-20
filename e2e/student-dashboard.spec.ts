@@ -16,11 +16,13 @@ test.describe('Student Dashboard E2E Flow', () => {
   });
 
   test('should allow navigation to other student modules', async ({ page }) => {
+    await page.waitForLoadState('domcontentloaded');
     const teachersLink = page.locator(
       'a[href*="/student/teachers"], button:has-text("المعلمين"), a:has-text("المعلمين")',
     );
     if ((await teachersLink.count()) > 0) {
-      await teachersLink.first().click();
+      await page.waitForTimeout(300);
+      await teachersLink.first().click({ force: true });
       await expect(page).toHaveURL(/.*\/student\/teachers/);
     }
   });

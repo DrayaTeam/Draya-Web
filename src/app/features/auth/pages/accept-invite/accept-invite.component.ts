@@ -11,8 +11,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/auth.service';
+import { ToastService } from '../../../../core/services/toast.service';
 import { ApiError } from '../../../../core/models/api-error.model';
 import {
   passwordStrengthValidator,
@@ -34,11 +34,13 @@ export class AcceptInviteComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly messageService = inject(MessageService, { optional: true });
+  private readonly toast = inject(ToastService);
   private readonly translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly acceptForm = this.fb.nonNullable.group({
+    fullName: ['', [Validators.required, Validators.minLength(3)]],
+    phone: ['', [Validators.pattern(/^(010|011|012|015)[0-9]{8}$/)]],
     password: ['', [Validators.required, passwordStrengthValidator()]],
     confirmPassword: ['', [Validators.required, matchFieldValidator('password')]],
   });
@@ -51,7 +53,8 @@ export class AcceptInviteComponent implements OnInit {
   readonly showConfirmPassword = signal(false);
   readonly passwordStrength = signal<PasswordStrength>('weak');
 
-  private token = '';
+  token = '';
+  email = '';
 
   constructor() {
     this.acceptForm.controls.password.valueChanges.pipe(takeUntilDestroyed()).subscribe((val) => {
@@ -64,11 +67,14 @@ export class AcceptInviteComponent implements OnInit {
     const rawToken =
       this.route.snapshot.queryParamMap.get('token') ||
       this.route.snapshot.queryParamMap.get('code');
+    const rawEmail = this.route.snapshot.queryParamMap.get('email') || '';
+
     if (!rawToken) {
       this.isInvalidToken.set(true);
       return;
     }
     this.token = rawToken;
+    this.email = rawEmail;
   }
 
   toggleShowPassword(): void {
@@ -85,37 +91,41 @@ export class AcceptInviteComponent implements OnInit {
       return;
     }
 
-    const { password } = this.acceptForm.getRawValue();
+    const { fullName, phone, password, confirmPassword } = this.acceptForm.getRawValue();
 
     this.auth
       .acceptInvite({
         token: this.token,
+        email: this.email,
+        password,
         newPassword: password,
+        confirmPassword,
+        fullName,
+        phone,
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.isSuccess.set(true);
-          this.messageService?.add({
-            severity: 'success',
-            summary: this.translate.instant('AUTH.ACCEPT_INVITE.SUCCESS_TITLE', {
-              defaultValue: 'تم تفعيل الحساب بنجاح',
+          this.toast.success(
+            this.translate.instant('AUTH.ACCEPT_INVITE.SUCCESS_TITLE', {
+              defaultValue: 'تم تفعيل حساب المشرف بنجاح! مرحباً بك في دراية.',
             }),
-            detail: this.translate.instant('AUTH.ACCEPT_INVITE.SUCCESS_DESC', {
-              defaultValue: 'يمكنك الآن تسجيل الدخول إلى لوحة إدارة دراية.',
-            }),
-          });
+          );
+          // Redirect to login or admin dashboard
+          setTimeout(() => {
+            this.router.navigate(['/auth/login'], {
+              queryParams: { email: this.email, activated: 'true' },
+            });
+          }, 1500);
         },
         error: (err: ApiError) => {
-          this.messageService?.add({
-            severity: 'error',
-            summary: this.translate.instant('COMMON.ERROR', { defaultValue: 'خطأ' }),
-            detail:
-              err?.message ||
-              this.translate.instant('AUTH.ACCEPT_INVITE.ERROR', {
-                defaultValue: 'تعذر تفعيل الحساب أو رابط الدعوة غير صالح أو منتهي.',
-              }),
-          });
+          const msg =
+            err?.message ||
+            this.translate.instant('AUTH.ACCEPT_INVITE.ERROR', {
+              defaultValue: 'تعذر تفعيل الحساب أو رابط الدعوة غير صالح أو منتهي.',
+            });
+          this.toast.error(msg);
         },
       });
   }
