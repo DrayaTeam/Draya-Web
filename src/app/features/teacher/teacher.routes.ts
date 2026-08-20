@@ -43,18 +43,42 @@ export const teacherRoutes: Routes = [
       {
         path: 'students',
         loadComponent: () =>
-          import('./placeholder/teacher-placeholder.component').then(
-            (m) => m.TeacherPlaceholderComponent,
+          import('./students/teacher-students/teacher-students.component').then(
+            (m) => m.TeacherStudentsComponent,
           ),
-        title: 'شؤون الطلاب — درايَة',
+        title: 'سجل الطلبة | دراية',
       },
       {
         path: 'exams',
         loadComponent: () =>
-          import('./placeholder/teacher-placeholder.component').then(
-            (m) => m.TeacherPlaceholderComponent,
+          import('./exams/teacher-exams/teacher-exams.component').then(
+            (m) => m.TeacherExamsComponent,
           ),
-        title: 'بنك الامتحانات — درايَة',
+        title: 'إدارة الامتحانات | دراية',
+      },
+      {
+        path: 'exams/generate',
+        loadComponent: () =>
+          import('./exams/generate-exam/generate-exam.component').then(
+            (m) => m.GenerateExamComponent,
+          ),
+        title: 'إنشاء امتحان بالذكاء الاصطناعي — درايَة',
+      },
+      {
+        path: 'exams/generations/:id/tracking',
+        loadComponent: () =>
+          import('./exams/generation-tracker/generation-tracker.component').then(
+            (m) => m.GenerationTrackerComponent,
+          ),
+        title: 'جاري الإنشاء... — درايَة',
+      },
+      {
+        path: 'exams/:id/review',
+        loadComponent: () =>
+          import('./exams/review-exam/review-exam.component').then(
+            (m) => m.ReviewExamComponent,
+          ),
+        title: 'مراجعة الامتحان — درايَة',
       },
       {
         path: 'channel',

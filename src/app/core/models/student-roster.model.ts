@@ -6,6 +6,8 @@ export interface StudentRosterItemDto {
   fullName: string;
   enrolledAt: string;
   status: string;
+  profilePictureUrl?: string;
+  pictureUrl?: string;
 }
 
 export type StudentRosterItemDtoPagedResult = PaginatedResponse<StudentRosterItemDto>;

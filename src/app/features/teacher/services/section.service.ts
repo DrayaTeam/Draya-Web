@@ -8,8 +8,7 @@ import { ClassroomSectionDto, CreateSectionRequest, UpdateSectionRequest } from 
 export class SectionService {
   private readonly http = inject(HttpClient);
   
-  // Custom baseUrl for sections since they are under /api/classrooms not /api/v1/classrooms
-  private readonly baseUrl = environment.apiBaseUrl.replace('/v1', '');
+  private readonly baseUrl = environment.apiBaseUrl;
 
   getSections(classroomId: string): Observable<ClassroomSectionDto[]> {
     return this.http.get<ClassroomSectionDto[]>(`${this.baseUrl}/classrooms/${classroomId}/sections`);

@@ -76,6 +76,8 @@ export class CreateClassroomModalComponent implements OnInit {
   readonly isCreatingSubject = signal<boolean>(false);
   readonly isCreatingSubjectLoading = signal<boolean>(false);
   readonly quotaError = signal<string | null>(null);
+  readonly selectedImage = signal<File | null>(null);
+  readonly imagePreview = signal<string | null>(null);
 
   // Standalone control for new subject
   readonly newSubjectControl = new FormControl('', [Validators.required, Validators.minLength(2)]);
@@ -85,8 +87,12 @@ export class CreateClassroomModalComponent implements OnInit {
     effect(() => {
       if (this.isOpen()) {
         this.quotaError.set(null);
+        this.selectedImage.set(null);
+        this.imagePreview.set(null);
         if (this.form) {
-          this.form.reset({ price: 0 }); // Default price to 0
+          this.form.reset({ price: 0 });
+    this.selectedImage.set(null);
+    this.imagePreview.set(null); // Default price to 0
         }
       }
     });
@@ -160,11 +166,28 @@ export class CreateClassroomModalComponent implements OnInit {
       });
   }
 
+  
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      this.selectedImage.set(file);
+      
+      const reader = new FileReader();
+      reader.onload = (e) => this.imagePreview.set(e.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeImage(): void {
+    this.selectedImage.set(null);
+    this.imagePreview.set(null);
+  }
+
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.toastService.warning('تنبيه', 'يرجى التأكد من إكمال جميع الحقول المطلوبة بشكل صحيح');
-      console.warn('Form is invalid. Errors:', this.form.errors, 'Controls:', this.form.controls);
+      this.toastService.warning('تنبيه', 'يرجى تعبئة جميع الحقول المطلوبة بشكل صحيح.');
       return;
     }
 
@@ -173,7 +196,6 @@ export class CreateClassroomModalComponent implements OnInit {
 
     const formValue = this.form.value;
 
-    // Ensure ISO strings for dates
     const payload: CreateClassroomRequest = {
       subjectId: formValue.subjectId,
       name: formValue.name,
@@ -184,34 +206,43 @@ export class CreateClassroomModalComponent implements OnInit {
       price: Number(formValue.price),
     };
 
-    this.classroomService
-      .createClassroom(payload)
-      .pipe(finalize(() => this.isSubmitting.set(false)))
-      .subscribe({
-        next: () => {
-          this.toastService.success('نجاح', 'تم إنشاء الفصل الدراسي بنجاح!');
+    this.classroomService.createClassroom(payload).subscribe({
+      next: (res) => {
+        const file = this.selectedImage();
+        if (file) {
+          this.classroomService.uploadClassroomImage(res.classroomId, file).pipe(
+            finalize(() => {
+              this.isSubmitting.set(false);
+              this.toastService.success('نجاح', 'تم إنشاء المرحلة الدراسية وصورة الغلاف بنجاح!');
+              this.created.emit();
+              this.close();
+            })
+          ).subscribe({
+            error: () => {
+              this.toastService.warning('تحذير', 'تم إنشاء المرحلة الدراسية ولكن فشل رفع الصورة.');
+            }
+          });
+        } else {
+          this.isSubmitting.set(false);
+          this.toastService.success('نجاح', 'تم إنشاء المرحلة الدراسية بنجاح!');
           this.created.emit();
           this.close();
-        },
-        error: (errorRes: HttpErrorResponse) => {
-          const responseBody = errorRes.error as { error: ApiError };
-          const apiError = responseBody?.error;
+        }
+      },
+      error: (errorRes) => {
+        this.isSubmitting.set(false);
+        const responseBody = errorRes.error;
+        const apiError = responseBody?.error;
 
-          // Handle confirmed backend quirk: 422 Quota Exceeded
-          if (errorRes.status === 422) {
-            if (apiError && apiError.code === 'QUOTA_EXCEEDED') {
-              this.quotaError.set(
-                'لقد استنفدت الحد المسموح به من الفصول. يرجى شحن رصيدك أو ترقية باقتك للاستمرار.',
-              );
-              return;
-            }
-          }
+        if (errorRes.status === 422 && apiError?.code === 'QUOTA_EXCEEDED') {
+          this.quotaError.set('لقد تجاوزت الحد الأقصى للمراحل الدراسية في هذه الباقة.');
+          return;
+        }
 
-          // Generic fallback error
-          const msg = apiError?.message || 'حدث خطأ أثناء إنشاء الفصل. يرجى المحاولة مرة أخرى.';
-          this.toastService.error('خطأ', msg);
-        },
-      });
+        const msg = apiError?.message || 'حدث خطأ أثناء إنشاء المرحلة. يرجى المحاولة مرة أخرى.';
+        this.toastService.error('خطأ', msg);
+      },
+    });
   }
 
   close(): void {

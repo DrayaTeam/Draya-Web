@@ -41,12 +41,15 @@
         <tr>
           <td>
             <div class="student-name-cell">
-              <div class="student-avatar">
-                {{ student.fullName.charAt(0) }}
+              <div class="student-avatar overflow-hidden">
+                @if (student.profilePictureUrl || student.pictureUrl) {
+                  <img [src]="student.profilePictureUrl || student.pictureUrl" [alt]="student.fullName" class="w-full h-full object-cover">
+                } @else {
+                  {{ student.fullName.charAt(0) }}
+                }
               </div>
               <div class="student-info">
                 <span class="student-full-name">{{ student.fullName }}</span>
-                <!-- Could add email or phone here if available in dto -->
               </div>
             </div>
           </td>

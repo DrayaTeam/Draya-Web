@@ -13,4 +13,6 @@ export const environment = {
   // to prevent red 404 negotiate errors in the browser console.
   enableNotificationsHub: false,
   enableQaHub: false,
+  examHubUrl: '/hubs/exam-generation',
+  enableExamHub: true,
 };

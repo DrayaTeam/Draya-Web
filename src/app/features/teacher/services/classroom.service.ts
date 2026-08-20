@@ -74,7 +74,7 @@ export class ClassroomService {
   }
 
   /** Creates a new classroom */
-  createClassroom(payload: CreateClassroomRequest): Observable<ClassroomDto> {
+  createClassroom(payload: import('../../../core/models/classroom.model').CreateClassroomRequest): Observable<ClassroomDto> {
     return this.http.post<ClassroomDto>(this.baseUrl, payload);
   }
 
@@ -156,5 +156,12 @@ export class ClassroomService {
   /** Retrieve all classrooms for the logged-in teacher without updating internal signals */
   getTeacherClassrooms(page = 1, size = 100): Observable<ClassroomDtoPagedResult> {
     return this.http.get<ClassroomDtoPagedResult>(`${this.baseUrl}?pageNumber=${page}&pageSize=${size}`);
+  }
+
+  /** Upload a cover image for a classroom */
+  uploadClassroomImage(classroomId: string, file: File): Observable<{ imageUrl: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ imageUrl: string }>(`${this.baseUrl}/${classroomId}/image`, formData);
   }
 }
