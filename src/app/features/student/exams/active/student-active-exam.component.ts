@@ -77,7 +77,7 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.examId = this.route.snapshot.paramMap.get('id') || 'exam-1';
-    this.examService.startTimer();
+    this.examService.loadExamSession(this.examId).subscribe();
 
     // Anti-cheating tab-switching listener
     this.visibilityListener = () => {
@@ -89,8 +89,9 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
             'لتكرار مغادرة شاشة الامتحان التفاعلي (3 مخالفات).',
           );
           this.examService.stopTimer();
+          const attemptId = this.examService.currentAttemptId() || undefined;
           this.router.navigate(['/student/exams', this.examId, 'result'], {
-            queryParams: { score: 0 },
+            queryParams: { score: 0, attemptId },
           });
         } else {
           this.toastService.warning(
@@ -134,13 +135,14 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
   }
 
   onSubmitExam(): void {
-    const finalScore = this.examService.submitExam();
+    const attemptId = this.examService.currentAttemptId() || undefined;
+    const finalScore = this.examService.submitExam(attemptId);
     this.toastService.success(
       'تم تسليم الامتحان بنجاح! 🎉',
       'جارٍ استخراج تقرير التحليل الذكي للدرجات والمهارات...',
     );
     this.router.navigate(['/student/exams', this.examId, 'result'], {
-      queryParams: { score: finalScore },
+      queryParams: { score: finalScore, attemptId },
     });
   }
 }

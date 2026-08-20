@@ -1,10 +1,10 @@
-// src/app/features/student/exams/active/student-active-exam.component.spec.ts
-
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { StudentActiveExamComponent } from './student-active-exam.component';
 import { ToastService } from '../../../../core/services/toast.service';
-import { MessageService } from 'primeng/api';
-import { provideRouter } from '@angular/router';
 
 describe('StudentActiveExamComponent', () => {
   let component: StudentActiveExamComponent;
@@ -13,7 +13,13 @@ describe('StudentActiveExamComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StudentActiveExamComponent],
-      providers: [MessageService, ToastService, provideRouter([])],
+      providers: [
+        MessageService,
+        ToastService,
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(StudentActiveExamComponent);

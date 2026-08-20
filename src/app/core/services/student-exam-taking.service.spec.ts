@@ -1,13 +1,15 @@
-// src/app/core/services/student-exam-taking.service.spec.ts
-
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { StudentExamTakingService } from './student-exam-taking.service';
 
 describe('StudentExamTakingService', () => {
   let service: StudentExamTakingService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
     service = TestBed.inject(StudentExamTakingService);
   });
 
