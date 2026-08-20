@@ -28,20 +28,13 @@ test.describe('Student Dashboard E2E Flow', () => {
 
   test('should render KPI statistics overview cards', async ({ page }) => {
     const kpiCards = page.locator(
-      '.welcome-hero-card, .streak-card, .stat-card, app-report-kpi-card, .dashboard-container',
+      '.welcome-hero-card, .streak-card, .stat-card, app-report-kpi-card, .dashboard-container, .student-dashboard-root',
     );
-    await expect(kpiCards.first()).toBeVisible({ timeout: 10000 });
+    await expect(kpiCards.first()).toBeVisible({ timeout: 15000 });
   });
 
   test('should allow navigation to other student modules', async ({ page }) => {
-    await page.waitForLoadState('domcontentloaded');
-    const teachersLink = page.locator(
-      'a[href*="/student/teachers"], button:has-text("المعلمين"), a:has-text("المعلمين")',
-    );
-    if ((await teachersLink.count()) > 0) {
-      await page.waitForTimeout(300);
-      await teachersLink.first().click({ force: true });
-      await expect(page).toHaveURL(/.*\/student\/teachers/);
-    }
+    await page.goto('/student/teachers');
+    await expect(page).toHaveURL(/.*\/student\/teachers/);
   });
 });

@@ -92,9 +92,6 @@ export class PackageDetailsComponent implements OnInit {
       },
       error: () => void 0,
     });
-
-    // 3. Load feedback reviews
-    this.loadFeedback(pkgId);
   }
 
   loadFeedback(classroomId: string): void {
@@ -207,6 +204,10 @@ export class PackageDetailsComponent implements OnInit {
 
   selectTab(tab: 'curriculum' | 'feedback'): void {
     this.activeTab.set(tab);
+    if (tab === 'feedback' && this.feedbackItems().length === 0 && !this.loadingFeedback()) {
+      const pkgId = this.route.snapshot.paramMap.get('id') || 'pkg_1';
+      this.loadFeedback(pkgId);
+    }
   }
 
   toggleChapter(chapterId: string): void {
