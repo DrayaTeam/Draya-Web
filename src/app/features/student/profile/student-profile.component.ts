@@ -98,7 +98,10 @@ export class StudentProfileComponent implements OnInit {
       return;
     }
 
-    if (updatedParentEmail && (!updatedParentEmail.includes('@') || !updatedParentEmail.includes('.'))) {
+    if (
+      updatedParentEmail &&
+      (!updatedParentEmail.includes('@') || !updatedParentEmail.includes('.'))
+    ) {
       this.toast.warning('تنبيه', 'يرجى إدخال بريد إلكتروني صحيح لولي الأمر.');
       return;
     }
@@ -110,6 +113,8 @@ export class StudentProfileComponent implements OnInit {
       .updateProfile({
         fullName: updatedName,
         parentGuardianEmail: updatedParentEmail || undefined,
+        parentGuardianName: this.parentName.trim() || undefined,
+        parentGuardianPhone: this.parentPhone.trim() || undefined,
         dateOfBirth: this.dateOfBirth || undefined,
       })
       .subscribe({
@@ -134,7 +139,6 @@ export class StudentProfileComponent implements OnInit {
         },
       });
   }
-
 
   onAvatarSelected(event: Event): void {
     const input = event.target as HTMLInputElement;

@@ -19,6 +19,8 @@ export interface StudentProfileData {
 export interface UpdateStudentProfileDto {
   fullName?: string;
   parentGuardianEmail?: string;
+  parentGuardianName?: string;
+  parentGuardianPhone?: string;
   dateOfBirth?: string;
 }
 
@@ -30,6 +32,8 @@ interface UserProfileResponse {
   gradeLevelName?: string;
   parentName?: string;
   parentPhone?: string;
+  parentGuardianName?: string;
+  parentGuardianPhone?: string;
   parentGuardianEmail?: string;
   dateOfBirth?: string;
   profilePictureUrl?: string;
@@ -61,8 +65,8 @@ export class StudentProfileService extends ApiBaseService {
           email: u?.email || res?.email || '',
           phone: u?.phone || res?.phoneNumber || res?.phone || '',
           gradeLevel: res?.gradeLevelName || 'الصف الثالث الثانوي - علمي رياضة',
-          parentName: res?.parentName || '',
-          parentPhone: res?.parentPhone || '',
+          parentName: res?.parentGuardianName || res?.parentName || '',
+          parentPhone: res?.parentGuardianPhone || res?.parentPhone || '',
           parentEmail: res?.parentGuardianEmail || '',
           dateOfBirth: res?.dateOfBirth,
           profilePictureUrl: u?.profilePictureUrl || res?.profilePictureUrl || '',
@@ -93,6 +97,12 @@ export class StudentProfileService extends ApiBaseService {
     }
     if (data.parentGuardianEmail && data.parentGuardianEmail.trim()) {
       payload.parentGuardianEmail = data.parentGuardianEmail.trim();
+    }
+    if (data.parentGuardianName && data.parentGuardianName.trim()) {
+      payload.parentGuardianName = data.parentGuardianName.trim();
+    }
+    if (data.parentGuardianPhone && data.parentGuardianPhone.trim()) {
+      payload.parentGuardianPhone = data.parentGuardianPhone.trim();
     }
     if (data.dateOfBirth) {
       try {
@@ -178,7 +188,6 @@ export class StudentProfileService extends ApiBaseService {
       ),
     );
   }
-
 
   /**
    * Uploads student profile avatar to Cloudinary via POST /api/v1/students/profile/picture.
