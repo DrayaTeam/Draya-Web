@@ -163,4 +163,34 @@ public class UpdateStudentProfileRequest
 - Make `GET /api/v1/classrooms/{classroomId}/feedback` publicly accessible or allow `[AllowAnonymous]` / `[Authorize(Roles = "Student,Teacher,Admin,SuperAdmin")]` without requiring an active classroom enrollment to view public reviews.
 
 ---
+
+## 📌 Note 14: Manual Balance Adjustments History / Audit Log for Admin (GET /api/v1/admin/financial/adjustments)
+
+### 🔍 Issue Description
+- Platform administrators can create manual balance adjustments via `POST /api/v1/admin/financial/adjustments`.
+- However, there is currently no corresponding `GET /api/v1/admin/financial/adjustments` endpoint to view a paginated audit log of all manual adjustments made by administrators across all teachers.
+
+### 💡 Recommendation for Backend Team
+- Provide `GET /api/v1/admin/financial/adjustments` with query parameters `(pageNumber, pageSize, teacherId, balanceType)` returning:
+  ```json
+  {
+    "items": [
+      {
+        "id": "adj-uuid",
+        "teacherId": "teacher-uuid",
+        "teacherName": "أ. حسام الدين",
+        "amount": 1500,
+        "balanceType": "Earned",
+        "reason": "مكافأة تميز في إنتاج المحتوى",
+        "createdByName": "أ. عبدالرحمن العنزي",
+        "createdAt": "2026-08-20T14:30:00Z"
+      }
+    ],
+    "totalCount": 1,
+    "pageNumber": 1,
+    "pageSize": 10
+  }
+  ```
+
+---
 *Last updated: 2026-08-20 by Frontend Team*
