@@ -81,6 +81,10 @@ export class StudentCoursesService extends ApiBaseService {
           return of(null);
         }),
       )
-      .subscribe();
+      .subscribe({
+        next: () => void 0,
+        error: () => void 0,
+      });
   }
 }
+
