@@ -154,26 +154,28 @@ export class StudentEnrollmentService extends ApiBaseService {
           }
         | { id?: string; title?: string; name?: string; type?: string; duration?: string }[]
       >(`/classrooms/${classroomId}/materials`).pipe(catchError(() => of(null))),
-      sectionsRes: this.get<
-        | {
-            id?: string;
-            sectionId?: string;
-            title?: string;
-            name?: string;
-            description?: string;
-            order?: number;
-          }[]
-        | {
-            items?: {
+      sectionsRes: this.http
+        .get<
+          | {
               id?: string;
               sectionId?: string;
               title?: string;
               name?: string;
               description?: string;
               order?: number;
-            }[];
-          }
-      >(`/classrooms/${classroomId}/sections`).pipe(catchError(() => of(null))),
+            }[]
+          | {
+              items?: {
+                id?: string;
+                sectionId?: string;
+                title?: string;
+                name?: string;
+                description?: string;
+                order?: number;
+              }[];
+            }
+        >(`/api/classrooms/${classroomId}/sections`)
+        .pipe(catchError(() => of(null))),
     }).pipe(
       map(({ classroom, materialsRes, sectionsRes }) => {
         let rawMaterials: {
@@ -319,9 +321,11 @@ export class StudentEnrollmentService extends ApiBaseService {
   ): Observable<
     { id?: string; sectionId?: string; title?: string; description?: string }[] | null
   > {
-    return this.get<{ id?: string; sectionId?: string; title?: string; description?: string }[]>(
-      `/classrooms/${classroomId}/sections`,
-    ).pipe(catchError(() => of(null)));
+    return this.http
+      .get<{ id?: string; sectionId?: string; title?: string; description?: string }[]>(
+        `/api/classrooms/${classroomId}/sections`,
+      )
+      .pipe(catchError(() => of(null)));
   }
 
   /**

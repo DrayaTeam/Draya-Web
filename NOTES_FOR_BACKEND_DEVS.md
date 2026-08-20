@@ -141,4 +141,26 @@ public class UpdateStudentProfileRequest
   returning the list of exams available to the authenticated student.
 
 ---
+
+## 📌 Note 12: Inconsistent Route Versioning for Classroom Sections (GET /api/classrooms/{id}/sections)
+
+### 🔍 Issue Description
+- Most platform controllers are versioned under `/api/v1/...`, but the `ClassroomSectionsController` is routed under `/api/classrooms/{classroomId}/sections` (missing `/v1`).
+- Calling `/api/v1/classrooms/{id}/sections` returns **`404 (Not Found)`**.
+
+### 💡 Recommendation for Backend Team
+- Standardize the route by adding `api/v1/classrooms/{classroomId}/sections` (or supporting both `/api/v1/...` and `/api/...` through `[Route("api/v1/classrooms/{classroomId}/sections")]`).
+
+---
+
+## 📌 Note 13: Allow Unenrolled Students & Visitors to View Classroom Feedback (GET /api/v1/classrooms/{id}/feedback)
+
+### 🔍 Issue Description
+- When prospective students view package details `/student/packages/{id}` before purchasing to read student reviews and ratings, calling `GET /api/v1/classrooms/{id}/feedback` returns **`403 (Forbidden)`**.
+- Prospective students need to see course ratings and reviews to decide whether to purchase the course.
+
+### 💡 Recommendation for Backend Team
+- Make `GET /api/v1/classrooms/{classroomId}/feedback` publicly accessible or allow `[AllowAnonymous]` / `[Authorize(Roles = "Student,Teacher,Admin,SuperAdmin")]` without requiring an active classroom enrollment to view public reviews.
+
+---
 *Last updated: 2026-08-20 by Frontend Team*
