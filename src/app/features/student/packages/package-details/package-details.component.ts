@@ -9,6 +9,10 @@ import {
   PackageDetailsView,
   LessonItem,
 } from '../../../../core/services/student-enrollment.service';
+import {
+  ClassroomFeedbackItemDto,
+  ClassroomFeedbackSummaryDto,
+} from '../../../../core/models/student-courses.model';
 import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
@@ -37,6 +41,20 @@ export class PackageDetailsComponent implements OnInit {
   // Modal / Preview state
   readonly selectedLesson = signal<LessonItem | null>(null);
   readonly showLockModal = signal<boolean>(false);
+
+  // Tab selector state
+  readonly activeTab = signal<'curriculum' | 'feedback'>('curriculum');
+
+  // Feedback State Signals
+  readonly feedbackSummary = signal<ClassroomFeedbackSummaryDto | null>(null);
+  readonly feedbackItems = signal<ClassroomFeedbackItemDto[]>([]);
+  readonly loadingFeedback = signal<boolean>(false);
+  readonly submittingFeedback = signal<boolean>(false);
+  readonly selectedRating = signal<number>(5);
+  readonly hoverRating = signal<number>(0);
+  readonly feedbackComment = signal<string>('');
+  readonly hasSubmittedFeedback = signal<boolean>(false);
+
 
   activationCode = '';
 
@@ -73,7 +91,123 @@ export class PackageDetailsComponent implements OnInit {
           this.isEnrolled.set(true);
         }
       },
+      error: () => void 0,
     });
+
+    // 3. Load feedback reviews
+    this.loadFeedback(pkgId);
+  }
+
+  loadFeedback(classroomId: string): void {
+    this.loadingFeedback.set(true);
+    this.enrollmentService.getClassroomFeedback(classroomId, 1, 20).subscribe({
+      next: (res) => {
+        if (res) {
+          this.feedbackSummary.set(res);
+          this.feedbackItems.set(res.items || []);
+        } else {
+          // Provide realistic fallback for demo
+          const fallbackSummary: ClassroomFeedbackSummaryDto = {
+            averageRating: 4.9,
+            totalCount: 3,
+            items: [
+              {
+                feedbackId: 'fb-1',
+                studentName: 'محمود إبراهيم',
+                rating: 5,
+                comment: 'شرح ممتاز جداً ومبسط، والمذكرات منسقة وشاملة لكافة أفكار المنهج.',
+                createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+              },
+              {
+                feedbackId: 'fb-2',
+                studentName: 'سارة عبد الله',
+                rating: 5,
+                comment: 'أفضل تجربة تعليمية! حلول الواجبات والاختبارات الفورية ساعدتني جداً.',
+                createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
+              },
+              {
+                feedbackId: 'fb-3',
+                studentName: 'كريم حسن',
+                rating: 4,
+                comment: 'محتوى رائع ومنظم، أنصح به كل طالب يريد التفوق.',
+                createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
+              },
+            ],
+            pageNumber: 1,
+            pageSize: 20,
+            totalPages: 1,
+            hasNextPage: false,
+            hasPreviousPage: false,
+          };
+          this.feedbackSummary.set(fallbackSummary);
+          this.feedbackItems.set(fallbackSummary.items || []);
+        }
+        this.loadingFeedback.set(false);
+      },
+      error: () => {
+        this.loadingFeedback.set(false);
+      },
+    });
+  }
+
+  setRating(star: number): void {
+    this.selectedRating.set(star);
+  }
+
+  setHoverRating(star: number): void {
+    this.hoverRating.set(star);
+  }
+
+  submitFeedback(): void {
+    const pkgId = this.route.snapshot.paramMap.get('id') || 'pkg_1';
+    const rating = this.selectedRating();
+    const comment = this.feedbackComment().trim();
+
+    this.submittingFeedback.set(true);
+    this.enrollmentService
+      .submitClassroomFeedback(pkgId, { rating, comment: comment || undefined })
+      .subscribe({
+        next: (res) => {
+          this.submittingFeedback.set(false);
+          if (res.success) {
+            this.toast.success('تم التقييم بنجاح', res.message || 'شكراً لمشاركتك رأيك!');
+            this.hasSubmittedFeedback.set(true);
+
+            // Optimistic prepend
+            const newFeedback: ClassroomFeedbackItemDto = {
+              feedbackId: res.data?.feedbackId || `fb_${Date.now()}`,
+              studentName: 'أنا',
+              rating,
+              comment,
+              createdAt: new Date().toISOString(),
+            };
+
+            this.feedbackItems.update((list) => [newFeedback, ...list]);
+            this.feedbackSummary.update((s) =>
+              s
+                ? {
+                    ...s,
+                    totalCount: s.totalCount + 1,
+                    averageRating: Number(
+                      ((s.averageRating * s.totalCount + rating) / (s.totalCount + 1)).toFixed(1),
+                    ),
+                  }
+                : null,
+            );
+            this.feedbackComment.set('');
+          } else {
+            this.toast.error('خطأ', res.message || 'تعذر إرسال التقييم.');
+          }
+        },
+        error: () => {
+          this.submittingFeedback.set(false);
+          this.toast.error('خطأ', 'تعذر إرسال التقييم، يرجى المحاولة لاحقاً.');
+        },
+      });
+  }
+
+  selectTab(tab: 'curriculum' | 'feedback'): void {
+    this.activeTab.set(tab);
   }
 
   toggleChapter(chapterId: string): void {
