@@ -13,60 +13,12 @@ import {
   SubmitAttemptResponseDto,
 } from '../models/student-exam-taking.model';
 
-const DEFAULT_QUESTIONS: ExamQuestion[] = [
-  {
-    id: 'q1',
-    index: 1,
-    text: 'إذا كان ن ل ر = 120 ، فما هي قيم ن ، ر الممكنة لحل هذه المعادلة التباديلية؟',
-    subjectTag: 'الجبر',
-    selectedOptionId: undefined,
-    correctOptionId: 'opt2',
-    isFlagged: false,
-    options: [
-      { id: 'opt1', text: 'ن = 5 ، ر = 3' },
-      { id: 'opt2', text: 'ن = 6 ، ر = 3' },
-      { id: 'opt3', text: 'ن = 5 ، ر = 4' },
-      { id: 'opt4', text: 'ن = 6 ، ر = 2' },
-    ],
-  },
-  {
-    id: 'q2',
-    index: 2,
-    text: 'عدد طرق اختيار لجنة مكونة من 3 أشخاص من بين 8 أشخاص يساوي:',
-    subjectTag: 'الجبر',
-    selectedOptionId: undefined,
-    correctOptionId: 'q2-opt1',
-    isFlagged: false,
-    options: [
-      { id: 'q2-opt1', text: '56 طريقة' },
-      { id: 'q2-opt2', text: '336 طريقة' },
-      { id: 'q2-opt3', text: '24 طريقة' },
-      { id: 'q2-opt4', text: '40 طريقة' },
-    ],
-  },
-  {
-    id: 'q3',
-    index: 3,
-    text: 'في مفكوك (س + أ) ^ ن ، يكون رتبة الحد الأوسط إذا كان ن زوجياً هي:',
-    subjectTag: 'الجبر',
-    selectedOptionId: undefined,
-    correctOptionId: 'q3-opt1',
-    isFlagged: false,
-    options: [
-      { id: 'q3-opt1', text: '(ن / 2) + 1' },
-      { id: 'q3-opt2', text: '(ن + 1) / 2' },
-      { id: 'q3-opt3', text: 'ن / 2' },
-      { id: 'q3-opt4', text: 'ن + 2' },
-    ],
-  },
-];
-
 @Injectable({
   providedIn: 'root',
 })
 export class StudentExamTakingService extends ApiBaseService {
-  readonly examTitle = signal<string>('امتحان الجبر والتباديل والتوافيق — 2026');
-  readonly examLevelText = signal<string>('المستوى: الثانوية العامة · بيئة اختبار مؤمنة');
+  readonly examTitle = signal<string>('جارٍ تحميل تفاصيل الامتحان...');
+  readonly examLevelText = signal<string>('بيئة اختبار تفاعلية مؤمنة');
   readonly remainingSeconds = signal<number>(2700); // 45:00
   readonly isLoading = signal<boolean>(false);
   readonly currentAttemptId = signal<string | null>(null);
@@ -75,21 +27,22 @@ export class StudentExamTakingService extends ApiBaseService {
   readonly currentQuestionIndex = signal<number>(0);
   readonly isSubmitted = signal<boolean>(false);
 
-  readonly questions = signal<readonly ExamQuestion[]>(DEFAULT_QUESTIONS);
+  readonly questions = signal<readonly ExamQuestion[]>([]);
 
   readonly currentQuestion = computed(() => {
     const idx = this.currentQuestionIndex();
     const list = this.questions();
-    return list[idx] || list[0];
+    return list[idx] || null;
   });
 
   readonly totalQuestionsCount = computed(() => this.questions().length);
 
   readonly isFirstQuestion = computed(() => this.currentQuestionIndex() === 0);
 
-  readonly isLastQuestion = computed(
-    () => this.currentQuestionIndex() === this.totalQuestionsCount() - 1,
-  );
+  readonly isLastQuestion = computed(() => {
+    const count = this.totalQuestionsCount();
+    return count > 0 ? this.currentQuestionIndex() === count - 1 : false;
+  });
 
   readonly formattedTimer = computed(() => {
     const total = this.remainingSeconds();
@@ -200,6 +153,9 @@ export class StudentExamTakingService extends ApiBaseService {
 
           this.questions.set(mapped);
           this.currentQuestionIndex.set(0);
+        } else {
+          this.questions.set([]);
+          this.currentQuestionIndex.set(0);
         }
 
         const durSeconds =
@@ -211,6 +167,7 @@ export class StudentExamTakingService extends ApiBaseService {
       map(() => true),
       catchError(() => {
         this.isLoading.set(false);
+        this.questions.set([]);
         this.startTimer();
         return of(false);
       }),

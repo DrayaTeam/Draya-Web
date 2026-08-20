@@ -32,31 +32,95 @@
     </div>
   </header>
 
-  <!-- Main Content Layout -->
-  <main class="exam-layout-grid">
-    <!-- Active Question Card (Right side in RTL) -->
-    <div class="main-question-col">
-      <app-exam-question-card
-        [question]="examService.currentQuestion()"
-        [totalQuestionsCount]="examService.totalQuestionsCount()"
-        [isFirstQuestion]="examService.isFirstQuestion()"
-        [isLastQuestion]="examService.isLastQuestion()"
-        (selectOption)="onSelectOption($event)"
-        (updateAnswerText)="onUpdateAnswerText($event)"
-        (toggleFlag)="onToggleFlag($event)"
-        (nextQuestion)="onNextQuestion()"
-        (prevQuestion)="onPrevQuestion()"
-        (submitExam)="onSubmitExam()"></app-exam-question-card>
+  <!-- 1. SKELETON LOADER STATE -->
+  @if (examService.isLoading()) {
+    <div class="exam-skeleton-layout" data-testid="exam-skeleton-loader">
+      <div class="skeleton-main-card">
+        <div class="skeleton-shimmer skeleton-badge"></div>
+        <div class="skeleton-shimmer skeleton-q-title"></div>
+        <div class="skeleton-shimmer skeleton-q-subtitle"></div>
+        
+        <div class="skeleton-options-wrapper">
+          <div class="skeleton-shimmer skeleton-opt-row"></div>
+          <div class="skeleton-shimmer skeleton-opt-row"></div>
+          <div class="skeleton-shimmer skeleton-opt-row"></div>
+          <div class="skeleton-shimmer skeleton-opt-row"></div>
+        </div>
+
+        <div class="skeleton-footer-wrapper">
+          <div class="skeleton-shimmer skeleton-btn-sm"></div>
+          <div class="skeleton-shimmer skeleton-btn-lg"></div>
+        </div>
+      </div>
+
+      <div class="skeleton-sidebar-card">
+        <div class="skeleton-shimmer skeleton-side-title"></div>
+        <div class="skeleton-chips-grid">
+          <div class="skeleton-shimmer skeleton-chip"></div>
+          <div class="skeleton-shimmer skeleton-chip"></div>
+          <div class="skeleton-shimmer skeleton-chip"></div>
+          <div class="skeleton-shimmer skeleton-chip"></div>
+          <div class="skeleton-shimmer skeleton-chip"></div>
+          <div class="skeleton-shimmer skeleton-chip"></div>
+        </div>
+        <div class="skeleton-shimmer skeleton-security-box"></div>
+      </div>
     </div>
+  }
+  <!-- 2. EMPTY STATE (No questions found) -->
+  @else if (examService.questions().length === 0) {
+    <div class="exam-empty-card" data-testid="exam-empty-state">
+      <div class="empty-icon-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#0F4F49" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <h2 class="empty-title">لا توجد أسئلة متاحة في هذا الامتحان حالياً</h2>
+      <p class="empty-desc">لم يقم المعلم بنشر أسئلة لهذا الاختبار بعد، أو أن الاختبار قيد التجهيز من قبل المعلم.</p>
+      
+      <div class="empty-actions">
+        <button type="button" class="btn-retry" (click)="onRetryLoad()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          إعادة المحاولة
+        </button>
+        <button type="button" class="btn-return" (click)="onReturnToExams()">
+          العودة لقائمة الامتحانات
+        </button>
+      </div>
+    </div>
+  }
+  <!-- 3. NORMAL ACTIVE EXAM TAKING INTERFACE -->
+  @else {
+    <!-- Main Content Layout -->
+    <main class="exam-layout-grid">
+      <!-- Active Question Card (Right side in RTL) -->
+      <div class="main-question-col">
+        <app-exam-question-card
+          [question]="examService.currentQuestion()!"
+          [totalQuestionsCount]="examService.totalQuestionsCount()"
+          [isFirstQuestion]="examService.isFirstQuestion()"
+          [isLastQuestion]="examService.isLastQuestion()"
+          (selectOption)="onSelectOption($event)"
+          (updateAnswerText)="onUpdateAnswerText($event)"
+          (toggleFlag)="onToggleFlag($event)"
+          (nextQuestion)="onNextQuestion()"
+          (prevQuestion)="onPrevQuestion()"
+          (submitExam)="onSubmitExam()"></app-exam-question-card>
+      </div>
 
-    <!-- Sidebar Map & Security Warnings (Left side in RTL) -->
-    <aside class="sidebar-col">
-      <app-exam-question-map
-        [questions]="examService.questions()"
-        [currentIndex]="examService.currentQuestionIndex()"
-        (selectQuestionIndex)="onGoToQuestion($event)"></app-exam-question-map>
+      <!-- Sidebar Map & Security Warnings (Left side in RTL) -->
+      <aside class="sidebar-col">
+        <app-exam-question-map
+          [questions]="examService.questions()"
+          [currentIndex]="examService.currentQuestionIndex()"
+          (selectQuestionIndex)="onGoToQuestion($event)"></app-exam-question-map>
 
-      <app-exam-security-warning></app-exam-security-warning>
-    </aside>
-  </main>
+        <app-exam-security-warning></app-exam-security-warning>
+      </aside>
+    </main>
+  }
 </div>

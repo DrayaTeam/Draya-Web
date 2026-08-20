@@ -24,6 +24,10 @@ describe('StudentExamTakingService', () => {
   });
 
   it('should navigate between questions', () => {
+    service.questions.set([
+      { id: 'q1', index: 1, text: 'Q1', subjectTag: 'عام', isFlagged: false, options: [] },
+      { id: 'q2', index: 2, text: 'Q2', subjectTag: 'عام', isFlagged: false, options: [] },
+    ]);
     expect(service.currentQuestionIndex()).toBe(0);
     service.nextQuestion();
     expect(service.currentQuestionIndex()).toBe(1);
@@ -32,12 +36,25 @@ describe('StudentExamTakingService', () => {
   });
 
   it('should select option for a question', () => {
+    service.questions.set([
+      {
+        id: 'q1',
+        index: 1,
+        text: 'Q1',
+        subjectTag: 'عام',
+        isFlagged: false,
+        options: [{ id: 'opt1', text: 'Option 1' }],
+      },
+    ]);
     service.selectOption('q1', 'opt1');
     const q1 = service.questions().find((q) => q.id === 'q1');
     expect(q1?.selectedOptionId).toBe('opt1');
   });
 
   it('should toggle flag question status', () => {
+    service.questions.set([
+      { id: 'q1', index: 1, text: 'Q1', subjectTag: 'عام', isFlagged: false, options: [] },
+    ]);
     const initialFlag = service.questions()[0].isFlagged;
     service.toggleFlagQuestion('q1');
     expect(service.questions()[0].isFlagged).toBe(!initialFlag);

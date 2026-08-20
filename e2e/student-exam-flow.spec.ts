@@ -4,6 +4,30 @@ import { setupStudentAuth } from './helpers/auth.helper';
 test.describe('Student Live Exam Taking & Result Flow', () => {
   test.beforeEach(async ({ page }) => {
     await setupStudentAuth(page);
+    await page.route('**/api/v1/students/exams/exam-1', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'exam-1',
+          title: 'امتحان الجبر والتباديل والتوافيق — 2026',
+          topic: 'الجبر',
+          durationMinutes: 45,
+          questions: [
+            {
+              id: 'q1',
+              text: 'إذا كان ن ل ر = 120 ، فما هي قيم ن ، ر الممكنة؟',
+              type: 'MultipleChoice',
+              difficulty: 'Medium',
+              options: [
+                { id: 'opt1', text: 'ن = 5 ، ر = 3' },
+                { id: 'opt2', text: 'ن = 6 ، ر = 3' },
+              ],
+            },
+          ],
+        }),
+      });
+    });
   });
 
   test('should render exam taking page, timer, and question navigation', async ({ page }) => {
@@ -30,7 +54,7 @@ test.describe('Student Live Exam Taking & Result Flow', () => {
 
     // Flag button toggle
     const flagBtn = page.locator('.flag-btn, button:has-text("مراجعة لاحقاً")').first();
-    if (await flagBtn.count() > 0) {
+    if ((await flagBtn.count()) > 0) {
       await flagBtn.click({ force: true, timeout: 2000 }).catch(() => void 0);
     }
   });

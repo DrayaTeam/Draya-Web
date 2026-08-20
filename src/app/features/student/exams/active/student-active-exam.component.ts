@@ -157,6 +157,17 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
     this.examService.prevQuestion();
   }
 
+  onReturnToExams(): void {
+    this.router.navigate(['/student/exams']);
+  }
+
+  onRetryLoad(): void {
+    this.examService.loadExamSession(this.examId).subscribe({
+      next: () => void 0,
+      error: () => void 0,
+    });
+  }
+
   onSubmitExam(): void {
     const attemptId = this.examService.currentAttemptId() || undefined;
     const finalScore = this.examService.submitExam(attemptId);
