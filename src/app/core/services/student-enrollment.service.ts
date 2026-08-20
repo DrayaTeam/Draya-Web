@@ -48,6 +48,9 @@ export interface LessonItem {
   type: 'video' | 'pdf' | 'exam';
   duration?: string;
   fileUrl?: string;
+  startDate?: string;
+  endDate?: string;
+  isAvailable?: boolean;
 }
 
 export interface ChapterItem {
@@ -259,15 +262,26 @@ export class StudentEnrollmentService extends ApiBaseService {
         };
 
         const mapExamToLesson = (
-          e: (typeof rawExams)[0],
+          e: (typeof rawExams)[0] & {
+            questionsCount?: number;
+            startDate?: string;
+            startsAt?: string;
+            scheduledAt?: string;
+            availableFrom?: string;
+            endDate?: string;
+            endsAt?: string;
+            availableTo?: string;
+          },
           idx: number,
           prefix = 'exam',
         ): LessonItem => {
           const examId = e.examId || e.id || `${prefix}_${idx + 1}`;
           const examTitle =
             e.title || (e.topic ? `اختبار: ${e.topic}` : `امتحان إلكتروني ${idx + 1}`);
-          const qCount = e.questions?.length;
+          const qCount = e.questionsCount || e.questions?.length;
           const durationText = qCount ? `${qCount} أسئلة · اختبار إلكتروني` : 'اختبار إلكتروني تفاعلي';
+          const start = e.startDate || e.startsAt || e.scheduledAt || e.availableFrom;
+          const end = e.endDate || e.endsAt || e.availableTo;
 
           return {
             id: examId,
@@ -275,6 +289,9 @@ export class StudentEnrollmentService extends ApiBaseService {
             type: 'exam',
             duration: durationText,
             fileUrl: `/student/exams/${examId}/take`,
+            startDate: start,
+            endDate: end,
+            isAvailable: !start || new Date(start) <= new Date(),
           };
         };
 
@@ -357,17 +374,25 @@ export class StudentEnrollmentService extends ApiBaseService {
             }));
 
             // 3. Embedded exams
-            const embeddedExams: LessonItem[] = (sec.exams || []).map((ex, eIdx) => ({
-              id: ex.id || `exam_${secId}_${eIdx + 1}`,
-              title:
-                ex.title ||
-                (ex.topic ? `اختبار: ${ex.topic}` : `امتحان إلكتروني ${eIdx + 1}`),
-              type: 'exam',
-              duration: ex.questionsCount
-                ? `${ex.questionsCount} أسئلة · اختبار إلكتروني`
-                : 'اختبار إلكتروني',
-              fileUrl: ex.id ? `/student/exams/${ex.id}/take` : '/student/exams',
-            }));
+            const embeddedExams: LessonItem[] = (sec.exams || []).map((ex, eIdx) => {
+              const exAny = ex as Record<string, string | undefined>;
+              const start = exAny['startDate'] || exAny['startsAt'] || exAny['scheduledAt'] || exAny['availableFrom'];
+              const end = exAny['endDate'] || exAny['endsAt'] || exAny['availableTo'];
+              return {
+                id: ex.id || `exam_${secId}_${eIdx + 1}`,
+                title:
+                  ex.title ||
+                  (ex.topic ? `اختبار: ${ex.topic}` : `امتحان إلكتروني ${eIdx + 1}`),
+                type: 'exam',
+                duration: ex.questionsCount
+                  ? `${ex.questionsCount} أسئلة · اختبار إلكتروني`
+                  : 'اختبار إلكتروني',
+                fileUrl: ex.id ? `/student/exams/${ex.id}/take` : '/student/exams',
+                startDate: start,
+                endDate: end,
+                isAvailable: !start || new Date(start) <= new Date(),
+              };
+            });
 
             // 4. Standalone materials from /materials endpoint
             let secMaterials: LessonItem[] = [];

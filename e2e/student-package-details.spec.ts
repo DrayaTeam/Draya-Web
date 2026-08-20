@@ -85,8 +85,9 @@ test.describe('Student Package Details & Feedback E2E Flow', () => {
   });
 
   test('should toggle tabs and display feedback reviews and rating stars', async ({ page }) => {
+    await expect(page.locator('.pkg-title')).toBeVisible({ timeout: 15000 });
     const feedbackTab = page.locator('.pkg-tab-btn').filter({ hasText: 'التقييمات' }).first();
-    await expect(feedbackTab).toBeVisible();
+    await expect(feedbackTab).toBeVisible({ timeout: 10000 });
     await feedbackTab.click({ force: true });
 
     // Verify feedback summary card is visible

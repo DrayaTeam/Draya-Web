@@ -98,18 +98,13 @@ test.describe('Admin Module E2E Flow', () => {
 
   test('should render supervisors page and open invite modal', async ({ page }) => {
     await page.goto('/admin/supervisors');
+    await expect(page.locator('h1.page-title')).toBeVisible({ timeout: 15000 });
     await expect(page.locator('h1.page-title')).toContainText('المشرفون');
 
     const inviteBtn = page.locator('.invite-btn, button:has-text("دعوة مشرف جديد")');
-    if (
-      await inviteBtn
-        .first()
-        .isVisible()
-        .catch(() => false)
-    ) {
-      await inviteBtn.first().click();
-      await expect(page.locator('.modal-card, .dialog-card')).toBeVisible();
-    }
+    await expect(inviteBtn.first()).toBeVisible({ timeout: 10000 });
+    await inviteBtn.first().click({ force: true });
+    await expect(page.locator('.modal-card, .dialog-card')).toBeVisible();
   });
 
   test('should render platform settings page and inputs', async ({ page }) => {
@@ -127,12 +122,11 @@ test.describe('Admin Module E2E Flow', () => {
     await expect(page.locator('h1.page-title')).toBeVisible({ timeout: 15000 });
     await expect(page.locator('h1.page-title')).toContainText('حسابي');
 
-    const tabBtns = page.locator('.profile-tabs .tab-btn');
-    if ((await tabBtns.count()) > 1) {
-      await tabBtns.nth(1).click();
-      await expect(
-        page.locator('input#newPass, input[type="password"]').first(),
-      ).toBeVisible({ timeout: 10000 });
-    }
+    const tabBtn = page.locator('.profile-tabs .tab-btn').nth(1);
+    await expect(tabBtn).toBeVisible({ timeout: 10000 });
+    await tabBtn.click({ force: true });
+    await expect(
+      page.locator('input#newPass, input[type="password"]').first(),
+    ).toBeVisible({ timeout: 10000 });
   });
 });

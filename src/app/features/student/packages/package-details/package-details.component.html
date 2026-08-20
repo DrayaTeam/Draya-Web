@@ -375,8 +375,11 @@
                           <span class="lesson-duration">{{ les.duration }}</span>
                         }
                         @if (isEnrolled()) {
-                          <span class="play-hint">
-                            {{ les.type === 'pdf' ? 'معاينة وتحميل 📄' : 'مشاهدة الآن ▶' }}
+                          <span
+                            class="play-hint"
+                            [class.exam-hint]="les.type === 'exam'"
+                            [class.pdf-hint]="les.type === 'pdf'">
+                            {{ getLessonActionLabel(les) }}
                           </span>
                         } @else {
                           <span class="lock-pill" title="مغلق — يلزم تفعيل الباقة">

@@ -220,9 +220,31 @@ export class PackageDetailsComponent implements OnInit {
     return !!this.expandedChapters()[chapterId];
   }
 
+  getLessonActionLabel(les: LessonItem): string {
+    if (les.type === 'pdf') {
+      return 'معاينة وتحميل 📄';
+    }
+    if (les.type === 'exam') {
+      if (les.startDate && new Date(les.startDate) > new Date()) {
+        const d = new Date(les.startDate);
+        const dateStr = d.toLocaleDateString('ar-EG', {
+          day: 'numeric',
+          month: 'short',
+        });
+        return `يبدأ ${dateStr} ⏳`;
+      }
+      return 'امتحن الآن ✍️';
+    }
+    return 'مشاهدة الآن ▶';
+  }
+
   onSelectLesson(lesson: LessonItem): void {
     if (this.isEnrolled()) {
       if (lesson.type === 'exam') {
+        if (lesson.startDate && new Date(lesson.startDate) > new Date()) {
+          this.toast.info('موعد الامتحان', `هذا الامتحان مجدول وسيبدأ في موعده المحدد.`);
+          return;
+        }
         this.toast.info('اختبار تدريبي', `جارٍ الانتقال للامتحان: ${lesson.title}`);
         if (lesson.id && !lesson.id.startsWith('les_') && !lesson.id.startsWith('exam_')) {
           this.router.navigate(['/student/exams', lesson.id, 'take']);
