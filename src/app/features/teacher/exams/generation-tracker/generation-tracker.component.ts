@@ -27,7 +27,7 @@ export class GenerationTrackerComponent implements OnInit, OnDestroy {
   // Expose the enum to the template
   readonly Status = GenerationStatus;
 
-  private pollingInterval: any;
+  private pollingInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
     // Listen to hub progress updates
@@ -78,7 +78,8 @@ export class GenerationTrackerComponent implements OnInit, OnDestroy {
       this.cleanup();
       // Wait a moment for UX before navigating
       setTimeout(() => {
-        const resolvedExamId = progress.examId || (progress as any).ExamId;
+        const resolvedExamId =
+          progress.examId || (progress as { ExamId?: string }).ExamId;
         if (resolvedExamId) {
           this.router.navigate(['/teacher/exams', resolvedExamId, 'review']);
         } else {

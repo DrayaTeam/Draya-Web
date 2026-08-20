@@ -1,7 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, output, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DialogModule } from 'primeng/dialog';
 import { MessageService } from 'primeng/api';
 import { finalize } from 'rxjs/operators';
 import { MaterialService } from '../../../../services/material.service';

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, input, OnInit, signal, computed, effect, untracked } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input, signal, computed, effect, untracked } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
@@ -16,7 +16,7 @@ import { ClassroomSectionDto } from '../../../../../../core/models/section.model
   styleUrl: './classroom-exams.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClassroomExamsComponent implements OnInit {
+export class ClassroomExamsComponent {
   private readonly examService = inject(TeacherExamService);
   private readonly sectionService = inject(SectionService);
 
@@ -59,8 +59,6 @@ export class ClassroomExamsComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
-
   loadData(): void {
     this.isLoading.set(true);
     this.error.set(null);
@@ -80,11 +78,12 @@ export class ClassroomExamsComponent implements OnInit {
         else if (examsRes && Array.isArray(examsRes.exams)) extractedExams = examsRes.exams;
 
         // Backfill sectionId
-        sections.forEach((s: any) => {
+        sections.forEach((s) => {
           if (s.exams && Array.isArray(s.exams)) {
-            s.exams.forEach((sectionExam: any) => {
-              const examId = typeof sectionExam === 'string' ? sectionExam : (sectionExam.id || sectionExam.examId);
-              const match = extractedExams.find(e => e.id === examId);
+            s.exams.forEach((sectionExam) => {
+              const examObj = sectionExam as { id?: string; examId?: string } | string;
+              const examId = typeof examObj === 'string' ? examObj : (examObj.id || examObj.examId);
+              const match = extractedExams.find((e) => e.id === examId);
               if (match) match.sectionId = s.id;
             });
           }

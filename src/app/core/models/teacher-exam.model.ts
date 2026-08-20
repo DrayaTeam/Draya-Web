@@ -1,4 +1,4 @@
-import { DifficultyLevel, QuestionType } from './exam-generation.model';
+import { QuestionType } from './exam-generation.model';
 
 export interface ExamQuestionOptionDto {
   text: string;
@@ -43,4 +43,14 @@ export interface UpdateQuestionRequest {
 
 export interface RefineQuestionRequest {
   instruction: string;
+}
+
+export interface GeneratedQuestionDto {
+  text: string;
+  type: QuestionType;
+  difficulty?: string;
+  rubric?: string;
+  correctAnswerIndex?: number;
+  acceptedAnswers?: string[];
+  options?: { text?: string; isCorrect?: boolean }[];
 }

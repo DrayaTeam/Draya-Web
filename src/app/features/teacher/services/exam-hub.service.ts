@@ -35,8 +35,7 @@ export class ExamHubService implements OnDestroy {
       await this.disconnect();
     }
 
-    const token = this.authService.accessToken();
-    let hubUrl = environment.examHubUrl;
+    const hubUrl = environment.examHubUrl;
     
     // In dev mode, we might be hitting a proxied /hubs endpoint. 
     // SignalR usually works fine with relative URLs if the proxy is configured.

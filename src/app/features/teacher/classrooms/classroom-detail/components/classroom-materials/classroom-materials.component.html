@@ -85,9 +85,15 @@
           <div class="section-card" [class.is-expanded]="expandedSections()[section.id]">
             
             <!-- Section Header -->
-            <div class="section-header" (click)="toggleSection(section.id)">
+            <div
+              class="section-header"
+              role="button"
+              tabindex="0"
+              (click)="toggleSection(section.id)"
+              (keydown.enter)="toggleSection(section.id)"
+              (keydown.space)="toggleSection(section.id)">
               <div class="sh-left">
-                <button class="sh-toggle-btn">
+                <button type="button" class="sh-toggle-btn" aria-label="Toggle section">
                   <i class="pi" [ngClass]="expandedSections()[section.id] ? 'pi-chevron-down' : 'pi-chevron-left'"></i>
                 </button>
                 <div class="sh-info">
@@ -97,7 +103,7 @@
                   }
                 </div>
               </div>
-              <div class="sh-right" (click)="$event.stopPropagation()">
+              <div class="sh-right">
                 <span class="sh-badge">{{ section.materials?.length || 0 }} {{ 'TEACHER.SECTIONS.MATERIAL_COUNT' | translate }}</span>
                 <button class="sh-action-btn" (click)="openUploadModal(section.id, $event)" title="إضافة مادة">
                   <i class="pi pi-plus"></i>
