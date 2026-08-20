@@ -19,13 +19,20 @@ export interface StudentCoursesHeaderInfo {
   readonly subtitleText: string;
 }
 
+export interface StudentProgressDto {
+  completedLessons?: number;
+  totalLessons?: number;
+  progressPercent?: number;
+  lastAccessedAt?: string;
+}
+
 export interface ClassroomDto {
   classroomId: string;
   teacherId: string;
   teacherName?: string;
   teacherAvatarUrl?: string;
   materialsCount?: number;
-  studentProgress?: number;
+  studentProgress?: number | StudentProgressDto;
   subjectName?: string;
   name?: string;
   enrollmentCode?: string;

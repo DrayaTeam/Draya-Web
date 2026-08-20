@@ -88,7 +88,16 @@ export class StudentDashboardService extends ApiBaseService {
           name?: string;
           teacherName?: string;
           subjectName?: string;
-          studentProgress?: { completedCount?: number; totalCount?: number; percentage?: number };
+          studentProgress?:
+            | number
+            | {
+                completedCount?: number;
+                totalCount?: number;
+                percentage?: number;
+                completedLessons?: number;
+                totalLessons?: number;
+                progressPercent?: number;
+              };
           imageUrl?: string;
         }[];
       }>('/classrooms').pipe(catchError(() => of(null))),
@@ -118,16 +127,29 @@ export class StudentDashboardService extends ApiBaseService {
             percentileRanking: fallback.percentileRanking,
             enrolledCourses:
               enrolledItems.length > 0
-                ? enrolledItems.map((c) => ({
-                    id: c.classroomId || c.id || 'crs-1',
-                    title: c.name || 'الفصل الدراسي',
-                    teacherName: c.teacherName || 'أستاذ المادة',
-                    subjectName: c.subjectName || 'المنهج',
-                    completedLessons: c.studentProgress?.completedCount ?? 0,
-                    totalLessons: c.studentProgress?.totalCount ?? 1,
-                    progressPercent: c.studentProgress?.percentage ?? 0,
-                    thumbnailUrl: c.imageUrl || '',
-                  }))
+                ? enrolledItems.map((c) => {
+                    const prog =
+                      typeof c.studentProgress === 'object' && c.studentProgress !== null
+                        ? c.studentProgress
+                        : null;
+                    const progressPercent =
+                      typeof c.studentProgress === 'number'
+                        ? c.studentProgress
+                        : (prog?.progressPercent ?? prog?.percentage ?? 0);
+                    const totalLessons = prog?.totalLessons ?? prog?.totalCount ?? 1;
+                    const completedLessons = prog?.completedLessons ?? prog?.completedCount ?? 0;
+
+                    return {
+                      id: c.classroomId || c.id || 'crs-1',
+                      title: c.name || 'الفصل الدراسي',
+                      teacherName: c.teacherName || 'أستاذ المادة',
+                      subjectName: c.subjectName || 'المنهج',
+                      completedLessons: isNaN(completedLessons) ? 0 : completedLessons,
+                      totalLessons: isNaN(totalLessons) || totalLessons === 0 ? 1 : totalLessons,
+                      progressPercent: isNaN(progressPercent) ? 0 : progressPercent,
+                      thumbnailUrl: c.imageUrl || '',
+                    };
+                  })
                 : fallback.enrolledCourses,
             upcomingExams:
               examItems.length > 0

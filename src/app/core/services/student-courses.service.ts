@@ -56,25 +56,38 @@ export class StudentCoursesService extends ApiBaseService {
         tap((res) => {
           const items = res?.items || [];
           this._subscribedPackages.set(
-            items.map((c, idx) => ({
-              id: c.classroomId,
-              title: c.name || 'فصل دراسي',
-              teacherName:
-                c.teacherName || (c.gradeLevelName ? `أستاذ ${c.subjectName || ''}` : 'معلم دراية'),
-              subjectName: c.subjectName || 'المادة الدراسية',
-              statusText: c.isActive ? 'سارية ومفعّلة' : 'غير نشطة',
-              isActive: c.isActive,
-              completedLessons: Math.round(
-                ((c.studentProgress ?? 0) / 100) * (c.materialsCount ?? 10),
-              ),
-              totalLessons: c.materialsCount ?? 10,
-              progressPercent: c.studentProgress ?? 0,
-              studyGroupName: c.classroomTypeName
-                ? `${c.classroomTypeName} - ${c.gradeLevelName || ''}`
-                : 'مجموعة دراسية',
-              bannerImageUrl: COURSE_BANNERS[idx % COURSE_BANNERS.length],
-              progressGradient: COURSE_GRADIENTS[idx % COURSE_GRADIENTS.length],
-            })),
+            items.map((c, idx) => {
+              const progressObj =
+                typeof c.studentProgress === 'object' && c.studentProgress !== null
+                  ? c.studentProgress
+                  : null;
+              const progressPercent =
+                typeof c.studentProgress === 'number'
+                  ? c.studentProgress
+                  : (progressObj?.progressPercent ?? 0);
+              const totalLessons = progressObj?.totalLessons ?? c.materialsCount ?? 10;
+              const completedLessons =
+                progressObj?.completedLessons ?? Math.round((progressPercent / 100) * totalLessons);
+
+              return {
+                id: c.classroomId,
+                title: c.name || 'فصل دراسي',
+                teacherName:
+                  c.teacherName ||
+                  (c.gradeLevelName ? `أستاذ ${c.subjectName || ''}` : 'معلم دراية'),
+                subjectName: c.subjectName || 'المادة الدراسية',
+                statusText: c.isActive ? 'سارية ومفعّلة' : 'غير نشطة',
+                isActive: c.isActive,
+                completedLessons: isNaN(completedLessons) ? 0 : completedLessons,
+                totalLessons: isNaN(totalLessons) || totalLessons === 0 ? 1 : totalLessons,
+                progressPercent: isNaN(progressPercent) ? 0 : progressPercent,
+                studyGroupName: c.classroomTypeName
+                  ? `${c.classroomTypeName} - ${c.gradeLevelName || ''}`
+                  : 'مجموعة دراسية',
+                bannerImageUrl: COURSE_BANNERS[idx % COURSE_BANNERS.length],
+                progressGradient: COURSE_GRADIENTS[idx % COURSE_GRADIENTS.length],
+              };
+            }),
           );
           this._loading.set(false);
         }),
