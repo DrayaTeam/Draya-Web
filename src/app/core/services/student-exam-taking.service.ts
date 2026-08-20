@@ -1,7 +1,7 @@
 // src/app/core/services/student-exam-taking.service.ts
 
 import { Injectable, computed, signal } from '@angular/core';
-import { Observable, catchError, map, of, tap } from 'rxjs';
+import { Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
 import {
   AnswerSubmissionDto,
@@ -360,7 +360,7 @@ export class StudentExamTakingService extends ApiBaseService {
       reviewQuestions,
     });
 
-    // Fire backend submission if targetAttemptId exists
+    // Fire backend submission and trigger AI grading if targetAttemptId exists
     if (targetAttemptId) {
       const payload: SubmitAttemptRequestDto = {
         answers: questionsList.map((q): AnswerSubmissionDto => ({
@@ -369,7 +369,14 @@ export class StudentExamTakingService extends ApiBaseService {
         })),
       };
       this.post<unknown>(`/attempts/${targetAttemptId}/submit`, payload)
-        .pipe(catchError(() => of(null)))
+        .pipe(
+          switchMap(() =>
+            this.post<unknown>(`/attempts/${targetAttemptId}/grade`, {
+              attemptId: targetAttemptId,
+            }).pipe(catchError(() => of(null))),
+          ),
+          catchError(() => of(null)),
+        )
         .subscribe({
           next: () => void 0,
           error: () => void 0,

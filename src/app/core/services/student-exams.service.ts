@@ -1,13 +1,62 @@
 // src/app/core/services/student-exams.service.ts
 import { Injectable, signal, computed } from '@angular/core';
+import { catchError, of, tap } from 'rxjs';
+import { ApiBaseService } from '../api/api-base.service';
 import {
   StudentExamItem,
   StudentExamsHeaderInfo,
   ExamStatusType,
 } from '../models/student-exam.model';
 
+export interface ExamDto {
+  id: string;
+  classroomId?: string;
+  sectionId?: string;
+  title?: string;
+  topic?: string;
+  createdAt?: string;
+  teacherName?: string;
+}
+
+const DEFAULT_EXAMS: StudentExamItem[] = [
+  {
+    id: 'ex-1',
+    title: 'امتحان الجبر والتباديل والتوافيق',
+    teacherName: 'أ. أحمد السيد',
+    subjectName: 'الرياضيات',
+    status: 'available',
+    statusLabel: 'متاح للحل الآن 🔥',
+    durationMinutes: 45,
+    secondaryDetailText: 'جاهز للبدء',
+    cornerTintBg: '#0EA5E9',
+  },
+  {
+    id: 'ex-2',
+    title: 'مراجعة قوانين نيوتن والكهربية',
+    teacherName: 'أ. سارة حسن',
+    subjectName: 'الفيزياء',
+    status: 'scheduled',
+    statusLabel: 'مجدول لاحقاً',
+    durationMinutes: 60,
+    secondaryDetailText: 'الخميس القادم 11:00 ص',
+    cornerTintBg: '#8B5CF6',
+  },
+  {
+    id: 'ex-3',
+    title: 'امتحان الفصل الدراسي الأول التراكمي',
+    teacherName: 'أ. أحمد السيد',
+    subjectName: 'الرياضيات',
+    status: 'completed',
+    statusLabel: 'مكتمل وحاصل على درجة',
+    durationMinutes: 90,
+    secondaryDetailText: 'الدرجة: 85%',
+    scorePercent: 85,
+    cornerTintBg: '#10B981',
+  },
+];
+
 @Injectable({ providedIn: 'root' })
-export class StudentExamsService {
+export class StudentExamsService extends ApiBaseService {
   readonly headerInfo = signal<StudentExamsHeaderInfo>({
     badgeText: 'مركز التقويم والاختبارات التفاعلية',
     mainHeading: 'الامتحانات والواجبات المجدولة',
@@ -16,47 +65,51 @@ export class StudentExamsService {
   });
 
   readonly selectedFilter = signal<'all' | ExamStatusType>('all');
-
-  readonly exams = signal<StudentExamItem[]>([
-    {
-      id: 'ex-1',
-      title: 'امتحان الجبر والتباديل والتوافيق',
-      teacherName: 'أ. أحمد السيد',
-      subjectName: 'الرياضيات',
-      status: 'available',
-      statusLabel: 'متاح للحل الآن 🔥',
-      durationMinutes: 45,
-      secondaryDetailText: 'جاهز للبدء',
-      cornerTintBg: '#0EA5E9',
-    },
-    {
-      id: 'ex-2',
-      title: 'مراجعة قوانين نيوتن والكهربية',
-      teacherName: 'أ. سارة حسن',
-      subjectName: 'الفيزياء',
-      status: 'scheduled',
-      statusLabel: 'مجدول لاحقاً',
-      durationMinutes: 60,
-      secondaryDetailText: 'الخميس القادم 11:00 ص',
-      cornerTintBg: '#8B5CF6',
-    },
-    {
-      id: 'ex-3',
-      title: 'امتحان الفصل الدراسي الأول التراكمي',
-      teacherName: 'أ. أحمد السيد',
-      subjectName: 'الرياضيات',
-      status: 'completed',
-      statusLabel: 'مكتمل وحاصل على درجة',
-      durationMinutes: 90,
-      secondaryDetailText: 'الدرجة: 85%',
-      scorePercent: 85,
-      cornerTintBg: '#10B981',
-    },
-  ]);
+  readonly loading = signal<boolean>(false);
+  readonly exams = signal<StudentExamItem[]>(DEFAULT_EXAMS);
 
   readonly filteredExams = computed(() => {
     const filter = this.selectedFilter();
     if (filter === 'all') return this.exams();
     return this.exams().filter((ex) => ex.status === filter);
   });
+
+  /**
+   * Loads the student's scheduled and active exams from GET /api/v1/exams.
+   */
+  loadExams(classroomId?: string, page = 1, pageSize = 20): void {
+    this.loading.set(true);
+    const params: Record<string, string | number> = { page, pageSize };
+    if (classroomId) {
+      params['classroomId'] = classroomId;
+    }
+
+    this.get<ExamDto[] | { items: ExamDto[] }>('/exams', params)
+      .pipe(
+        tap((res) => {
+          this.loading.set(false);
+          const rawItems = Array.isArray(res) ? res : res?.items || [];
+          if (rawItems.length > 0) {
+            const colors = ['#0EA5E9', '#8B5CF6', '#10B981', '#F59E0B'];
+            const mapped: StudentExamItem[] = rawItems.map((ex, idx) => ({
+              id: ex.id,
+              title: ex.title || 'امتحان تفاعلي',
+              teacherName: ex.teacherName || 'أستاذ المادة',
+              subjectName: ex.topic || 'المنهج الدراسي',
+              status: 'available',
+              statusLabel: 'متاح للحل الآن 🔥',
+              durationMinutes: 45,
+              secondaryDetailText: 'جاهز للبدء',
+              cornerTintBg: colors[idx % colors.length],
+            }));
+            this.exams.set(mapped);
+          }
+        }),
+        catchError(() => {
+          this.loading.set(false);
+          return of(null);
+        }),
+      )
+      .subscribe();
+  }
 }
