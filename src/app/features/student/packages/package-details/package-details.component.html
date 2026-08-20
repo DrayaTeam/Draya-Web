@@ -602,38 +602,19 @@
               }
             </div>
           } @else if (selectedLesson()?.type === 'pdf') {
-            <div class="pdf-viewer-container">
-              <div class="pdf-file-icon">📄</div>
-              <h4>{{ selectedLesson()?.title }}</h4>
-              <p class="pdf-desc-text">
-                المذكرة والمادة العلمية جاهزة للمعاينة والتحميل بجودة عالية.
-              </p>
-
-              <div class="pdf-actions-row">
-                @if (selectedLesson()?.fileUrl) {
-                  <a
-                    [href]="selectedLesson()?.fileUrl"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="btn-pdf-open">
-                    <span>فتح المذكرة في نافذة جديدة</span>
+            <div class="pdf-viewer-modal-frame">
+              @if (selectedLesson()?.fileUrl) {
+                <iframe
+                  [src]="getSafeUrl(selectedLesson()?.fileUrl)"
+                  class="pdf-embedded-iframe"
+                  title="عارض المذكرة"></iframe>
+                <div class="pdf-modal-footer-bar">
+                  <span class="pdf-lesson-title">📄 {{ selectedLesson()?.title }}</span>
+                  <a [href]="selectedLesson()?.fileUrl" download class="btn-pdf-download-pill">
+                    <span>تحميل المذكرة</span>
                     <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                      <polyline points="15 3 21 3 21 9"></polyline>
-                      <line x1="10" y1="14" x2="21" y2="3"></line>
-                    </svg>
-                  </a>
-                  <a [href]="selectedLesson()?.fileUrl" download class="btn-pdf-download">
-                    <span>تحميل المذكرة (PDF)</span>
-                    <svg
-                      width="16"
-                      height="16"
+                      width="14"
+                      height="14"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -643,10 +624,14 @@
                       <line x1="12" y1="15" x2="12" y2="3"></line>
                     </svg>
                   </a>
-                } @else {
-                  <p class="no-url-text">رابط المستند قيد المعالجة من المعلم.</p>
-                }
-              </div>
+                </div>
+              } @else {
+                <div class="no-pdf-content-box">
+                  <div class="pdf-file-icon">📄</div>
+                  <h4>{{ selectedLesson()?.title }}</h4>
+                  <p class="no-url-text">رابط المذكرة قيد المعالجة والرفع من المعلم.</p>
+                </div>
+              }
             </div>
           }
         </div>
