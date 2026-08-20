@@ -65,4 +65,3 @@ export interface UpdateAdminProfileRequest {
   email?: string;
   phoneNumber?: string;
 }
-

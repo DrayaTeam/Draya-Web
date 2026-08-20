@@ -76,6 +76,3 @@ export interface ClassroomSectionDto {
   order?: number;
   materials?: unknown[];
 }
-
-
-

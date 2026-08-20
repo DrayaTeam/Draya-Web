@@ -55,7 +55,6 @@ export class PackageDetailsComponent implements OnInit {
   readonly feedbackComment = signal<string>('');
   readonly hasSubmittedFeedback = signal<boolean>(false);
 
-
   activationCode = '';
 
   ngOnInit(): void {

@@ -27,7 +27,6 @@ export interface RegisterStudentRequest {
   dateOfBirth: string;
 }
 
-
 export interface AuthResponse {
   accessToken: string;
   refreshToken: string;

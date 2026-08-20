@@ -1,4 +1,4 @@
-﻿import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { setupStudentAuth } from './helpers/auth.helper';
 
 test.describe('Student Live Exam Taking & Result Flow', () => {
@@ -18,28 +18,20 @@ test.describe('Student Live Exam Taking & Result Flow', () => {
 
     // Question card and options
     const questionCard = page.locator('app-exam-question-card');
-    await expect(questionCard).toBeVisible();
+    await expect(questionCard).toBeVisible({ timeout: 10000 });
 
-    const options = page.locator('.option-item');
-    if ((await options.count()) > 0) {
-      await options.first().dispatchEvent('click');
-    }
+    const firstOption = page.locator('.option-item').first();
+    await expect(firstOption).toBeVisible({ timeout: 10000 });
+    await firstOption.click();
 
     // Question map sidebar
     const mapSidebar = page.locator('app-exam-question-map');
     await expect(mapSidebar).toBeVisible();
 
-    // Next question navigation
-    const nextBtn = page.locator('.next-btn');
-    if ((await nextBtn.count()) > 0) {
-      await nextBtn.dispatchEvent('click');
-    }
-
     // Flag button toggle
-    const flagBtn = page.locator('.flag-btn');
-    if ((await flagBtn.count()) > 0) {
-      await flagBtn.dispatchEvent('click');
-    }
+    const flagBtn = page.locator('.flag-btn').first();
+    await expect(flagBtn).toBeVisible();
+    await flagBtn.click();
   });
 
   test('should display exam results report, score, and review items', async ({ page }) => {

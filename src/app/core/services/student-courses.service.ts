@@ -87,4 +87,3 @@ export class StudentCoursesService extends ApiBaseService {
       });
   }
 }
-

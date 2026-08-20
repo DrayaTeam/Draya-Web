@@ -15,7 +15,6 @@ import {
   UpdateAdminProfileRequest,
 } from '../models/admin-financial.model';
 
-
 @Injectable({ providedIn: 'root' })
 export class AdminFinancialService extends ApiBaseService {
   private readonly basePath = '/admin/financial';
@@ -99,5 +98,3 @@ export class AdminFinancialService extends ApiBaseService {
     return this.put<void, UpdateAdminProfileRequest>('/admin/profile', request);
   }
 }
-
-
