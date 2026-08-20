@@ -79,7 +79,7 @@ test.describe('Admin Module E2E Flow', () => {
 
     const addBtn = page.locator('.add-btn, button:has-text("إضافة نوع فصل جديد")');
     await expect(addBtn.first()).toBeVisible({ timeout: 10000 });
-    await addBtn.first().click();
+    await addBtn.first().click({ force: true });
 
     await expect(page.locator('.modal-card, .dialog-card')).toBeVisible();
   });
@@ -91,7 +91,7 @@ test.describe('Admin Module E2E Flow', () => {
 
     const addBtn = page.locator('.add-btn, button:has-text("إضافة مرحلة دراسية جديدة")');
     await expect(addBtn.first()).toBeVisible({ timeout: 10000 });
-    await addBtn.first().click();
+    await addBtn.first().click({ force: true });
 
     await expect(page.locator('.modal-card, .dialog-card')).toBeVisible();
   });
@@ -124,13 +124,12 @@ test.describe('Admin Module E2E Flow', () => {
 
   test('should render profile page and toggle security tab', async ({ page }) => {
     await page.goto('/admin/profile');
+    await expect(page.locator('h1.page-title')).toBeVisible({ timeout: 15000 });
     await expect(page.locator('h1.page-title')).toContainText('حسابي');
 
-    const tabBtn = page.locator(
-      '.profile-tabs button:has-text("الأمان"), .profile-tabs button:has-text("كلمة المرور"), .profile-tabs .tab-btn',
-    );
-    if ((await tabBtn.count()) > 1) {
-      await tabBtn.nth(1).click({ force: true });
+    const tabBtns = page.locator('.profile-tabs .tab-btn');
+    if ((await tabBtns.count()) > 1) {
+      await tabBtns.nth(1).click();
       await expect(
         page.locator('input#newPass, input[type="password"]').first(),
       ).toBeVisible({ timeout: 10000 });

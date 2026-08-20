@@ -296,6 +296,33 @@ export class StudentEnrollmentService extends ApiBaseService {
           description?: string;
           order?: number;
           materials?: typeof rawMaterials;
+          documents?: {
+            id?: string;
+            title?: string;
+            name?: string;
+            materialType?: string;
+            fileUrl?: string;
+            url?: string;
+            createdAt?: string;
+          }[];
+          videos?: {
+            id?: string;
+            title?: string;
+            name?: string;
+            materialType?: string;
+            fileUrl?: string;
+            url?: string;
+            duration?: string;
+            durationText?: string;
+            createdAt?: string;
+          }[];
+          exams?: {
+            id?: string;
+            title?: string;
+            topic?: string;
+            questionsCount?: number;
+            createdAt?: string;
+          }[];
         }[] = [];
 
         if (Array.isArray(sectionsRes)) {
@@ -311,6 +338,38 @@ export class StudentEnrollmentService extends ApiBaseService {
             const secId = sec.id || sec.sectionId || `sec_${sIdx + 1}`;
             const secTitle = sec.title || sec.name || `الوحدة / القسم ${sIdx + 1}`;
 
+            // 1. Embedded documents (PDFs)
+            const embeddedDocs: LessonItem[] = (sec.documents || []).map((doc, dIdx) => ({
+              id: doc.id || `doc_${secId}_${dIdx + 1}`,
+              title: doc.title || doc.name || `مستند ${dIdx + 1}`,
+              type: 'pdf',
+              duration: 'مستند PDF',
+              fileUrl: doc.fileUrl || doc.url || '',
+            }));
+
+            // 2. Embedded videos
+            const embeddedVideos: LessonItem[] = (sec.videos || []).map((vid, vIdx) => ({
+              id: vid.id || `vid_${secId}_${vIdx + 1}`,
+              title: vid.title || vid.name || `فيديو ${vIdx + 1}`,
+              type: 'video',
+              duration: vid.durationText || vid.duration || 'فيديو تعليمي',
+              fileUrl: vid.fileUrl || vid.url || '',
+            }));
+
+            // 3. Embedded exams
+            const embeddedExams: LessonItem[] = (sec.exams || []).map((ex, eIdx) => ({
+              id: ex.id || `exam_${secId}_${eIdx + 1}`,
+              title:
+                ex.title ||
+                (ex.topic ? `اختبار: ${ex.topic}` : `امتحان إلكتروني ${eIdx + 1}`),
+              type: 'exam',
+              duration: ex.questionsCount
+                ? `${ex.questionsCount} أسئلة · اختبار إلكتروني`
+                : 'اختبار إلكتروني',
+              fileUrl: ex.id ? `/student/exams/${ex.id}/take` : '/student/exams',
+            }));
+
+            // 4. Standalone materials from /materials endpoint
             let secMaterials: LessonItem[] = [];
             if (sec.materials && Array.isArray(sec.materials) && sec.materials.length > 0) {
               secMaterials = sec.materials.map((m, mIdx) => mapMaterialToLesson(m, mIdx, secId));
@@ -318,21 +377,47 @@ export class StudentEnrollmentService extends ApiBaseService {
               secMaterials = rawMaterials
                 .filter((m) => m.sectionId === secId)
                 .map((m, mIdx) => mapMaterialToLesson(m, mIdx, secId));
-            } else if (sIdx === 0 && !rawMaterials.some((m) => !!m.sectionId)) {
+            } else if (
+              sIdx === 0 &&
+              !rawMaterials.some((m) => !!m.sectionId) &&
+              embeddedDocs.length === 0 &&
+              embeddedVideos.length === 0
+            ) {
               secMaterials = allLessons;
             }
 
-            // Merge exams belonging to this section (or attach to section 0 if sectionId is not set)
-            let secExams: LessonItem[] = [];
+            // 5. Standalone exams from /exams endpoint
+            let standaloneExams: LessonItem[] = [];
             if (rawExams.some((e) => e.sectionId === secId)) {
-              secExams = rawExams
+              standaloneExams = rawExams
                 .filter((e) => e.sectionId === secId)
                 .map((e, eIdx) => mapExamToLesson(e, eIdx, secId));
-            } else if (sIdx === 0 && !rawExams.some((e) => !!e.sectionId)) {
-              secExams = rawExams.map((e, eIdx) => mapExamToLesson(e, eIdx, secId));
+            } else if (
+              sIdx === 0 &&
+              !rawExams.some((e) => !!e.sectionId) &&
+              embeddedExams.length === 0
+            ) {
+              standaloneExams = rawExams.map((e, eIdx) => mapExamToLesson(e, eIdx, secId));
             }
 
-            const secLessons: LessonItem[] = [...secMaterials, ...secExams];
+            // Combine all without duplicating IDs
+            const seenIds = new Set<string>();
+            const secLessons: LessonItem[] = [];
+
+            for (const item of [
+              ...embeddedVideos,
+              ...embeddedDocs,
+              ...embeddedExams,
+              ...secMaterials,
+              ...standaloneExams,
+            ]) {
+              if (item.id && !seenIds.has(item.id)) {
+                seenIds.add(item.id);
+                secLessons.push(item);
+              } else if (!item.id) {
+                secLessons.push(item);
+              }
+            }
 
             return {
               id: secId,

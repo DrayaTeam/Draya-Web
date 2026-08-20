@@ -1,7 +1,23 @@
 import { test, expect } from '@playwright/test';
+import { setupStudentAuth } from './helpers/auth.helper';
 
 test.describe('Student Dashboard E2E Flow', () => {
   test.beforeEach(async ({ page }) => {
+    await setupStudentAuth(page);
+    await page.route('**/api/v1/students/dashboard*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          studentName: 'أحمد علي',
+          completedExamsCount: 5,
+          overallAveragePercentage: 88,
+          weeklyStudyStreakDays: 4,
+          enrolledCourses: [],
+          upcomingDeadlines: [],
+        }),
+      });
+    });
     await page.goto('/student/dashboard');
   });
 
