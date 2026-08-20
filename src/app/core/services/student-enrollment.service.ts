@@ -46,9 +46,11 @@ export interface LessonItem {
   title: string;
   type: 'video' | 'pdf' | 'exam';
   duration?: string;
+  durationMinutes?: number;
   fileUrl?: string;
   startDate?: string;
-  endDate?: string;
+  endDate?: string | null;
+  allowedAttempts?: number;
   isAvailable?: boolean;
 }
 
@@ -97,12 +99,14 @@ export interface SectionItemDto {
     id?: string;
     title?: string;
     topic?: string;
+    durationMinutes?: number;
+    allowedAttempts?: number;
     questionsCount?: number;
     startDate?: string;
     startsAt?: string;
     scheduledAt?: string;
     availableFrom?: string;
-    endDate?: string;
+    endDate?: string | null;
     endsAt?: string;
     availableTo?: string;
     createdAt?: string;
@@ -287,11 +291,13 @@ export class StudentEnrollmentService extends ApiBaseService {
         const mapExamToLesson = (
           e: (typeof rawExams)[0] & {
             questionsCount?: number;
+            durationMinutes?: number;
+            allowedAttempts?: number;
             startDate?: string;
             startsAt?: string;
             scheduledAt?: string;
             availableFrom?: string;
-            endDate?: string;
+            endDate?: string | null;
             endsAt?: string;
             availableTo?: string;
           },
@@ -302,19 +308,33 @@ export class StudentEnrollmentService extends ApiBaseService {
           const examTitle =
             e.title || (e.topic ? `اختبار: ${e.topic}` : `امتحان إلكتروني ${idx + 1}`);
           const qCount = e.questionsCount || e.questions?.length;
-          const durationText = qCount ? `${qCount} أسئلة · اختبار إلكتروني` : 'اختبار إلكتروني تفاعلي';
+          const durMin = e.durationMinutes;
+          const durationParts: string[] = [];
+          if (qCount) durationParts.push(`${qCount} أسئلة`);
+          if (durMin) durationParts.push(`${durMin} دقيقة`);
+          const durationText =
+            durationParts.length > 0
+              ? `${durationParts.join(' · ')} · اختبار إلكتروني`
+              : 'اختبار إلكتروني تفاعلي';
+
           const start = e.startDate || e.startsAt || e.scheduledAt || e.availableFrom;
           const end = e.endDate || e.endsAt || e.availableTo;
+          const now = new Date();
+          const isUpcoming = start ? new Date(start) > now : false;
+          const isExpired = end ? new Date(end) < now : false;
+          const isAvailable = !isUpcoming && !isExpired;
 
           return {
             id: examId,
             title: examTitle,
             type: 'exam',
             duration: durationText,
+            durationMinutes: durMin,
+            allowedAttempts: e.allowedAttempts,
             fileUrl: `/student/exams/${examId}/take`,
             startDate: start,
             endDate: end,
-            isAvailable: !start || new Date(start) <= new Date(),
+            isAvailable,
           };
         };
 

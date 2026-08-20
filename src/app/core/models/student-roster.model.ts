@@ -4,6 +4,7 @@ import { PaginatedResponse } from './classroom.model';
 export interface StudentRosterItemDto {
   studentId: string;
   fullName: string;
+  profilePictureUrl?: string | null;
   enrolledAt: string;
   status: string;
 }

@@ -202,7 +202,11 @@ export class StudentExamTakingService extends ApiBaseService {
           this.currentQuestionIndex.set(0);
         }
 
-        this.startTimer();
+        const durSeconds =
+          exam?.durationMinutes && exam.durationMinutes > 0
+            ? exam.durationMinutes * 60
+            : 2700;
+        this.startTimer(durSeconds);
       }),
       map(() => true),
       catchError(() => {
@@ -213,10 +217,12 @@ export class StudentExamTakingService extends ApiBaseService {
     );
   }
 
-  startTimer(): void {
+  startTimer(initialSeconds?: number): void {
     this.stopTimer();
-    if (this.remainingSeconds() <= 0) {
-      this.remainingSeconds.set(2700); // 45 minutes
+    if (initialSeconds && initialSeconds > 0) {
+      this.remainingSeconds.set(initialSeconds);
+    } else if (this.remainingSeconds() <= 0) {
+      this.remainingSeconds.set(2700); // 45 minutes default
     }
     this.timerInterval = setInterval(() => {
       this.remainingSeconds.update((s) => {

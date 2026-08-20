@@ -140,6 +140,13 @@
   font-size: 0.9rem;
   flex-shrink: 0;
   box-shadow: 0 2px 4px rgba(27, 109, 99, 0.2);
+  overflow: hidden;
+}
+
+.student-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .student-info {

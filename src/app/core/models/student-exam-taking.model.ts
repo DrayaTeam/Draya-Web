@@ -76,6 +76,11 @@ export interface StudentExamDto {
   sectionId?: string;
   title?: string;
   topic?: string;
+  durationMinutes?: number;
+  startDate?: string;
+  endDate?: string | null;
+  allowedAttempts?: number;
+  questionsCount?: number;
   createdAt?: string;
   questions?: StudentExamQuestionDto[];
 }
@@ -87,6 +92,9 @@ export interface StartAttemptResponseDto {
   examTitle?: string;
   title?: string;
   durationMinutes?: number;
+  startDate?: string;
+  endDate?: string | null;
+  allowedAttempts?: number;
   startedAt?: string;
   expiresAt?: string;
   questions?: StudentExamQuestionDto[];

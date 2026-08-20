@@ -226,13 +226,17 @@ export class PackageDetailsComponent implements OnInit {
       return 'معاينة وتحميل 📄';
     }
     if (les.type === 'exam') {
-      if (les.startDate && new Date(les.startDate) > new Date()) {
+      const now = new Date();
+      if (les.startDate && new Date(les.startDate) > now) {
         const d = new Date(les.startDate);
         const dateStr = d.toLocaleDateString('ar-EG', {
           day: 'numeric',
           month: 'short',
         });
         return `يبدأ ${dateStr} ⏳`;
+      }
+      if (les.endDate && new Date(les.endDate) < now) {
+        return 'انتهت الفترة ⛔';
       }
       return 'امتحن الآن ✍️';
     }
@@ -242,8 +246,22 @@ export class PackageDetailsComponent implements OnInit {
   onSelectLesson(lesson: LessonItem): void {
     if (this.isEnrolled()) {
       if (lesson.type === 'exam') {
-        if (lesson.startDate && new Date(lesson.startDate) > new Date()) {
-          this.toast.info('موعد الامتحان', `هذا الامتحان مجدول وسيبدأ في موعده المحدد.`);
+        const now = new Date();
+        if (lesson.startDate && new Date(lesson.startDate) > now) {
+          const d = new Date(lesson.startDate).toLocaleDateString('ar-EG', {
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+          this.toast.info('موعد الامتحان', `هذا الامتحان مجدول وسيبدأ في: ${d}.`);
+          return;
+        }
+        if (lesson.endDate && new Date(lesson.endDate) < now) {
+          this.toast.warning(
+            'انتهت فترة الامتحان ⛔',
+            'لقد انتهت الفترة الزمنية المحددة لأداء هذا الامتحان.',
+          );
           return;
         }
         this.toast.info('اختبار تدريبي', `جارٍ الانتقال للامتحان: ${lesson.title}`);

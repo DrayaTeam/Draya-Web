@@ -6,6 +6,7 @@ import {
   OnDestroy,
   HostListener,
   signal,
+  effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -74,6 +75,21 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
   readonly showSubmitConfirm = signal<boolean>(false);
   private examId = 'exam-1';
   private visibilityListener: (() => void) | null = null;
+
+  constructor() {
+    effect(() => {
+      const remaining = this.examService.remainingSeconds();
+      const isSub = this.examService.isSubmitted();
+      const isLoading = this.examService.isLoading();
+      if (remaining === 0 && !isSub && !isLoading) {
+        this.toastService.warning(
+          'انتهى وقت الامتحان! ⌛',
+          'تم إرسال وتسليم إجاباتك تلقائياً للحفاظ على درجاتك قبل انتهاء المهلة.',
+        );
+        this.onSubmitExam();
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.examId = this.route.snapshot.paramMap.get('id') || 'exam-1';

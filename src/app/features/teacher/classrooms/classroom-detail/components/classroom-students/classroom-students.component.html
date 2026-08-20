@@ -42,7 +42,11 @@
           <td>
             <div class="student-name-cell">
               <div class="student-avatar">
-                {{ student.fullName.charAt(0) }}
+                @if (student.profilePictureUrl) {
+                  <img [src]="student.profilePictureUrl" [alt]="student.fullName" class="student-avatar-img" />
+                } @else {
+                  {{ student.fullName.charAt(0) }}
+                }
               </div>
               <div class="student-info">
                 <span class="student-full-name">{{ student.fullName }}</span>
