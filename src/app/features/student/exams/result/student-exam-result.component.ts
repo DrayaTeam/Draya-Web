@@ -25,21 +25,31 @@ export class StudentExamResultComponent implements OnInit {
   readonly resultReport = this.examService.examResult;
 
   ngOnInit(): void {
-    const scoreParam = this.route.snapshot.queryParams['score'];
-    if (scoreParam !== undefined && scoreParam !== null) {
-      const numericScore = Number(scoreParam);
-      if (!isNaN(numericScore)) {
-        let gradeLabel = 'راسب — ضعيف جداً';
-        if (numericScore >= 85) gradeLabel = 'ممتاز جداً 🌟';
-        else if (numericScore >= 65) gradeLabel = 'جيد جداً 👍';
-        else if (numericScore >= 50) gradeLabel = 'مقبول — يحتاج مراجعة';
+    const attemptIdParam = this.route.snapshot.queryParams['attemptId'];
+    if (attemptIdParam) {
+      this.examService.fetchAttemptResults(attemptIdParam).subscribe();
 
-        this.examService.examResult.update((current) => ({
-          ...current,
-          scorePercentage: numericScore,
-          gradeLabel,
-          isPassed: numericScore >= 50,
-        }));
+      // Poll once after 2.5s to ensure AI background grading has updated
+      setTimeout(() => {
+        this.examService.fetchAttemptResults(attemptIdParam).subscribe();
+      }, 2500);
+    } else {
+      const scoreParam = this.route.snapshot.queryParams['score'];
+      if (scoreParam !== undefined && scoreParam !== null) {
+        const numericScore = Number(scoreParam);
+        if (!isNaN(numericScore)) {
+          let gradeLabel = 'راسب — ضعيف جداً';
+          if (numericScore >= 85) gradeLabel = 'ممتاز جداً 🌟';
+          else if (numericScore >= 65) gradeLabel = 'جيد جداً 👍';
+          else if (numericScore >= 50) gradeLabel = 'مقبول — يحتاج مراجعة';
+
+          this.examService.examResult.update((current) => ({
+            ...current,
+            scorePercentage: numericScore,
+            gradeLabel,
+            isPassed: numericScore >= 50,
+          }));
+        }
       }
     }
   }

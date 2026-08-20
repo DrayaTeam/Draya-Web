@@ -1,6 +1,6 @@
 // src/app/core/services/teacher-directory.service.ts
 import { Injectable, signal, computed } from '@angular/core';
-import { catchError, of, forkJoin, map, switchMap } from 'rxjs';
+import { catchError, of, map } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
 import {
   TeacherDirectoryItem,
@@ -8,7 +8,6 @@ import {
   SubjectFilterOption,
   TeacherProfile,
 } from '../models/teacher.model';
-import { ClassroomDto, ClassroomDtoPagedResult } from '../models/student-courses.model';
 
 const CARD_GRADIENTS = [
   'linear-gradient(135deg, rgba(0, 166, 244, 0.1) 0%, rgba(97, 95, 255, 0.05) 100%), #FFFFFF',
@@ -109,49 +108,16 @@ export class TeacherDirectoryService extends ApiBaseService {
 
     this.get<TeacherProfile[]>('/teachers')
       .pipe(
-        switchMap((teachersList) => {
+        map((teachersList) => {
           if (!teachersList || teachersList.length === 0) {
-            return of([]);
+            return [];
           }
 
-          // Fetch real classrooms for each teacher in parallel
-          const teacherRequests = teachersList.map((t) =>
-            this.get<ClassroomDtoPagedResult | ClassroomDto[]>(
-              `/teachers/${t.userId}/classrooms`,
-            ).pipe(
-              catchError(() => of(null)),
-              map((classroomsRes) => {
-                let classrooms: ClassroomDto[] = [];
-                if (Array.isArray(classroomsRes)) {
-                  classrooms = classroomsRes;
-                } else if (classroomsRes && Array.isArray(classroomsRes.items)) {
-                  classrooms = classroomsRes.items;
-                }
-
-                return { teacher: t, classrooms };
-              }),
-            ),
-          );
-
-          return forkJoin(teacherRequests);
-        }),
-        map((results) => {
-          return results.map(({ teacher: t, classrooms }, idx) => {
-            const firstClass = classrooms[0];
-            const realSubject =
-              (t.specialization && t.specialization.trim()) ||
-              (firstClass?.subjectName && firstClass.subjectName.trim()) ||
-              (firstClass?.name && firstClass.name.trim()) ||
-              'التعليم العام';
+          return teachersList.map((t, idx) => {
+            const realSubject = (t.specialization && t.specialization.trim()) || 'التعليم العام';
 
             const cat = inferCategory(realSubject);
             const styleIdx = idx % CARD_GRADIENTS.length;
-            const realPackagesCount = classrooms.length;
-            const totalStudents = classrooms.reduce(
-              (acc, c: ClassroomDto & { enrolledCount?: number; studentsCount?: number }) =>
-                acc + (c.studentCount || c.enrolledCount || c.studentsCount || 0),
-              0,
-            );
 
             const bio =
               (t.description && t.description.trim()) ||
@@ -165,11 +131,11 @@ export class TeacherDirectoryService extends ApiBaseService {
               subjectCategory: cat,
               subjectName: realSubject,
               rating: 5.0,
-              avatarUrl: TEACHER_AVATARS[idx % TEACHER_AVATARS.length],
+              avatarUrl: t.pictureUrl || TEACHER_AVATARS[idx % TEACHER_AVATARS.length],
               isVerified: true,
               bio: bio,
-              packagesCount: realPackagesCount,
-              studentsCount: totalStudents,
+              packagesCount: 1,
+              studentsCount: 0,
               cardGradient: CARD_GRADIENTS[styleIdx],
               blurBlobColor: BLUR_COLORS[styleIdx],
               badgeBgColor: BADGE_STYLES[styleIdx].bg,

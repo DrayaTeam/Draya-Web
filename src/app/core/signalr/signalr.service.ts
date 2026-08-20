@@ -4,6 +4,8 @@
 // - Exposes typed event signals for each real-time event (US-115, CONTEXT.md §Real-Time Events).
 // - Implements exponential backoff on top of withAutomaticReconnect().
 // - Status signal is read-only to prevent external mutation.
+// - Gated by environment.enableNotificationsHub: when false the connection is skipped entirely
+//   so the browser never emits a red 404 negotiate error for /hubs/notifications.
 
 import { Injectable, inject, signal, computed, effect, DestroyRef } from '@angular/core';
 import {
@@ -42,10 +44,7 @@ export class SignalRService {
 
   /** True when the connection is degraded and the user should be notified. */
   readonly showBanner = computed<boolean>(
-    () =>
-      this._status() === 'Disconnected' ||
-      this._status() === 'Reconnecting' ||
-      this._status() === 'Error',
+    () => this._status() === 'Reconnecting' || this._status() === 'Error',
   );
 
   // ─── Typed event signals ──────────────────────────────────────────────────
@@ -86,8 +85,23 @@ export class SignalRService {
    * Attaches the JWT as an access-token factory so SignalR can authenticate
    * WebSocket/SSE connections (Bearer token in query string).
    * No-ops when already connected.
+   *
+   * NOTE: This method is gated by environment.enableNotificationsHub.
+   * When the flag is false the negotiate request is never sent, preventing
+   * the red 404 console errors from /hubs/notifications while that hub is
+   * not yet mapped on the backend. Flip the flag to true once the backend
+   * confirms /hubs/notifications is live.
    */
   async startConnection(): Promise<void> {
+    // ── Feature gate ─────────────────────────────────────────────────────
+    if (!environment.enableNotificationsHub) {
+      // Single quiet log — not an error. Only fires once per connection attempt.
+      console.warn(
+        '[SignalR] Notifications hub disabled via config — skipping connection attempt.',
+      );
+      return;
+    }
+
     if (this.connection?.state === HubConnectionState.Connected) return;
 
     this.connection = new HubConnectionBuilder()
@@ -121,10 +135,20 @@ export class SignalRService {
       this._status.set('Connecting');
       await this.connection.start();
       this._status.set('Connected');
-    } catch (err) {
-      this._status.set('Error');
-      console.error('[SignalR] Connection failed:', err); // legitimate: infra error trace
-      throw err;
+    } catch (err: unknown) {
+      // If hub is not mapped on backend (404), stay disconnected gracefully
+      const is404 =
+        err instanceof Error &&
+        (err.message.includes('404') || (err as { statusCode?: number }).statusCode === 404);
+      if (is404) {
+        this._status.set('Disconnected');
+        console.warn(
+          '[SignalR] Hub endpoint not available on backend, running in offline/polling mode.',
+        );
+      } else {
+        this._status.set('Error');
+        console.error('[SignalR] Connection failed:', err);
+      }
     }
   }
 

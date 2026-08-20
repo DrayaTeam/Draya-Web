@@ -15,19 +15,13 @@ const COURSE_GRADIENTS = [
   'linear-gradient(90deg, #FF6B35 0%, #F7C59F 100%)',
 ];
 
-const COURSE_BANNERS = [
-  'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=800&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=800&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?q=80&w=800&auto=format&fit=crop',
-];
-
 @Injectable({ providedIn: 'root' })
 export class StudentCoursesService extends ApiBaseService {
   readonly headerInfo = signal<StudentCoursesHeaderInfo>({
     badgeText: 'محتواك المفضل وتحديات التعلم',
-    mainHeading: 'باقاتي الدراسية النشطة',
+    mainHeading: 'فصولي الدراسية النشطة',
     subtitleText:
-      'استعرض باقاتك الأكاديمية النشطة، وتابع المحاضرات والامتحانات المرفقة لكل مادة بحماس.',
+      'استعرض فصولك الأكاديمية النشطة، وتابع المحاضرات والامتحانات المرفقة لكل مادة بحماس.',
   });
 
   private readonly _loading = signal<boolean>(false);
@@ -56,22 +50,38 @@ export class StudentCoursesService extends ApiBaseService {
         tap((res) => {
           const items = res?.items || [];
           this._subscribedPackages.set(
-            items.map((c, idx) => ({
-              id: c.classroomId,
-              title: c.name || 'باقة دراسية',
-              teacherName: c.gradeLevelName ? `أستاذ ${c.subjectName || ''}` : 'معلم دراية',
-              subjectName: c.subjectName || 'المادة الدراسية',
-              statusText: c.isActive ? 'سارية ومفعّلة' : 'غير نشطة',
-              isActive: c.isActive,
-              completedLessons: 0,
-              totalLessons: 10,
-              progressPercent: 0,
-              studyGroupName: c.classroomTypeName
-                ? `${c.classroomTypeName} - ${c.gradeLevelName || ''}`
-                : 'مجموعة دراسية',
-              bannerImageUrl: COURSE_BANNERS[idx % COURSE_BANNERS.length],
-              progressGradient: COURSE_GRADIENTS[idx % COURSE_GRADIENTS.length],
-            })),
+            items.map((c, idx) => {
+              const progressObj =
+                typeof c.studentProgress === 'object' && c.studentProgress !== null
+                  ? c.studentProgress
+                  : null;
+              const progressPercent =
+                typeof c.studentProgress === 'number'
+                  ? c.studentProgress
+                  : (progressObj?.progressPercent ?? 0);
+              const totalLessons = progressObj?.totalLessons ?? c.materialsCount ?? 10;
+              const completedLessons =
+                progressObj?.completedLessons ?? Math.round((progressPercent / 100) * totalLessons);
+
+              return {
+                id: c.classroomId,
+                title: c.name || 'فصل دراسي',
+                teacherName:
+                  c.teacherName ||
+                  (c.gradeLevelName ? `أستاذ ${c.subjectName || ''}` : 'معلم دراية'),
+                subjectName: c.subjectName || 'المادة الدراسية',
+                statusText: c.isActive ? 'سارية ومفعّلة' : 'غير نشطة',
+                isActive: c.isActive,
+                completedLessons: isNaN(completedLessons) ? 0 : completedLessons,
+                totalLessons: isNaN(totalLessons) || totalLessons === 0 ? 1 : totalLessons,
+                progressPercent: isNaN(progressPercent) ? 0 : progressPercent,
+                studyGroupName: c.classroomTypeName
+                  ? `${c.classroomTypeName} - ${c.gradeLevelName || ''}`
+                  : 'مجموعة دراسية',
+                bannerImageUrl: c.imageUrl || 'assets/images/default-classroom.svg',
+                progressGradient: COURSE_GRADIENTS[idx % COURSE_GRADIENTS.length],
+              };
+            }),
           );
           this._loading.set(false);
         }),
@@ -81,6 +91,9 @@ export class StudentCoursesService extends ApiBaseService {
           return of(null);
         }),
       )
-      .subscribe();
+      .subscribe({
+        next: () => void 0,
+        error: () => void 0,
+      });
   }
 }

@@ -9,10 +9,12 @@ interface PlanPricing {
   priceAnnual: number;
 }
 
+import { LogoComponent } from '../../shared/components/logo/logo.component';
+
 @Component({
   selector: 'draya-checkout',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, LogoComponent],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

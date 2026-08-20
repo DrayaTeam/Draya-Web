@@ -1,0 +1,123 @@
+<!-- src/app/features/teacher/wallet/components/withdrawal-modal/withdrawal-modal.component.html -->
+@if (isOpen()) {
+  <div class="modal-backdrop animate-fade-in" dir="rtl">
+    <div class="modal-content bounce-in">
+      <div class="modal-header">
+        <h2 class="modal-title">طلب سحب الأرباح</h2>
+        <button class="close-btn" (click)="close()" aria-label="إغلاق">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="balance-info mb-6">
+          <span class="info-label">الرصيد المتاح للسحب:</span>
+          <span class="info-amount">{{ maxAmount() }} ج.م</span>
+        </div>
+
+        <!-- Account Selection Area -->
+        @if (isLoadingAccounts()) {
+          <div class="target-account-card mb-6 flex justify-center py-4">
+            <span class="spinner-sm"></span>
+            <span class="text-sm text-gray-500 mr-2">جاري تحميل حساباتك...</span>
+          </div>
+        } @else if (activeAccount()) {
+          <div class="target-account-card mb-6">
+            <div class="account-icon">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+              </svg>
+            </div>
+            
+            <div class="flex-1">
+              <p class="account-name">
+                سيتم التحويل إلى:
+              </p>
+              
+              <!-- If an account was pre-selected by parent -->
+              @if (targetAccount()) {
+                <p class="font-bold text-gray-900">{{ targetAccount()?.accountName }}</p>
+                <p class="account-id" dir="ltr">{{ targetAccount()?.accountIdentifier }}</p>
+              } 
+              <!-- If we fetched accounts, let the user pick -->
+              @else if (accounts().length > 1) {
+                <select 
+                  class="mt-1 w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-primary-500 focus:outline-none"
+                  [ngModel]="selectedAccountId() || activeAccount()?.id"
+                  (ngModelChange)="selectedAccountId.set($event)">
+                  @for (acc of accounts(); track acc.id) {
+                    <option [value]="acc.id">{{ acc.accountName }} ({{ acc.accountIdentifier }})</option>
+                  }
+                </select>
+              } 
+              <!-- Only one account exists -->
+              @else {
+                <p class="font-bold text-gray-900">{{ activeAccount()?.accountName }}</p>
+                <p class="account-id" dir="ltr">{{ activeAccount()?.accountIdentifier }}</p>
+              }
+            </div>
+          </div>
+        } @else if (!isLoadingAccounts()) {
+          <div class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-center">
+            <p class="text-sm font-semibold text-red-600">لا يوجد لديك أي حسابات سحب مضافة.</p>
+            <p class="text-xs text-red-500 mt-1">يرجى إغلاق هذه النافذة وإضافة حساب إنستاباي أو حساب بنكي من قسم حسابات السحب.</p>
+          </div>
+        }
+
+        <div class="form-group">
+          <label for="withdrawalAmountInput">المبلغ المراد سحبه (ج.م)</label>
+          <input
+            id="withdrawalAmountInput"
+            type="number"
+            [ngModel]="amount()"
+            (ngModelChange)="amount.set($event)"
+            class="form-control amount-input"
+            placeholder="0.00"
+            [max]="maxAmount()"
+            min="10" />
+          <button class="btn-text mt-2 text-sm" (click)="amount.set(maxAmount())">
+            سحب كل الرصيد
+          </button>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="error-alert mt-4">
+            {{ errorMessage() }}
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="close()" [disabled]="isSubmitting()">إلغاء</button>
+        <button class="btn-primary" (click)="submit()" [disabled]="isSubmitting() || !amount()">
+          @if (isSubmitting()) {
+            <span class="spinner-sm"></span>
+            جاري التنفيذ...
+          } @else {
+            تأكيد طلب السحب
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

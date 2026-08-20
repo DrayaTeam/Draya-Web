@@ -22,7 +22,12 @@
       <div class="course-card-box">
         <!-- Thumbnail Media -->
         <div class="thumbnail-wrapper">
-          <img [src]="course.imgUrl" [alt]="course.title" class="thumb-img" />
+          <img
+            [src]="course.imgUrl || defaultThumbnail"
+            [alt]="course.title"
+            class="thumb-img"
+            loading="lazy"
+            (error)="onImageError($event)" />
           <div class="thumb-overlay"></div>
           <span class="subject-tag">{{ course.subject }}</span>
         </div>

@@ -22,6 +22,8 @@ export interface RegisterStudentRequest {
   confirmPassword?: string;
   fullName: string;
   parentGuardianEmail: string;
+  parentGuardianName?: string;
+  parentGuardianPhone?: string;
   dateOfBirth: string;
 }
 
@@ -30,6 +32,27 @@ export interface AuthResponse {
   refreshToken: string;
   expiresIn: number;
   user: User;
+}
+
+export interface AcceptInviteRequest {
+  email?: string;
+  token: string;
+  password?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+  fullName?: string;
+  phone?: string;
+}
+
+export interface PasswordResetRequest {
+  email: string;
+}
+
+export interface PasswordResetConfirmationRequest {
+  email?: string;
+  token: string;
+  newPassword: string;
+  confirmPassword?: string;
 }
 
 // Re-export UserProfile so callers can import from auth.model as before

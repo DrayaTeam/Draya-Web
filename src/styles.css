@@ -15,6 +15,15 @@ svg {
   flex-shrink: 0;
 }
 
+/* Force cursor pointer on all buttons */
+button, 
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  cursor: pointer;
+}
+
 /* ── Global Keyframes & Animations ── */
 @keyframes drayaFadeInUp {
   from {
@@ -158,4 +167,406 @@ svg {
     transform: none !important;
     transition: none !important;
   }
+}
+
+/* ── PrimeNG RTL Overrides for Menus ── */
+.p-menu.draya-action-menu {
+  min-width: 14rem !important;
+  padding: 0.5rem !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #f1f5f9 !important;
+}
+
+.draya-action-menu .p-menu-list {
+  padding: 0 !important;
+  margin: 0 !important;
+  list-style: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  width: 100% !important;
+}
+
+.draya-action-menu .p-menuitem {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.draya-action-menu .p-menuitem-link {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.75rem !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  text-decoration: none !important;
+  outline: none !important;
+  border: none !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.draya-action-menu .p-menuitem-icon {
+  margin: 0 !important;
+  color: #64748b !important;
+  font-size: 1.1rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.draya-action-menu .p-menuitem-text {
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  font-family: inherit !important;
+  color: #334155 !important;
+  margin: 0 !important;
+  flex-grow: 1 !important;
+  text-align: right !important;
+}
+
+.draya-action-menu .p-menuitem-link:hover {
+  background-color: #f5fcfb !important;
+}
+
+.draya-action-menu .p-menuitem-link:hover .p-menuitem-text,
+.draya-action-menu .p-menuitem-link:hover .p-menuitem-icon {
+  color: #1b6d63 !important;
+}
+
+
+/* %% Shared Modal Forms & Buttons %% */
+.draya-form {
+  width: 100%;
+}
+
+.draya-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.draya-form .form-group label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.draya-form .form-group label.required::after {
+  content: '*';
+  color: #ef4444;
+  margin-right: 4px;
+}
+
+.draya-form .form-control {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: all 150ms ease;
+  width: 100%;
+  font-family: inherit;
+}
+
+.draya-form .form-control:focus {
+  outline: none;
+  border-color: #1b6d63;
+  box-shadow: 0 0 0 2px rgba(27, 109, 99, 0.1);
+}
+
+.draya-form .error-text {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+
+/* ── Shared Modal Forms & Buttons ── */
+.draya-form {
+  width: 100%;
+}
+
+.draya-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.draya-form .form-group label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.draya-form .form-group label.required::after {
+  content: '*';
+  color: #ef4444;
+  margin-right: 4px;
+}
+
+.draya-form .form-control {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: all 150ms ease;
+  width: 100%;
+  font-family: inherit;
+}
+
+.draya-form .form-control:focus {
+  outline: none;
+  border-color: #1b6d63;
+  box-shadow: 0 0 0 2px rgba(27, 109, 99, 0.1);
+}
+
+.draya-form .error-text {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+/* ── Form Buttons ── */
+.btn-primary {
+  background-color: var(--draya-primary-700, #1b6d63);
+  color: #ffffff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 9999px !important;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 150ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--draya-primary-800, #134e48);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--draya-surface-300, #d1d5db);
+  color: var(--draya-text-700, #374151);
+  padding: 10px 20px;
+  border-radius: 9999px !important;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 150ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-outline:hover {
+  background-color: var(--draya-surface-100, #f3f4f6);
+}
+
+
+/* ── Global RTL & LTR Cascading Controls ── */
+html[dir='ltr'] {
+  direction: ltr;
+  text-align: left;
+}
+
+html[dir='rtl'] {
+  direction: rtl;
+  text-align: right;
+}
+
+/* ── Global Dark Mode Styling Engine ── */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: var(--draya-bg-base, #091817) !important;
+  color: var(--draya-text-primary, #f7f9f8) !important;
+}
+
+/* Dark mode for main layouts and views */
+html.dark .landing-page-root,
+html.dark .teacher-portal-layout,
+html.dark .admin-layout,
+html.dark .student-portal-layout,
+html.dark .portal-router-content,
+html.dark .profile-container,
+html.dark .wallet-container,
+html.dark .classrooms-container,
+html.dark .admin-page-container {
+  background-color: var(--draya-bg-base, #091817) !important;
+  color: var(--draya-text-primary, #f7f9f8) !important;
+}
+
+/* Dark mode for Headers and Navbars */
+html.dark .landing-navbar.scrolled,
+html.dark .teacher-navbar-root,
+html.dark .student-navbar-root,
+html.dark .topbar,
+html.dark .mobile-top-bar {
+  background: rgba(15, 34, 32, 0.94) !important;
+  border-color: var(--draya-border, #1c3633) !important;
+  color: var(--draya-text-primary, #f7f9f8) !important;
+}
+
+html.dark .nav-link,
+html.dark .nav-item,
+html.dark .user-name,
+html.dark .mobile-brand-title,
+html.dark .page-title {
+  color: var(--draya-text-primary, #f7f9f8) !important;
+}
+
+html.dark .nav-link:hover,
+html.dark .nav-item:hover {
+  background: var(--draya-primary-100, #0e2b28) !important;
+  color: var(--draya-primary-500, #52b6a8) !important;
+}
+
+/* Dark mode for Sidebars */
+html.dark .sidebar,
+html.dark .teacher-sidebar-root,
+html.dark .student-sidebar-root,
+html.dark .admin-sidebar {
+  background: var(--draya-bg-surface, #0f2220) !important;
+  border-color: var(--draya-border, #1c3633) !important;
+}
+
+/* Dark mode for Mobile Drawers */
+html.dark .mobile-drawer {
+  background: var(--draya-bg-surface, #0f2220) !important;
+  color: var(--draya-text-primary, #f7f9f8) !important;
+  border-color: var(--draya-border, #1c3633) !important;
+}
+
+html.dark .drawer-header,
+html.dark .drawer-controls-row,
+html.dark .drawer-footer {
+  background: var(--draya-bg-surface, #0f2220) !important;
+  border-color: var(--draya-border, #1c3633) !important;
+}
+
+html.dark .drawer-link {
+  color: var(--draya-text-primary, #f7f9f8) !important;
+}
+
+html.dark .drawer-link:hover {
+  background: var(--draya-primary-100, #0e2b28) !important;
+  color: var(--draya-primary-500, #52b6a8) !important;
+}
+
+html.dark .btn-drawer-action {
+  background: var(--draya-bg-muted, #132422) !important;
+  border-color: var(--draya-border, #1c3633) !important;
+  color: var(--draya-text-primary, #f7f9f8) !important;
+}
+
+html.dark .btn-drawer-action:hover {
+  background: var(--draya-primary-100, #0e2b28) !important;
+  color: var(--draya-primary-300, #83d1c7) !important;
+}
+
+/* Dark mode for Action Icons and Buttons */
+html.dark .nav-icon-btn,
+html.dark .icon-btn,
+html.dark .burger-btn,
+html.dark .mobile-burger-btn,
+html.dark .collapse-toggle,
+html.dark .topbar-icon-btn,
+html.dark .drawer-close-btn {
+  background: var(--draya-bg-muted, #132422) !important;
+  border-color: var(--draya-border, #1c3633) !important;
+  color: var(--draya-text-primary, #f7f9f8) !important;
+}
+
+html.dark .nav-icon-btn:hover,
+html.dark .icon-btn:hover,
+html.dark .burger-btn:hover,
+html.dark .topbar-icon-btn:hover {
+  background: var(--draya-primary-100, #0e2b28) !important;
+  border-color: var(--draya-primary-500, #52b6a8) !important;
+  color: var(--draya-primary-300, #83d1c7) !important;
+}
+
+/* Dark mode for Cards and Panels */
+html.dark .card-panel,
+html.dark .profile-card,
+html.dark .password-card,
+html.dark .security-card,
+html.dark .stat-card,
+html.dark .admin-card,
+html.dark .wallet-card,
+html.dark .p-card,
+html.dark .interactive-hover-card,
+html.dark .pricing-card,
+html.dark .feature-card,
+html.dark .faq-item,
+html.dark .testimonial-card,
+html.dark .classroom-card,
+html.dark .admin-table-wrapper {
+  background-color: var(--draya-bg-surface, #0f2220) !important;
+  border-color: var(--draya-border, #1c3633) !important;
+  color: var(--draya-text-primary, #f7f9f8) !important;
+}
+
+/* Dark mode for Form Controls & Inputs */
+html.dark input[type='text'],
+html.dark input[type='email'],
+html.dark input[type='password'],
+html.dark input[type='number'],
+html.dark input[type='search'],
+html.dark textarea,
+html.dark select,
+html.dark .form-control {
+  background-color: var(--draya-bg-muted, #132422) !important;
+  border-color: var(--draya-border, #1c3633) !important;
+  color: var(--draya-text-primary, #f7f9f8) !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: var(--draya-text-disabled, #525e5a) !important;
+}
+
+/* Dark mode for Tables */
+html.dark table,
+html.dark th,
+html.dark td {
+  border-color: var(--draya-border, #1c3633) !important;
+}
+
+html.dark th {
+  background-color: var(--draya-bg-secondary, #0c1e1c) !important;
+  color: var(--draya-text-secondary, #94a3a0) !important;
+}
+
+html.dark tr:hover td {
+  background-color: var(--draya-primary-100, #0e2b28) !important;
+}
+
+/* Dark mode for Dropdowns and Dialogs */
+html.dark .notifications-dropdown,
+html.dark .profile-menu,
+html.dark .p-dialog,
+html.dark .p-menu,
+html.dark .admin-profile-pill {
+  background-color: var(--draya-bg-surface, #0f2220) !important;
+  border-color: var(--draya-border, #1c3633) !important;
+  color: var(--draya-text-primary, #f7f9f8) !important;
 }

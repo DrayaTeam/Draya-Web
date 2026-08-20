@@ -99,6 +99,31 @@
   align-items: center;
 }
 
+.nav-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--draya-primary-50, #f5fcfb);
+  border: 1px solid var(--draya-border, #dde4e2);
+  color: var(--draya-text-secondary, #525e5a);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 150ms ease-out;
+
+  &:hover {
+    background: var(--draya-primary-100, #e0f2fe);
+    color: var(--draya-primary-700, #1b6d63);
+    border-color: var(--draya-primary-700, #1b6d63);
+  }
+
+  &.lang-pill {
+    width: auto;
+    padding: 0 12px;
+  }
+}
+
 .mobile-actions {
   align-items: center;
   gap: 10px;
@@ -216,22 +241,29 @@
 }
 
 .mobile-drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: min(320px, 84vw);
-  background: #ffffff;
-  z-index: 600;
-  box-shadow: -4px 0 24px rgba(15, 27, 24, 0.15);
-  display: flex;
-  flex-direction: column;
-  transform: translateX(100%);
-  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
-  direction: rtl;
+  display: none;
 
-  &.open {
-    transform: translateX(0);
+  @media (max-width: 768px) {
+    display: flex;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(320px, 84vw);
+    background: var(--draya-bg-surface, #ffffff);
+    z-index: 600;
+    box-shadow: -4px 0 24px rgba(15, 27, 24, 0.15);
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    visibility: hidden;
+
+    &.open {
+      transform: translateX(0) !important;
+      pointer-events: auto;
+      visibility: visible;
+    }
   }
 }
 
@@ -299,6 +331,36 @@
   transition:
     transform 150ms ease-out,
     stroke 150ms ease-out;
+}
+
+.drawer-controls-row {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--draya-border, #dde4e2);
+  background: #fff;
+}
+
+.btn-drawer-action {
+  flex: 1;
+  height: 38px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 150ms ease;
+
+  &:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
 }
 
 .drawer-footer {

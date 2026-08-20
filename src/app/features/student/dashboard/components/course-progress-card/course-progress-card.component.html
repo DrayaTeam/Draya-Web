@@ -2,10 +2,11 @@
   <!-- Right Side (RTL): Course Thumbnail Image -->
   <div class="thumbnail-wrapper">
     <img
-      [src]="course().thumbnailUrl"
+      [src]="course().thumbnailUrl || defaultThumbnail"
       [alt]="course().title"
       class="thumbnail-img"
-      loading="lazy" />
+      loading="lazy"
+      (error)="onImageError($event)" />
     <div class="thumbnail-overlay"></div>
     <span class="subject-tag-pill">{{ course().subjectName }}</span>
   </div>

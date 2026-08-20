@@ -223,3 +223,105 @@
   height: 14px;
   display: block;
 }
+
+/* Essay Question Styles */
+.essay-answer-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.essay-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.essay-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1e293b;
+  cursor: pointer;
+}
+
+.essay-label-icon {
+  width: 18px;
+  height: 18px;
+  color: #1b6d63;
+}
+
+.essay-badge {
+  padding: 4px 12px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 999px;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  color: #047857;
+}
+
+.essay-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px 20px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #0f172a;
+  outline: none;
+  resize: vertical;
+  min-height: 180px;
+  transition: all 0.2s ease-in-out;
+
+  &::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+  }
+
+  &:hover {
+    border-color: #cbd5e1;
+    background: #ffffff;
+  }
+
+  &:focus {
+    border-color: #1b6d63;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(27, 109, 99, 0.12);
+  }
+}
+
+.essay-meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 12px;
+  color: #64748b;
+  padding: 0 4px;
+}
+
+.essay-hint {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.char-count {
+  font-weight: 600;
+  color: #475569;
+  white-space: nowrap;
+
+  strong {
+    color: #1b6d63;
+  }
+}

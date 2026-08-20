@@ -1,5 +1,4 @@
 <div class="teacher-portal-layout">
-  <draya-connection-status-banner />
   <!-- Mobile Backdrop Overlay -->
   @if (isMobileSidebarOpen()) {
     <div class="mobile-backdrop-overlay" (click)="closeMobileSidebar()" aria-hidden="true"></div>
@@ -11,7 +10,30 @@
     (closeMobile)="closeMobileSidebar()" />
 
   <!-- Main Content Container -->
-  <div class="teacher-main-viewport">
+  <div class="teacher-main-viewport relative">
+    
+    <!-- Floating Theme/Locale Controls (Desktop Only) -->
+    <div class="hidden lg:flex absolute top-4 left-4 z-40 items-center gap-2" [dir]="localeService.locale() === 'ar' ? 'rtl' : 'ltr'">
+      <button
+        type="button"
+        (click)="themeService.toggleTheme()"
+        class="w-10 h-10 rounded-full bg-white border border-gray-100 shadow-sm hover:bg-gray-50 flex items-center justify-center text-gray-600 transition-all">
+        @if (themeService.isDarkMode()) {
+          <span class="text-amber-500">☀️</span>
+        } @else {
+          <span>🌙</span>
+        }
+      </button>
+      <button
+        type="button"
+        (click)="localeService.toggle()"
+        class="h-10 px-3 rounded-full bg-white border border-gray-100 shadow-sm hover:bg-gray-50 text-sm font-bold text-gray-600 transition-all">
+        {{ localeService.locale() === 'ar' ? 'EN' : 'عربي' }}
+      </button>
+    </div>
+
+    <draya-connection-status-banner />
+
     <!-- Top Mobile App Bar (visible < 1024px) -->
     <header class="mobile-top-bar">
       <button
@@ -35,6 +57,26 @@
       </button>
 
       <span class="mobile-brand-title">{{ 'TEACHER.SIDEBAR.BRAND_NAME' | translate }}</span>
+      
+      <!-- Mobile Theme/Locale Controls -->
+      <div class="flex items-center gap-2 ms-auto" [dir]="localeService.locale() === 'ar' ? 'rtl' : 'ltr'">
+        <button
+          type="button"
+          (click)="themeService.toggleTheme()"
+          class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600">
+          @if (themeService.isDarkMode()) {
+            <span class="text-amber-500 text-sm">☀️</span>
+          } @else {
+            <span class="text-sm">🌙</span>
+          }
+        </button>
+        <button
+          type="button"
+          (click)="localeService.toggle()"
+          class="h-8 px-2 rounded hover:bg-gray-100 text-xs font-bold text-gray-600">
+          {{ localeService.locale() === 'ar' ? 'EN' : 'عربي' }}
+        </button>
+      </div>
     </header>
 
     <!-- Main Router Outlet Area -->

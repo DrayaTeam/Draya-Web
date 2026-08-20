@@ -8,7 +8,7 @@
     <div class="header-badge-row">
       <div class="badge-pill">
         <span class="live-signal-dot"></span>
-        <span>قناة الأسئلة والنقاش المباشرة (SignalR)</span>
+        <span>قناة الأسئلة والنقاش</span>
       </div>
     </div>
 
@@ -37,19 +37,59 @@
   </header>
 
   <!-- Classroom Subject Selector Pills -->
-  <section class="classrooms-selector-bar">
-    <span class="selector-label">المجموعة الدراسية:</span>
-    <div class="selector-pills-list">
-      @for (c of classrooms(); track c.id) {
-        <button
-          type="button"
-          class="classroom-pill"
-          [class.active]="selectedClassroomId() === c.id"
-          (click)="onSelectClassroom(c.id)">
-          <span class="subj-indicator"></span>
-          <span>{{ c.title }}</span>
-        </button>
-      }
+  <section class="classrooms-selector-bar" aria-label="اختيار المجموعة الدراسية">
+    <div class="selector-label-group">
+      <div class="label-icon-box">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg>
+      </div>
+      <div class="label-text-wrap">
+        <span class="selector-label">المجموعة الدراسية</span>
+        @if (classrooms().length > 0) {
+          <span class="count-badge">{{ classrooms().length }} فصول</span>
+        }
+      </div>
+    </div>
+
+    <div class="selector-pills-wrapper">
+      <div class="selector-pills-list" role="tablist">
+        @for (c of classrooms(); track c.id) {
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="selectedClassroomId() === c.id"
+            class="classroom-pill"
+            [class.active]="selectedClassroomId() === c.id"
+            (click)="onSelectClassroom(c.id)">
+            <span class="pill-dot"></span>
+            <span class="pill-text">{{ c.title }}</span>
+            @if (selectedClassroomId() === c.id) {
+              <svg
+                class="active-check-icon"
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            }
+          </button>
+        }
+      </div>
     </div>
   </section>
 

@@ -54,6 +54,10 @@ export class StudentQaChannelService extends ApiBaseService {
   // ==========================================
 
   async startSignalRConnection(): Promise<void> {
+    if (!environment.enableQaHub) {
+      return;
+    }
+
     if (this.hubConnection && this.hubConnection.state === signalR.HubConnectionState.Connected) {
       return;
     }
@@ -433,7 +437,10 @@ export class StudentQaChannelService extends ApiBaseService {
           return of(null);
         }),
       )
-      .subscribe();
+      .subscribe({
+        next: () => void 0,
+        error: () => void 0,
+      });
   }
 
   editQuestion(classroomId: string, questionId: string, content: string): Observable<void> {
@@ -470,14 +477,24 @@ export class StudentQaChannelService extends ApiBaseService {
     questionId: string,
     replyId: string,
     content: string,
+    imageUrl?: string,
   ): Observable<void> {
     const trimmed = content.trim();
-    return this.put<void>(`/classrooms/${classroomId}/questions/${questionId}/replies/${replyId}`, {
-      content: trimmed,
-    }).pipe(
+    const payload: { content: string; imageUrl?: string } = { content: trimmed };
+    if (imageUrl !== undefined) {
+      payload.imageUrl = imageUrl;
+    }
+    return this.put<void>(
+      `/classrooms/${classroomId}/questions/${questionId}/replies/${replyId}`,
+      payload,
+    ).pipe(
       tap(() => {
         this.activeReplies.update((list) =>
-          list.map((r) => (r.id === replyId ? { ...r, content: trimmed } : r)),
+          list.map((r) =>
+            r.id === replyId
+              ? { ...r, content: trimmed, ...(imageUrl !== undefined ? { imageUrl } : {}) }
+              : r,
+          ),
         );
       }),
     );

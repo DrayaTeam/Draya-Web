@@ -13,7 +13,11 @@
   <!-- Sidebar (Right side in RTL) -->
   <aside class="sidebar" [class.mobile-open]="isMobileSidebarOpen()">
     <div class="sidebar-header">
-      <div class="logo-area">
+      <a
+        routerLink="/"
+        class="logo-area"
+        style="text-decoration: none; color: inherit"
+        title="الرئيسية">
         <div class="logo-circle">
           <i class="pi pi-shield"></i>
         </div>
@@ -23,7 +27,7 @@
             <p>{{ 'ADMIN.SHELL.BRAND_SUBTITLE' | translate }}</p>
           </div>
         }
-      </div>
+      </a>
       <!-- Close button for mobile -->
       <button
         class="sidebar-close-btn"
@@ -105,6 +109,34 @@
 
       <!-- Left area (end of reading in RTL): Admin profile dropdown -->
       <div class="topbar-end">
+        <!-- Theme Switcher -->
+        <button
+          type="button"
+          (click)="themeService.toggleTheme()"
+          [title]="themeService.isDarkMode() ? 'الوضع النهاري' : 'الوضع الليلي'"
+          [attr.aria-label]="themeService.isDarkMode() ? 'الوضع النهاري' : 'الوضع الليلي'"
+          class="topbar-icon-btn">
+          @if (themeService.isDarkMode()) {
+            <i class="pi pi-sun text-amber-400"></i>
+          } @else {
+            <i class="pi pi-moon"></i>
+          }
+        </button>
+
+        <!-- Language Switcher -->
+        <button
+          type="button"
+          (click)="localeService.toggle()"
+          [title]="localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'"
+          [attr.aria-label]="
+            localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'
+          "
+          class="topbar-icon-btn lang-pill">
+          <span class="text-xs font-bold">
+            {{ localeService.locale() === 'ar' ? 'EN' : 'عربي' }}
+          </span>
+        </button>
+
         <div class="profile-dropdown-wrapper">
           <button
             class="admin-profile-pill"
@@ -112,7 +144,22 @@
             [attr.aria-expanded]="isProfileMenuOpen()"
             aria-haspopup="true"
             type="button">
-            <div class="profile-avatar">{{ currentUserInitial() }}</div>
+            @if (auth.currentUser()?.profilePictureUrl || auth.currentUser()?.pictureUrl) {
+              <img
+                [src]="auth.currentUser()?.profilePictureUrl || auth.currentUser()?.pictureUrl"
+                [alt]="currentUserName()"
+                class="profile-avatar"
+                style="object-fit: cover"
+                (error)="
+                  $any($event.target).style.display = 'none';
+                  fallbackAdminSpan.style.display = 'flex'
+                " />
+              <div #fallbackAdminSpan style="display: none" class="profile-avatar">
+                {{ currentUserInitial() }}
+              </div>
+            } @else {
+              <div class="profile-avatar">{{ currentUserInitial() }}</div>
+            }
             <span class="profile-name">{{ currentUserName() }}</span>
             <i class="pi pi-chevron-down profile-caret" [class.rotated]="isProfileMenuOpen()"></i>
           </button>

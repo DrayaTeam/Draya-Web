@@ -55,3 +55,4 @@ Draya Platform API.postman_collection.json
 playwright-report/
 test-results/
 
+.env*

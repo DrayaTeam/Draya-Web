@@ -1,0 +1,269 @@
+/* src/app/features/teacher/classrooms/classroom-detail/components/classroom-students/classroom-students.component.scss */
+
+.roster-container {
+  width: 100%;
+}
+
+/* ─── Toolbar ───────────────────────────────────────── */
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toolbar-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.toolbar-badge {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+}
+
+.search-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 8px 16px;
+  border-radius: 10px;
+  color: #94a3b8;
+  font-size: 0.875rem;
+
+  i {
+    font-size: 0.875rem;
+  }
+}
+
+/* ─── Table Card ────────────────────────────────────── */
+.table-card {
+  background-color: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+/* ─── Custom PrimeNG Table Overrides ────────────────── */
+::ng-deep .draya-custom-table {
+  .p-datatable-wrapper {
+    border-radius: 16px 16px 0 0;
+  }
+
+  .p-datatable-thead > tr > th {
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e2e8f0;
+    border-top: none;
+  }
+
+  .p-datatable-tbody > tr {
+    transition: background-color 150ms ease;
+
+    &:nth-child(even) {
+      background: #fafaf9;
+    }
+    &:hover {
+      background: #f0fdfa;
+    }
+
+    > td {
+      padding: 16px 24px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+    }
+  }
+
+  /* Paginator */
+  .p-paginator {
+    background: #ffffff;
+    border-top: 1px solid #f1f5f9;
+    padding: 16px;
+    border-radius: 0 0 16px 16px;
+
+    .p-paginator-current {
+      color: #64748b;
+    }
+    .p-paginator-page,
+    .p-paginator-next,
+    .p-paginator-prev,
+    .p-paginator-first,
+    .p-paginator-last {
+      color: #64748b;
+      border-radius: 8px;
+      &.p-highlight {
+        background: #1b6d63;
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+/* ─── Cell Contents ─────────────────────────────────── */
+.student-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.student-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1b6d63, #0f4d45);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(27, 109, 99, 0.2);
+  overflow: hidden;
+}
+
+.student-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.student-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.student-full-name {
+  color: #111827;
+  font-weight: 700;
+  font-size: 0.9375rem;
+}
+
+.date-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  font-size: 0.875rem;
+
+  i {
+    color: #94a3b8;
+    font-size: 0.8rem;
+  }
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &.badge-active {
+    background: #f0fdf4;
+    color: #16a34a;
+    border-color: #bbf7d0;
+
+    .status-dot {
+      background: #22c55e;
+    }
+  }
+
+  &.badge-inactive {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+
+    .status-dot {
+      background: #ef4444;
+    }
+  }
+}
+
+.action-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 150ms ease;
+
+  &:hover {
+    background: #fef2f2;
+    color: #ef4444;
+    border-color: #fca5a5;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+/* ─── Empty State ───────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 0;
+
+  .empty-icon-wrap {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: #f8fafc;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .empty-title {
+    margin: 0 0 8px;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1e293b;
+  }
+
+  .empty-text {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: #64748b;
+  }
+}

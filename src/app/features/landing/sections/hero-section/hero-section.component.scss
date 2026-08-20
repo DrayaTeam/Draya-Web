@@ -1,6 +1,7 @@
 .hero-section {
   min-height: 100vh;
-  background: #fafaf8;
+  background: var(--draya-bg-base, #fafaf8);
+  color: var(--draya-text-primary, #151b19);
   display: flex;
   align-items: center;
   padding: 120px clamp(20px, 5vw, 48px) 80px;
@@ -41,7 +42,7 @@
 }
 
 .hero-title {
-  font-family: 'Cairo', 'IBM Plex Sans Arabic', sans-serif;
+  font-family: inherit;
   font-size: clamp(2.75rem, 5.5vw, 4.5rem);
   font-weight: 800;
   color: var(--draya-text-primary, #151b19);
@@ -267,7 +268,7 @@
   overflow: hidden;
   border-radius: 28px;
   box-shadow: 0 10px 15px -3px rgba(21, 27, 25, 0.08);
-  background: #ffffff;
+  background: var(--draya-bg-surface, #ffffff);
 }
 
 .photo-img {
@@ -293,7 +294,7 @@
 .floating-card {
   position: absolute;
   z-index: 6;
-  background: #ffffff;
+  background: var(--draya-bg-surface, #ffffff);
   border: 1px solid var(--draya-border, #dde4e2);
   border-radius: 14px;
   white-space: nowrap;

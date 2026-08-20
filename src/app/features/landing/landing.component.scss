@@ -1,7 +1,9 @@
 .landing-page-root {
-  direction: rtl;
-  font-family: 'Cairo', 'Cairo', 'IBM Plex Sans Arabic', system-ui, sans-serif;
-  background: #fafaf8;
   min-height: 100vh;
   overflow-x: hidden;
+  background-color: var(--draya-bg-base, #fafaf8);
+  color: var(--draya-text-primary, #151b19);
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
 }

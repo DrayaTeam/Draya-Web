@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   TemplateRef,
+  computed,
   input,
   output,
   signal,
@@ -41,6 +42,15 @@ export class AdminDataTableComponent {
   currentPage = input<number>(1);
   searchPlaceholderKey = input<string>('ADMIN.SHARED.SEARCH');
 
+  readonly searchVal = signal<string>('');
+  readonly skeletonRows = Array.from({ length: 5 }, (_, i) => i);
+
+  readonly totalPages = computed(() => {
+    const size = this.pageSize();
+    const count = this.totalCount();
+    return size > 0 ? Math.ceil(count / size) : 1;
+  });
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getCellValue(row: any, key: string): unknown {
     return row && typeof row === 'object' ? (row as Record<string, unknown>)[key] : '';
@@ -63,7 +73,13 @@ export class AdminDataTableComponent {
 
   onSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value;
+    this.searchVal.set(value);
     this.searchSubject.next(value);
+  }
+
+  clearSearch() {
+    this.searchVal.set('');
+    this.searchSubject.next('');
   }
 
   handleSort(column: AdminColumn) {

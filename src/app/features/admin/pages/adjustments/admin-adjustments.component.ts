@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
+  computed,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -12,6 +19,8 @@ interface TeacherOption {
   id: string;
   name: string;
   email: string;
+  earnedBalance?: number;
+  purchasedBalance?: number;
 }
 
 @Component({
@@ -35,7 +44,7 @@ export class AdminAdjustmentsComponent implements OnInit {
 
   readonly WalletBalanceType = WalletBalanceType;
 
-  // Real teacher options from GET /api/v1/teachers
+  // Real teacher options from GET /api/v1/admin/teachers/search
   readonly teachers = signal<TeacherOption[]>([]);
   readonly loadingTeachers = signal<boolean>(false);
 
@@ -50,32 +59,63 @@ export class AdminAdjustmentsComponent implements OnInit {
   readonly isSubmitting = signal<boolean>(false);
   readonly isConfirmOpen = signal<boolean>(false);
 
+  readonly selectedTeacher = computed(() => {
+    const id = this.form.get('teacherId')?.value;
+    if (!id) return null;
+    return this.teachers().find((t) => t.id === id) || null;
+  });
+
   ngOnInit(): void {
     this.loadTeachers();
   }
 
-  loadTeachers(): void {
+  loadTeachers(query?: string): void {
     this.loadingTeachers.set(true);
     this.financialService
-      .getTeachers()
+      .searchTeachers(query)
       .pipe(finalize(() => this.loadingTeachers.set(false)))
       .subscribe({
         next: (list) => {
-          if (Array.isArray(list)) {
+          if (Array.isArray(list) && list.length > 0) {
             const mapped: TeacherOption[] = list.map((t) => ({
-              id: t.userId || t.id || '',
+              id: t.id || '',
               name: t.fullName || t.name || t.email || 'معلم',
               email: t.email || '',
+              earnedBalance: t.earnedBalance ?? 0,
+              purchasedBalance: t.purchasedBalance ?? 0,
             }));
             this.teachers.set(mapped);
           } else {
-            this.teachers.set([]);
+            // Fallback to getTeachers
+            this.fallbackGetTeachers();
           }
         },
         error: () => {
-          this.teachers.set([]);
+          this.fallbackGetTeachers();
         },
       });
+  }
+
+  private fallbackGetTeachers(): void {
+    this.financialService.getTeachers().subscribe({
+      next: (list) => {
+        if (Array.isArray(list)) {
+          const mapped: TeacherOption[] = list.map((t) => ({
+            id: t.userId || t.id || '',
+            name: t.fullName || t.name || t.email || 'معلم',
+            email: t.email || '',
+            earnedBalance: 0,
+            purchasedBalance: 0,
+          }));
+          this.teachers.set(mapped);
+        } else {
+          this.teachers.set([]);
+        }
+      },
+      error: () => {
+        this.teachers.set([]);
+      },
+    });
   }
 
   onSubmit(): void {

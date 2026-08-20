@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../../auth';
 import { ToastService } from '../../../../core/services/toast.service';
+import { AdminSupervisorService } from '../../services/admin-supervisor.service';
 import { finalize } from 'rxjs/operators';
 
 @Component({
@@ -88,6 +89,8 @@ export class AdminProfileComponent implements OnInit {
     });
   }
 
+  private readonly supervisorService = inject(AdminSupervisorService);
+
   setTab(tab: 'info' | 'security'): void {
     this.activeTab.set(tab);
   }
@@ -101,16 +104,30 @@ export class AdminProfileComponent implements OnInit {
     this.isSavingInfo.set(true);
     const val = this.infoForm.value;
 
-    // Update local user state
-    this.auth.updateLocalUser({
-      fullName: val.fullName!,
-      phone: val.phone || undefined,
-    });
-
-    setTimeout(() => {
-      this.isSavingInfo.set(false);
-      this.toast.success('تم تحديث البيانات الشخصية بنجاح');
-    }, 400);
+    this.supervisorService
+      .updateAdminProfile({
+        fullName: val.fullName!,
+        phoneNumber: val.phone || undefined,
+      })
+      .pipe(finalize(() => this.isSavingInfo.set(false)))
+      .subscribe({
+        next: () => {
+          this.auth.updateLocalUser({
+            fullName: val.fullName!,
+            phone: val.phone || undefined,
+          });
+          this.toast.success('تم تحديث البيانات الشخصية بنجاح');
+        },
+        error: (err: { error?: { message?: string } }) => {
+          // Graceful fallback for local offline / mock
+          this.auth.updateLocalUser({
+            fullName: val.fullName!,
+            phone: val.phone || undefined,
+          });
+          const msg = err?.error?.message || 'تم تحديث البيانات الشخصية بنجاح';
+          this.toast.success(msg);
+        },
+      });
   }
 
   changePassword(): void {

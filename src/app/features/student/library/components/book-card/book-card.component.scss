@@ -148,6 +148,19 @@
     background: #e2e8f0;
     color: #0f172a;
   }
+
+  &.btn-full-width {
+    flex: 1;
+    width: 100%;
+    background: #1b6d63;
+    color: #ffffff;
+    border: none;
+
+    &:hover {
+      background: #2d9b8a;
+      color: #ffffff;
+    }
+  }
 }
 
 .btn-icon {

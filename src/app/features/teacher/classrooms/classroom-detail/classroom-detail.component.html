@@ -1,0 +1,368 @@
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+
+@if (isLoading()) {
+  <div class="page-loader">
+    <div class="spinner"></div>
+    <p>جاري تحميل بيانات المرحلة...</p>
+  </div>
+} @else if (hasError() || !classroom()) {
+  <div class="empty-state">
+    <div class="empty-icon">
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+    </div>
+    <h3 class="empty-title">المرحلة غير موجودة</h3>
+    <p class="empty-description">
+      عذراً، لم نتمكن من العثور على هذه المرحلة أو قد لا تملك صلاحية الوصول إليها.
+    </p>
+    <a routerLink="/teacher/classrooms" class="btn-primary mt-6">الرجوع إلى قائمة المراحل</a>
+  </div>
+} @else {
+  <div class="detail-container">
+    <!-- ─── Hero Banner ─────────────────────────────────────── -->
+    <!-- 🟢 2026 Modern Bento Header 🟢 -->
+    <div class="modern-header">
+      <!-- Top Breadcrumbs -->
+      <div class="header-breadcrumbs">
+        <a routerLink="/teacher/classrooms" class="breadcrumb-link-modern">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+          الفصول الدراسية
+          <span class="breadcrumb-sep">/</span>
+          <span class="breadcrumb-current">{{ classroom()?.name }}</span>
+        </a>
+      </div>
+
+      <!-- Bento Grid -->
+      <div class="header-main-bento">
+        
+        <!-- Cell 1: Image -->
+        <div class="bento-image-card">
+          <img
+            [src]="classroom()?.imageUrl || defaultCover"
+            class="bento-img"
+            alt="Cover Image"
+            (error)="onCoverImageError($event)" />
+          
+          <div class="image-overlay">
+            <input #imageInput type="file" accept="image/jpeg, image/png" class="hidden" (change)="onCoverImageSelected($event)" />
+            <button type="button" class="btn-glass" (click)="imageInput.click()" [disabled]="isUploadingImage()">
+              @if (isUploadingImage()) {
+                <i class="pi pi-spin pi-spinner"></i>
+              } @else {
+                <i class="pi pi-camera"></i>
+              }
+              <span>{{ classroom()?.imageUrl ? 'تغيير الغلاف' : 'رفع غلاف' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cell 2: Info -->
+        <div class="bento-info-card">
+          <div class="bento-badges">
+            <span class="badge-modern primary">{{ classroom()?.gradeLevelName }}</span>
+            <span class="badge-modern">{{ classroom()?.classroomTypeName }}</span>
+            @if (!classroom()?.isActive) {
+              <span class="badge-modern danger">مغلق</span>
+            }
+          </div>
+          
+          <h1 class="bento-title">{{ classroom()?.name }}</h1>
+          <p class="bento-subject">{{ classroom()?.subjectName }}</p>
+          
+          <div class="bento-actions">
+            <button class="btn-modern primary" (click)="isEditModalOpen.set(true)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+              تعديل الفصل
+            </button>
+            <button class="btn-modern danger-soft" (click)="confirmDeactivateClassroom()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+              </svg>
+              {{ classroom()?.isActive ? 'تعطيل' : 'تفعيل' }}
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    
+    <!-- 📊 KPI Cards ------------------------------------------------ -->
+    <div class="kpi-grid">
+      <!-- Students -->
+      <div class="kpi-card">
+        <div class="kpi-icon-wrap kpi-teal">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+        </div>
+        <div class="kpi-text">
+          <span class="kpi-label">الطلبة المقيدون</span>
+          <span class="kpi-value">
+            {{ currentRosterTotalCount() || classroom()?.studentCount || 0 }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Enrollment Code -->
+      <div class="kpi-card">
+        <div class="kpi-icon-wrap kpi-amber">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+        </div>
+        <div class="kpi-text">
+          <span class="kpi-label">كود التسجيل</span>
+          <div class="kpi-code-row">
+            <span class="kpi-code">{{ classroom()?.enrollmentCode }}</span>
+            <button class="btn-icon-regen" (click)="confirmRegenerateCode()" title="إنشاء كود جديد">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10" />
+                <polyline points="1 20 1 14 7 14" />
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Price -->
+      <div class="kpi-card">
+        <div class="kpi-icon-wrap kpi-green">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23" />
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg>
+        </div>
+        <div class="kpi-text">
+          <span class="kpi-label">سعر الاشتراك</span>
+          <span class="kpi-value">
+            {{ classroom()?.price === 0 ? 'مجاني' : classroom()?.price + ' ج.م' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Start Date -->
+      <div class="kpi-card">
+        <div class="kpi-icon-wrap kpi-blue">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+        </div>
+        <div class="kpi-text">
+          <span class="kpi-label">تاريخ البدء</span>
+          @if (classroom()?.startDate) {
+            <span class="kpi-value kpi-date">{{ classroom()?.startDate | date: 'd MMM y' }}</span>
+          } @else {
+            <span class="kpi-value">—</span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Custom Tab Bar ────────────────────────────────────── -->
+    <div class="tabs-shell">
+      <!-- Tab Nav -->
+      <div class="tab-nav" role="tablist">
+        <button
+          class="tab-btn"
+          [class.tab-active]="activeTab() === 0"
+          (click)="activeTab.set(0)"
+          role="tab">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+          </svg>
+          الطلبة
+        </button>
+        <button
+          class="tab-btn"
+          [class.tab-active]="activeTab() === 1"
+          (click)="activeTab.set(1)"
+          role="tab">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+          المواد العلمية
+        </button>
+        <button
+          class="tab-btn"
+          [class.tab-active]="activeTab() === 2"
+          (click)="activeTab.set(2)"
+          role="tab">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+          الأسئلة والنقاش
+        </button>
+        
+        <button
+          class="tab-btn"
+          [class.tab-active]="activeTab() === 3"
+          (click)="activeTab.set(3)"
+          role="tab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          الامتحانات
+        </button>
+      </div>
+
+      <!-- Tab Panels -->
+      <div class="tab-panel">
+        @if (activeTab() === 0) {
+          @if (classroom()?.classroomId) {
+            <draya-classroom-students
+              [classroomId]="classroom()!.classroomId"></draya-classroom-students>
+          }
+        }
+        @if (activeTab() === 1) {
+          @if (classroom()?.classroomId) {
+            <draya-classroom-materials
+              [classroomId]="classroom()!.classroomId"></draya-classroom-materials>
+          }
+        }
+        @if (activeTab() === 2) {
+          @if (classroom()?.classroomId) {
+            <draya-classroom-qa [classroomId]="classroom()!.classroomId"></draya-classroom-qa>
+          }
+        }
+        
+        @if (activeTab() === 3) {
+          @if (classroom()?.classroomId) {
+            <draya-classroom-exams
+              [classroomId]="classroom()!.classroomId"></draya-classroom-exams>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <draya-edit-classroom-modal
+      [isOpen]="isEditModalOpen()"
+      [classroom]="classroom()"
+      (modalClosed)="isEditModalOpen.set(false)"
+      (updated)="loadClassroom()"></draya-edit-classroom-modal>
+  </div>
+}
+
+<draya-teacher-modal
+  [isOpen]="isRegenerateModalOpen()"
+  title="إنشاء كود جديد للفصل"
+  (modalClosed)="isRegenerateModalOpen.set(false)">
+  <div class="draya-form p-4">
+    <p class="text-gray-700 mb-4">
+      هل أنت متأكد من أنك تريد إنشاء كود جديد لهذا الفصل؟ سيتم إبطال الكود القديم ولن يتمكن أي طالب جديد من استخدامه. هل تود الاستمرار؟
+    </p>
+  </div>
+  <div modal-footer class="flex gap-3">
+    <button class="btn-outline" (click)="isRegenerateModalOpen.set(false)">إلغاء</button>
+    <button class="btn-primary bg-red-600 hover:bg-red-700 border-none" (click)="executeRegenerateCode()">نعم، إنشاء كود جديد</button>
+  </div>
+</draya-teacher-modal>
+
+<draya-teacher-modal
+  [isOpen]="isDeactivateModalOpen()"
+  title="إلغاء تنشيط الفصل"
+  (modalClosed)="isDeactivateModalOpen.set(false)">
+  <div class="draya-form p-4">
+    <p class="text-gray-700 mb-4">هل أنت متأكد من إلغاء تنشيط هذا الفصل؟</p>
+  </div>
+  <div modal-footer class="flex gap-3">
+    <button class="btn-outline" (click)="isDeactivateModalOpen.set(false)">إلغاء</button>
+    <button class="btn-primary bg-red-600 hover:bg-red-700 border-none" (click)="executeDeactivateClassroom()">نعم، إلغاء التنشيط</button>
+  </div>
+</draya-teacher-modal>

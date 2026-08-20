@@ -21,3 +21,24 @@ export const authGuard: CanActivateFn = (route, state) => {
     queryParams: { returnUrl: state.url },
   });
 };
+
+/**
+ * Guard for guest/anonymous routes (e.g. /auth/login, /auth/register-*).
+ * If the user is already logged in, redirect them to their respective dashboard.
+ */
+export const noAuthGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+
+  if (!auth.isAuthenticated()) {
+    return true;
+  }
+
+  const role = auth.currentUser()?.role?.toLowerCase();
+  if (role === 'admin' || role === 'superadmin') {
+    return router.createUrlTree(['/admin/dashboard']);
+  } else if (role === 'teacher') {
+    return router.createUrlTree(['/teacher/dashboard']);
+  }
+  return router.createUrlTree(['/student/dashboard']);
+};

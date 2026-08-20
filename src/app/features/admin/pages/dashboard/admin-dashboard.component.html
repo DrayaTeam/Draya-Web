@@ -1,11 +1,26 @@
 <div class="dashboard-page">
-  <!-- Page Header -->
+  <!-- Page Header & Quick Actions -->
   <div class="page-header">
-    <div>
+    <div class="header-content">
       <h1 class="page-title">{{ 'ADMIN.DASHBOARD.TITLE' | translate }}</h1>
       <p class="page-subtitle">
-        {{ 'ADMIN.BREADCRUMB.HOME' | translate }} / {{ 'ADMIN.DASHBOARD.TITLE' | translate }}
+        متابعة المؤشرات المالية العامة، حركة الإيرادات، وأرصدة محافظ المعلمين اللحظية
       </p>
+    </div>
+    <div class="header-actions">
+      <button
+        class="btn-refresh"
+        (click)="loadOverview()"
+        [disabled]="loading()"
+        title="تحديث البيانات"
+        type="button">
+        <i class="pi pi-sync" [class.pi-spin]="loading()"></i>
+        <span>تحديث</span>
+      </button>
+      <a routerLink="/admin/adjustments" class="btn-action-primary">
+        <i class="pi pi-sliders-h"></i>
+        <span>تسوية رصيد جديدة</span>
+      </a>
     </div>
   </div>
 
@@ -17,7 +32,12 @@
           <i class="pi pi-exclamation-triangle"></i>
         </div>
         <div class="alert-text">
-          <h3 class="alert-title">{{ 'ADMIN.DASHBOARD.PENDING_WITHDRAWALS_TITLE' | translate }}</h3>
+          <div class="alert-title-row">
+            <h3 class="alert-title">
+              {{ 'ADMIN.DASHBOARD.PENDING_WITHDRAWALS_TITLE' | translate }}
+            </h3>
+            <span class="urgent-pill">{{ pendingWithdrawalsCount() }} طلب معلق</span>
+          </div>
           <p class="alert-desc">
             {{
               'ADMIN.DASHBOARD.PENDING_WITHDRAWALS_DESC'
@@ -27,8 +47,8 @@
         </div>
       </div>
       <a routerLink="/admin/withdrawals" class="alert-action-btn">
-        <i class="pi pi-arrow-left"></i>
         <span>{{ 'ADMIN.DASHBOARD.PROCESS_WITHDRAWALS' | translate }}</span>
+        <i class="pi pi-arrow-left"></i>
       </a>
     </div>
   }
@@ -36,7 +56,13 @@
   <!-- Financial Overview Section -->
   <div class="section-container">
     <div class="section-header">
-      <h2 class="section-title">{{ 'ADMIN.DASHBOARD.TITLE' | translate }}</h2>
+      <div>
+        <h2 class="section-title">إيرادات وعمولات المنصة</h2>
+        <p class="section-subtitle">
+          إجمالي الإيرادات وعوائد المنصة من الاشتراكات والذكاء الاصطناعي
+        </p>
+      </div>
+      <span class="badge-tag">إجمالي المنصة</span>
     </div>
 
     <!-- Stat Cards Grid -->
@@ -72,12 +98,13 @@
   </div>
 
   <!-- Wallet Balances Section -->
-  <div class="section-container mt-8">
+  <div class="section-container">
     <div class="section-header">
       <div>
         <h2 class="section-title">{{ 'ADMIN.DASHBOARD.WALLET_BALANCES_TITLE' | translate }}</h2>
         <p class="section-subtitle">{{ 'ADMIN.DASHBOARD.WALLET_BALANCES_SUBTITLE' | translate }}</p>
       </div>
+      <span class="badge-tag">محافظ المعلمين</span>
     </div>
 
     <div class="stats-grid grid-cols-3">
@@ -101,6 +128,54 @@
         [iconClass]="'pi pi-clock'"
         [variant]="'amber'"
         [currencySuffix]="'ADMIN.DASHBOARD.CURRENCY' | translate"></draya-admin-stat-card>
+    </div>
+  </div>
+
+  <!-- Quick Navigation Cards Grid -->
+  <div class="section-container">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">روابط وإجراءات سريعة</h2>
+        <p class="section-subtitle">الوصول المباشر لإدارة الفصول، المراحل، والإعدادات</p>
+      </div>
+    </div>
+
+    <div class="quick-links-grid">
+      <a routerLink="/admin/withdrawals" class="quick-card">
+        <div class="quick-icon teal"><i class="pi pi-wallet"></i></div>
+        <div class="quick-info">
+          <h4>إدارة السحوبات</h4>
+          <p>مراجعة طلبات السحب وتحويل المستحقات</p>
+        </div>
+        <i class="pi pi-arrow-left arrow-icon"></i>
+      </a>
+
+      <a routerLink="/admin/classroom-types" class="quick-card">
+        <div class="quick-icon blue"><i class="pi pi-th-large"></i></div>
+        <div class="quick-info">
+          <h4>أنواع الفصول</h4>
+          <p>تحديد وإدارة تصنيفات الفصول الدراسية</p>
+        </div>
+        <i class="pi pi-arrow-left arrow-icon"></i>
+      </a>
+
+      <a routerLink="/admin/supervisors" class="quick-card">
+        <div class="quick-icon violet"><i class="pi pi-users"></i></div>
+        <div class="quick-info">
+          <h4>فريق المشرفين</h4>
+          <p>إدارة الحسابات وصلاحيات الوصول</p>
+        </div>
+        <i class="pi pi-arrow-left arrow-icon"></i>
+      </a>
+
+      <a routerLink="/admin/settings" class="quick-card">
+        <div class="quick-icon amber"><i class="pi pi-cog"></i></div>
+        <div class="quick-info">
+          <h4>إعدادات المنصة</h4>
+          <p>تسعير الامتحانات وعمولات المنصة</p>
+        </div>
+        <i class="pi pi-arrow-left arrow-icon"></i>
+      </a>
     </div>
   </div>
 </div>

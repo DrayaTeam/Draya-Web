@@ -41,6 +41,7 @@ export class StudentProfileComponent implements OnInit {
   parentName = '';
   parentPhone = '';
   parentEmail = '';
+  dateOfBirth = '';
 
   currentPass = '';
   newPass = '';
@@ -59,6 +60,7 @@ export class StudentProfileComponent implements OnInit {
           this.parentName = data.parentName || this.parentName;
           this.parentPhone = data.parentPhone || this.parentPhone;
           this.parentEmail = data.parentEmail || this.parentEmail;
+          this.dateOfBirth = data.dateOfBirth || this.dateOfBirth;
           if (data.profilePictureUrl) {
             this.avatarUrl.set(data.profilePictureUrl);
           }
@@ -85,10 +87,22 @@ export class StudentProfileComponent implements OnInit {
     }
 
     const updatedName = this.name.trim();
-    const updatedParentEmail = this.parentEmail.trim();
+    let updatedParentEmail = this.parentEmail.trim();
+
+    if (!updatedParentEmail && this.auth.currentUser()?.parentGuardianEmail) {
+      updatedParentEmail = this.auth.currentUser()!.parentGuardianEmail!.trim();
+    }
 
     if (!updatedName) {
       this.toast.warning('تنبيه', 'يرجى إدخال اسم الطالب.');
+      return;
+    }
+
+    if (
+      updatedParentEmail &&
+      (!updatedParentEmail.includes('@') || !updatedParentEmail.includes('.'))
+    ) {
+      this.toast.warning('تنبيه', 'يرجى إدخال بريد إلكتروني صحيح لولي الأمر.');
       return;
     }
 
@@ -98,13 +112,18 @@ export class StudentProfileComponent implements OnInit {
     this.profileService
       .updateProfile({
         fullName: updatedName,
-        parentGuardianEmail: updatedParentEmail,
+        parentGuardianEmail: updatedParentEmail || undefined,
+        parentGuardianName: this.parentName.trim() || undefined,
+        parentGuardianPhone: this.parentPhone.trim() || undefined,
+        dateOfBirth: this.dateOfBirth || undefined,
       })
       .subscribe({
         next: (res) => {
           this.saving.set(false);
           this.name = updatedName;
-          this.parentEmail = updatedParentEmail;
+          if (updatedParentEmail) {
+            this.parentEmail = updatedParentEmail;
+          }
           this.cdr.detectChanges();
           if (res.success) {
             this.toast.success('تم الحفظ', res.message);

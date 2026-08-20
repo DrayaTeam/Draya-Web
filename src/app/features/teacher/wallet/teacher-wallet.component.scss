@@ -1,0 +1,118 @@
+/* src/app/features/teacher/wallet/teacher-wallet.component.scss */
+.wallet-container {
+  padding: 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.page-header {
+  margin-bottom: 32px;
+}
+
+.page-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--draya-surface-900);
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  font-size: 1rem;
+  color: var(--draya-surface-500);
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 0;
+  color: var(--draya-surface-500);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--draya-primary-100);
+  border-top-color: var(--draya-primary-700);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--draya-surface-900);
+}
+
+.btn-text {
+  color: var(--draya-primary-700);
+  background: none;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.btn-text:hover {
+  text-decoration: underline;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 0;
+  color: var(--draya-surface-400);
+
+  .icon-wrapper {
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:host-context(.dark) {
+  .page-title {
+    color: var(--draya-surface-50);
+  }
+  .page-subtitle {
+    color: var(--draya-surface-400);
+  }
+  .section-title {
+    color: var(--draya-surface-100);
+  }
+  .empty-state {
+    color: var(--draya-surface-500);
+  }
+}

@@ -1,5 +1,4 @@
-// src/app/features/student/exams/student-exams.component.ts
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
 import { StudentExamsService } from '../../../core/services/student-exams.service';
 import { ExamCardComponent } from './components/exam-card/exam-card.component';
 import { StudentExamItem } from '../../../core/models/student-exam.model';
@@ -14,7 +13,7 @@ import { Router } from '@angular/router';
   styleUrl: './student-exams.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StudentExamsComponent {
+export class StudentExamsComponent implements OnInit {
   protected readonly examsService = inject(StudentExamsService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
@@ -22,6 +21,10 @@ export class StudentExamsComponent {
   readonly headerInfo = this.examsService.headerInfo;
   readonly exams = this.examsService.filteredExams;
   readonly selectedFilter = this.examsService.selectedFilter;
+
+  ngOnInit(): void {
+    this.examsService.loadExams();
+  }
 
   setFilter(filter: 'all' | 'available' | 'scheduled' | 'completed'): void {
     this.examsService.selectedFilter.set(filter);

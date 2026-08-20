@@ -49,3 +49,29 @@ export interface PaginatedResponse<T> {
   pageNumber: number;
   pageSize: number;
 }
+
+export interface TeacherSearchResultDto {
+  id: string;
+  name: string;
+  fullName?: string;
+  email: string;
+  earnedBalance?: number;
+  purchasedBalance?: number;
+  phone?: string;
+}
+
+export interface UpdateAdminProfileRequest {
+  fullName?: string;
+  email?: string;
+  phoneNumber?: string;
+}
+
+export interface AdjustmentAuditItemDto {
+  transactionId: string;
+  teacherId: string;
+  teacherName?: string;
+  amount: number;
+  balanceType: WalletBalanceType | string;
+  description: string;
+  createdAt: string | Date;
+}

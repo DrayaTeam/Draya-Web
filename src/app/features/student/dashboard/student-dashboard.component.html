@@ -279,14 +279,56 @@
           </a>
         </div>
 
-        <!-- Loop of Course Progress Cards -->
+        <!-- Loop of Course Progress Cards (Max 3) -->
         <div class="courses-cards-list">
-          @for (course of enrolledCourses(); track course.id) {
+          @for (course of displayedCourses(); track course.id) {
             <draya-course-progress-card
               [course]="course"
               (resumeWatching)="onResumeCourse($event)" />
           }
         </div>
+
+        <!-- Show More Classrooms Action Bar -->
+        @if (enrolledCourses().length > 3 || (summary().subscribedPackagesCount || 0) > 3) {
+          <a routerLink="/student/courses" class="btn-show-more-courses">
+            <div class="show-more-content">
+              <div class="show-more-icon">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                </svg>
+              </div>
+              <span class="show-more-text">
+                عرض المزيد من فصولك الدراسية
+                @if (remainingCoursesCount() > 0) {
+                  <span class="more-count-pill">+{{ remainingCoursesCount() }} فصول إضافية</span>
+                }
+              </span>
+            </div>
+            <div class="show-more-arrow">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
+              </svg>
+            </div>
+          </a>
+        }
       </section>
 
       <!-- Right Sidebar Column (RTL): Upcoming Exams + Weakness Points -->

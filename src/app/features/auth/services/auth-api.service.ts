@@ -78,8 +78,30 @@ export class AuthApiService implements IAuthApi {
     return this.http.post<{ message: string }>(`${this.baseUrl}/password-reset/request`, { email });
   }
 
-  resetPassword(payload: { token: string; newPassword: string }): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/reset-password`, payload);
+  resetPassword(payload: { token: string; newPassword: string; email?: string }): Observable<void> {
+    const body = {
+      token: payload.token,
+      newPassword: payload.newPassword,
+    };
+    return this.http.post<void>(`${this.baseUrl}/password-reset/confirm`, body);
+  }
+
+  acceptInvite(payload: {
+    email?: string;
+    token: string;
+    password?: string;
+    newPassword?: string;
+    confirmPassword?: string;
+    fullName?: string;
+    phone?: string;
+  }): Observable<void> {
+    const body = {
+      email: payload.email,
+      token: payload.token,
+      password: payload.password || payload.newPassword,
+      confirmPassword: payload.confirmPassword || payload.password || payload.newPassword,
+    };
+    return this.http.post<void>(`${this.baseUrl}/accept-invite`, body);
   }
 
   changePassword(payload: {

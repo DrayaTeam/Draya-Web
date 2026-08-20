@@ -1,4 +1,4 @@
-<div class="stat-card">
+<div class="stat-card" [ngClass]="'card-variant-' + variant()">
   <div class="stat-header">
     <div class="icon-container" [ngClass]="'variant-' + variant()">
       <i [class]="iconClass()"></i>
@@ -12,10 +12,10 @@
   </div>
 
   <div class="stat-body">
-    <div class="stat-value">
-      {{ value() }}
+    <div class="stat-value-row">
+      <span class="stat-value">{{ displayValue() }}</span>
       @if (currencySuffix()) {
-        <span class="currency">{{ currencySuffix() }}</span>
+        <span class="currency-badge">{{ currencySuffix() }}</span>
       }
     </div>
     <div class="stat-label">

@@ -1,7 +1,7 @@
 <div class="adjustments-page">
   <!-- Page Header -->
   <div class="page-header">
-    <div>
+    <div class="header-text">
       <h1 class="page-title">{{ 'ADMIN.ADJUSTMENTS.TITLE' | translate }}</h1>
       <p class="page-subtitle">{{ 'ADMIN.ADJUSTMENTS.SUBTITLE' | translate }}</p>
     </div>
@@ -9,9 +9,12 @@
 
   <!-- Warning Banner -->
   <div class="warning-banner">
-    <i class="pi pi-exclamation-circle banner-icon"></i>
-    <div class="banner-text">
-      {{ 'ADMIN.ADJUSTMENTS.WARNING' | translate }}
+    <div class="banner-icon-wrap">
+      <i class="pi pi-exclamation-triangle"></i>
+    </div>
+    <div class="banner-content">
+      <h4 class="banner-heading">تنبيه مالي مهم</h4>
+      <p class="banner-text">{{ 'ADMIN.ADJUSTMENTS.WARNING' | translate }}</p>
     </div>
   </div>
 
@@ -21,42 +24,61 @@
       <!-- 1. Teacher Selector -->
       <div class="form-group">
         <label class="form-label" for="teacherId">
-          {{ 'ADMIN.ADJUSTMENTS.TEACHER_LABEL' | translate }}
+          <span>{{ 'ADMIN.ADJUSTMENTS.TEACHER_LABEL' | translate }}</span>
           <span class="required">*</span>
         </label>
-        <select id="teacherId" formControlName="teacherId" class="form-select">
-          <option value="" disabled>
-            @if (loadingTeachers()) {
-              جاري تحميل قائمة المعلمين...
-            } @else if (teachers().length === 0) {
-              لا يوجد معلمون مسجلون حالياً
-            } @else {
-              {{ 'ADMIN.ADJUSTMENTS.TEACHER_PLACEHOLDER' | translate }}
+        <div class="select-wrapper">
+          <select id="teacherId" formControlName="teacherId" class="form-select">
+            <option value="" disabled>
+              @if (loadingTeachers()) {
+                جاري تحميل قائمة المعلمين من الخادم...
+              } @else if (teachers().length === 0) {
+                لا يوجد معلمون مسجلون حالياً
+              } @else {
+                {{ 'ADMIN.ADJUSTMENTS.TEACHER_PLACEHOLDER' | translate }}
+              }
+            </option>
+            @for (teacher of teachers(); track teacher.id) {
+              <option [value]="teacher.id">{{ teacher.name }} — ({{ teacher.email }})</option>
             }
-          </option>
-          @for (teacher of teachers(); track teacher.id) {
-            <option [value]="teacher.id">{{ teacher.name }} ({{ teacher.email }})</option>
-          }
-        </select>
+          </select>
+          <i class="pi pi-chevron-down select-caret"></i>
+        </div>
+        @if (selectedTeacher(); as teacher) {
+          <div class="teacher-balances-summary">
+            <div class="balance-item earned">
+              <span class="bal-label">رصيد الأرباح الحالي:</span>
+              <span class="bal-val">{{ teacher.earnedBalance ?? 0 | number: '1.2-2' }} ج.م</span>
+            </div>
+            <div class="balance-item purchased">
+              <span class="bal-label">رصيد الخدمات المشحون:</span>
+              <span class="bal-val">{{ teacher.purchasedBalance ?? 0 | number: '1.2-2' }} ج.م</span>
+            </div>
+          </div>
+        }
         @if (form.get('teacherId')?.touched && form.get('teacherId')?.errors?.['required']) {
-          <span class="form-error">يرجى اختيار المعلّم</span>
+          <span class="form-error">
+            <i class="pi pi-times-circle"></i>
+            <span>يرجى اختيار المعلّم المستفيد من التسوية</span>
+          </span>
         }
       </div>
 
       <!-- 2. Balance Type -->
       <div class="form-group">
         <span class="form-label">
-          {{ 'ADMIN.ADJUSTMENTS.BALANCE_TYPE_LABEL' | translate }}
+          <span>{{ 'ADMIN.ADJUSTMENTS.BALANCE_TYPE_LABEL' | translate }}</span>
           <span class="required">*</span>
         </span>
-        <div class="radio-group">
+        <div class="radio-grid">
           <label
             class="radio-card"
             [class.selected]="form.get('balanceType')?.value === WalletBalanceType.Earned">
             <input type="radio" [value]="WalletBalanceType.Earned" formControlName="balanceType" />
+            <div class="radio-icon teal"><i class="pi pi-wallet"></i></div>
             <div class="radio-content">
               <span class="radio-title">{{ 'ADMIN.ADJUSTMENTS.BALANCE_EARNED' | translate }}</span>
-              <span class="radio-desc">الأرباح الناتجة عن اشتراكات الفصول</span>
+              <span class="radio-desc">الأرباح الناتجة عن اشتراكات الفصول الدراسية</span>
             </div>
           </label>
 
@@ -67,11 +89,12 @@
               type="radio"
               [value]="WalletBalanceType.Purchased"
               formControlName="balanceType" />
+            <div class="radio-icon blue"><i class="pi pi-shopping-cart"></i></div>
             <div class="radio-content">
               <span class="radio-title">
                 {{ 'ADMIN.ADJUSTMENTS.BALANCE_PURCHASED' | translate }}
               </span>
-              <span class="radio-desc">الأرصدة المشحونة لاستهلاك الخدمات</span>
+              <span class="radio-desc">الأرصدة المشحونة لاستهلاك الخدمات والذكاء الاصطناعي</span>
             </div>
           </label>
         </div>
@@ -82,7 +105,7 @@
         <!-- Direction: Add or Deduct -->
         <div class="form-group flex-1">
           <span class="form-label">
-            نوع الحركة
+            <span>نوع الحركة</span>
             <span class="required">*</span>
           </span>
           <div class="segmented-control">
@@ -92,7 +115,7 @@
               [class.active]="form.get('adjustmentDirection')?.value === 'credit'"
               (click)="form.get('adjustmentDirection')?.setValue('credit')">
               <i class="pi pi-plus"></i>
-              <span>إيداع / إضافة</span>
+              <span>إيداع / إضافة (+)</span>
             </button>
             <button
               type="button"
@@ -100,7 +123,7 @@
               [class.active]="form.get('adjustmentDirection')?.value === 'debit'"
               (click)="form.get('adjustmentDirection')?.setValue('debit')">
               <i class="pi pi-minus"></i>
-              <span>خصم / استقطاع</span>
+              <span>خصم / استقطاع (-)</span>
             </button>
           </div>
         </div>
@@ -108,7 +131,7 @@
         <!-- Amount -->
         <div class="form-group flex-1">
           <label class="form-label" for="amount">
-            {{ 'ADMIN.ADJUSTMENTS.AMOUNT_LABEL' | translate }}
+            <span>{{ 'ADMIN.ADJUSTMENTS.AMOUNT_LABEL' | translate }}</span>
             <span class="required">*</span>
           </label>
           <div class="input-addon-wrap">
@@ -123,7 +146,10 @@
             <span class="addon-text">{{ 'ADMIN.SHARED.CURRENCY' | translate }}</span>
           </div>
           @if (form.get('amount')?.touched && form.get('amount')?.errors?.['required']) {
-            <span class="form-error">يرجى إدخال المبلغ</span>
+            <span class="form-error">
+              <i class="pi pi-times-circle"></i>
+              <span>يرجى إدخال المبلغ المراد تسويته</span>
+            </span>
           }
         </div>
       </div>
@@ -131,7 +157,7 @@
       <!-- 4. Reason Textarea -->
       <div class="form-group">
         <label class="form-label" for="reason">
-          {{ 'ADMIN.ADJUSTMENTS.REASON_LABEL' | translate }}
+          <span>{{ 'ADMIN.ADJUSTMENTS.REASON_LABEL' | translate }}</span>
           <span class="required">*</span>
         </label>
         <textarea
@@ -141,7 +167,10 @@
           [placeholder]="'ADMIN.ADJUSTMENTS.REASON_PLACEHOLDER' | translate"
           class="form-textarea"></textarea>
         @if (form.get('reason')?.touched && form.get('reason')?.errors?.['required']) {
-          <span class="form-error">يرجى إدخال سبب التسوية</span>
+          <span class="form-error">
+            <i class="pi pi-times-circle"></i>
+            <span>يرجى توضيح سبب التسوية لسجل التدقيق الإداري</span>
+          </span>
         }
       </div>
 

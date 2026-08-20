@@ -9,6 +9,10 @@ import {
   PackageDetailsView,
   LessonItem,
 } from '../../../../core/services/student-enrollment.service';
+import {
+  ClassroomFeedbackItemDto,
+  ClassroomFeedbackSummaryDto,
+} from '../../../../core/models/student-courses.model';
 import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
@@ -37,6 +41,19 @@ export class PackageDetailsComponent implements OnInit {
   // Modal / Preview state
   readonly selectedLesson = signal<LessonItem | null>(null);
   readonly showLockModal = signal<boolean>(false);
+
+  // Tab selector state
+  readonly activeTab = signal<'curriculum' | 'feedback'>('curriculum');
+
+  // Feedback State Signals
+  readonly feedbackSummary = signal<ClassroomFeedbackSummaryDto | null>(null);
+  readonly feedbackItems = signal<ClassroomFeedbackItemDto[]>([]);
+  readonly loadingFeedback = signal<boolean>(false);
+  readonly submittingFeedback = signal<boolean>(false);
+  readonly selectedRating = signal<number>(5);
+  readonly hoverRating = signal<number>(0);
+  readonly feedbackComment = signal<string>('');
+  readonly hasSubmittedFeedback = signal<boolean>(false);
 
   activationCode = '';
 
@@ -73,7 +90,111 @@ export class PackageDetailsComponent implements OnInit {
           this.isEnrolled.set(true);
         }
       },
+      error: () => void 0,
     });
+  }
+
+  loadFeedback(classroomId: string): void {
+    this.loadingFeedback.set(true);
+    this.enrollmentService.getClassroomFeedback(classroomId, 1, 20).subscribe({
+      next: (res) => {
+        if (res && Array.isArray(res.items)) {
+          this.feedbackSummary.set(res);
+          this.feedbackItems.set(res.items);
+        } else {
+          this.feedbackSummary.set({
+            averageRating: 0,
+            totalCount: 0,
+            items: [],
+            pageNumber: 1,
+            pageSize: 20,
+            totalPages: 0,
+            hasNextPage: false,
+            hasPreviousPage: false,
+          });
+          this.feedbackItems.set([]);
+        }
+        this.loadingFeedback.set(false);
+      },
+      error: () => {
+        this.feedbackSummary.set({
+          averageRating: 0,
+          totalCount: 0,
+          items: [],
+          pageNumber: 1,
+          pageSize: 20,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPreviousPage: false,
+        });
+        this.feedbackItems.set([]);
+        this.loadingFeedback.set(false);
+      },
+    });
+  }
+
+  setRating(star: number): void {
+    this.selectedRating.set(star);
+  }
+
+  setHoverRating(star: number): void {
+    this.hoverRating.set(star);
+  }
+
+  submitFeedback(): void {
+    const pkgId = this.route.snapshot.paramMap.get('id') || 'pkg_1';
+    const rating = this.selectedRating();
+    const comment = this.feedbackComment().trim();
+
+    this.submittingFeedback.set(true);
+    this.enrollmentService
+      .submitClassroomFeedback(pkgId, { rating, comment: comment || undefined })
+      .subscribe({
+        next: (res) => {
+          this.submittingFeedback.set(false);
+          if (res.success) {
+            this.toast.success('تم التقييم بنجاح', res.message || 'شكراً لمشاركتك رأيك!');
+            this.hasSubmittedFeedback.set(true);
+
+            // Optimistic prepend
+            const newFeedback: ClassroomFeedbackItemDto = {
+              feedbackId: res.data?.feedbackId || `fb_${Date.now()}`,
+              studentName: 'أنا',
+              rating,
+              comment,
+              createdAt: new Date().toISOString(),
+            };
+
+            this.feedbackItems.update((list) => [newFeedback, ...list]);
+            this.feedbackSummary.update((s) =>
+              s
+                ? {
+                    ...s,
+                    totalCount: s.totalCount + 1,
+                    averageRating: Number(
+                      ((s.averageRating * s.totalCount + rating) / (s.totalCount + 1)).toFixed(1),
+                    ),
+                  }
+                : null,
+            );
+            this.feedbackComment.set('');
+          } else {
+            this.toast.error('خطأ', res.message || 'تعذر إرسال التقييم.');
+          }
+        },
+        error: () => {
+          this.submittingFeedback.set(false);
+          this.toast.error('خطأ', 'تعذر إرسال التقييم، يرجى المحاولة لاحقاً.');
+        },
+      });
+  }
+
+  selectTab(tab: 'curriculum' | 'feedback'): void {
+    this.activeTab.set(tab);
+    if (tab === 'feedback' && this.feedbackItems().length === 0 && !this.loadingFeedback()) {
+      const pkgId = this.route.snapshot.paramMap.get('id') || 'pkg_1';
+      this.loadFeedback(pkgId);
+    }
   }
 
   toggleChapter(chapterId: string): void {
@@ -87,11 +208,55 @@ export class PackageDetailsComponent implements OnInit {
     return !!this.expandedChapters()[chapterId];
   }
 
+  getLessonActionLabel(les: LessonItem): string {
+    if (les.type === 'pdf') {
+      return 'معاينة وتحميل 📄';
+    }
+    if (les.type === 'exam') {
+      const now = new Date();
+      if (les.startDate && new Date(les.startDate) > now) {
+        const d = new Date(les.startDate);
+        const dateStr = d.toLocaleDateString('ar-EG', {
+          day: 'numeric',
+          month: 'short',
+        });
+        return `يبدأ ${dateStr} ⏳`;
+      }
+      if (les.endDate && new Date(les.endDate) < now) {
+        return 'انتهت الفترة ⛔';
+      }
+      return 'امتحن الآن ✍️';
+    }
+    return 'مشاهدة الآن ▶';
+  }
+
   onSelectLesson(lesson: LessonItem): void {
     if (this.isEnrolled()) {
       if (lesson.type === 'exam') {
+        const now = new Date();
+        if (lesson.startDate && new Date(lesson.startDate) > now) {
+          const d = new Date(lesson.startDate).toLocaleDateString('ar-EG', {
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+          this.toast.info('موعد الامتحان', `هذا الامتحان مجدول وسيبدأ في: ${d}.`);
+          return;
+        }
+        if (lesson.endDate && new Date(lesson.endDate) < now) {
+          this.toast.warning(
+            'انتهت فترة الامتحان ⛔',
+            'لقد انتهت الفترة الزمنية المحددة لأداء هذا الامتحان.',
+          );
+          return;
+        }
         this.toast.info('اختبار تدريبي', `جارٍ الانتقال للامتحان: ${lesson.title}`);
-        this.router.navigate(['/student/exams']);
+        if (lesson.id && !lesson.id.startsWith('les_') && !lesson.id.startsWith('exam_')) {
+          this.router.navigate(['/student/exams', lesson.id, 'take']);
+        } else {
+          this.router.navigate(['/student/exams']);
+        }
         return;
       }
       // Open lesson viewer modal

@@ -94,3 +94,32 @@
   color: #525e5a;
   font-weight: 400;
 }
+
+.ai-explanation-box {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border-right: 3px solid #0f4f49;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  color: #0f4f49;
+}
+
+.explanation-text {
+  font-family: 'Cairo', sans-serif;
+  font-size: 13px;
+  line-height: 20px;
+  color: #334155;
+  margin: 0;
+}

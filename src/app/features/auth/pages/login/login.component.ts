@@ -8,10 +8,12 @@ import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/auth.service';
 import { ApiError } from '../../../../core/models/api-error.model';
 
+import { LogoComponent } from '../../../../shared/components/logo/logo.component';
+
 @Component({
   selector: 'app-auth-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterModule, LogoComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login.component.html',
 })
@@ -39,7 +41,10 @@ export class LoginComponent {
 
   onSubmit(): void {
     // Prevent double-submit by checking loading state
-    if (this.loginForm.invalid || this.loginForm.untouched || this.loading()) return;
+    if (this.loginForm.invalid || this.loading()) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
 
     // Clear old error for clean validation
     this.inlineError.set(null);

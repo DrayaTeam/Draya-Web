@@ -1,7 +1,7 @@
 <div class="withdrawals-page">
   <!-- Page Header -->
   <div class="page-header">
-    <div>
+    <div class="header-text">
       <h1 class="page-title">{{ 'ADMIN.WITHDRAWALS.TITLE' | translate }}</h1>
       <p class="page-subtitle">{{ 'ADMIN.WITHDRAWALS.SUBTITLE' | translate }}</p>
     </div>
@@ -15,13 +15,16 @@
         [class.active]="activeStatusTab() === tab.key"
         (click)="setTab(tab.key)"
         type="button">
-        {{ tab.labelKey | translate }}
+        <span>{{ tab.labelKey | translate }}</span>
+        @if (tab.key === 'Pending' && totalCount() > 0 && activeStatusTab() === 'Pending') {
+          <span class="tab-count-badge">{{ totalCount() }}</span>
+        }
       </button>
     }
   </div>
 
   <!-- Data Table -->
-  <div class="table-container">
+  <div class="table-card">
     <draya-admin-data-table
       [data]="withdrawals()"
       [columns]="columns()"
@@ -73,7 +76,7 @@
       <button
         class="action-icon-btn view-btn"
         (click)="openDetail(row)"
-        title="عرض التفاصيل"
+        title="عرض التفاصيل الكاملة"
         type="button">
         <i class="pi pi-eye"></i>
       </button>
@@ -178,7 +181,7 @@
                   <span class="label">
                     {{ 'ADMIN.WITHDRAWALS.DETAIL_ACCOUNT_ID' | translate }}:
                   </span>
-                  <span class="value ltr font-mono">{{ acc.accountIdentifier }}</span>
+                  <span class="value ltr copyable-id font-mono">{{ acc.accountIdentifier }}</span>
                 </div>
               }
             </div>
@@ -188,14 +191,20 @@
         <!-- Rejection / Admin Note if exists -->
         @if (selectedWithdrawal()?.rejectionReason) {
           <div class="note-box error-box">
-            <span class="note-title">سبب الرفض:</span>
+            <div class="note-header">
+              <i class="pi pi-exclamation-circle"></i>
+              <span class="note-title">سبب الرفض:</span>
+            </div>
             <p class="note-text">{{ selectedWithdrawal()?.rejectionReason }}</p>
           </div>
         }
 
         @if (selectedWithdrawal()?.adminNote) {
           <div class="note-box info-box">
-            <span class="note-title">ملاحظة الدفع:</span>
+            <div class="note-header">
+              <i class="pi pi-info-circle"></i>
+              <span class="note-title">ملاحظة الدفع:</span>
+            </div>
             <p class="note-text">{{ selectedWithdrawal()?.adminNote }}</p>
           </div>
         }
@@ -228,6 +237,19 @@
             type="button">
             <i class="pi pi-dollar"></i>
             <span>{{ 'ADMIN.WITHDRAWALS.ACTION_MARK_PAID' | translate }}</span>
+          </button>
+        }
+        @if (
+          selectedWithdrawal()?.status === WithdrawalStatus.Paid ||
+          selectedWithdrawal()?.status === WithdrawalStatus.Approved
+        ) {
+          <button
+            class="btn btn-danger"
+            (click)="promptRefund(selectedWithdrawal()!)"
+            type="button"
+            title="استرجاع المعاملة المالية">
+            <i class="pi pi-replay"></i>
+            <span>استرجاع المعاملة (Refund)</span>
           </button>
         }
         <button class="btn btn-outline" (click)="closeDetail()" type="button">
@@ -269,4 +291,15 @@
     [cancelLabelKey]="'ADMIN.SHARED.CANCEL'"
     (confirmed)="onConfirmMarkPaid()"
     (cancelled)="confirmPaidOpen.set(false)"></draya-admin-confirm-dialog>
+
+  <!-- 4. Refund Confirm Dialog -->
+  <draya-admin-confirm-dialog
+    [isOpen]="confirmRefundOpen()"
+    [titleKey]="'تأكيد استرجاع المعاملة المالية'"
+    [descriptionKey]="'هل أنت متأكد من رغبتك في استرجاع هذه المعاملة؟ سيتم التراجع عن تحويل المبلغ وتحديث السجلات المالية للمعلم.'"
+    [variant]="'danger'"
+    [confirmLabelKey]="'استرجاع المعاملة (Confirm Refund)'"
+    [cancelLabelKey]="'ADMIN.SHARED.CANCEL'"
+    (confirmed)="onConfirmRefund()"
+    (cancelled)="confirmRefundOpen.set(false)"></draya-admin-confirm-dialog>
 </div>

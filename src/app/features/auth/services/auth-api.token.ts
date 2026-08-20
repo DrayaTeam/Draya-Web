@@ -18,7 +18,16 @@ export interface IAuthApi {
   getProfile(): Observable<UserProfile>;
 
   forgotPassword(email: string): Observable<{ message: string }>;
-  resetPassword(payload: { token: string; newPassword: string }): Observable<void>;
+  resetPassword(payload: { token: string; newPassword: string; email?: string }): Observable<void>;
+  acceptInvite(payload: {
+    email?: string;
+    token: string;
+    password?: string;
+    newPassword?: string;
+    confirmPassword?: string;
+    fullName?: string;
+    phone?: string;
+  }): Observable<void>;
   changePassword(payload: {
     currentPassword: string;
     newPassword: string;

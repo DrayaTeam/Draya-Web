@@ -1,0 +1,114 @@
+<div class="flex flex-col gap-6" dir="rtl">
+  <!-- Header Section -->
+  <div class="flex flex-col gap-2">
+    <h2 class="text-xl font-bold text-gray-900 m-0">سجل المعاملات</h2>
+    <p class="text-sm text-gray-500 m-0">تتبع جميع حركات الأموال في محفظتك (أرباح، مشتريات، وسحوبات).</p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex flex-col items-center justify-center py-16 text-gray-400">
+      <i class="pi pi-spin pi-spinner text-3xl mb-4 text-primary-600"></i>
+      <p class="text-sm font-medium">جاري تحميل السجل...</p>
+    </div>
+  } @else if (transactions().length === 0) {
+    <div class="flex flex-col items-center justify-center py-16 text-gray-400 border border-gray-100 rounded-2xl bg-gray-50/50">
+      <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-sm mb-4">
+        <i class="pi pi-receipt text-2xl text-gray-400"></i>
+      </div>
+      <p class="text-sm font-medium text-gray-600">لا توجد أي معاملات سابقة في محفظتك.</p>
+    </div>
+  } @else {
+    <div class="animate-fade-in-up overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
+      <div class="overflow-x-auto" style="scrollbar-width: thin;">
+        <table class="w-full text-right text-sm text-gray-600">
+          <thead class="bg-gray-50 text-xs uppercase text-gray-500">
+            <tr>
+              <th scope="col" class="whitespace-nowrap px-6 py-4 font-bold">التاريخ</th>
+              <th scope="col" class="whitespace-nowrap px-6 py-4 font-bold">نوع المعاملة</th>
+              <th scope="col" class="whitespace-nowrap px-6 py-4 font-bold">الوصف والمرجع</th>
+              <th scope="col" class="whitespace-nowrap px-6 py-4 font-bold text-left">المبلغ</th>
+              <th scope="col" class="whitespace-nowrap px-6 py-4 font-bold">الرصيد المتأثر</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            @for (tx of transactions(); track tx.id) {
+              <tr class="transition-colors hover:bg-gray-50/50">
+                <!-- Date -->
+                <td class="whitespace-nowrap px-6 py-4">
+                  <div class="flex flex-col gap-1">
+                    <span class="font-bold text-gray-900">{{ tx.createdAt | date: 'dd/MM/yyyy' }}</span>
+                    <span class="text-xs text-gray-500">{{ tx.createdAt | date: 'shortTime' }}</span>
+                  </div>
+                </td>
+                
+                <!-- Type -->
+                <td class="whitespace-nowrap px-6 py-4">
+                  <span class="badge" [ngClass]="getTypeClass(tx.type)">
+                    {{ getTypeLabel(tx.type) }}
+                  </span>
+                </td>
+                
+                <!-- Description -->
+                <td class="px-6 py-4 max-w-[250px]">
+                  <div class="flex flex-col gap-1">
+                    <span class="font-medium text-gray-800 truncate" [title]="tx.description">{{ tx.description }}</span>
+                    <span class="text-xs font-mono text-gray-400">مرجع: {{ tx.referenceId }}</span>
+                  </div>
+                </td>
+                
+                <!-- Amount -->
+                <td class="whitespace-nowrap px-6 py-4 text-left">
+                  <div 
+                    class="inline-flex items-center gap-1 font-bold text-base ltr"
+                    [class.text-green-600]="getEffectiveAmount(tx) > 0"
+                    [class.text-red-600]="getEffectiveAmount(tx) < 0"
+                    [class.text-gray-700]="getEffectiveAmount(tx) === 0"
+                    dir="ltr">
+                    <span>{{ getEffectiveAmount(tx) > 0 ? '+' : '' }}{{ getEffectiveAmount(tx) }}</span>
+                    <span class="text-xs font-normal">ج.م</span>
+                  </div>
+                </td>
+                
+                <!-- Balance Type -->
+                <td class="whitespace-nowrap px-6 py-4">
+                  <span class="inline-flex items-center gap-2 rounded-full border border-gray-100 bg-white px-3 py-1 text-xs font-semibold text-gray-600 shadow-sm">
+                    @if (tx.balanceType === BalanceType.Earned) {
+                      <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                      أرباح الكورسات
+                    } @else {
+                      <span class="h-1.5 w-1.5 rounded-full bg-purple-500"></span>
+                      رصيد المنصة
+                    }
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      @if (totalPages() > 1) {
+        <div class="flex items-center justify-between border-t border-gray-100 bg-gray-50/50 px-6 py-3">
+          <span class="text-sm font-medium text-gray-500">صفحة {{ currentPage() }} من {{ totalPages() }}</span>
+          <div class="flex items-center gap-2">
+            <button
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-white"
+              (click)="nextPage()"
+              [disabled]="!hasNextPage()"
+              title="الصفحة السابقة">
+              <i class="pi pi-chevron-right text-xs"></i>
+            </button>
+            <button
+              class="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-white"
+              (click)="prevPage()"
+              [disabled]="!hasPrevPage()"
+              title="الصفحة التالية">
+              <i class="pi pi-chevron-left text-xs"></i>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

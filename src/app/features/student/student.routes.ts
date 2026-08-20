@@ -30,7 +30,7 @@ export const studentRoutes: Routes = [
           import('./teachers/teacher-details/teacher-details.component').then(
             (m) => m.TeacherDetailsComponent,
           ),
-        title: 'ملف المعلم والباقات — درايَة',
+        title: 'ملف المعلم والفصول — درايَة',
       },
       {
         path: 'packages/:id',
@@ -38,7 +38,7 @@ export const studentRoutes: Routes = [
           import('./packages/package-details/package-details.component').then(
             (m) => m.PackageDetailsComponent,
           ),
-        title: 'تفاصيل الباقة والمحتوى — درايَة',
+        title: 'تفاصيل الفصل والمحتوى — درايَة',
       },
       {
         path: 'checkout/callback',
@@ -58,7 +58,7 @@ export const studentRoutes: Routes = [
         path: 'courses',
         loadComponent: () =>
           import('./courses/student-courses.component').then((m) => m.StudentCoursesComponent),
-        title: 'باقاتي الدراسية — درايَة',
+        title: 'فصولي الدراسية — درايَة',
       },
       {
         path: 'exams',

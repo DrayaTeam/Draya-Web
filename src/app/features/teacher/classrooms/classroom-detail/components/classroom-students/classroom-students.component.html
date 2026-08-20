@@ -1,0 +1,124 @@
+<!-- src/app/features/teacher/classrooms/classroom-detail/components/classroom-students/classroom-students.component.html -->
+<div class="roster-container">
+  <!-- Table Header Toolbar -->
+  <div class="table-toolbar">
+    <div class="toolbar-left">
+      <h3 class="toolbar-title">قائمة الطلبة</h3>
+      <span class="toolbar-badge">{{ rosterResult()?.totalCount ?? 0 }} طالب</span>
+    </div>
+    <div class="toolbar-right">
+      <!-- Search could go here in future -->
+      <div class="search-placeholder">
+        <i class="pi pi-search"></i>
+        <span>بحث عن طالب...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <p-table
+      [value]="rosterResult()?.items ?? []"
+      [lazy]="true"
+      (onLazyLoad)="onPageChange($event)"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="rosterResult()?.totalCount ?? 0"
+      [loading]="isLoading()"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="عرض {first} إلى {last} من أصل {totalRecords} طالب"
+      styleClass="draya-custom-table"
+      [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>الطالب</th>
+          <th>تاريخ الانضمام</th>
+          <th>الحالة</th>
+          <th style="width: 120px; text-align: center">إجراءات</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-student>
+        <tr>
+          <td>
+            <div class="student-name-cell">
+              <div class="student-avatar overflow-hidden">
+                @if (student.profilePictureUrl || student.pictureUrl) {
+                  <img
+                    [src]="student.profilePictureUrl || student.pictureUrl"
+                    [alt]="student.fullName"
+                    class="student-avatar-img w-full h-full object-cover" />
+                } @else {
+                  {{ student.fullName.charAt(0) }}
+                }
+              </div>
+              <div class="student-info">
+                <span class="student-full-name">{{ student.fullName }}</span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="date-cell">
+              <i class="pi pi-calendar"></i>
+              <span>{{ student.enrolledAt | date: 'dd MMM yyyy' }}</span>
+            </div>
+          </td>
+          <td>
+            <div
+              class="status-badge"
+              [ngClass]="student.status === 'Active' ? 'badge-active' : 'badge-inactive'">
+              <span class="status-dot"></span>
+              {{ student.status === 'Active' ? 'نشط' : student.status }}
+            </div>
+          </td>
+          <td style="text-align: center">
+            <button
+              class="action-btn-danger"
+              (click)="confirmRemoveStudent(student)"
+              title="إزالة الطالب">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M3 6h18"></path>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+              </svg>
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4">
+            <div class="empty-state">
+              <div class="empty-icon-wrap">
+                <svg
+                  width="40"
+                  height="40"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <h4 class="empty-title">لا يوجد طلبة</h4>
+              <p class="empty-text">لم يقم أي طالب بالتسجيل في هذه المرحلة بعد.</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

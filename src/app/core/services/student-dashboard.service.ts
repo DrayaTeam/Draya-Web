@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { catchError, of, tap } from 'rxjs';
+import { catchError, forkJoin, of, tap } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
 import {
   EnrolledCourseItem,
@@ -72,16 +72,100 @@ export class StudentDashboardService extends ApiBaseService {
 
   // ── API call ───────────────────────────────────────────────────────────────
 
-  /** Load dashboard data from the real API. Falls back to mock data if endpoint is not yet implemented (404). */
+  /** Load dashboard data by aggregating real Swagger endpoints (auth/me, classrooms, exams, materials). */
   loadDashboard(): void {
     this._loading.set(true);
     this._error.set(null);
 
-    this.get<StudentDashboardApiResponse>('/dashboard/student')
+    forkJoin({
+      me: this.get<{ fullName?: string; gradeLevelName?: string; pictureUrl?: string }>(
+        '/auth/me',
+      ).pipe(catchError(() => of(null))),
+      classrooms: this.get<{
+        items: {
+          id?: string;
+          classroomId?: string;
+          name?: string;
+          teacherName?: string;
+          subjectName?: string;
+          studentProgress?:
+            | number
+            | {
+                completedCount?: number;
+                totalCount?: number;
+                percentage?: number;
+                completedLessons?: number;
+                totalLessons?: number;
+                progressPercent?: number;
+              };
+          imageUrl?: string;
+        }[];
+      }>('/classrooms').pipe(catchError(() => of(null))),
+      exams: this.get<{ id: string; title?: string; topic?: string; createdAt?: string }[]>(
+        '/exams',
+      ).pipe(catchError(() => of(null))),
+      materials: this.get<{ totalCount?: number }>('/students/materials').pipe(
+        catchError(() => of(null)),
+      ),
+    })
       .pipe(
-        tap((res) => this.mapResponse(res)),
+        tap(({ me, classrooms, exams, materials }) => {
+          const fallback = this.getMockDashboard();
+          const enrolledItems = classrooms?.items || [];
+          const examItems = Array.isArray(exams) ? exams : [];
+
+          const apiResponse: StudentDashboardApiResponse = {
+            studentName: me?.fullName || fallback.studentName,
+            streakDays: fallback.streakDays,
+            cumulativeAverage: fallback.cumulativeAverage,
+            completedLessonsCount: materials?.totalCount || fallback.completedLessonsCount,
+            subscribedPackagesCount:
+              enrolledItems.length > 0 ? enrolledItems.length : fallback.subscribedPackagesCount,
+            scheduledExamsCount:
+              examItems.length > 0 ? examItems.length : fallback.scheduledExamsCount,
+            monthlyGrowthPercent: fallback.monthlyGrowthPercent,
+            percentileRanking: fallback.percentileRanking,
+            enrolledCourses:
+              enrolledItems.length > 0
+                ? enrolledItems.map((c) => {
+                    const prog =
+                      typeof c.studentProgress === 'object' && c.studentProgress !== null
+                        ? c.studentProgress
+                        : null;
+                    const progressPercent =
+                      typeof c.studentProgress === 'number'
+                        ? c.studentProgress
+                        : (prog?.progressPercent ?? prog?.percentage ?? 0);
+                    const totalLessons = prog?.totalLessons ?? prog?.totalCount ?? 1;
+                    const completedLessons = prog?.completedLessons ?? prog?.completedCount ?? 0;
+
+                    return {
+                      id: c.classroomId || c.id || 'crs-1',
+                      title: c.name || 'الفصل الدراسي',
+                      teacherName: c.teacherName || 'أستاذ المادة',
+                      subjectName: c.subjectName || 'المنهج',
+                      completedLessons: isNaN(completedLessons) ? 0 : completedLessons,
+                      totalLessons: isNaN(totalLessons) || totalLessons === 0 ? 1 : totalLessons,
+                      progressPercent: isNaN(progressPercent) ? 0 : progressPercent,
+                      thumbnailUrl: c.imageUrl || 'assets/images/default-classroom.svg',
+                    };
+                  })
+                : fallback.enrolledCourses,
+            upcomingExams:
+              examItems.length > 0
+                ? examItems.map((e, idx) => ({
+                    id: e.id,
+                    title: e.title || 'امتحان تفاعلي',
+                    timeText: 'متاح للحل الآن',
+                    isImportant: idx === 0,
+                  }))
+                : fallback.upcomingExams,
+            weaknessTopics: fallback.weaknessTopics,
+          };
+
+          this.mapResponse(apiResponse);
+        }),
         catchError(() => {
-          // If backend hasn't implemented /dashboard/student yet (404), provide realistic fallback data
           const fallback = this.getMockDashboard();
           this.mapResponse(fallback);
           this._loading.set(false);

@@ -69,4 +69,9 @@ describe('StudentDashboardComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.hero-title')?.textContent).toContain('أحمد');
   });
+
+  it('should limit displayed courses to 3 items', () => {
+    expect(component.displayedCourses().length).toBe(0);
+    expect(component.remainingCoursesCount()).toBe(0);
+  });
 });

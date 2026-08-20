@@ -1,0 +1,89 @@
+<draya-teacher-modal
+  title="إضافة مادة تعليمية جديدة"
+  subtitle="قم برفع ملف مستند أو فيديو لطلابك"
+  [isOpen]="isOpen()"
+  size="md"
+  (modalClosed)="cancelUpload.emit()">
+  
+  <form [formGroup]="form" (ngSubmit)="submit()" class="draya-form">
+    <!-- Type -->
+    <div class="form-group">
+      <label for="type">نوع المادة التعليمية</label>
+      <select
+        id="type"
+        formControlName="type"
+        class="form-control"
+        (change)="onTypeChange()">
+        @for (opt of typeOptions; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+        }
+      </select>
+    </div>
+
+    <!-- Title -->
+    <div class="form-group mt-4">
+      <label for="title" class="required">عنوان المادة</label>
+      <input
+        id="title"
+        type="text"
+        formControlName="title"
+        class="form-control"
+        placeholder="مثال: مذكرة مراجعة الباب الأول" />
+      @if (form.get('title')?.invalid && form.get('title')?.touched) {
+        <small class="error-text">عنوان المادة مطلوب (الحد الأقصى 255 حرف).</small>
+      }
+    </div>
+
+    <!-- Description -->
+    <div class="form-group mt-4">
+      <label for="description">وصف تفصيلي (اختياري)</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="form-control min-h-[100px] resize-y"
+        placeholder="أضف ملاحظات أو تعليمات للطلاب حول هذه المادة..."></textarea>
+    </div>
+
+    <!-- File Upload Section -->
+    <div class="form-group mt-4">
+      <label for="fileUpload" class="required">ملف {{ currentType === 'PDF' ? 'المستند (PDF/Word/etc)' : 'الفيديو' }}</label>
+      <div class="file-upload-box" [class.has-error]="fileError()">
+        <input
+          type="file"
+          id="fileUpload"
+          (change)="onFileSelect($event)"
+          class="hidden" />
+
+        <label for="fileUpload" class="file-upload-label">
+          <i class="pi pi-cloud-upload text-primary-600 mb-2 text-3xl"></i>
+          @if (selectedFile()) {
+            <span class="font-semibold text-gray-900">{{ selectedFile()!.name }}</span>
+            <span class="mt-1 text-xs text-gray-500">
+              {{ selectedFile()!.size / 1024 / 1024 | number: '1.1-2' }} MB
+            </span>
+          } @else {
+            <span class="font-semibold text-gray-900">اضغط هنا لاختيار ملف</span>
+            <span class="mt-1 text-xs text-gray-500">
+              مسموح بجميع أنواع الملفات (الحد الأقصى 200MB)
+            </span>
+          }
+        </label>
+      </div>
+      @if (fileError()) {
+        <small class="error-text">{{ fileError() }}</small>
+      }
+    </div>
+  </form>
+
+  <div modal-footer class="flex gap-3">
+    <button class="btn-outline" (click)="cancelUpload.emit()" [disabled]="isSubmitting()">إلغاء</button>
+    <button class="btn-primary" (click)="submit()" [disabled]="isSubmitting()">
+      @if (isSubmitting()) {
+        <i class="pi pi-spinner pi-spin ml-2"></i>
+        <span>جاري الرفع...</span>
+      } @else {
+        <span>حفظ ورفع المادة</span>
+      }
+    </button>
+  </div>
+</draya-teacher-modal>

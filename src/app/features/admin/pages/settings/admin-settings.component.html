@@ -1,14 +1,14 @@
 <div class="settings-page">
   <!-- Page Header -->
   <div class="page-header">
-    <div>
+    <div class="header-text">
       <h1 class="page-title">{{ 'ADMIN.SETTINGS.TITLE' | translate }}</h1>
       <p class="page-subtitle">{{ 'ADMIN.SETTINGS.SUBTITLE' | translate }}</p>
     </div>
     <div class="last-updated-badge">
       <i class="pi pi-history"></i>
       <span>
-        {{ 'ADMIN.SETTINGS.LAST_UPDATED' | translate }}: {{ lastUpdated() | date: 'shortDate' }}
+        {{ 'ADMIN.SETTINGS.LAST_UPDATED' | translate }}: {{ lastUpdated() | date: 'mediumDate' }}
       </span>
     </div>
   </div>
@@ -20,10 +20,12 @@
       <div class="form-group">
         <div class="label-block">
           <label class="form-label" for="aiExamPrice">
-            {{ 'ADMIN.SETTINGS.AI_EXAM_PRICE' | translate }}
+            <span>{{ 'ADMIN.SETTINGS.AI_EXAM_PRICE' | translate }}</span>
             <span class="required">*</span>
           </label>
-          <span class="form-hint">تكلفة إنشاء الاختبار الواحد بواسطة الذكاء الاصطناعي</span>
+          <span class="form-hint">
+            تكلفة إنشاء الاختبار الواحد بواسطة الذكاء الاصطناعي للمعلّم بعد نفاد الحصة
+          </span>
         </div>
         <div class="input-addon-wrap">
           <input
@@ -36,7 +38,10 @@
           <span class="addon-text">{{ 'ADMIN.SHARED.CURRENCY' | translate }}</span>
         </div>
         @if (form.get('aiExamPrice')?.touched && form.get('aiExamPrice')?.errors?.['required']) {
-          <span class="form-error">سعر اختبار الذكاء الاصطناعي مطلوب</span>
+          <span class="form-error">
+            <i class="pi pi-times-circle"></i>
+            <span>سعر اختبار الذكاء الاصطناعي مطلوب</span>
+          </span>
         }
       </div>
 
@@ -44,7 +49,7 @@
       <div class="form-group">
         <div class="label-block">
           <label class="form-label" for="freeQuota">
-            {{ 'ADMIN.SETTINGS.FREE_QUOTA' | translate }}
+            <span>{{ 'ADMIN.SETTINGS.FREE_QUOTA' | translate }}</span>
             <span class="required">*</span>
           </label>
           <span class="form-hint">{{ 'ADMIN.SETTINGS.FREE_QUOTA_HINT' | translate }}</span>
@@ -57,13 +62,16 @@
             step="1"
             formControlName="freeMonthlyAIExamQuota"
             class="form-input" />
-          <span class="addon-text">اختبار</span>
+          <span class="addon-text">اختبار / شهر</span>
         </div>
         @if (
           form.get('freeMonthlyAIExamQuota')?.touched &&
           form.get('freeMonthlyAIExamQuota')?.errors?.['required']
         ) {
-          <span class="form-error">الحصة الشهرية المجانية مطلوبة</span>
+          <span class="form-error">
+            <i class="pi pi-times-circle"></i>
+            <span>الحصة الشهرية المجانية مطلوبة</span>
+          </span>
         }
       </div>
 
@@ -71,7 +79,7 @@
       <div class="form-group">
         <div class="label-block">
           <label class="form-label" for="commission">
-            {{ 'ADMIN.SETTINGS.COMMISSION_PERCENT' | translate }}
+            <span>{{ 'ADMIN.SETTINGS.COMMISSION_PERCENT' | translate }}</span>
             <span class="required">*</span>
           </label>
           <span class="form-hint">{{ 'ADMIN.SETTINGS.COMMISSION_HINT' | translate }}</span>
@@ -91,7 +99,10 @@
           form.get('platformCommissionPercent')?.touched &&
           form.get('platformCommissionPercent')?.errors?.['required']
         ) {
-          <span class="form-error">نسبة عمولة المنصة مطلوبة</span>
+          <span class="form-error">
+            <i class="pi pi-times-circle"></i>
+            <span>نسبة عمولة المنصة مطلوبة (بين 0 و 100)</span>
+          </span>
         }
       </div>
 
@@ -102,7 +113,7 @@
             <i class="pi pi-spin pi-spinner"></i>
             <span>{{ 'ADMIN.SHARED.LOADING' | translate }}</span>
           } @else {
-            <i class="pi pi-save"></i>
+            <i class="pi pi-check"></i>
             <span>{{ 'ADMIN.SETTINGS.SAVE' | translate }}</span>
           }
         </button>

@@ -22,6 +22,105 @@ import { AdminConfirmDialogComponent } from '../../components/admin-confirm-dial
 import { ToastService } from '../../../../core/services/toast.service';
 import { finalize } from 'rxjs/operators';
 
+const DEFAULT_GRADE_LEVELS: GradeLevelDto[] = [
+  {
+    id: '1',
+    name: 'الصف الأول الابتدائي',
+    description: 'المرحلة الابتدائية',
+    sortOrder: 1,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: '2',
+    name: 'الصف الثاني الابتدائي',
+    description: 'المرحلة الابتدائية',
+    sortOrder: 2,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: '3',
+    name: 'الصف الثالث الابتدائي',
+    description: 'المرحلة الابتدائية',
+    sortOrder: 3,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: '4',
+    name: 'الصف الرابع الابتدائي',
+    description: 'المرحلة الابتدائية',
+    sortOrder: 4,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: '5',
+    name: 'الصف الخامس الابتدائي',
+    description: 'المرحلة الابتدائية',
+    sortOrder: 5,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: '6',
+    name: 'الصف السادس الابتدائي',
+    description: 'المرحلة الابتدائية',
+    sortOrder: 6,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: '7',
+    name: 'الصف الأول الإعدادي',
+    description: 'المرحلة الإعدادية',
+    sortOrder: 7,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: '8',
+    name: 'الصف الثاني الإعدادي',
+    description: 'المرحلة الإعدادية',
+    sortOrder: 8,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: '9',
+    name: 'الصف الثالث الإعدادي',
+    description: 'المرحلة الإعدادية',
+    sortOrder: 9,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: '10',
+    name: 'الصف الأول الثانوي',
+    description: 'المرحلة الثانوية',
+    sortOrder: 10,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: '11',
+    name: 'الصف الثاني الثانوي',
+    description: 'المرحلة الثانوية',
+    sortOrder: 11,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: '12',
+    name: 'الصف الثالث الثانوي',
+    description: 'المرحلة الثانوية (شهادة الثانوية العامة)',
+    sortOrder: 12,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+];
+
 @Component({
   selector: 'draya-admin-grade-levels',
   standalone: true,
@@ -47,6 +146,26 @@ export class AdminGradeLevelsComponent implements OnInit {
   readonly loading = signal<boolean>(false);
   readonly totalCount = signal<number>(0);
   readonly searchQuery = signal<string>('');
+
+  // Quick preset grade levels for selection
+  readonly presetSuggestions = [
+    'الصف الأول الثانوي',
+    'الصف الثاني الثانوي',
+    'الصف الثالث الثانوي',
+    'الصف الأول الإعدادي',
+    'الصف الثاني الإعدادي',
+    'الصف الثالث الإعدادي',
+    'الصف الأول الابتدائي',
+    'الصف الثاني الابتدائي',
+    'الصف الثالث الابتدائي',
+    'الصف الرابع الابتدائي',
+    'الصف الخامس الابتدائي',
+    'الصف السادس الابتدائي',
+  ];
+
+  selectPreset(name: string): void {
+    this.form.patchValue({ name });
+  }
 
   // Modal State
   readonly isModalOpen = signal<boolean>(false);
@@ -126,12 +245,17 @@ export class AdminGradeLevelsComponent implements OnInit {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (items) => {
-          this.gradeLevels.set(items || []);
-          this.totalCount.set(items?.length || 0);
+          if (items && items.length > 0) {
+            this.gradeLevels.set(items);
+            this.totalCount.set(items.length);
+          } else {
+            this.gradeLevels.set(DEFAULT_GRADE_LEVELS);
+            this.totalCount.set(DEFAULT_GRADE_LEVELS.length);
+          }
         },
         error: () => {
-          this.gradeLevels.set([]);
-          this.totalCount.set(0);
+          this.gradeLevels.set(DEFAULT_GRADE_LEVELS);
+          this.totalCount.set(DEFAULT_GRADE_LEVELS.length);
         },
       });
   }

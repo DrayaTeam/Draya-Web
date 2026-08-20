@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
+import { noAuthGuard } from '../../core/auth/auth.guard';
 
 export const authRoutes: Routes = [
   {
     path: '',
+    canActivate: [noAuthGuard],
     loadComponent: () =>
       import('./layout/auth-shell/auth-shell.component').then((m) => m.AuthShellComponent),
     children: [
@@ -18,6 +20,11 @@ export const authRoutes: Routes = [
             (m) => m.RegisterTeacherComponent,
           ),
         title: 'Register Teacher — Draya',
+      },
+      {
+        path: 'register',
+        redirectTo: 'register-teacher',
+        pathMatch: 'full',
       },
       {
         path: 'register-student',
@@ -42,6 +49,14 @@ export const authRoutes: Routes = [
             (m) => m.ResetPasswordComponent,
           ),
         title: 'Reset Password — Draya',
+      },
+      {
+        path: 'accept-invite',
+        loadComponent: () =>
+          import('./pages/accept-invite/accept-invite.component').then(
+            (m) => m.AcceptInviteComponent,
+          ),
+        title: 'Accept Invitation — Draya',
       },
       {
         path: '',

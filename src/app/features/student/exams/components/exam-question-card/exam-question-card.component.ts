@@ -19,12 +19,27 @@ export class ExamQuestionCardComponent {
   readonly isLastQuestion = input.required<boolean>();
 
   readonly selectOption = output<{ questionId: string; optionId: string }>();
+  readonly updateAnswerText = output<{ questionId: string; text: string }>();
   readonly toggleFlag = output<string>();
   readonly nextQuestion = output<void>();
   readonly prevQuestion = output<void>();
   readonly submitExam = output<void>();
 
+  isEssay(): boolean {
+    const q = this.question();
+    return (
+      (q.type || '').toLowerCase().includes('essay') ||
+      (q.subjectTag || '').toLowerCase().includes('essay') ||
+      (q.options.length === 0 && !q.correctOptionId)
+    );
+  }
+
   onSelect(optionId: string): void {
     this.selectOption.emit({ questionId: this.question().id, optionId });
+  }
+
+  onTextInput(event: Event): void {
+    const val = (event.target as HTMLTextAreaElement)?.value ?? '';
+    this.updateAnswerText.emit({ questionId: this.question().id, text: val });
   }
 }

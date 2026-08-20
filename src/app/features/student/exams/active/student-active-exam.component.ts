@@ -1,12 +1,12 @@
-// src/app/features/student/exams/active/student-active-exam.component.ts
-
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   OnInit,
   OnDestroy,
+  HostListener,
   signal,
+  effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -35,13 +35,68 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
+  @HostListener('contextmenu', ['$event'])
+  onContextMenu(event: MouseEvent): void {
+    event.preventDefault();
+    this.toastService.warning('تنبيه أمني ⚠️', 'النقر بالزر الأيمن غير مسموح به أثناء الامتحان.');
+  }
+
+  @HostListener('copy', ['$event'])
+  onCopy(event: ClipboardEvent): void {
+    event.preventDefault();
+    this.toastService.warning('تنبيه أمني ⚠️', 'نسخ أسئلة ومحتوى الامتحان محظور.');
+  }
+
+  @HostListener('cut', ['$event'])
+  onCut(event: ClipboardEvent): void {
+    event.preventDefault();
+  }
+
+  @HostListener('paste', ['$event'])
+  onPaste(event: ClipboardEvent): void {
+    event.preventDefault();
+  }
+
+  @HostListener('keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+    // Block Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+P, Ctrl+U, Ctrl+S
+    if (
+      (event.ctrlKey || event.metaKey) &&
+      ['c', 'v', 'x', 'p', 's', 'u'].includes(event.key.toLowerCase())
+    ) {
+      event.preventDefault();
+      this.toastService.warning('تنبيه أمني ⚠️', 'اختصارات لوحة المفاتيح معطلة أثناء الامتحان.');
+    }
+    if (event.key === 'F12') {
+      event.preventDefault();
+    }
+  }
+
   readonly showSubmitConfirm = signal<boolean>(false);
   private examId = 'exam-1';
   private visibilityListener: (() => void) | null = null;
 
+  constructor() {
+    effect(() => {
+      const remaining = this.examService.remainingSeconds();
+      const isSub = this.examService.isSubmitted();
+      const isLoading = this.examService.isLoading();
+      if (remaining === 0 && !isSub && !isLoading) {
+        this.toastService.warning(
+          'انتهى وقت الامتحان! ⌛',
+          'تم إرسال وتسليم إجاباتك تلقائياً للحفاظ على درجاتك قبل انتهاء المهلة.',
+        );
+        this.onSubmitExam();
+      }
+    });
+  }
+
   ngOnInit(): void {
     this.examId = this.route.snapshot.paramMap.get('id') || 'exam-1';
-    this.examService.startTimer();
+    this.examService.loadExamSession(this.examId).subscribe({
+      next: () => void 0,
+      error: () => void 0,
+    });
 
     // Anti-cheating tab-switching listener
     this.visibilityListener = () => {
@@ -53,8 +108,9 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
             'لتكرار مغادرة شاشة الامتحان التفاعلي (3 مخالفات).',
           );
           this.examService.stopTimer();
+          const attemptId = this.examService.currentAttemptId() || undefined;
           this.router.navigate(['/student/exams', this.examId, 'result'], {
-            queryParams: { score: 0 },
+            queryParams: { score: 0, attemptId },
           });
         } else {
           this.toastService.warning(
@@ -80,6 +136,10 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
     this.examService.selectOption(event.questionId, event.optionId);
   }
 
+  onUpdateAnswerText(event: { questionId: string; text: string }): void {
+    this.examService.setAnswerText(event.questionId, event.text);
+  }
+
   onToggleFlag(questionId: string): void {
     this.examService.toggleFlagQuestion(questionId);
     this.toastService.info('تحديث المراجعة', 'تم تعديل علامة المراجعة للسؤال.');
@@ -97,14 +157,26 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
     this.examService.prevQuestion();
   }
 
+  onReturnToExams(): void {
+    this.router.navigate(['/student/exams']);
+  }
+
+  onRetryLoad(): void {
+    this.examService.loadExamSession(this.examId).subscribe({
+      next: () => void 0,
+      error: () => void 0,
+    });
+  }
+
   onSubmitExam(): void {
-    const finalScore = this.examService.submitExam();
+    const attemptId = this.examService.currentAttemptId() || undefined;
+    const finalScore = this.examService.submitExam(attemptId);
     this.toastService.success(
       'تم تسليم الامتحان بنجاح! 🎉',
       'جارٍ استخراج تقرير التحليل الذكي للدرجات والمهارات...',
     );
     this.router.navigate(['/student/exams', this.examId, 'result'], {
-      queryParams: { score: finalScore },
+      queryParams: { score: finalScore, attemptId },
     });
   }
 }

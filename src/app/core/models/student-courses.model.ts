@@ -19,9 +19,20 @@ export interface StudentCoursesHeaderInfo {
   readonly subtitleText: string;
 }
 
+export interface StudentProgressDto {
+  completedLessons?: number;
+  totalLessons?: number;
+  progressPercent?: number;
+  lastAccessedAt?: string;
+}
+
 export interface ClassroomDto {
   classroomId: string;
   teacherId: string;
+  teacherName?: string;
+  teacherAvatarUrl?: string;
+  materialsCount?: number;
+  studentProgress?: number | StudentProgressDto;
   subjectName?: string;
   name?: string;
   enrollmentCode?: string;
@@ -33,6 +44,7 @@ export interface ClassroomDto {
   startDate?: string;
   endDate?: string;
   price?: number;
+  imageUrl?: string;
 }
 
 export interface ClassroomDtoPagedResult {
@@ -41,4 +53,38 @@ export interface ClassroomDtoPagedResult {
   pageSize: number;
   totalCount: number;
   totalPages: number;
+}
+
+export interface ClassroomFeedbackItemDto {
+  feedbackId: string;
+  studentName?: string;
+  studentAvatarUrl?: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+}
+
+export interface ClassroomFeedbackSummaryDto {
+  averageRating: number;
+  totalCount: number;
+  items?: ClassroomFeedbackItemDto[];
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface SubmitClassroomFeedbackRequest {
+  rating: number;
+  comment?: string;
+}
+
+export interface ClassroomSectionDto {
+  id?: string;
+  sectionId?: string;
+  title: string;
+  description?: string;
+  order?: number;
+  materials?: unknown[];
 }
