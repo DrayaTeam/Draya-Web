@@ -75,4 +75,3 @@ export async function setupAdminAuth(page: Page): Promise<void> {
     { t: token, u: user },
   );
 }
-

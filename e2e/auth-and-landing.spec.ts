@@ -15,8 +15,12 @@ test.describe('Landing & Authentication E2E Flow', () => {
   test('should navigate to login page and render login form', async ({ page }) => {
     await page.goto('/auth/login');
 
-    const emailInput = page.locator('input[type="email"], input[formcontrolname="email"], input[name="email"]');
-    const passwordInput = page.locator('input[type="password"], input[formcontrolname="password"], input[name="password"]');
+    const emailInput = page.locator(
+      'input[type="email"], input[formcontrolname="email"], input[name="email"]',
+    );
+    const passwordInput = page.locator(
+      'input[type="password"], input[formcontrolname="password"], input[name="password"]',
+    );
 
     await expect(emailInput.first()).toBeVisible();
     await expect(passwordInput.first()).toBeVisible();

@@ -20,7 +20,9 @@ test.describe('Teachers Directory E2E Flow', () => {
     await searchInput.fill('أحمد');
 
     // Wait for filtered results, empty state, or skeleton cards
-    const teacherCards = page.locator('draya-teacher-card, .teacher-skeleton-card, .empty-results-box, .teachers-card-grid');
+    const teacherCards = page.locator(
+      'draya-teacher-card, .teacher-skeleton-card, .empty-results-box, .teachers-card-grid',
+    );
     await expect(teacherCards.first()).toBeVisible();
   });
 
