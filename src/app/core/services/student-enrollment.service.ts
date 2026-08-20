@@ -638,7 +638,8 @@ export class StudentEnrollmentService extends ApiBaseService {
     pageSize = 10,
   ): Observable<ClassroomFeedbackSummaryDto | null> {
     return this.get<ClassroomFeedbackSummaryDto>(
-      `/classrooms/${classroomId}/feedback?page=${page}&pageSize=${pageSize}`,
+      `/classrooms/${classroomId}/feedback`,
+      { page, pageSize },
     ).pipe(catchError(() => of(null)));
   }
 
@@ -656,12 +657,21 @@ export class StudentEnrollmentService extends ApiBaseService {
         data: res,
         message: 'شكراً لك! تم إرسال تقييمك بنجاح.',
       })),
-      catchError((err) =>
-        of({
+      catchError((err) => {
+        let errorMsg = 'تعذر إرسال التقييم إلى السيرفر حالياً.';
+        if (err?.status === 500) {
+          errorMsg =
+            'خطأ في سيرفر التقييمات (500) — جارٍ معالجة التقييم أو يتطلب تحديث الباك إند.';
+        } else if (err?.error?.message) {
+          errorMsg = err.error.message;
+        } else if (err?.error?.title) {
+          errorMsg = err.error.title;
+        }
+        return of({
           success: false,
-          message: err?.error?.message || err?.error?.title || 'تعذر إرسال التقييم حالياً.',
-        }),
-      ),
+          message: errorMsg,
+        });
+      }),
     );
   }
 }
