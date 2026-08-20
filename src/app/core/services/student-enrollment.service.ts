@@ -10,7 +10,6 @@ import {
   ClassroomFeedbackSummaryDto,
   SubmitClassroomFeedbackRequest,
 } from '../models/student-courses.model';
-import { StudentExamDto } from '../models/student-exam-taking.model';
 
 export interface ClassroomMaterialDto {
   materialId: string;
@@ -51,6 +50,63 @@ export interface LessonItem {
   startDate?: string;
   endDate?: string;
   isAvailable?: boolean;
+}
+
+export interface SectionItemDto {
+  id?: string;
+  sectionId?: string;
+  title?: string;
+  name?: string;
+  description?: string;
+  order?: number;
+  materials?: {
+    id?: string;
+    materialId?: string;
+    sectionId?: string;
+    title?: string;
+    name?: string;
+    type?: string;
+    materialType?: string;
+    duration?: string;
+    durationText?: string;
+    fileUrl?: string;
+    url?: string;
+    currentVersion?: { fileUrl?: string };
+  }[];
+  documents?: {
+    id?: string;
+    title?: string;
+    name?: string;
+    materialType?: string;
+    fileUrl?: string;
+    url?: string;
+    createdAt?: string;
+  }[];
+  videos?: {
+    id?: string;
+    title?: string;
+    name?: string;
+    materialType?: string;
+    fileUrl?: string;
+    url?: string;
+    duration?: string;
+    durationText?: string;
+    createdAt?: string;
+  }[];
+  exams?: {
+    id?: string;
+    title?: string;
+    topic?: string;
+    questionsCount?: number;
+    startDate?: string;
+    startsAt?: string;
+    scheduledAt?: string;
+    availableFrom?: string;
+    endDate?: string;
+    endsAt?: string;
+    availableTo?: string;
+    createdAt?: string;
+  }[];
 }
 
 export interface ChapterItem {
@@ -158,40 +214,11 @@ export class StudentEnrollmentService extends ApiBaseService {
           }
         | { id?: string; title?: string; name?: string; type?: string; duration?: string }[]
       >(`/classrooms/${classroomId}/materials`).pipe(catchError(() => of(null))),
-      sectionsRes: this.get<
-        | {
-            id?: string;
-            sectionId?: string;
-            title?: string;
-            name?: string;
-            description?: string;
-            order?: number;
-          }[]
-        | {
-            items?: {
-              id?: string;
-              sectionId?: string;
-              title?: string;
-              name?: string;
-              description?: string;
-              order?: number;
-            }[];
-          }
-      >(`/classrooms/${classroomId}/sections`).pipe(catchError(() => of(null))),
-      examsRes: this.get<
-        | StudentExamDto[]
-        | { items?: StudentExamDto[] }
-        | {
-            id?: string;
-            examId?: string;
-            title?: string;
-            topic?: string;
-            sectionId?: string;
-            questions?: unknown[];
-          }[]
-      >(`/exams?classroomId=${classroomId}`).pipe(catchError(() => of(null))),
+      sectionsRes: this.get<SectionItemDto[] | { items?: SectionItemDto[] }>(
+        `/classrooms/${classroomId}/sections`,
+      ).pipe(catchError(() => of(null))),
     }).pipe(
-      map(({ classroom, materialsRes, sectionsRes, examsRes }) => {
+      map(({ classroom, materialsRes, sectionsRes }) => {
         let rawMaterials: {
           id?: string;
           materialId?: string;
@@ -212,19 +239,15 @@ export class StudentEnrollmentService extends ApiBaseService {
           rawMaterials = materialsRes.items;
         }
 
-        let rawExams: {
+        const rawExams: {
           id?: string;
           examId?: string;
           sectionId?: string;
           title?: string;
           topic?: string;
+          questionsCount?: number;
           questions?: unknown[];
         }[] = [];
-        if (Array.isArray(examsRes)) {
-          rawExams = examsRes;
-        } else if (examsRes && 'items' in examsRes && Array.isArray(examsRes.items)) {
-          rawExams = examsRes.items;
-        }
 
         const mapMaterialToLesson = (
           m: (typeof rawMaterials)[0],
@@ -305,42 +328,7 @@ export class StudentEnrollmentService extends ApiBaseService {
         const allLessons: LessonItem[] = rawMaterials.map((m, idx) => mapMaterialToLesson(m, idx));
 
         // Group into chapters by sections if available
-        let rawSections: {
-          id?: string;
-          sectionId?: string;
-          title?: string;
-          name?: string;
-          description?: string;
-          order?: number;
-          materials?: typeof rawMaterials;
-          documents?: {
-            id?: string;
-            title?: string;
-            name?: string;
-            materialType?: string;
-            fileUrl?: string;
-            url?: string;
-            createdAt?: string;
-          }[];
-          videos?: {
-            id?: string;
-            title?: string;
-            name?: string;
-            materialType?: string;
-            fileUrl?: string;
-            url?: string;
-            duration?: string;
-            durationText?: string;
-            createdAt?: string;
-          }[];
-          exams?: {
-            id?: string;
-            title?: string;
-            topic?: string;
-            questionsCount?: number;
-            createdAt?: string;
-          }[];
-        }[] = [];
+        let rawSections: SectionItemDto[] = [];
 
         if (Array.isArray(sectionsRes)) {
           rawSections = sectionsRes;
