@@ -95,7 +95,9 @@ test.describe('Student Package Details & Feedback E2E Flow', () => {
     await expect(scoreCard).toBeVisible({ timeout: 10000 });
 
     // Verify reviews feed shows student reviews or feedback section
-    const reviewCard = page.locator('.review-card, .feedback-summary-card, .feedback-tab-section').first();
+    const reviewCard = page
+      .locator('.review-card, .feedback-summary-card, .feedback-tab-section')
+      .first();
     await expect(reviewCard).toBeVisible({ timeout: 10000 });
   });
 });

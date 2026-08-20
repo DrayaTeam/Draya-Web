@@ -98,49 +98,36 @@ export class PackageDetailsComponent implements OnInit {
     this.loadingFeedback.set(true);
     this.enrollmentService.getClassroomFeedback(classroomId, 1, 20).subscribe({
       next: (res) => {
-        if (res) {
+        if (res && Array.isArray(res.items)) {
           this.feedbackSummary.set(res);
-          this.feedbackItems.set(res.items || []);
+          this.feedbackItems.set(res.items);
         } else {
-          // Provide realistic fallback for demo
-          const fallbackSummary: ClassroomFeedbackSummaryDto = {
-            averageRating: 4.9,
-            totalCount: 3,
-            items: [
-              {
-                feedbackId: 'fb-1',
-                studentName: 'محمود إبراهيم',
-                rating: 5,
-                comment: 'شرح ممتاز جداً ومبسط، والمذكرات منسقة وشاملة لكافة أفكار المنهج.',
-                createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-              },
-              {
-                feedbackId: 'fb-2',
-                studentName: 'سارة عبد الله',
-                rating: 5,
-                comment: 'أفضل تجربة تعليمية! حلول الواجبات والاختبارات الفورية ساعدتني جداً.',
-                createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
-              },
-              {
-                feedbackId: 'fb-3',
-                studentName: 'كريم حسن',
-                rating: 4,
-                comment: 'محتوى رائع ومنظم، أنصح به كل طالب يريد التفوق.',
-                createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
-              },
-            ],
+          this.feedbackSummary.set({
+            averageRating: 0,
+            totalCount: 0,
+            items: [],
             pageNumber: 1,
             pageSize: 20,
-            totalPages: 1,
+            totalPages: 0,
             hasNextPage: false,
             hasPreviousPage: false,
-          };
-          this.feedbackSummary.set(fallbackSummary);
-          this.feedbackItems.set(fallbackSummary.items || []);
+          });
+          this.feedbackItems.set([]);
         }
         this.loadingFeedback.set(false);
       },
       error: () => {
+        this.feedbackSummary.set({
+          averageRating: 0,
+          totalCount: 0,
+          items: [],
+          pageNumber: 1,
+          pageSize: 20,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPreviousPage: false,
+        });
+        this.feedbackItems.set([]);
         this.loadingFeedback.set(false);
       },
     });

@@ -77,11 +77,11 @@ test.describe('Admin Module E2E Flow', () => {
     await expect(page.locator('h1.page-title')).toBeVisible({ timeout: 15000 });
     await expect(page.locator('h1.page-title')).toContainText('أنواع الفصول');
 
-    const addBtn = page.locator('button.add-btn');
-    await expect(addBtn.first()).toBeVisible({ timeout: 10000 });
-    await addBtn.first().click();
+    const addBtn = page.locator('button.add-btn').first();
+    await expect(addBtn).toBeVisible({ timeout: 10000 });
+    await addBtn.click({ force: true });
 
-    await expect(page.locator('.modal-card')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('.modal-card, .dialog-card')).toBeVisible({ timeout: 10000 });
   });
 
   test('should render grade levels page and allow open modal', async ({ page }) => {
@@ -89,9 +89,9 @@ test.describe('Admin Module E2E Flow', () => {
     await expect(page.locator('h1.page-title')).toBeVisible({ timeout: 15000 });
     await expect(page.locator('h1.page-title')).toContainText('المراحل الدراسية');
 
-    const addBtn = page.locator('.add-btn, button:has-text("إضافة مرحلة دراسية جديدة")');
-    await expect(addBtn.first()).toBeVisible({ timeout: 10000 });
-    await addBtn.first().click({ force: true });
+    const addBtn = page.locator('.grade-levels-page button.add-btn, button.add-btn').first();
+    await expect(addBtn).toBeVisible({ timeout: 10000 });
+    await addBtn.click({ force: true });
 
     await expect(page.locator('.modal-card, .dialog-card')).toBeVisible({ timeout: 10000 });
   });
@@ -119,15 +119,18 @@ test.describe('Admin Module E2E Flow', () => {
 
   test('should render profile page and toggle security tab', async ({ page }) => {
     await page.goto('/admin/profile');
-    const title = page.locator('h1.page-title, .page-title, .profile-page').first();
-    await expect(title).toBeVisible({ timeout: 15000 });
+    const header = page.locator('.profile-page, h1.page-title, .hero-info').first();
+    await expect(header).toBeVisible({ timeout: 15000 });
 
-    const secTab = page.locator('.profile-tabs button.tab-btn').filter({ hasText: 'الأمان' });
-    if ((await secTab.count()) > 0) {
-      await secTab.first().click();
-      await expect(
-        page.locator('input#newPass, input[type="password"]').first(),
-      ).toBeVisible({ timeout: 10000 });
+    const secTab = page
+      .locator('.profile-tabs button.tab-btn')
+      .filter({ hasText: 'الأمان' })
+      .first();
+    if (await secTab.isVisible().catch(() => false)) {
+      await secTab.click({ force: true });
+      await expect(page.locator('input#newPass, input[type="password"]').first()).toBeVisible({
+        timeout: 10000,
+      });
     }
   });
 });

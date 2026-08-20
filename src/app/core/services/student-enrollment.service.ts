@@ -384,13 +384,16 @@ export class StudentEnrollmentService extends ApiBaseService {
             // 3. Embedded exams
             const embeddedExams: LessonItem[] = (sec.exams || []).map((ex, eIdx) => {
               const exAny = ex as Record<string, string | undefined>;
-              const start = exAny['startDate'] || exAny['startsAt'] || exAny['scheduledAt'] || exAny['availableFrom'];
+              const start =
+                exAny['startDate'] ||
+                exAny['startsAt'] ||
+                exAny['scheduledAt'] ||
+                exAny['availableFrom'];
               const end = exAny['endDate'] || exAny['endsAt'] || exAny['availableTo'];
               return {
                 id: ex.id || `exam_${secId}_${eIdx + 1}`,
                 title:
-                  ex.title ||
-                  (ex.topic ? `اختبار: ${ex.topic}` : `امتحان إلكتروني ${eIdx + 1}`),
+                  ex.title || (ex.topic ? `اختبار: ${ex.topic}` : `امتحان إلكتروني ${eIdx + 1}`),
                 type: 'exam',
                 duration: ex.questionsCount
                   ? `${ex.questionsCount} أسئلة · اختبار إلكتروني`
@@ -637,10 +640,11 @@ export class StudentEnrollmentService extends ApiBaseService {
     page = 1,
     pageSize = 10,
   ): Observable<ClassroomFeedbackSummaryDto | null> {
-    return this.get<ClassroomFeedbackSummaryDto>(
-      `/classrooms/${classroomId}/feedback`,
-      { page, pageSize },
-    ).pipe(catchError(() => of(null)));
+    return this.get<ClassroomFeedbackSummaryDto>(`/classrooms/${classroomId}/feedback`, {
+      page,
+      pageNumber: page,
+      pageSize,
+    }).pipe(catchError(() => of(null)));
   }
 
   /**
@@ -660,8 +664,7 @@ export class StudentEnrollmentService extends ApiBaseService {
       catchError((err) => {
         let errorMsg = 'تعذر إرسال التقييم إلى السيرفر حالياً.';
         if (err?.status === 500) {
-          errorMsg =
-            'خطأ في سيرفر التقييمات (500) — جارٍ معالجة التقييم أو يتطلب تحديث الباك إند.';
+          errorMsg = 'خطأ في سيرفر التقييمات (500) — جارٍ معالجة التقييم أو يتطلب تحديث الباك إند.';
         } else if (err?.error?.message) {
           errorMsg = err.error.message;
         } else if (err?.error?.title) {

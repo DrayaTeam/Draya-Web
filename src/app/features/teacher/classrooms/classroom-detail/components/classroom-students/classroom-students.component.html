@@ -43,7 +43,10 @@
             <div class="student-name-cell">
               <div class="student-avatar">
                 @if (student.profilePictureUrl) {
-                  <img [src]="student.profilePictureUrl" [alt]="student.fullName" class="student-avatar-img" />
+                  <img
+                    [src]="student.profilePictureUrl"
+                    [alt]="student.fullName"
+                    class="student-avatar-img" />
                 } @else {
                   {{ student.fullName.charAt(0) }}
                 }

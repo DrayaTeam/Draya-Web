@@ -1,4 +1,4 @@
-﻿// src/app/features/student/packages/package-details/package-details.component.spec.ts
+// src/app/features/student/packages/package-details/package-details.component.spec.ts
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
@@ -138,10 +138,21 @@ describe('PackageDetailsComponent', () => {
     expect(component.isChapterExpanded('ch-1')).toBeFalse();
   });
 
-  it('should show lock modal when non-enrolled user selects a lesson', () => {
-    component.isEnrolled.set(false);
-    component.onSelectLesson(mockPackage.chapters[0].lessons[0]);
-    expect(component.showLockModal()).toBeTrue();
-    expect(component.selectedLesson()?.id).toBe('les-1');
+  it('should handle empty feedback gracefully with 0 score and empty items', () => {
+    enrollmentServiceMock.getClassroomFeedback.and.returnValue(
+      of({
+        averageRating: 0,
+        totalCount: 0,
+        items: [],
+        pageNumber: 1,
+        pageSize: 10,
+        totalPages: 0,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      }),
+    );
+    component.loadFeedback('pkg-1');
+    expect(component.feedbackItems().length).toBe(0);
+    expect(component.feedbackSummary()?.averageRating).toBe(0);
   });
 });

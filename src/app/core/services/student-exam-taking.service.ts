@@ -142,8 +142,7 @@ export class StudentExamTakingService extends ApiBaseService {
               isCorrect?: boolean;
             }[];
             const correctOpt = rawOptions.find((o) => o.isCorrect);
-            const questionType =
-              q.type || (rawOptions.length > 0 ? 'MultipleChoice' : 'Essay');
+            const questionType = q.type || (rawOptions.length > 0 ? 'MultipleChoice' : 'Essay');
 
             return {
               id: q.id || `q_${idx + 1}`,
@@ -174,9 +173,7 @@ export class StudentExamTakingService extends ApiBaseService {
         }
 
         const durSeconds =
-          exam?.durationMinutes && exam.durationMinutes > 0
-            ? exam.durationMinutes * 60
-            : 2700;
+          exam?.durationMinutes && exam.durationMinutes > 0 ? exam.durationMinutes * 60 : 2700;
         this.startTimer(durSeconds);
       }),
       map(() => true),
@@ -298,9 +295,7 @@ export class StudentExamTakingService extends ApiBaseService {
     });
 
     const finalScore =
-      knownAnswersCount > 0
-        ? Math.round((correctCount / knownAnswersCount) * 100)
-        : 0;
+      knownAnswersCount > 0 ? Math.round((correctCount / knownAnswersCount) * 100) : 0;
     const isPassed = finalScore >= 50;
 
     let gradeLabel = 'قيد التقييم بالذكاء الاصطناعي ⏳';

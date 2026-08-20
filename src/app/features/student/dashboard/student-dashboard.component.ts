@@ -1,5 +1,4 @@
-// src/app/features/student/dashboard/student-dashboard.component.ts
-import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth';
 import { StudentDashboardService } from '../../../core/services/student-dashboard.service';
@@ -27,11 +26,15 @@ export class StudentDashboardComponent implements OnInit {
   private readonly dashboardService = inject(StudentDashboardService);
   private readonly toastService = inject(ToastService);
 
-  // Data signals — bound directly to template (no changes needed in HTML)
+  // Data signals — bound directly to template
   readonly summary = this.dashboardService.summary;
   readonly enrolledCourses = this.dashboardService.enrolledCourses;
   readonly upcomingExams = this.dashboardService.upcomingExams;
   readonly weaknessTopics = this.dashboardService.weaknessTopics;
+
+  // Display only first 3 classrooms on dashboard
+  readonly displayedCourses = computed(() => this.enrolledCourses().slice(0, 3));
+  readonly remainingCoursesCount = computed(() => Math.max(0, this.enrolledCourses().length - 3));
 
   // Loading / error signals — used for skeleton + error banner in template
   readonly loading = this.dashboardService.loading;

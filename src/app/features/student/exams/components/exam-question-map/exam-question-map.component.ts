@@ -24,8 +24,7 @@ export class ExamQuestionMapComponent {
 
   isAnswered(q: ExamQuestion): boolean {
     return (
-      !!q.selectedOptionId ||
-      (typeof q.answerText === 'string' && q.answerText.trim().length > 0)
+      !!q.selectedOptionId || (typeof q.answerText === 'string' && q.answerText.trim().length > 0)
     );
   }
 }

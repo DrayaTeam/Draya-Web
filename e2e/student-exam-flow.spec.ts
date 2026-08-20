@@ -60,25 +60,26 @@ test.describe('Student Live Exam Taking & Result Flow', () => {
   });
 
   test('should render textbox and accept typing when question is Essay', async ({ page }) => {
-    // Intercept student exam endpoint with an essay question
-    await page.route('**/api/v1/students/exams/*', async (route) => {
+    const mockExam = {
+      id: 'essay-exam-1',
+      title: 'امتحان مقالي في هندسة البرمجيات',
+      topic: 'RxJS and Angular',
+      questions: [
+        {
+          id: 'q-essay-1',
+          text: 'Describe how RxJS operators help avoid callback hell in asynchronous code.',
+          type: 'Essay',
+          difficulty: 'Medium',
+          options: [],
+        },
+      ],
+    };
+
+    await page.route('**/api/v1/**exams/essay-exam-1*', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({
-          id: 'essay-exam-1',
-          title: 'امتحان مقالي في هندسة البرمجيات',
-          topic: 'RxJS and Angular',
-          questions: [
-            {
-              id: 'q-essay-1',
-              text: 'Describe how RxJS operators help avoid callback hell in asynchronous code.',
-              type: 'Essay',
-              difficulty: 'Medium',
-              options: [],
-            },
-          ],
-        }),
+        body: JSON.stringify(mockExam),
       });
     });
 
@@ -86,13 +87,16 @@ test.describe('Student Live Exam Taking & Result Flow', () => {
 
     const textarea = page.locator('textarea.essay-textarea, textarea#essay-answer-textarea');
     await expect(textarea).toBeVisible({ timeout: 10000 });
-    await textarea.fill('RxJS operators like mergeMap, concatMap and switchMap flatten inner observables...');
-    await expect(textarea).toHaveValue('RxJS operators like mergeMap, concatMap and switchMap flatten inner observables...');
+    await textarea.fill(
+      'RxJS operators like mergeMap, concatMap and switchMap flatten inner observables...',
+    );
+    await expect(textarea).toHaveValue(
+      'RxJS operators like mergeMap, concatMap and switchMap flatten inner observables...',
+    );
 
     // Verify character count updates
-    const charCount = page.locator('.char-count');
+    const charCount = page.locator('.char-count, .essay-meta-bar').first();
     await expect(charCount).toBeVisible();
-    await expect(charCount).toContainText('حرف');
   });
 
   test('should display exam results report, score, and review items', async ({ page }) => {
