@@ -131,7 +131,15 @@
     "EDIT": "Edit",
     "BACK": "Back",
     "CLOSE": "Close",
-    "NO_DATA": "No data available"
+    "NO_DATA": "No data available",
+    "NO_DATA_DESC": "No items available to display."
+  },
+  "STUDENT": {
+    "CHANNEL": {
+      "NO_QUESTIONS_TITLE": "No questions yet in this classroom",
+      "NO_QUESTIONS_DESC": "Be the first to ask the teacher and classmates a question in this section!",
+      "ASK_FIRST_QUESTION": "Ask First Question Now 💬"
+    }
   },
   "common": {
     "loading": "Loading...",

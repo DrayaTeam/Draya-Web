@@ -14,6 +14,7 @@ export * from './components/modal/modal.component';
 export * from './components/data-table/data-table.component';
 export * from './components/logo/logo.component';
 export * from './components/connection-status-banner/connection-status-banner.component';
+export * from './components/empty-state/empty-state.component';
 
 // UI components
 export * from './ui/empty-state/empty-state.component';
