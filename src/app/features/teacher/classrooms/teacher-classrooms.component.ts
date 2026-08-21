@@ -50,6 +50,14 @@ export class TeacherClassroomsComponent implements OnInit {
 
   // Track which classroom's dropdown is open
   readonly openMenuId = signal<string | null>(null);
+  readonly defaultClassroomCover = 'assets/images/default-classroom.svg';
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target && !target.src.includes('default-classroom.svg')) {
+      target.src = this.defaultClassroomCover;
+    }
+  }
 
   toggleMenu(classroomId: string, event: MouseEvent): void {
     event.stopPropagation();

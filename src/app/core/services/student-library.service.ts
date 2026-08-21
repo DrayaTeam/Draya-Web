@@ -81,7 +81,10 @@ export class StudentLibraryService extends ApiBaseService {
 
   constructor() {
     super();
-    this.loadEnrolledMaterials().subscribe();
+    this.loadEnrolledMaterials().subscribe({
+      next: () => void 0,
+      error: () => void 0,
+    });
   }
 
   /**

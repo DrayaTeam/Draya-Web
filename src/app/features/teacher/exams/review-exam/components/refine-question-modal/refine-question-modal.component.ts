@@ -23,7 +23,7 @@ export class RefineQuestionModalComponent {
   readonly question = input<ExamQuestionDto | null>(null);
 
   readonly modalClosed = output<void>();
-  readonly questionRefined = output<any>();
+  readonly questionRefined = output<unknown>();
 
   readonly isSubmitting = signal(false);
 
@@ -55,7 +55,7 @@ export class RefineQuestionModalComponent {
           type: generatedQuestion.type,
           difficulty: generatedQuestion.difficulty,
           rubric: generatedQuestion.rubric || '',
-          options: (generatedQuestion.options || []).map((opt: any, index: number) => ({
+          options: (generatedQuestion.options || []).map((opt: { text?: string }, index: number) => ({
             text: opt.text || '',
             isCorrect: index === generatedQuestion.correctAnswerIndex
           }))

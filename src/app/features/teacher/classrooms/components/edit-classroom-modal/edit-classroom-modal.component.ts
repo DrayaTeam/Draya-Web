@@ -19,7 +19,6 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-import { DialogModule } from 'primeng/dialog';
 import { ClassroomService } from '../../../services/classroom.service';
 import {
   ClassroomTypeDto,

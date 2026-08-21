@@ -157,6 +157,7 @@ export class AdminWithdrawalsComponent implements OnInit {
   readonly confirmApproveOpen = signal<boolean>(false);
   readonly confirmRejectOpen = signal<boolean>(false);
   readonly confirmPaidOpen = signal<boolean>(false);
+  readonly confirmRefundOpen = signal<boolean>(false);
   readonly actionTarget = signal<WithdrawalDto | null>(null);
   readonly paidAdminNote = signal<string>('');
 
@@ -265,6 +266,11 @@ export class AdminWithdrawalsComponent implements OnInit {
     this.confirmPaidOpen.set(true);
   }
 
+  promptRefund(withdrawal: WithdrawalDto): void {
+    this.actionTarget.set(withdrawal);
+    this.confirmRefundOpen.set(true);
+  }
+
   // Confirmation Handlers
   onConfirmApprove(): void {
     const target = this.actionTarget();
@@ -319,6 +325,25 @@ export class AdminWithdrawalsComponent implements OnInit {
         const msg = err?.error?.message || 'فشلت عملية تعليم السحب كمدفوع';
         this.toast.error(msg);
         this.confirmPaidOpen.set(false);
+      },
+    });
+  }
+
+  onConfirmRefund(): void {
+    const target = this.actionTarget();
+    if (!target) return;
+
+    this.financialService.refundPaymentTransaction(target.id).subscribe({
+      next: () => {
+        this.toast.success('تم استرجاع المعاملة المالية بنجاح وإعادتها لحساب المعلم/المستخدم.');
+        this.confirmRefundOpen.set(false);
+        this.closeDetail();
+        this.loadWithdrawals();
+      },
+      error: (err) => {
+        const msg = err?.error?.message || 'فشلت عملية الاسترجاع المالي';
+        this.toast.error(msg);
+        this.confirmRefundOpen.set(false);
       },
     });
   }

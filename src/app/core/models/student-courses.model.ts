@@ -19,9 +19,20 @@ export interface StudentCoursesHeaderInfo {
   readonly subtitleText: string;
 }
 
+export interface StudentProgressDto {
+  completedLessons?: number;
+  totalLessons?: number;
+  progressPercent?: number;
+  lastAccessedAt?: string;
+}
+
 export interface ClassroomDto {
   classroomId: string;
   teacherId: string;
+  teacherName?: string;
+  teacherAvatarUrl?: string;
+  materialsCount?: number;
+  studentProgress?: number | StudentProgressDto;
   subjectName?: string;
   name?: string;
   enrollmentCode?: string;
@@ -33,6 +44,7 @@ export interface ClassroomDto {
   startDate?: string;
   endDate?: string;
   price?: number;
+  imageUrl?: string;
 }
 
 export interface ClassroomDtoPagedResult {
@@ -76,6 +88,3 @@ export interface ClassroomSectionDto {
   order?: number;
   materials?: unknown[];
 }
-
-
-

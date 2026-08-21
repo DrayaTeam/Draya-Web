@@ -25,6 +25,14 @@ interface CourseItem {
 })
 export class TeacherDailyCoursesComponent {
   readonly resumeCourse = output<string>();
+  readonly defaultThumbnail = 'assets/images/default-classroom.svg';
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target && !target.src.includes('default-classroom.svg')) {
+      target.src = this.defaultThumbnail;
+    }
+  }
 
   readonly courses: CourseItem[] = [
     {

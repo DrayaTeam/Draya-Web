@@ -437,7 +437,10 @@ export class StudentQaChannelService extends ApiBaseService {
           return of(null);
         }),
       )
-      .subscribe();
+      .subscribe({
+        next: () => void 0,
+        error: () => void 0,
+      });
   }
 
   editQuestion(classroomId: string, questionId: string, content: string): Observable<void> {
@@ -496,7 +499,6 @@ export class StudentQaChannelService extends ApiBaseService {
       }),
     );
   }
-
 
   deleteReply(classroomId: string, questionId: string, replyId: string): Observable<void> {
     return this.delete<void>(

@@ -40,7 +40,6 @@ export class ThemeService {
     }
   }
 
-
   private applyTheme(dark: boolean): void {
     if (isPlatformBrowser(this.platformId)) {
       if (dark) {

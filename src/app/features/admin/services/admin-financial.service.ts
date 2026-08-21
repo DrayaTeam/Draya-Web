@@ -10,11 +10,11 @@ import {
   WithdrawalDto,
   PlatformSettingsDto,
   AdjustmentRequest,
+  AdjustmentAuditItemDto,
   PaginatedResponse,
   TeacherSearchResultDto,
   UpdateAdminProfileRequest,
 } from '../models/admin-financial.model';
-
 
 @Injectable({ providedIn: 'root' })
 export class AdminFinancialService extends ApiBaseService {
@@ -58,6 +58,22 @@ export class AdminFinancialService extends ApiBaseService {
     });
   }
 
+  /** GET /api/v1/admin/financial/adjustments */
+  getAdjustments(params?: {
+    teacherId?: string;
+    pageNumber?: number;
+    pageSize?: number;
+  }): Observable<PaginatedResponse<AdjustmentAuditItemDto>> {
+    const queryParams: Record<string, string | number> = {};
+    if (params?.teacherId) queryParams['teacherId'] = params.teacherId;
+    if (params?.pageNumber) queryParams['pageNumber'] = params.pageNumber;
+    if (params?.pageSize) queryParams['pageSize'] = params.pageSize;
+    return this.get<PaginatedResponse<AdjustmentAuditItemDto>>(
+      `${this.basePath}/adjustments`,
+      queryParams,
+    );
+  }
+
   /** POST /api/v1/admin/financial/adjustments */
   createAdjustment(request: AdjustmentRequest): Observable<void> {
     return this.post<void, AdjustmentRequest>(`${this.basePath}/adjustments`, request);
@@ -98,6 +114,9 @@ export class AdminFinancialService extends ApiBaseService {
   updateAdminProfile(request: UpdateAdminProfileRequest): Observable<void> {
     return this.put<void, UpdateAdminProfileRequest>('/admin/profile', request);
   }
+
+  /** POST /api/v1/payments/{id}/refund */
+  refundPaymentTransaction(paymentId: string): Observable<void> {
+    return this.post<void, undefined>(`/payments/${paymentId}/refund`, undefined);
+  }
 }
-
-

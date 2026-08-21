@@ -269,15 +269,29 @@
 .mobile-drawer {
   position: fixed;
   top: 0;
-  inset-inline-end: 0;
+  right: 0;
+  left: auto;
   bottom: 0;
   width: 290px;
   background: var(--draya-bg-surface, #ffffff);
   z-index: 160;
-  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.06);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   padding: 20px;
+  direction: rtl;
+  animation: teacherDrawerSlideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes teacherDrawerSlideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .drawer-header {

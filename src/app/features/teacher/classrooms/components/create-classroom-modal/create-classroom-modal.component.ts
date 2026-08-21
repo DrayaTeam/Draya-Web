@@ -28,8 +28,6 @@ import {
   SubjectDto,
   CreateClassroomRequest,
 } from '../../../../../core/models/classroom.model';
-import { ApiError } from '../../../../../core/models/api-error.model';
-import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 import { ToastService } from '../../../../../core/services/toast.service';
 

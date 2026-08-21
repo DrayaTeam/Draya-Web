@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { TeacherExamService } from '../../services/teacher-exam.service';
 import { ToastService } from '../../../../core/services/toast.service';
-import { TeacherExamDto, ExamQuestionDto } from '../../../../core/models/teacher-exam.model';
+import { TeacherExamDto, ExamQuestionDto, GeneratedQuestionDto } from '../../../../core/models/teacher-exam.model';
 import { RefineQuestionModalComponent } from './components/refine-question-modal/refine-question-modal.component';
 
 @Component({
@@ -60,14 +60,15 @@ export class ReviewExamComponent implements OnInit {
     this.selectedQuestionForRefine.set(null);
   }
 
-  onQuestionRefined(updatedQuestion: any): void {
+  onQuestionRefined(questionResult: unknown): void {
+    const updatedQuestion = questionResult as GeneratedQuestionDto;
     const originalQuestion = this.selectedQuestionForRefine();
     const originalQuestionId = originalQuestion?.id;
     const originalQuestionOrder = originalQuestion?.order ?? 0;
     this.closeRefineModal();
     
     const currentExam = this.exam();
-    if (currentExam && originalQuestionId) {
+    if (currentExam && originalQuestionId && updatedQuestion) {
       // Map GeneratedQuestionDto to ExamQuestionDto format
       const mappedQuestion: ExamQuestionDto = {
         id: originalQuestionId, // Preserve the ID so subsequent refinements work!
@@ -77,11 +78,11 @@ export class ReviewExamComponent implements OnInit {
         rubric: updatedQuestion.rubric,
         correctAnswer: updatedQuestion.acceptedAnswers ? updatedQuestion.acceptedAnswers[0] : undefined,
         order: originalQuestionOrder, // Preserve the order
-        options: updatedQuestion.options?.map((opt: any, index: number) => ({
-          text: opt.text,
+        options: updatedQuestion.options?.map((opt: { text?: string }, index: number) => ({
+          text: opt.text || '',
           isCorrect: index === updatedQuestion.correctAnswerIndex
         }))
-      } as ExamQuestionDto;
+      };
 
       const updatedQuestions = (currentExam.questions || []).map(q => 
         q.id === originalQuestionId ? mappedQuestion : q

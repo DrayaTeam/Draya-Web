@@ -84,4 +84,32 @@ describe('AdminSupervisorService', () => {
     expect(req.request.body).toEqual({ fullName: 'New Name', phoneNumber: '01000000000' });
     req.flush(null);
   });
+
+  it('should search students from API with query params', () => {
+    service.getStudents({ searchTerm: 'Ahmed', page: 1, pageSize: 20 }).subscribe((res) => {
+      expect(res.items.length).toBe(1);
+      expect(res.items[0].fullName).toBe('Ahmed Student');
+    });
+
+    const req = httpMock.expectOne((r) => r.url.endsWith('/admin/students'));
+    expect(req.request.method).toBe('GET');
+    expect(req.request.params.get('searchTerm')).toBe('Ahmed');
+    expect(req.request.params.get('page')).toBe('1');
+    expect(req.request.params.get('pageSize')).toBe('20');
+    req.flush({
+      items: [
+        {
+          userId: 'u-1',
+          fullName: 'Ahmed Student',
+          email: 'ahmed@student.com',
+          isActive: true,
+          createdAt: '2026-08-20',
+        },
+      ],
+      pageNumber: 1,
+      pageSize: 20,
+      totalCount: 1,
+      totalPages: 1,
+    });
+  });
 });

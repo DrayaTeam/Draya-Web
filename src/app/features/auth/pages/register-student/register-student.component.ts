@@ -59,6 +59,11 @@ export class RegisterStudentComponent {
     {
       fullName: ['', [Validators.required, Validators.minLength(3), noPureNumericValidator]],
       email: ['', [Validators.required, Validators.email]],
+      parentGuardianName: [
+        '',
+        [Validators.required, Validators.minLength(3), noPureNumericValidator],
+      ],
+      parentGuardianPhone: ['', [Validators.required, Validators.pattern(/^[0-9+ ]{10,15}$/)]],
       parentGuardianEmail: ['', [Validators.required, Validators.email]],
       dateOfBirth: ['', [Validators.required, minAgeValidator()]],
       password: ['', [Validators.required, passwordStrengthValidator()]],
@@ -104,6 +109,8 @@ export class RegisterStudentComponent {
     const payload = {
       fullName: formValue.fullName.trim(),
       email: formValue.email.trim().toLowerCase(),
+      parentGuardianName: formValue.parentGuardianName.trim(),
+      parentGuardianPhone: formValue.parentGuardianPhone.trim(),
       parentGuardianEmail: formValue.parentGuardianEmail.trim().toLowerCase(),
       dateOfBirth: formValue.dateOfBirth,
       password: formValue.password,

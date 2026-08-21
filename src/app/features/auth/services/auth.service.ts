@@ -138,7 +138,10 @@ export class AuthService {
           this.router.navigate(['/auth/login']);
         }),
       )
-      .subscribe();
+      .subscribe({
+        next: () => void 0,
+        error: () => void 0,
+      });
   }
 
   refreshToken(token: string): Observable<AuthResponse> {
@@ -211,7 +214,7 @@ export class AuthService {
     );
   }
 
-  resetPassword(payload: { token: string; newPassword: string }): Observable<void> {
+  resetPassword(payload: { token: string; newPassword: string; email?: string }): Observable<void> {
     this._isLoading.set(true);
     this._authError.set(null);
     return this.authApi.resetPassword(payload).pipe(
@@ -223,7 +226,15 @@ export class AuthService {
     );
   }
 
-  acceptInvite(payload: { token: string; newPassword: string }): Observable<void> {
+  acceptInvite(payload: {
+    email?: string;
+    token: string;
+    password?: string;
+    newPassword?: string;
+    confirmPassword?: string;
+    fullName?: string;
+    phone?: string;
+  }): Observable<void> {
     this._isLoading.set(true);
     this._authError.set(null);
     return this.authApi.acceptInvite(payload).pipe(

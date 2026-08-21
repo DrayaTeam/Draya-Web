@@ -18,7 +18,7 @@ export interface ClassroomSectionDto {
   createdAt: string;
   documents?: SectionMaterialDto[];
   videos?: SectionMaterialDto[];
-  exams?: any[];
+  exams?: unknown[];
   materials?: SectionMaterialDto[]; // Virtual property for UI convenience
 }
 

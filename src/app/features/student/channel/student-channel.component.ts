@@ -117,18 +117,27 @@ export class StudentChannelComponent implements OnInit, OnDestroy {
 
   private loadClassroomChannel(classroomId: string): void {
     this.qaService.joinClassroomHub(classroomId);
-    this.qaService.loadQuestions(classroomId).subscribe();
+    this.qaService.loadQuestions(classroomId).subscribe({
+      next: () => void 0,
+      error: () => void 0,
+    });
   }
 
   // Filter & Sort
   onFilterChange(filter: QuestionFilterBy): void {
     this.qaService.currentFilterBy.set(filter);
-    this.qaService.loadQuestions(this.selectedClassroomId(), { filterBy: filter }).subscribe();
+    this.qaService.loadQuestions(this.selectedClassroomId(), { filterBy: filter }).subscribe({
+      next: () => void 0,
+      error: () => void 0,
+    });
   }
 
   onSortChange(sort: QuestionSortBy): void {
     this.qaService.currentSortBy.set(sort);
-    this.qaService.loadQuestions(this.selectedClassroomId(), { sortBy: sort }).subscribe();
+    this.qaService.loadQuestions(this.selectedClassroomId(), { sortBy: sort }).subscribe({
+      next: () => void 0,
+      error: () => void 0,
+    });
   }
 
   onSearch(event: Event): void {
@@ -200,7 +209,10 @@ export class StudentChannelComponent implements OnInit, OnDestroy {
 
   // Thread Discussion
   openThread(question: QuestionItem): void {
-    this.qaService.loadQuestionDetails(this.selectedClassroomId(), question.id).subscribe();
+    this.qaService.loadQuestionDetails(this.selectedClassroomId(), question.id).subscribe({
+      next: () => void 0,
+      error: () => void 0,
+    });
     this.newReplyText.set('');
     this.removeReplyPhoto();
     this.showThreadModal.set(true);

@@ -11,7 +11,6 @@ import {
   SubmitClassroomFeedbackRequest,
 } from '../models/student-courses.model';
 
-
 export interface ClassroomMaterialDto {
   materialId: string;
   title: string;
@@ -47,7 +46,71 @@ export interface LessonItem {
   title: string;
   type: 'video' | 'pdf' | 'exam';
   duration?: string;
+  durationMinutes?: number;
   fileUrl?: string;
+  startDate?: string;
+  endDate?: string | null;
+  allowedAttempts?: number;
+  isAvailable?: boolean;
+}
+
+export interface SectionItemDto {
+  id?: string;
+  sectionId?: string;
+  title?: string;
+  name?: string;
+  description?: string;
+  order?: number;
+  materials?: {
+    id?: string;
+    materialId?: string;
+    sectionId?: string;
+    title?: string;
+    name?: string;
+    type?: string;
+    materialType?: string;
+    duration?: string;
+    durationText?: string;
+    fileUrl?: string;
+    url?: string;
+    currentVersion?: { fileUrl?: string };
+  }[];
+  documents?: {
+    id?: string;
+    title?: string;
+    name?: string;
+    materialType?: string;
+    fileUrl?: string;
+    url?: string;
+    createdAt?: string;
+  }[];
+  videos?: {
+    id?: string;
+    title?: string;
+    name?: string;
+    materialType?: string;
+    fileUrl?: string;
+    url?: string;
+    duration?: string;
+    durationText?: string;
+    createdAt?: string;
+  }[];
+  exams?: {
+    id?: string;
+    title?: string;
+    topic?: string;
+    durationMinutes?: number;
+    allowedAttempts?: number;
+    questionsCount?: number;
+    startDate?: string;
+    startsAt?: string;
+    scheduledAt?: string;
+    availableFrom?: string;
+    endDate?: string | null;
+    endsAt?: string;
+    availableTo?: string;
+    createdAt?: string;
+  }[];
 }
 
 export interface ChapterItem {
@@ -155,10 +218,9 @@ export class StudentEnrollmentService extends ApiBaseService {
           }
         | { id?: string; title?: string; name?: string; type?: string; duration?: string }[]
       >(`/classrooms/${classroomId}/materials`).pipe(catchError(() => of(null))),
-      sectionsRes: this.get<
-        | { id?: string; sectionId?: string; title?: string; name?: string; description?: string; order?: number }[]
-        | { items?: { id?: string; sectionId?: string; title?: string; name?: string; description?: string; order?: number }[] }
-      >(`/classrooms/${classroomId}/sections`).pipe(catchError(() => of(null))),
+      sectionsRes: this.get<SectionItemDto[] | { items?: SectionItemDto[] }>(
+        `/classrooms/${classroomId}/sections`,
+      ).pipe(catchError(() => of(null))),
     }).pipe(
       map(({ classroom, materialsRes, sectionsRes }) => {
         let rawMaterials: {
@@ -181,8 +243,18 @@ export class StudentEnrollmentService extends ApiBaseService {
           rawMaterials = materialsRes.items;
         }
 
+        const rawExams: {
+          id?: string;
+          examId?: string;
+          sectionId?: string;
+          title?: string;
+          topic?: string;
+          questionsCount?: number;
+          questions?: unknown[];
+        }[] = [];
+
         const mapMaterialToLesson = (
-          m: typeof rawMaterials[0],
+          m: (typeof rawMaterials)[0],
           idx: number,
           prefix = 'les',
         ): LessonItem => {
@@ -216,6 +288,56 @@ export class StudentEnrollmentService extends ApiBaseService {
           };
         };
 
+        const mapExamToLesson = (
+          e: (typeof rawExams)[0] & {
+            questionsCount?: number;
+            durationMinutes?: number;
+            allowedAttempts?: number;
+            startDate?: string;
+            startsAt?: string;
+            scheduledAt?: string;
+            availableFrom?: string;
+            endDate?: string | null;
+            endsAt?: string;
+            availableTo?: string;
+          },
+          idx: number,
+          prefix = 'exam',
+        ): LessonItem => {
+          const examId = e.examId || e.id || `${prefix}_${idx + 1}`;
+          const examTitle =
+            e.title || (e.topic ? `اختبار: ${e.topic}` : `امتحان إلكتروني ${idx + 1}`);
+          const qCount = e.questionsCount || e.questions?.length;
+          const durMin = e.durationMinutes;
+          const durationParts: string[] = [];
+          if (qCount) durationParts.push(`${qCount} أسئلة`);
+          if (durMin) durationParts.push(`${durMin} دقيقة`);
+          const durationText =
+            durationParts.length > 0
+              ? `${durationParts.join(' · ')} · اختبار إلكتروني`
+              : 'اختبار إلكتروني تفاعلي';
+
+          const start = e.startDate || e.startsAt || e.scheduledAt || e.availableFrom;
+          const end = e.endDate || e.endsAt || e.availableTo;
+          const now = new Date();
+          const isUpcoming = start ? new Date(start) > now : false;
+          const isExpired = end ? new Date(end) < now : false;
+          const isAvailable = !isUpcoming && !isExpired;
+
+          return {
+            id: examId,
+            title: examTitle,
+            type: 'exam',
+            duration: durationText,
+            durationMinutes: durMin,
+            allowedAttempts: e.allowedAttempts,
+            fileUrl: `/student/exams/${examId}/take`,
+            startDate: start,
+            endDate: end,
+            isAvailable,
+          };
+        };
+
         const teacherName = classroom?.gradeLevelName
           ? `أستاذ ${classroom.subjectName || ''}`
           : 'معلم دراية';
@@ -226,15 +348,7 @@ export class StudentEnrollmentService extends ApiBaseService {
         const allLessons: LessonItem[] = rawMaterials.map((m, idx) => mapMaterialToLesson(m, idx));
 
         // Group into chapters by sections if available
-        let rawSections: {
-          id?: string;
-          sectionId?: string;
-          title?: string;
-          name?: string;
-          description?: string;
-          order?: number;
-          materials?: typeof rawMaterials;
-        }[] = [];
+        let rawSections: SectionItemDto[] = [];
 
         if (Array.isArray(sectionsRes)) {
           rawSections = sectionsRes;
@@ -249,16 +363,96 @@ export class StudentEnrollmentService extends ApiBaseService {
             const secId = sec.id || sec.sectionId || `sec_${sIdx + 1}`;
             const secTitle = sec.title || sec.name || `الوحدة / القسم ${sIdx + 1}`;
 
-            let secLessons: LessonItem[] = [];
+            // 1. Embedded documents (PDFs)
+            const embeddedDocs: LessonItem[] = (sec.documents || []).map((doc, dIdx) => ({
+              id: doc.id || `doc_${secId}_${dIdx + 1}`,
+              title: doc.title || doc.name || `مستند ${dIdx + 1}`,
+              type: 'pdf',
+              duration: 'مستند PDF',
+              fileUrl: doc.fileUrl || doc.url || '',
+            }));
+
+            // 2. Embedded videos
+            const embeddedVideos: LessonItem[] = (sec.videos || []).map((vid, vIdx) => ({
+              id: vid.id || `vid_${secId}_${vIdx + 1}`,
+              title: vid.title || vid.name || `فيديو ${vIdx + 1}`,
+              type: 'video',
+              duration: vid.durationText || vid.duration || 'فيديو تعليمي',
+              fileUrl: vid.fileUrl || vid.url || '',
+            }));
+
+            // 3. Embedded exams
+            const embeddedExams: LessonItem[] = (sec.exams || []).map((ex, eIdx) => {
+              const exAny = ex as Record<string, string | undefined>;
+              const start =
+                exAny['startDate'] ||
+                exAny['startsAt'] ||
+                exAny['scheduledAt'] ||
+                exAny['availableFrom'];
+              const end = exAny['endDate'] || exAny['endsAt'] || exAny['availableTo'];
+              return {
+                id: ex.id || `exam_${secId}_${eIdx + 1}`,
+                title:
+                  ex.title || (ex.topic ? `اختبار: ${ex.topic}` : `امتحان إلكتروني ${eIdx + 1}`),
+                type: 'exam',
+                duration: ex.questionsCount
+                  ? `${ex.questionsCount} أسئلة · اختبار إلكتروني`
+                  : 'اختبار إلكتروني',
+                fileUrl: ex.id ? `/student/exams/${ex.id}/take` : '/student/exams',
+                startDate: start,
+                endDate: end,
+                isAvailable: !start || new Date(start) <= new Date(),
+              };
+            });
+
+            // 4. Standalone materials from /materials endpoint
+            let secMaterials: LessonItem[] = [];
             if (sec.materials && Array.isArray(sec.materials) && sec.materials.length > 0) {
-              secLessons = sec.materials.map((m, mIdx) => mapMaterialToLesson(m, mIdx, secId));
+              secMaterials = sec.materials.map((m, mIdx) => mapMaterialToLesson(m, mIdx, secId));
             } else if (rawMaterials.some((m) => m.sectionId === secId)) {
-              secLessons = rawMaterials
+              secMaterials = rawMaterials
                 .filter((m) => m.sectionId === secId)
                 .map((m, mIdx) => mapMaterialToLesson(m, mIdx, secId));
-            } else if (sIdx === 0) {
-              // Fallback: assign remaining materials to the first section
-              secLessons = allLessons;
+            } else if (
+              sIdx === 0 &&
+              !rawMaterials.some((m) => !!m.sectionId) &&
+              embeddedDocs.length === 0 &&
+              embeddedVideos.length === 0
+            ) {
+              secMaterials = allLessons;
+            }
+
+            // 5. Standalone exams from /exams endpoint
+            let standaloneExams: LessonItem[] = [];
+            if (rawExams.some((e) => e.sectionId === secId)) {
+              standaloneExams = rawExams
+                .filter((e) => e.sectionId === secId)
+                .map((e, eIdx) => mapExamToLesson(e, eIdx, secId));
+            } else if (
+              sIdx === 0 &&
+              !rawExams.some((e) => !!e.sectionId) &&
+              embeddedExams.length === 0
+            ) {
+              standaloneExams = rawExams.map((e, eIdx) => mapExamToLesson(e, eIdx, secId));
+            }
+
+            // Combine all without duplicating IDs
+            const seenIds = new Set<string>();
+            const secLessons: LessonItem[] = [];
+
+            for (const item of [
+              ...embeddedVideos,
+              ...embeddedDocs,
+              ...embeddedExams,
+              ...secMaterials,
+              ...standaloneExams,
+            ]) {
+              if (item.id && !seenIds.has(item.id)) {
+                seenIds.add(item.id);
+                secLessons.push(item);
+              } else if (!item.id) {
+                secLessons.push(item);
+              }
             }
 
             return {
@@ -268,11 +462,12 @@ export class StudentEnrollmentService extends ApiBaseService {
             };
           });
         } else {
+          const allExams: LessonItem[] = rawExams.map((e, idx) => mapExamToLesson(e, idx));
           chapters = [
             {
               id: 'ch_1',
               title: 'محتوى الباقة والمحاضرات',
-              lessons: allLessons,
+              lessons: [...allLessons, ...allExams],
             },
           ];
         }
@@ -301,12 +496,15 @@ export class StudentEnrollmentService extends ApiBaseService {
    */
   getClassroomSections(
     classroomId: string,
-  ): Observable<{ id?: string; sectionId?: string; title?: string; description?: string }[] | null> {
-    return this.get<{ id?: string; sectionId?: string; title?: string; description?: string }[]>(
-      `/classrooms/${classroomId}/sections`,
-    ).pipe(catchError(() => of(null)));
+  ): Observable<
+    { id?: string; sectionId?: string; title?: string; description?: string }[] | null
+  > {
+    return this.http
+      .get<{ id?: string; sectionId?: string; title?: string; description?: string }[]>(
+        `/api/classrooms/${classroomId}/sections`,
+      )
+      .pipe(catchError(() => of(null)));
   }
-
 
   /**
    * Enrolls student with paper activation code.
@@ -442,9 +640,11 @@ export class StudentEnrollmentService extends ApiBaseService {
     page = 1,
     pageSize = 10,
   ): Observable<ClassroomFeedbackSummaryDto | null> {
-    return this.get<ClassroomFeedbackSummaryDto>(
-      `/classrooms/${classroomId}/feedback?page=${page}&pageSize=${pageSize}`,
-    ).pipe(catchError(() => of(null)));
+    return this.get<ClassroomFeedbackSummaryDto>(`/classrooms/${classroomId}/feedback`, {
+      page,
+      pageNumber: page,
+      pageSize,
+    }).pipe(catchError(() => of(null)));
   }
 
   /**
@@ -461,13 +661,20 @@ export class StudentEnrollmentService extends ApiBaseService {
         data: res,
         message: 'شكراً لك! تم إرسال تقييمك بنجاح.',
       })),
-      catchError((err) =>
-        of({
+      catchError((err) => {
+        let errorMsg = 'تعذر إرسال التقييم إلى السيرفر حالياً.';
+        if (err?.status === 500) {
+          errorMsg = 'خطأ في سيرفر التقييمات (500) — جارٍ معالجة التقييم أو يتطلب تحديث الباك إند.';
+        } else if (err?.error?.message) {
+          errorMsg = err.error.message;
+        } else if (err?.error?.title) {
+          errorMsg = err.error.title;
+        }
+        return of({
           success: false,
-          message: err?.error?.message || err?.error?.title || 'تعذر إرسال التقييم حالياً.',
-        }),
-      ),
+          message: errorMsg,
+        });
+      }),
     );
   }
 }
-

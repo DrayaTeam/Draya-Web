@@ -6,6 +6,8 @@ import {
   signal,
   effect,
   HostListener,
+  OnInit,
+  OnDestroy,
 } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -14,16 +16,13 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
-import { finalize, takeUntil, switchMap, filter } from 'rxjs/operators';
+import { finalize, takeUntil, switchMap } from 'rxjs/operators';
 import { Subject, timer } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { MaterialService } from '../../../../services/material.service';
 import { SectionService } from '../../../../services/section.service';
-import {
-  ClassroomMaterialDto,
-  MaterialVersionDto,
-} from '../../../../../../core/models/material.model';
+import { ClassroomMaterialDto } from '../../../../../../core/models/material.model';
 import { ClassroomSectionDto, SectionMaterialDto } from '../../../../../../core/models/section.model';
 import { resolveMaterialUrl } from '../../../../../../core/services/student-library.service';
 
@@ -58,7 +57,7 @@ import { EditSectionModalComponent } from '../edit-section-modal/edit-section-mo
   styleUrl: './classroom-materials.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClassroomMaterialsComponent {
+export class ClassroomMaterialsComponent implements OnInit, OnDestroy {
   readonly classroomId = input.required<string>();
 
   private readonly sectionService = inject(SectionService);
@@ -99,7 +98,7 @@ export class ClassroomMaterialsComponent {
     }));
   }
 
-  getSectionTab(section: any): string {
+  getSectionTab(section: ClassroomSectionDto): string {
     const active = this.activeTabBySection()[section.id];
     if (active) return active;
     
@@ -331,25 +330,17 @@ export class ClassroomMaterialsComponent {
     ).subscribe({
       next: (versions) => {
         const latest = versions && versions.length > 0 ? versions[versions.length - 1] : null;
-        if (latest) {
-          if (latest.parseStatus === 'Failed') {
-            this.isProcessing.set(false);
-            this.previewError.set('فشلت معالجة الملف على الخادم: ' + (latest.errorMessage || 'خطأ غير معروف'));
-            this.cancelPolling$.next();
-            return;
-          }
-          if (latest.fileUrl) {
-            // Yay! The cloud has finished processing and we have a URL!
-            this.isProcessing.set(false);
-            let fetchedUrl = latest.fileUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
-              String.fromCharCode(parseInt(hex, 16)),
-            );
-            this.activePreviewUrl.set(resolveMaterialUrl(fetchedUrl));
-            // Stop polling since we found it
-            this.cancelPolling$.next();
-          }
+        if (latest && latest.fileUrl) {
+          // Yay! The cloud has finished processing and we have a URL!
+          this.isProcessing.set(false);
+          const fetchedUrl = latest.fileUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
+            String.fromCharCode(parseInt(hex, 16)),
+          );
+          this.activePreviewUrl.set(resolveMaterialUrl(fetchedUrl));
+          // Stop polling since we found it
+          this.cancelPolling$.next();
         }
-        // If not found yet and not failed, it will just poll again in 3 seconds.
+        // If not found yet, it will just poll again in 3 seconds.
       },
       error: (err) => {
         console.error('Polling failed', err);
@@ -386,7 +377,7 @@ export class ClassroomMaterialsComponent {
     return {
       materialId: material.id,
       title: material.title,
-      materialType: material.materialType as any,
+      materialType: material.materialType as ClassroomMaterialDto['materialType'],
       createdAt: material.createdAt,
       currentVersion: {
         versionId: '',

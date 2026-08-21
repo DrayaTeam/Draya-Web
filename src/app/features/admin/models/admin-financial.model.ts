@@ -66,3 +66,12 @@ export interface UpdateAdminProfileRequest {
   phoneNumber?: string;
 }
 
+export interface AdjustmentAuditItemDto {
+  transactionId: string;
+  teacherId: string;
+  teacherName?: string;
+  amount: number;
+  balanceType: WalletBalanceType | string;
+  description: string;
+  createdAt: string | Date;
+}

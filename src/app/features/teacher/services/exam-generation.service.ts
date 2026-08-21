@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { GenerateExamRequest, GenerateExamResponse } from '../../../core/models/exam-generation.model';
+import { GenerationProgressDto } from './exam-hub.service';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,7 @@ export class ExamGenerationService {
   /**
    * Fallback HTTP polling for generation progress.
    */
-  getGenerationStatus(generationId: string): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/generations/${generationId}`);
+  getGenerationStatus(generationId: string): Observable<GenerationProgressDto> {
+    return this.http.get<GenerationProgressDto>(`${this.baseUrl}/generations/${generationId}`);
   }
 }
