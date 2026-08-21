@@ -351,12 +351,16 @@ export class StudentExamTakingService extends ApiBaseService {
       const payload: SubmitAttemptRequestDto = {
         idempotencyKey: `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
         answers: questionsList.map((q): AnswerSubmissionDto => {
-          const selectedOpt = q.options.find((o) => o.id === q.selectedOptionId);
-          const text = q.answerText?.trim() || selectedOpt?.text || ' ';
+          if (q.selectedOptionId) {
+            return {
+              examQuestionId: q.id,
+              selectedOptionId: q.selectedOptionId,
+            };
+          }
+          const text = q.answerText?.trim();
           return {
             examQuestionId: q.id,
-            selectedOptionId: q.selectedOptionId || undefined,
-            answerText: text,
+            answerText: text && text.length > 0 ? text : 'لم يتم إدخال إجابة',
           };
         }),
       };

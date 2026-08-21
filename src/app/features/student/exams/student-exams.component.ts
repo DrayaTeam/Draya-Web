@@ -4,12 +4,12 @@ import { StudentExamsService } from '../../../core/services/student-exams.servic
 import { ExamCardComponent } from './components/exam-card/exam-card.component';
 import { StudentExamItem, ExamStatusType } from '../../../core/models/student-exam.model';
 import { ToastService } from '../../../core/services/toast.service';
-import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { DrayaEmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'draya-student-exams',
   standalone: true,
-  imports: [ExamCardComponent, EmptyStateComponent],
+  imports: [ExamCardComponent, DrayaEmptyStateComponent],
   templateUrl: './student-exams.component.html',
   styleUrl: './student-exams.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

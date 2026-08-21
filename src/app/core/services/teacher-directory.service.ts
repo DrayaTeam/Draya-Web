@@ -25,13 +25,6 @@ const BADGE_STYLES = [
   { bg: '#FFE4E6', border: '#FFCCD3', text: '#A50036' },
 ];
 
-const TEACHER_AVATARS = [
-  'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=300&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=300&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=300&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1580894732413-b7ce75e785f3?q=80&w=300&auto=format&fit=crop',
-];
-
 function inferCategory(subject: string): TeacherSubjectCategory {
   if (!subject) return 'all';
   const s = subject.toLowerCase();

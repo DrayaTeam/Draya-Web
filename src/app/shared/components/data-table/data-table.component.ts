@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
-import { EmptyStateComponent } from '../empty-state/empty-state.component';
+import { DrayaEmptyStateComponent } from '../empty-state/empty-state.component';
 
 export interface Column<T = Record<string, unknown>> {
   header: string;
@@ -13,7 +13,7 @@ export interface Column<T = Record<string, unknown>> {
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, EmptyStateComponent],
+  imports: [CommonModule, ButtonComponent, DrayaEmptyStateComponent],
   template: `
     @if (data.length === 0) {
       <draya-empty-state

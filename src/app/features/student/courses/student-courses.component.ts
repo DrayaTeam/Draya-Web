@@ -3,14 +3,14 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { StudentCoursesService } from '../../../core/services/student-courses.service';
 import { SubscribedPackageCardComponent } from './components/subscribed-package-card/subscribed-package-card.component';
-import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { DrayaEmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { SubscribedPackage } from '../../../core/models/student-courses.model';
 import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'draya-student-courses',
   standalone: true,
-  imports: [CommonModule, SubscribedPackageCardComponent, EmptyStateComponent],
+  imports: [CommonModule, SubscribedPackageCardComponent, DrayaEmptyStateComponent],
   templateUrl: './student-courses.component.html',
   styleUrl: './student-courses.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
