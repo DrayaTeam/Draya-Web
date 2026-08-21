@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators, FormArray, FormGroup } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators, FormArray, FormGroup, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ClassroomService } from '../../services/classroom.service';
@@ -13,6 +13,13 @@ import { QuestionType, DifficultyLevel, GenerateExamRequest, QuestionRequirement
 import { AuthService } from '../../../../features/auth/services/auth.service';
 
 import { Select } from 'primeng/select';
+
+export function futureDateValidator(control: AbstractControl): ValidationErrors | null {
+  if (!control.value) return null;
+  const selectedDate = new Date(control.value).getTime();
+  const now = new Date().getTime();
+  return selectedDate <= now ? { futureDate: true } : null;
+}
 
 @Component({
   selector: 'draya-generate-exam',
@@ -59,7 +66,7 @@ export class GenerateExamComponent implements OnInit {
     topic: ['', [Validators.required, Validators.maxLength(200)]],
     difficultyLevel: ['Medium' as DifficultyLevel, Validators.required],
     durationMinutes: [60, [Validators.required, Validators.min(1)]],
-    startDate: ['', Validators.required],
+    startDate: ['', [Validators.required, futureDateValidator]],
     endDate: [''],
     allowedAttempts: [1, [Validators.required, Validators.min(1)]],
     teacherInstructions: ['', Validators.maxLength(1000)],
