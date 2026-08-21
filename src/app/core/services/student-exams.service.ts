@@ -18,6 +18,10 @@ export interface ExamDto {
   startDate?: string;
   endDate?: string | null;
   allowedAttempts?: number;
+  usedAttempts?: number;
+  hasSubmitted?: boolean;
+  attemptStatus?: 'NotStarted' | 'InProgress' | 'PendingGrading' | 'Completed';
+  latestScore?: number;
   questionsCount?: number;
   createdAt?: string;
   teacherName?: string;
@@ -80,7 +84,27 @@ export class StudentExamsService extends ApiBaseService {
             let statusLabel = 'متاح للحل الآن 🔥';
             let secondaryDetailText = 'جاهز للبدء';
 
-            if (ex.startDate && new Date(ex.startDate) > now) {
+            const normAttemptStatus = (ex.attemptStatus || '').toLowerCase();
+            if (
+              ex.hasSubmitted ||
+              normAttemptStatus === 'completed' ||
+              normAttemptStatus === 'pendinggrading' ||
+              (ex.usedAttempts !== undefined &&
+                ex.allowedAttempts !== undefined &&
+                ex.usedAttempts >= ex.allowedAttempts &&
+                ex.usedAttempts > 0)
+            ) {
+              status = 'completed';
+              statusLabel = 'مكتمل ومصحح ✅';
+              secondaryDetailText =
+                ex.latestScore !== undefined && ex.latestScore !== null
+                  ? `الدرجة: ${ex.latestScore}%`
+                  : 'تم التسليم';
+            } else if (normAttemptStatus === 'inprogress') {
+              status = 'available';
+              statusLabel = 'جلسة جارية ⏳';
+              secondaryDetailText = 'متابعة الحل';
+            } else if (ex.startDate && new Date(ex.startDate) > now) {
               status = 'scheduled';
               const startD = new Date(ex.startDate);
               statusLabel = 'مجدول لاحقاً ⏳';
@@ -105,6 +129,8 @@ export class StudentExamsService extends ApiBaseService {
               secondaryDetailText,
               cornerTintBg: colors[idx % colors.length],
               allowedAttempts: ex.allowedAttempts ?? 1,
+              attemptsTaken: ex.usedAttempts ?? 0,
+              scorePercent: ex.latestScore,
             };
           });
           this.exams.set(mapped);
