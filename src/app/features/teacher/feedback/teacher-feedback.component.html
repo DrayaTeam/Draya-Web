@@ -1,20 +1,25 @@
 <div class="feed-page-wrapper" dir="rtl">
   <div class="feed-page-container">
-    
     <!-- Beautiful Header -->
     <header class="feed-header">
       <div class="header-inner">
         <h1 class="page-title">{{ 'TEACHER.FEEDBACK.REVIEWS_FOR' | translate }}</h1>
-        
+
         @if (isLoadingClassrooms()) {
           <div class="skeleton-dropdown shimmer"></div>
         } @else if (classrooms().length > 0) {
-          
           <!-- Custom Beautiful Dropdown -->
           <div class="custom-dropdown-container">
-            <button class="dropdown-trigger" (click)="toggleDropdown()" [class.is-open]="isDropdownOpen()">
+            <button
+              class="dropdown-trigger"
+              (click)="toggleDropdown()"
+              [class.is-open]="isDropdownOpen()">
               <span class="trigger-text">
-                {{ selectedClassroom() ? selectedClassroom()!.name : ('TEACHER.FEEDBACK.SELECT_CLASSROOM_PROMPT' | translate) }}
+                {{
+                  selectedClassroom()
+                    ? selectedClassroom()!.name
+                    : ('TEACHER.FEEDBACK.SELECT_CLASSROOM_PROMPT' | translate)
+                }}
               </span>
               <i class="pi pi-chevron-down drop-icon"></i>
             </button>
@@ -22,8 +27,8 @@
             @if (isDropdownOpen()) {
               <div class="dropdown-menu fade-in-down">
                 @for (cls of classrooms(); track cls.classroomId) {
-                  <button 
-                    class="dropdown-item" 
+                  <button
+                    class="dropdown-item"
                     [class.active]="selectedClassroom()?.classroomId === cls.classroomId"
                     (click)="selectClassroom(cls)">
                     <div class="item-content">
@@ -42,9 +47,14 @@
           </div>
           <!-- Click outside overlay to close -->
           @if (isDropdownOpen()) {
-            <div class="dropdown-overlay" (click)="isDropdownOpen.set(false)"></div>
+            <div
+              class="dropdown-overlay"
+              (click)="isDropdownOpen.set(false)"
+              (keyup.enter)="isDropdownOpen.set(false)"
+              tabindex="0"
+              role="button"
+              aria-label="Close dropdown"></div>
           }
-
         }
       </div>
     </header>
@@ -60,15 +70,20 @@
           <p>قم باختيار أحد الفصول من القائمة العلوية لاستعراض تقييمات الطلاب وتحديثاتهم.</p>
         </div>
       } @else {
-        
         <!-- Stats Overview for Selected Classroom -->
         @if (!isLoadingFeedback() && feedback() && feedback()!.totalCount > 0) {
           <div class="feed-stats-banner fade-in">
             <div class="stat-main">
-              <span class="rating-number">{{ feedback()!.averageRating | number:'1.1-1' }}</span>
+              <span class="rating-number">{{ feedback()!.averageRating | number: '1.1-1' }}</span>
               <div class="stars">
                 @for (star of getStars(); track star) {
-                  <i class="pi" [ngClass]="star <= feedback()!.averageRating ? 'pi-star-fill text-yellow-400' : 'pi-star text-gray-200'"></i>
+                  <i
+                    class="pi"
+                    [ngClass]="
+                      star <= feedback()!.averageRating
+                        ? 'pi-star-fill text-yellow-400'
+                        : 'pi-star text-gray-200'
+                    "></i>
                 }
               </div>
             </div>
@@ -83,7 +98,7 @@
         <!-- Feed / Timeline of Reviews -->
         <div class="feed-timeline">
           @if (isLoadingFeedback()) {
-            @for (i of [1,2,3]; track i) {
+            @for (i of [1, 2, 3]; track i) {
               <div class="feed-skeleton-post shimmer"></div>
             }
           } @else if (!feedback() || feedback()!.totalCount === 0) {
@@ -98,7 +113,6 @@
             <div class="feed-posts-list">
               @for (item of feedback()!.items; track item.feedbackId; let i = $index) {
                 <article class="feed-post fade-in" [style.animation-delay.ms]="i * 50">
-                  
                   <!-- Post Header (User) -->
                   <div class="post-header">
                     <div class="user-block">
@@ -110,14 +124,22 @@
                         </div>
                       }
                       <div class="user-info">
-                        <span class="name">{{ item.studentName ?? ('TEACHER.FEEDBACK.ANONYMOUS' | translate) }}</span>
-                        <span class="time">{{ item.createdAt | date:'mediumDate' }}</span>
+                        <span class="name">
+                          {{ item.studentName ?? ('TEACHER.FEEDBACK.ANONYMOUS' | translate) }}
+                        </span>
+                        <span class="time">{{ item.createdAt | date: 'mediumDate' }}</span>
                       </div>
                     </div>
-                    
+
                     <div class="post-rating">
                       @for (star of getStars(); track star) {
-                        <i class="pi text-sm" [ngClass]="star <= item.rating ? 'pi-star-fill text-yellow-400' : 'pi-star text-gray-200'"></i>
+                        <i
+                          class="pi text-sm"
+                          [ngClass]="
+                            star <= item.rating
+                              ? 'pi-star-fill text-yellow-400'
+                              : 'pi-star text-gray-200'
+                          "></i>
                       }
                     </div>
                   </div>
@@ -127,7 +149,9 @@
                     @if (item.comment) {
                       <p class="comment-text">{{ item.comment }}</p>
                     } @else {
-                      <p class="comment-text empty-comment">اكتفى الطالب بالتقييم بالنجوم دون كتابة تعليق.</p>
+                      <p class="comment-text empty-comment">
+                        اكتفى الطالب بالتقييم بالنجوم دون كتابة تعليق.
+                      </p>
                     }
                   </div>
                 </article>
@@ -135,7 +159,6 @@
             </div>
           }
         </div>
-
       }
     </main>
   </div>

@@ -85,7 +85,9 @@ export class TeacherDashboardService {
 
   getDashboardData(): Observable<boolean> {
     forkJoin({
-      classrooms: this.classroomService.getTeacherClassrooms(1, 100).pipe(catchError(() => of(null))),
+      classrooms: this.classroomService
+        .getTeacherClassrooms(1, 100)
+        .pipe(catchError(() => of(null))),
       exams: this.examService.getExams(undefined, 1, 100).pipe(catchError(() => of(null))),
     }).subscribe(({ classrooms, exams }) => {
       let activeStudents = 0;
@@ -98,10 +100,10 @@ export class TeacherDashboardService {
       if (exams) {
         if (Array.isArray(exams)) {
           totalExams = exams.length;
-        } else if ((exams as any).totalCount !== undefined) {
-          totalExams = (exams as any).totalCount;
-        } else if ((exams as any).items) {
-          totalExams = (exams as any).items.length;
+        } else if ((exams as { totalCount?: number }).totalCount !== undefined) {
+          totalExams = (exams as { totalCount?: number }).totalCount!;
+        } else if ((exams as { items?: unknown[] }).items) {
+          totalExams = (exams as { items?: unknown[] }).items!.length;
         }
       }
 
