@@ -60,51 +60,15 @@ export class StudentExamTakingService extends ApiBaseService {
   });
 
   readonly examResult = signal<ExamResultReport>({
-    examId: 'exam-1',
-    examTitle: 'امتحان الجبر والتباديل والتوافيق — 2026',
-    scorePercentage: 66.6,
-    gradeLabel: 'مقبول — يحتاج تحسين',
-    isPassed: true,
-    submittedAt: '20 يوليو 2026',
-    weaknessTopics: [
-      {
-        id: 'w1',
-        title: 'التباديل وحساب المضاريب',
-        accuracyPercentage: 33,
-        aiTip: 'أخطاء متكررة في فهم قيم ن الممكنة لمضروب العدد.',
-        reviewLectureUrl: '#',
-      },
-      {
-        id: 'w2',
-        title: 'التوافيق وحل مسائل اللجان المشتركة',
-        accuracyPercentage: 50,
-        aiTip: 'صعوبة في تحديد الفرق بين التباديل والتوافيق في سياق الاختيار العشوائي.',
-        reviewLectureUrl: '#',
-      },
-    ],
-    reviewQuestions: [
-      {
-        questionIndex: 1,
-        questionText: 'إذا كان ن ل ر = 120 ، فما هي قيم ن ، ر الممكنة؟',
-        isCorrect: false,
-        studentAnswerText: 'ن = 5 ، ر = 3',
-        correctAnswerText: 'ن = 6 ، ر = 3',
-      },
-      {
-        questionIndex: 2,
-        questionText: 'عدد طرق اختيار لجنة مكونة من 3 أشخاص من بين 8 أشخاص يساوي:',
-        isCorrect: true,
-        studentAnswerText: '56 طريقة',
-        correctAnswerText: '56 طريقة',
-      },
-      {
-        questionIndex: 3,
-        questionText: 'في مفكوك (س + أ) ^ ن ، يكون رتبة الحد الأوسط إذا كان ن زوجياً هي:',
-        isCorrect: true,
-        studentAnswerText: '(ن / 2) + 1',
-        correctAnswerText: '(ن / 2) + 1',
-      },
-    ],
+    examId: '',
+    examTitle: '',
+    scorePercentage: 0,
+    gradeLabel: 'قيد التقييم والمراجعة ⏳',
+    isPassed: false,
+    isGradingPending: true,
+    submittedAt: '',
+    weaknessTopics: [],
+    reviewQuestions: [],
   });
 
   private timerInterval: ReturnType<typeof setInterval> | null = null;

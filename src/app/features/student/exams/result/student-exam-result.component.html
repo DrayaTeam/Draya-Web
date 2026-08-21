@@ -133,6 +133,10 @@
       <div class="review-list">
         @for (item of resultReport().reviewQuestions; track item.questionIndex) {
           <app-exam-question-review-card [reviewItem]="item"></app-exam-question-review-card>
+        } @empty {
+          <div class="empty-review-box">
+            <p class="empty-review-text">لا توجد تفاصيل أسئلة متاحة حالياً.</p>
+          </div>
         }
       </div>
     </section>
