@@ -1,114 +1,164 @@
-<div class="feedback-container">
-  <div class="split-layout">
-    <!-- Left Pane: Classrooms List -->
-    <aside class="classrooms-sidebar">
-      <h2 class="sidebar-title">{{ 'TEACHER.FEEDBACK.CLASSROOMS' | translate }}</h2>
-      
-      @if (isLoadingClassrooms()) {
-        <div class="loading-state">
-          <i class="pi pi-spin pi-spinner text-2xl text-[--draya-primary-700]"></i>
-        </div>
-      } @else if (classrooms().length === 0) {
-        <div class="empty-state">
-          <p>{{ 'TEACHER.FEEDBACK.NO_CLASSROOMS' | translate }}</p>
-        </div>
-      } @else {
-        <ul class="classroom-list">
-          @for (cls of classrooms(); track cls.classroomId) {
-            <li 
-              class="classroom-item" 
-              [ngClass]="{'active': selectedClassroom()?.classroomId === cls.classroomId}"
-              (click)="selectClassroom(cls)"
-              (keydown.enter)="selectClassroom(cls)"
-              tabindex="0">
-              <div class="classroom-info">
-                <span class="classroom-name">{{ cls.name }}</span>
+<div class="feedback-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar-panel">
+    <div class="sidebar-header">
+      <div class="icon-box">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9"></path>
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+        </svg>
+      </div>
+      <h2>{{ 'TEACHER.FEEDBACK.CLASSROOMS' | translate }}</h2>
+    </div>
+
+    @if (isLoadingClassrooms()) {
+      <div class="skeleton-list">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="skeleton-item shimmer"></div>
+        }
+      </div>
+    } @else if (classrooms().length === 0) {
+      <div class="empty-sidebar">
+        <p>{{ 'TEACHER.FEEDBACK.NO_CLASSROOMS' | translate }}</p>
+      </div>
+    } @else {
+      <nav class="classroom-nav">
+        @for (cls of classrooms(); track cls.classroomId) {
+          <button 
+            class="nav-item group" 
+            [class.is-active]="selectedClassroom()?.classroomId === cls.classroomId"
+            (click)="selectClassroom(cls)">
+            <div class="nav-content">
+              <div class="nav-indicator"></div>
+              <div class="nav-text">
+                <span class="name">{{ cls.name }}</span>
                 @if (cls.subjectName) {
-                  <span class="classroom-subject">{{ cls.subjectName }}</span>
+                  <span class="subject">{{ cls.subjectName }}</span>
                 }
               </div>
-              <i class="pi pi-chevron-left text-sm text-gray-400"></i>
-            </li>
-          }
-        </ul>
-      }
-    </aside>
+            </div>
+            <svg class="arrow-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+        }
+      </nav>
+    }
+  </aside>
 
-    <!-- Right Pane: Feedback Details -->
-    <main class="feedback-main">
-      @if (!selectedClassroom()) {
-        <div class="empty-selection">
-          <i class="pi pi-inbox text-5xl text-gray-300 mb-4"></i>
-          <p class="text-gray-500">{{ 'TEACHER.FEEDBACK.SELECT_CLASSROOM_PROMPT' | translate }}</p>
+  <!-- Main Content -->
+  <main class="main-panel">
+    @if (!selectedClassroom()) {
+      <div class="welcome-state">
+        <div class="blob-bg"></div>
+        <div class="welcome-card animate-fade-in">
+          <div class="icon-ring">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+          <h3>{{ 'TEACHER.FEEDBACK.SELECT_CLASSROOM_PROMPT' | translate }}</h3>
+          <p>اختر أحد الفصول من القائمة الجانبية لعرض آراء وتقييمات الطلاب</p>
         </div>
-      } @else {
-        <div class="feedback-content">
-          <header class="feedback-header">
-            <div>
-              <h2 class="text-2xl font-bold text-gray-900">{{ selectedClassroom()?.name }}</h2>
-              <p class="text-gray-500 mt-1">{{ 'TEACHER.FEEDBACK.REVIEWS_FOR' | translate }}</p>
+      </div>
+    } @else {
+      <div class="feedback-dashboard animate-fade-in">
+        
+        <!-- Dashboard Header / Overview -->
+        <div class="dashboard-hero">
+          <div class="hero-bg-pattern"></div>
+          <div class="hero-content">
+            <div class="hero-titles">
+              <span class="eyebrow">{{ 'TEACHER.FEEDBACK.REVIEWS_FOR' | translate }}</span>
+              <h1>{{ selectedClassroom()?.name }}</h1>
             </div>
-          </header>
 
-          @if (isLoadingFeedback()) {
-            <div class="loading-state h-64">
-              <i class="pi pi-spin pi-spinner text-3xl text-[--draya-primary-700]"></i>
-            </div>
-          } @else if (!feedback() || feedback()!.totalCount === 0) {
-            <div class="empty-state h-64 bg-gray-50 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
-              <i class="pi pi-star text-4xl text-gray-300 mb-3"></i>
-              <p class="text-gray-500">{{ 'TEACHER.FEEDBACK.NO_FEEDBACK_YET' | translate }}</p>
-            </div>
-          } @else {
-            <div class="feedback-summary">
-              <div class="summary-card">
-                <div class="avg-rating">
-                  <span class="text-4xl font-bold text-gray-900">{{ feedback()!.averageRating | number:'1.1-1' }}</span>
-                  <div class="flex items-center text-yellow-400 mt-2">
+            @if (!isLoadingFeedback() && feedback() && feedback()!.totalCount > 0) {
+              <div class="rating-overview-badge">
+                <div class="rating-huge">{{ feedback()!.averageRating | number:'1.1-1' }}</div>
+                <div class="rating-meta">
+                  <div class="stars-row">
                     @for (star of getStars(); track star) {
-                      <i class="pi" [ngClass]="star <= feedback()!.averageRating ? 'pi-star-fill' : 'pi-star'"></i>
+                      <svg width="20" height="20" viewBox="0 0 24 24" [attr.fill]="star <= feedback()!.averageRating ? 'currentColor' : 'rgba(255,255,255,0.2)'" stroke="none">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                      </svg>
                     }
                   </div>
-                  <span class="text-sm text-gray-500 mt-1">{{ feedback()!.totalCount }} {{ 'TEACHER.FEEDBACK.RATINGS' | translate }}</span>
+                  <span class="count-text">{{ feedback()!.totalCount }} {{ 'TEACHER.FEEDBACK.RATINGS' | translate }}</span>
                 </div>
               </div>
-            </div>
+            }
+          </div>
+        </div>
 
-            <div class="feedback-list mt-8">
-              <h3 class="text-lg font-semibold text-gray-800 mb-4">{{ 'TEACHER.FEEDBACK.ALL_REVIEWS' | translate }}</h3>
-              <div class="grid gap-4">
-                @for (item of feedback()!.items; track item.feedbackId) {
-                  <div class="feedback-card">
-                    <div class="feedback-card-header">
-                      <div class="student-info">
-                        @if (item.studentAvatarUrl) {
-                          <img [src]="item.studentAvatarUrl" alt="Student avatar" class="avatar" />
-                        } @else {
-                          <div class="avatar-placeholder">
-                            {{ item.studentName?.charAt(0) ?? '؟' }}
-                          </div>
-                        }
-                        <div class="student-details">
-                          <span class="student-name">{{ item.studentName ?? ('TEACHER.FEEDBACK.ANONYMOUS' | translate) }}</span>
-                          <span class="feedback-date">{{ item.createdAt | date:'mediumDate' }}</span>
-                        </div>
-                      </div>
-                      <div class="flex items-center text-yellow-400">
-                        @for (star of getStars(); track star) {
-                          <i class="pi text-sm" [ngClass]="star <= item.rating ? 'pi-star-fill' : 'pi-star'"></i>
-                        }
-                      </div>
+        <!-- Feedback Content -->
+        <div class="reviews-section">
+          @if (isLoadingFeedback()) {
+            <div class="reviews-masonry">
+              @for (i of [1,2,3,4,5,6]; track i) {
+                <div class="review-card shimmer-card">
+                  <div class="shimmer-block w-1/4 h-4 mb-4"></div>
+                  <div class="shimmer-block w-full h-16 mb-6"></div>
+                  <div class="flex items-center gap-3">
+                    <div class="shimmer-block w-10 h-10 rounded-full"></div>
+                    <div class="flex flex-col gap-2">
+                      <div class="shimmer-block w-24 h-3"></div>
+                      <div class="shimmer-block w-16 h-2"></div>
                     </div>
-                    @if (item.comment) {
-                      <p class="feedback-comment">{{ item.comment }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else if (!feedback() || feedback()!.totalCount === 0) {
+            <div class="empty-reviews">
+              <div class="empty-icon-wrap">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+              </div>
+              <h4>{{ 'TEACHER.FEEDBACK.NO_FEEDBACK_YET' | translate }}</h4>
+              <p>لم يقم أي طالب بكتابة تقييم لهذا الفصل حتى الآن.</p>
+            </div>
+          } @else {
+            <div class="reviews-masonry">
+              @for (item of feedback()!.items; track item.feedbackId; let i = $index) {
+                <div class="review-card" [style.animation-delay.ms]="i * 50">
+                  <div class="quote-mark">"</div>
+                  
+                  <div class="review-stars">
+                    @for (star of getStars(); track star) {
+                      <svg width="16" height="16" viewBox="0 0 24 24" [attr.fill]="star <= item.rating ? 'var(--draya-primary-500)' : 'var(--draya-surface-200)'" stroke="none">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                      </svg>
                     }
                   </div>
-                }
-              </div>
+
+                  @if (item.comment) {
+                    <p class="review-body">{{ item.comment }}</p>
+                  } @else {
+                    <p class="review-body empty-comment">لم يترك الطالب تعليقاً نصياً، واكتفى بالتقييم فقط.</p>
+                  }
+
+                  <div class="review-footer">
+                    @if (item.studentAvatarUrl) {
+                      <img [src]="item.studentAvatarUrl" alt="Student avatar" class="student-avatar" />
+                    } @else {
+                      <div class="student-avatar-placeholder">
+                        {{ item.studentName?.charAt(0) ?? 'ط' }}
+                      </div>
+                    }
+                    <div class="student-info">
+                      <span class="student-name">{{ item.studentName ?? ('TEACHER.FEEDBACK.ANONYMOUS' | translate) }}</span>
+                      <span class="review-date">{{ item.createdAt | date:'mediumDate' }}</span>
+                    </div>
+                  </div>
+                </div>
+              }
             </div>
           }
         </div>
-      }
-    </main>
-  </div>
+
+      </div>
+    }
+  </main>
 </div>
