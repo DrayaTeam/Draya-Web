@@ -94,8 +94,18 @@ export class GenerateExamComponent implements OnInit {
 
   private loadSections(classroomId: string): void {
     this.sectionService.getSections(classroomId).subscribe({
-      next: (res) => this.sections.set(res),
-      error: () => this.toast.error('فشل في تحميل أقسام الفصل'),
+      next: (res) => {
+        const mappedSections = res.map(s => {
+          const hasMaterial = (s.documents && s.documents.length > 0) || (s.videos && s.videos.length > 0);
+          return {
+            ...s,
+            title: hasMaterial ? s.title : `${s.title} (غير متاح - لا يوجد محتوى)`,
+            disabled: !hasMaterial
+          };
+        });
+        this.sections.set(mappedSections);
+      },
+      error: () => this.toast.error('حدث خطأ أثناء تحميل الوحدات'),
     });
   }
 

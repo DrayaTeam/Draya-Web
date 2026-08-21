@@ -69,26 +69,48 @@ export class ReviewExamComponent implements OnInit {
     
     const currentExam = this.exam();
     if (currentExam && originalQuestionId && updatedQuestion) {
-      // Map GeneratedQuestionDto to ExamQuestionDto format
-      const mappedQuestion: ExamQuestionDto = {
-        id: originalQuestionId, // Preserve the ID so subsequent refinements work!
+      this.isLoading.set(true);
+
+      const payload = {
         text: updatedQuestion.text,
         type: updatedQuestion.type,
-        difficultyLevel: updatedQuestion.difficulty,
+        difficulty: updatedQuestion.difficulty,
         rubric: updatedQuestion.rubric,
-        correctAnswer: updatedQuestion.acceptedAnswers ? updatedQuestion.acceptedAnswers[0] : undefined,
-        order: originalQuestionOrder, // Preserve the order
-        options: updatedQuestion.options?.map((opt: { text?: string }, index: number) => ({
+        options: updatedQuestion.options?.map(opt => ({
           text: opt.text || '',
-          isCorrect: index === updatedQuestion.correctAnswerIndex
+          isCorrect: !!opt.isCorrect
         }))
       };
 
-      const updatedQuestions = (currentExam.questions || []).map(q => 
-        q.id === originalQuestionId ? mappedQuestion : q
-      );
-      this.exam.set({ ...currentExam, questions: updatedQuestions });
-      this.toast.success('تم تحسين السؤال بنجاح');
+      this.examService.updateQuestion(currentExam.id, originalQuestionId, payload).subscribe({
+        next: () => {
+          // Map GeneratedQuestionDto to ExamQuestionDto format for local state update
+          const mappedQuestion: ExamQuestionDto = {
+            id: originalQuestionId,
+            text: updatedQuestion.text,
+            type: updatedQuestion.type,
+            difficultyLevel: updatedQuestion.difficulty,
+            rubric: updatedQuestion.rubric,
+            correctAnswer: updatedQuestion.acceptedAnswers ? updatedQuestion.acceptedAnswers[0] : undefined,
+            order: originalQuestionOrder,
+            options: updatedQuestion.options?.map((opt: { text?: string; isCorrect?: boolean }) => ({
+              text: opt.text || '',
+              isCorrect: !!opt.isCorrect
+            }))
+          };
+
+          const updatedQuestions = (currentExam.questions || []).map(q => 
+            q.id === originalQuestionId ? mappedQuestion : q
+          );
+          this.exam.set({ ...currentExam, questions: updatedQuestions });
+          this.toast.success('تم حفظ التعديل بنجاح');
+          this.isLoading.set(false);
+        },
+        error: () => {
+          this.toast.error('حدث خطأ أثناء حفظ التعديل');
+          this.isLoading.set(false);
+        }
+      });
     }
   }
 

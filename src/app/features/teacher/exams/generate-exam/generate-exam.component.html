@@ -21,7 +21,7 @@
 
           <div class="form-group">
             <label for="sectionId" class="block text-sm font-medium text-gray-700 mb-2">الوحدة *</label>
-            <p-select [inputId]="'sectionId'" formControlName="sectionId" [options]="sections()" optionLabel="title" optionValue="id" placeholder="اختر الوحدة..." styleClass="w-full" [pt]="{ root: { class: '!rounded-xl !border-gray-200 hover:!border-[#1B6D63] focus-within:!ring-2 focus-within:!ring-[#1B6D63] focus-within:!border-transparent transition-all' }, label: { class: '!py-2.5 !px-4' }, list: { class: '!p-2' }, option: { class: '!rounded-lg !my-1 hover:!bg-[#f0f9f8] hover:!text-[#1B6D63] transition-colors' } }"></p-select>
+            <p-select [inputId]="'sectionId'" formControlName="sectionId" [options]="sections()" optionLabel="title" optionValue="id" optionDisabled="disabled" placeholder="اختيار الوحدة..." styleClass="w-full" [pt]="{ root: { class: '!rounded-xl !border-gray-200 hover:!border-[#1B6D63] focus-within:!ring-2 focus-within:!ring-[#1B6D63] focus-within:!border-transparent transition-all' }, label: { class: '!py-2.5 !px-4' }, list: { class: '!p-2' }, option: { class: '!rounded-lg !my-1 hover:!bg-[#f0f9f8] hover:!text-[#1B6D63] transition-colors' } }"></p-select>
             @if (form.controls.sectionId.touched && form.controls.sectionId.invalid) {
               <p class="text-red-500 text-xs mt-1">برجاء اختيار الوحدة</p>
             }
