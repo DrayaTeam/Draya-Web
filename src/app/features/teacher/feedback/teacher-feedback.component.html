@@ -1,163 +1,131 @@
-<div class="feedback-layout">
+<div class="neo-layout">
   <!-- Sidebar -->
-  <aside class="sidebar-panel">
+  <aside class="neo-sidebar">
     <div class="sidebar-header">
-      <div class="icon-box">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 20h9"></path>
-          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-        </svg>
-      </div>
       <h2>{{ 'TEACHER.FEEDBACK.CLASSROOMS' | translate }}</h2>
+      <span class="badge">{{ classrooms().length }}</span>
     </div>
 
     @if (isLoadingClassrooms()) {
-      <div class="skeleton-list">
+      <div class="neo-nav">
         @for (i of [1,2,3,4]; track i) {
-          <div class="skeleton-item shimmer"></div>
+          <div class="neo-skeleton"></div>
         }
       </div>
     } @else if (classrooms().length === 0) {
-      <div class="empty-sidebar">
+      <div class="neo-empty">
         <p>{{ 'TEACHER.FEEDBACK.NO_CLASSROOMS' | translate }}</p>
       </div>
     } @else {
-      <nav class="classroom-nav">
+      <div class="neo-nav">
         @for (cls of classrooms(); track cls.classroomId) {
           <button 
-            class="nav-item group" 
-            [class.is-active]="selectedClassroom()?.classroomId === cls.classroomId"
+            class="neo-nav-item" 
+            [class.active]="selectedClassroom()?.classroomId === cls.classroomId"
             (click)="selectClassroom(cls)">
-            <div class="nav-content">
-              <div class="nav-indicator"></div>
-              <div class="nav-text">
-                <span class="name">{{ cls.name }}</span>
-                @if (cls.subjectName) {
-                  <span class="subject">{{ cls.subjectName }}</span>
-                }
-              </div>
+            <div class="nav-info">
+              <span class="nav-name">{{ cls.name }}</span>
+              @if (cls.subjectName) {
+                <span class="nav-subject">{{ cls.subjectName }}</span>
+              }
             </div>
-            <svg class="arrow-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M15 18l-6-6 6-6"/>
-            </svg>
+            <div class="nav-arrow">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 5 12 12 19"></polyline>
+              </svg>
+            </div>
           </button>
         }
-      </nav>
+      </div>
     }
   </aside>
 
   <!-- Main Content -->
-  <main class="main-panel">
+  <main class="neo-main">
     @if (!selectedClassroom()) {
-      <div class="welcome-state">
-        <div class="blob-bg"></div>
-        <div class="welcome-card animate-fade-in">
-          <div class="icon-ring">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-            </svg>
-          </div>
-          <h3>{{ 'TEACHER.FEEDBACK.SELECT_CLASSROOM_PROMPT' | translate }}</h3>
-          <p>اختر أحد الفصول من القائمة الجانبية لعرض آراء وتقييمات الطلاب</p>
-        </div>
+      <div class="neo-welcome">
+        <h1>{{ 'TEACHER.FEEDBACK.SELECT_CLASSROOM_PROMPT' | translate }}</h1>
+        <p>اختر أحد الفصول من القائمة لعرض الآراء</p>
       </div>
     } @else {
-      <div class="feedback-dashboard animate-fade-in">
-        
-        <!-- Dashboard Header / Overview -->
-        <div class="dashboard-hero">
-          <div class="hero-bg-pattern"></div>
-          <div class="hero-content">
-            <div class="hero-titles">
-              <span class="eyebrow">{{ 'TEACHER.FEEDBACK.REVIEWS_FOR' | translate }}</span>
-              <h1>{{ selectedClassroom()?.name }}</h1>
-            </div>
-
-            @if (!isLoadingFeedback() && feedback() && feedback()!.totalCount > 0) {
-              <div class="rating-overview-badge">
-                <div class="rating-huge">{{ feedback()!.averageRating | number:'1.1-1' }}</div>
-                <div class="rating-meta">
-                  <div class="stars-row">
-                    @for (star of getStars(); track star) {
-                      <svg width="20" height="20" viewBox="0 0 24 24" [attr.fill]="star <= feedback()!.averageRating ? 'currentColor' : 'rgba(255,255,255,0.2)'" stroke="none">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                      </svg>
-                    }
-                  </div>
-                  <span class="count-text">{{ feedback()!.totalCount }} {{ 'TEACHER.FEEDBACK.RATINGS' | translate }}</span>
-                </div>
-              </div>
-            }
+      <div class="neo-dashboard">
+        <!-- Header -->
+        <header class="neo-header">
+          <div class="header-text">
+            <span class="label">{{ 'TEACHER.FEEDBACK.REVIEWS_FOR' | translate }}</span>
+            <h1>{{ selectedClassroom()?.name }}</h1>
           </div>
-        </div>
 
-        <!-- Feedback Content -->
-        <div class="reviews-section">
-          @if (isLoadingFeedback()) {
-            <div class="reviews-masonry">
-              @for (i of [1,2,3,4,5,6]; track i) {
-                <div class="review-card shimmer-card">
-                  <div class="shimmer-block w-1/4 h-4 mb-4"></div>
-                  <div class="shimmer-block w-full h-16 mb-6"></div>
-                  <div class="flex items-center gap-3">
-                    <div class="shimmer-block w-10 h-10 rounded-full"></div>
-                    <div class="flex flex-col gap-2">
-                      <div class="shimmer-block w-24 h-3"></div>
-                      <div class="shimmer-block w-16 h-2"></div>
-                    </div>
-                  </div>
+          @if (!isLoadingFeedback() && feedback() && feedback()!.totalCount > 0) {
+            <div class="neo-rating-box">
+              <div class="rating-number">{{ feedback()!.averageRating | number:'1.1-1' }}</div>
+              <div class="rating-details">
+                <div class="stars">
+                  @for (star of getStars(); track star) {
+                    <svg width="20" height="20" viewBox="0 0 24 24" [attr.fill]="star <= feedback()!.averageRating ? 'currentColor' : 'none'" [attr.stroke]="star <= feedback()!.averageRating ? 'none' : 'currentColor'" stroke-width="1.5">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                  }
                 </div>
+                <span>{{ feedback()!.totalCount }} {{ 'TEACHER.FEEDBACK.RATINGS' | translate }}</span>
+              </div>
+            </div>
+          }
+        </header>
+
+        <!-- Reviews -->
+        <div class="neo-reviews">
+          @if (isLoadingFeedback()) {
+            <div class="neo-reviews-grid">
+              @for (i of [1,2,3,4]; track i) {
+                <div class="neo-skeleton-card"></div>
               }
             </div>
           } @else if (!feedback() || feedback()!.totalCount === 0) {
-            <div class="empty-reviews">
-              <div class="empty-icon-wrap">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-              </div>
-              <h4>{{ 'TEACHER.FEEDBACK.NO_FEEDBACK_YET' | translate }}</h4>
-              <p>لم يقم أي طالب بكتابة تقييم لهذا الفصل حتى الآن.</p>
+            <div class="neo-empty-reviews">
+              <h2>{{ 'TEACHER.FEEDBACK.NO_FEEDBACK_YET' | translate }}</h2>
+              <p>لم يتم تقديم أي تقييمات حتى الآن</p>
             </div>
           } @else {
-            <div class="reviews-masonry">
-              @for (item of feedback()!.items; track item.feedbackId; let i = $index) {
-                <div class="review-card" [style.animation-delay.ms]="i * 50">
-                  <div class="quote-mark">"</div>
-                  
-                  <div class="review-stars">
-                    @for (star of getStars(); track star) {
-                      <svg width="16" height="16" viewBox="0 0 24 24" [attr.fill]="star <= item.rating ? 'var(--draya-primary-500)' : 'var(--draya-surface-200)'" stroke="none">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                      </svg>
-                    }
+            <div class="neo-reviews-grid">
+              @for (item of feedback()!.items; track item.feedbackId) {
+                <article class="neo-review-card">
+                  <div class="card-top">
+                    <div class="stars">
+                      @for (star of getStars(); track star) {
+                        <svg width="16" height="16" viewBox="0 0 24 24" [attr.fill]="star <= item.rating ? 'currentColor' : 'none'" [attr.stroke]="star <= item.rating ? 'none' : 'currentColor'" stroke-width="1.5">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                      }
+                    </div>
+                    <time>{{ item.createdAt | date:'shortDate' }}</time>
                   </div>
-
+                  
                   @if (item.comment) {
-                    <p class="review-body">{{ item.comment }}</p>
+                    <p class="comment">{{ item.comment }}</p>
                   } @else {
-                    <p class="review-body empty-comment">لم يترك الطالب تعليقاً نصياً، واكتفى بالتقييم فقط.</p>
+                    <p class="comment empty">لا يوجد تعليق نصي.</p>
                   }
 
-                  <div class="review-footer">
+                  <footer class="card-bottom">
                     @if (item.studentAvatarUrl) {
-                      <img [src]="item.studentAvatarUrl" alt="Student avatar" class="student-avatar" />
+                      <img [src]="item.studentAvatarUrl" alt="Avatar" class="avatar" />
                     } @else {
-                      <div class="student-avatar-placeholder">
-                        {{ item.studentName?.charAt(0) ?? 'ط' }}
+                      <div class="avatar-placeholder">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
                       </div>
                     }
-                    <div class="student-info">
-                      <span class="student-name">{{ item.studentName ?? ('TEACHER.FEEDBACK.ANONYMOUS' | translate) }}</span>
-                      <span class="review-date">{{ item.createdAt | date:'mediumDate' }}</span>
-                    </div>
-                  </div>
-                </div>
+                    <span class="student-name">{{ item.studentName ?? ('TEACHER.FEEDBACK.ANONYMOUS' | translate) }}</span>
+                  </footer>
+                </article>
               }
             </div>
           }
         </div>
-
       </div>
     }
   </main>
