@@ -75,7 +75,7 @@ export class ClassroomService {
   }
 
   /** Creates a new classroom */
-  createClassroom(payload: import('../../../core/models/classroom.model').CreateClassroomRequest): Observable<ClassroomDto> {
+  createClassroom(payload: CreateClassroomRequest): Observable<ClassroomDto> {
     return this.http.post<ClassroomDto>(this.baseUrl, payload);
   }
 

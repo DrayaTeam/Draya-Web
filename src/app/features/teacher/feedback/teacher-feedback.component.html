@@ -18,7 +18,9 @@
             <li 
               class="classroom-item" 
               [ngClass]="{'active': selectedClassroom()?.classroomId === cls.classroomId}"
-              (click)="selectClassroom(cls)">
+              (click)="selectClassroom(cls)"
+              (keydown.enter)="selectClassroom(cls)"
+              tabindex="0">
               <div class="classroom-info">
                 <span class="classroom-name">{{ cls.name }}</span>
                 @if (cls.subjectName) {
@@ -63,7 +65,7 @@
                 <div class="avg-rating">
                   <span class="text-4xl font-bold text-gray-900">{{ feedback()!.averageRating | number:'1.1-1' }}</span>
                   <div class="flex items-center text-yellow-400 mt-2">
-                    @for (star of getStars(5); track star) {
+                    @for (star of getStars(); track star) {
                       <i class="pi" [ngClass]="star <= feedback()!.averageRating ? 'pi-star-fill' : 'pi-star'"></i>
                     }
                   </div>
@@ -92,7 +94,7 @@
                         </div>
                       </div>
                       <div class="flex items-center text-yellow-400">
-                        @for (star of getStars(5); track star) {
+                        @for (star of getStars(); track star) {
                           <i class="pi text-sm" [ngClass]="star <= item.rating ? 'pi-star-fill' : 'pi-star'"></i>
                         }
                       </div>
