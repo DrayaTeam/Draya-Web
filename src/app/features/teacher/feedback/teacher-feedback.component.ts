@@ -22,6 +22,7 @@ export class TeacherFeedbackComponent implements OnInit {
   readonly feedback = signal<ClassroomFeedbackSummaryDto | null>(null);
   readonly isLoadingClassrooms = signal<boolean>(true);
   readonly isLoadingFeedback = signal<boolean>(false);
+  readonly isDropdownOpen = signal<boolean>(false);
 
   ngOnInit(): void {
     this.loadClassrooms();
@@ -40,7 +41,12 @@ export class TeacherFeedbackComponent implements OnInit {
     });
   }
 
+  toggleDropdown(): void {
+    this.isDropdownOpen.update(v => !v);
+  }
+
   selectClassroom(classroom: ClassroomDto): void {
+    this.isDropdownOpen.set(false);
     if (this.selectedClassroom()?.classroomId === classroom.classroomId) {
       return;
     }

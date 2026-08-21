@@ -521,6 +521,16 @@
       "CREATE_SUCCESS": "تم إنشاء القسم بنجاح.",
       "UPDATE_SUCCESS": "تم تحديث القسم بنجاح.",
       "DELETE_SUCCESS": "تم حذف القسم بنجاح."
+    },
+    "FEEDBACK": {
+      "CLASSROOMS": "الفصول الدراسية",
+      "NO_CLASSROOMS": "لا توجد فصول دراسية متاحة.",
+      "SELECT_CLASSROOM_PROMPT": "اختر فصلاً دراسياً",
+      "REVIEWS_FOR": "آراء وتقييمات الطلاب",
+      "NO_FEEDBACK_YET": "لا توجد تقييمات حتى الآن",
+      "RATINGS": "تقييم",
+      "ALL_REVIEWS": "أحدث التقييمات",
+      "ANONYMOUS": "طالب غير معروف"
     }
   },
   "STUDENT": {

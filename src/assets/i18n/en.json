@@ -521,6 +521,16 @@
       "CREATE_SUCCESS": "Section created successfully.",
       "UPDATE_SUCCESS": "Section updated successfully.",
       "DELETE_SUCCESS": "Section deleted successfully."
+    },
+    "FEEDBACK": {
+      "CLASSROOMS": "Classrooms",
+      "NO_CLASSROOMS": "No classrooms available.",
+      "SELECT_CLASSROOM_PROMPT": "Select a classroom",
+      "REVIEWS_FOR": "Student Reviews",
+      "NO_FEEDBACK_YET": "No feedback yet",
+      "RATINGS": "ratings",
+      "ALL_REVIEWS": "Latest Reviews",
+      "ANONYMOUS": "Anonymous Student"
     }
   },
   "STUDENT": {
