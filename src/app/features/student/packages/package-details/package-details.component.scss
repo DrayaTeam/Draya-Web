@@ -1024,3 +1024,200 @@
   height: 280px;
   border-radius: 24px;
 }
+
+.feedback-section {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 24px;
+  border: 1px solid var(--draya-surface-200);
+
+  .feedback-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--draya-surface-900);
+    margin-bottom: 24px;
+  }
+
+  .feedback-summary-header {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--draya-surface-200);
+    
+    .average-rating-display {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      
+      .rating-number {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--draya-surface-900);
+        line-height: 1;
+      }
+      
+      .rating-stars {
+        display: flex;
+        gap: 4px;
+      }
+      
+      .rating-count {
+        color: var(--draya-surface-500);
+        font-size: 0.875rem;
+      }
+    }
+  }
+
+  .feedback-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .feedback-item-card {
+    background: var(--draya-surface-50);
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid var(--draya-surface-100);
+
+    .feedback-user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+
+      .student-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .student-meta {
+        display: flex;
+        flex-direction: column;
+        
+        .student-name {
+          font-weight: 600;
+          color: var(--draya-surface-900);
+        }
+        
+        .feedback-date {
+          font-size: 0.75rem;
+          color: var(--draya-surface-500);
+        }
+      }
+    }
+
+    .feedback-rating {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 8px;
+    }
+
+    .feedback-comment {
+      color: var(--draya-surface-700);
+      line-height: 1.5;
+      font-size: 0.9375rem;
+      margin: 0;
+    }
+  }
+
+  .no-feedback-text {
+    color: var(--draya-surface-500);
+    text-align: center;
+    padding: 24px 0;
+    font-size: 0.9375rem;
+  }
+
+  .leave-feedback-box {
+    background: var(--draya-surface-50);
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid var(--draya-surface-200);
+
+    h4 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--draya-surface-900);
+      margin-bottom: 16px;
+    }
+
+    .rating-input-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      
+      span {
+        font-weight: 600;
+        color: var(--draya-surface-700);
+      }
+      
+      .stars-input {
+        display: flex;
+        gap: 4px;
+        
+        .btn-star {
+          background: none;
+          border: none;
+          padding: 4px;
+          cursor: pointer;
+          border-radius: 50%;
+          transition: transform 0.2s;
+          
+          &:hover {
+            transform: scale(1.1);
+          }
+        }
+      }
+    }
+
+    .feedback-textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--draya-surface-300);
+      background: white;
+      resize: vertical;
+      font-family: inherit;
+      margin-bottom: 16px;
+      
+      &:focus {
+        outline: none;
+        border-color: var(--draya-primary-500);
+        box-shadow: 0 0 0 3px var(--draya-primary-100);
+      }
+    }
+
+    .btn-submit-feedback {
+      background: var(--draya-primary-600);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background-color 0.2s, transform 0.1s;
+      
+      &:hover:not(:disabled) {
+        background: var(--draya-primary-700);
+      }
+      
+      &:active:not(:disabled) {
+        transform: scale(0.98);
+      }
+      
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+

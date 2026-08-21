@@ -1,0 +1,112 @@
+<div class="feedback-container">
+  <div class="split-layout">
+    <!-- Left Pane: Classrooms List -->
+    <aside class="classrooms-sidebar">
+      <h2 class="sidebar-title">{{ 'TEACHER.FEEDBACK.CLASSROOMS' | translate }}</h2>
+      
+      @if (isLoadingClassrooms()) {
+        <div class="loading-state">
+          <i class="pi pi-spin pi-spinner text-2xl text-[--draya-primary-700]"></i>
+        </div>
+      } @else if (classrooms().length === 0) {
+        <div class="empty-state">
+          <p>{{ 'TEACHER.FEEDBACK.NO_CLASSROOMS' | translate }}</p>
+        </div>
+      } @else {
+        <ul class="classroom-list">
+          @for (cls of classrooms(); track cls.classroomId) {
+            <li 
+              class="classroom-item" 
+              [ngClass]="{'active': selectedClassroom()?.classroomId === cls.classroomId}"
+              (click)="selectClassroom(cls)">
+              <div class="classroom-info">
+                <span class="classroom-name">{{ cls.name }}</span>
+                @if (cls.subjectName) {
+                  <span class="classroom-subject">{{ cls.subjectName }}</span>
+                }
+              </div>
+              <i class="pi pi-chevron-left text-sm text-gray-400"></i>
+            </li>
+          }
+        </ul>
+      }
+    </aside>
+
+    <!-- Right Pane: Feedback Details -->
+    <main class="feedback-main">
+      @if (!selectedClassroom()) {
+        <div class="empty-selection">
+          <i class="pi pi-inbox text-5xl text-gray-300 mb-4"></i>
+          <p class="text-gray-500">{{ 'TEACHER.FEEDBACK.SELECT_CLASSROOM_PROMPT' | translate }}</p>
+        </div>
+      } @else {
+        <div class="feedback-content">
+          <header class="feedback-header">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-900">{{ selectedClassroom()?.name }}</h2>
+              <p class="text-gray-500 mt-1">{{ 'TEACHER.FEEDBACK.REVIEWS_FOR' | translate }}</p>
+            </div>
+          </header>
+
+          @if (isLoadingFeedback()) {
+            <div class="loading-state h-64">
+              <i class="pi pi-spin pi-spinner text-3xl text-[--draya-primary-700]"></i>
+            </div>
+          } @else if (!feedback() || feedback()!.totalCount === 0) {
+            <div class="empty-state h-64 bg-gray-50 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
+              <i class="pi pi-star text-4xl text-gray-300 mb-3"></i>
+              <p class="text-gray-500">{{ 'TEACHER.FEEDBACK.NO_FEEDBACK_YET' | translate }}</p>
+            </div>
+          } @else {
+            <div class="feedback-summary">
+              <div class="summary-card">
+                <div class="avg-rating">
+                  <span class="text-4xl font-bold text-gray-900">{{ feedback()!.averageRating | number:'1.1-1' }}</span>
+                  <div class="flex items-center text-yellow-400 mt-2">
+                    @for (star of getStars(5); track star) {
+                      <i class="pi" [ngClass]="star <= feedback()!.averageRating ? 'pi-star-fill' : 'pi-star'"></i>
+                    }
+                  </div>
+                  <span class="text-sm text-gray-500 mt-1">{{ feedback()!.totalCount }} {{ 'TEACHER.FEEDBACK.RATINGS' | translate }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="feedback-list mt-8">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">{{ 'TEACHER.FEEDBACK.ALL_REVIEWS' | translate }}</h3>
+              <div class="grid gap-4">
+                @for (item of feedback()!.items; track item.feedbackId) {
+                  <div class="feedback-card">
+                    <div class="feedback-card-header">
+                      <div class="student-info">
+                        @if (item.studentAvatarUrl) {
+                          <img [src]="item.studentAvatarUrl" alt="Student avatar" class="avatar" />
+                        } @else {
+                          <div class="avatar-placeholder">
+                            {{ item.studentName?.charAt(0) ?? '؟' }}
+                          </div>
+                        }
+                        <div class="student-details">
+                          <span class="student-name">{{ item.studentName ?? ('TEACHER.FEEDBACK.ANONYMOUS' | translate) }}</span>
+                          <span class="feedback-date">{{ item.createdAt | date:'mediumDate' }}</span>
+                        </div>
+                      </div>
+                      <div class="flex items-center text-yellow-400">
+                        @for (star of getStars(5); track star) {
+                          <i class="pi text-sm" [ngClass]="star <= item.rating ? 'pi-star-fill' : 'pi-star'"></i>
+                        }
+                      </div>
+                    </div>
+                    @if (item.comment) {
+                      <p class="feedback-comment">{{ item.comment }}</p>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </main>
+  </div>
+</div>

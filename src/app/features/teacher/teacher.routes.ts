@@ -91,8 +91,8 @@ export const teacherRoutes: Routes = [
       {
         path: 'feedback',
         loadComponent: () =>
-          import('./placeholder/teacher-placeholder.component').then(
-            (m) => m.TeacherPlaceholderComponent,
+          import('./feedback/teacher-feedback.component').then(
+            (m) => m.TeacherFeedbackComponent,
           ),
         title: 'آراء وملاحظات — درايَة',
       },

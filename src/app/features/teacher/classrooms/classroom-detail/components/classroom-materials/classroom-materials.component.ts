@@ -331,17 +331,25 @@ export class ClassroomMaterialsComponent {
     ).subscribe({
       next: (versions) => {
         const latest = versions && versions.length > 0 ? versions[versions.length - 1] : null;
-        if (latest && latest.fileUrl) {
-          // Yay! The cloud has finished processing and we have a URL!
-          this.isProcessing.set(false);
-          let fetchedUrl = latest.fileUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
-            String.fromCharCode(parseInt(hex, 16)),
-          );
-          this.activePreviewUrl.set(resolveMaterialUrl(fetchedUrl));
-          // Stop polling since we found it
-          this.cancelPolling$.next();
+        if (latest) {
+          if (latest.parseStatus === 'Failed') {
+            this.isProcessing.set(false);
+            this.previewError.set('فشلت معالجة الملف على الخادم: ' + (latest.errorMessage || 'خطأ غير معروف'));
+            this.cancelPolling$.next();
+            return;
+          }
+          if (latest.fileUrl) {
+            // Yay! The cloud has finished processing and we have a URL!
+            this.isProcessing.set(false);
+            let fetchedUrl = latest.fileUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
+              String.fromCharCode(parseInt(hex, 16)),
+            );
+            this.activePreviewUrl.set(resolveMaterialUrl(fetchedUrl));
+            // Stop polling since we found it
+            this.cancelPolling$.next();
+          }
         }
-        // If not found yet, it will just poll again in 3 seconds.
+        // If not found yet and not failed, it will just poll again in 3 seconds.
       },
       error: (err) => {
         console.error('Polling failed', err);

@@ -351,6 +351,88 @@
         }
       </div>
     </div>
+
+    <!-- Classroom Feedback Section -->
+    <div class="feedback-section">
+      <h3 class="feedback-title">التقييمات والآراء</h3>
+      
+      @if (feedbackLoading()) {
+        <div class="loading-skeleton shimmer" style="height: 100px; border-radius: 12px; margin-bottom: 24px;"></div>
+      } @else if (feedbackSummary(); as summary) {
+        <div class="feedback-summary-header">
+          <div class="average-rating-display">
+            <span class="rating-number">{{ summary.averageRating | number:'1.1-1' }}</span>
+            <div class="rating-stars">
+              @for (star of getStarArray(5); track star) {
+                <svg width="20" height="20" viewBox="0 0 24 24" [attr.fill]="star <= summary.averageRating ? 'var(--draya-primary-500)' : 'none'" [attr.stroke]="star <= summary.averageRating ? 'var(--draya-primary-500)' : 'var(--draya-surface-300)'" stroke-width="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+              }
+            </div>
+            <span class="rating-count">({{ summary.totalCount }} تقييم)</span>
+          </div>
+        </div>
+
+        @if (summary.items?.length) {
+          <div class="feedback-list">
+            @for (item of summary.items; track item.feedbackId) {
+              <div class="feedback-item-card">
+                <div class="feedback-user-info">
+                  <img [src]="item.studentAvatarUrl || 'assets/images/default-avatar.png'" alt="Student" class="student-avatar" />
+                  <div class="student-meta">
+                    <span class="student-name">{{ item.studentName || 'طالب مجهول' }}</span>
+                    <span class="feedback-date">{{ item.createdAt | date:'shortDate' }}</span>
+                  </div>
+                </div>
+                <div class="feedback-rating">
+                  @for (star of getStarArray(item.rating); track star) {
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--draya-primary-500)" stroke="var(--draya-primary-500)" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                  }
+                </div>
+                @if (item.comment) {
+                  <p class="feedback-comment">{{ item.comment }}</p>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="no-feedback-text">لا توجد تقييمات حتى الآن. كن أول من يقيّم!</p>
+        }
+      }
+
+      @if (isEnrolled()) {
+        <div class="leave-feedback-box">
+          <h4>أضف تقييمك</h4>
+          <div class="rating-input-row">
+            <span>تقييمك:</span>
+            <div class="stars-input">
+              @for (star of getStarArray(5); track star) {
+                <button type="button" class="btn-star" (click)="feedbackRating = star">
+                  <svg width="24" height="24" viewBox="0 0 24 24" [attr.fill]="star <= feedbackRating ? 'var(--draya-primary-500)' : 'none'" [attr.stroke]="star <= feedbackRating ? 'var(--draya-primary-500)' : 'var(--draya-surface-400)'" stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                </button>
+              }
+            </div>
+          </div>
+          <textarea
+            class="feedback-textarea"
+            [(ngModel)]="feedbackComment"
+            placeholder="اكتب تعليقك هنا (اختياري)..."
+            rows="3"
+            maxlength="500"></textarea>
+          <button type="button" class="btn-submit-feedback" (click)="onSubmitFeedback()" [disabled]="submittingFeedback()">
+            @if (submittingFeedback()) {
+              <span class="spinner-sm"></span>
+            } @else {
+              <span>إرسال التقييم</span>
+            }
+          </button>
+        </div>
+      }
+    </div>
   }
 
   <!-- Active Lesson Viewer Modal (For Enrolled Students) -->
