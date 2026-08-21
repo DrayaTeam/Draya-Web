@@ -5,7 +5,10 @@ import { MessageService } from 'primeng/api';
 import { finalize } from 'rxjs/operators';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SectionService } from '../../../../services/section.service';
-import { ClassroomSectionDto, CreateSectionRequest } from '../../../../../../core/models/section.model';
+import {
+  ClassroomSectionDto,
+  CreateSectionRequest,
+} from '../../../../../../core/models/section.model';
 import { TeacherModalComponent } from '../../../../components/teacher-modal/teacher-modal.component';
 
 @Component({

@@ -1,6 +1,7 @@
 export type DifficultyLevel = 'Easy' | 'Medium' | 'Hard';
 
-export type QuestionType = 'MCQ' | 'MultipleChoice' | 'Essay' | 'TrueFalse' | 'FillInTheBlank' | 'ShortAnswer';
+export type QuestionType =
+  'MCQ' | 'MultipleChoice' | 'Essay' | 'TrueFalse' | 'FillInTheBlank' | 'ShortAnswer';
 
 export enum GenerationStatus {
   Pending = 0,
@@ -10,7 +11,7 @@ export enum GenerationStatus {
   Completed = 4,
   CompletedWithWarning = 5,
   DataUnavailable = 6, // Insufficient Context
-  Failed = 7 // AI Service Error
+  Failed = 7, // AI Service Error
 }
 
 export interface QuestionRequirement {

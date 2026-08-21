@@ -14,7 +14,7 @@ import { trigger, transition, style, query, animate, group } from '@angular/anim
   animations: [
     trigger('routeTransition', [
       transition('* <=> *', [
-          query(
+        query(
           ':enter, :leave',
           [
             style({
@@ -55,7 +55,9 @@ import { trigger, transition, style, query, animate, group } from '@angular/anim
       <div
         class="relative z-10 flex flex-col overflow-y-auto bg-white px-6 py-8 transition-all duration-700 ease-in-out lg:absolute lg:top-0 lg:bottom-0 lg:w-1/2 lg:px-16 xl:px-24"
         [ngClass]="isLogin() ? 'lg:start-0' : 'lg:start-1/2'">
-        <div class="auth-route-wrapper relative m-auto w-full py-8" [@routeTransition]="getRouteAnimationData(outlet)">
+        <div
+          class="auth-route-wrapper relative m-auto w-full py-8"
+          [@routeTransition]="getRouteAnimationData(outlet)">
           <router-outlet #outlet="outlet"></router-outlet>
         </div>
       </div>

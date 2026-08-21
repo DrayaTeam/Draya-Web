@@ -1,11 +1,22 @@
-import { Component, ChangeDetectionStrategy, input, output, inject, signal, effect } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  output,
+  inject,
+  signal,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { finalize } from 'rxjs/operators';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SectionService } from '../../../../services/section.service';
-import { ClassroomSectionDto, UpdateSectionRequest } from '../../../../../../core/models/section.model';
+import {
+  ClassroomSectionDto,
+  UpdateSectionRequest,
+} from '../../../../../../core/models/section.model';
 import { TeacherModalComponent } from '../../../../components/teacher-modal/teacher-modal.component';
 
 @Component({

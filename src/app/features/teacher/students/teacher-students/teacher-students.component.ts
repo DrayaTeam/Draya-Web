@@ -29,9 +29,11 @@ export class TeacherStudentsComponent {
     this.isLoadingClassrooms.set(true);
     this.classroomService.getTeacherClassrooms(1, 50).subscribe({
       next: (res) => {
-        const sorted = res.items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        const sorted = res.items.sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        );
         this.classrooms.set(sorted);
-        
+
         // Auto-select first classroom
         if (sorted.length > 0) {
           this.selectedClassroomId.set(sorted[0].classroomId);
@@ -41,7 +43,7 @@ export class TeacherStudentsComponent {
       error: (err) => {
         console.error('Failed to load classrooms for students hub', err);
         this.isLoadingClassrooms.set(false);
-      }
+      },
     });
   }
 

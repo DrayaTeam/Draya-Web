@@ -1,94 +1,145 @@
-<div class="review-exam-page max-w-[1280px] w-full mx-auto p-4 md:p-8">
-  
+<div class="review-exam-page mx-auto w-full max-w-[1280px] p-4 md:p-8">
   @if (isLoading()) {
     <div class="flex flex-col items-center justify-center py-20">
-      <i class="pi pi-spinner pi-spin text-4xl text-[#1B6D63] mb-4"></i>
+      <i class="pi pi-spinner pi-spin mb-4 text-4xl text-[#1B6D63]"></i>
       <p class="text-gray-500">جاري تحميل بيانات الامتحان...</p>
     </div>
   } @else if (exam(); as examData) {
     <!-- Header -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div
+      class="mb-8 flex flex-col items-start justify-between gap-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:flex-row md:items-center">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900 mb-2">معاينة الامتحان: {{ examData.topic }}</h1>
+        <h1 class="mb-2 text-2xl font-bold text-gray-900">معاينة الامتحان: {{ examData.topic }}</h1>
         <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">
           @if (examData.difficultyLevel) {
-            <span class="bg-gray-100 px-3 py-1 rounded-full"><i class="pi pi-chart-bar ms-1"></i> المستوى: {{ examData.difficultyLevel === 'Easy' ? 'سهل' : examData.difficultyLevel === 'Medium' ? 'متوسط' : examData.difficultyLevel === 'Hard' ? 'صعب' : examData.difficultyLevel }}</span>
+            <span class="rounded-full bg-gray-100 px-3 py-1">
+              <i class="pi pi-chart-bar ms-1"></i>
+              المستوى:
+              {{
+                examData.difficultyLevel === 'Easy'
+                  ? 'سهل'
+                  : examData.difficultyLevel === 'Medium'
+                    ? 'متوسط'
+                    : examData.difficultyLevel === 'Hard'
+                      ? 'صعب'
+                      : examData.difficultyLevel
+              }}
+            </span>
           }
-          <span class="bg-gray-100 px-3 py-1 rounded-full"><i class="pi pi-list ms-1"></i> عدد الأسئلة: {{ examData.totalQuestions || examData.questions?.length || 0 }}</span>
-          <span class="bg-gray-100 px-3 py-1 rounded-full"><i class="pi pi-calendar ms-1"></i> تم الإنشاء: {{ examData.createdAt | date:'short' }}</span>
+          <span class="rounded-full bg-gray-100 px-3 py-1">
+            <i class="pi pi-list ms-1"></i>
+            عدد الأسئلة: {{ examData.totalQuestions || examData.questions?.length || 0 }}
+          </span>
+          <span class="rounded-full bg-gray-100 px-3 py-1">
+            <i class="pi pi-calendar ms-1"></i>
+            تم الإنشاء: {{ examData.createdAt | date: 'short' }}
+          </span>
         </div>
       </div>
-      <button (click)="finishReview()" class="px-6 py-2.5 bg-[#1B6D63] text-white rounded-xl font-medium hover:bg-[#0f4f49] transition-colors shadow-sm whitespace-nowrap">
+      <button
+        (click)="finishReview()"
+        class="rounded-xl bg-[#1B6D63] px-6 py-2.5 font-medium whitespace-nowrap text-white shadow-sm transition-colors hover:bg-[#0f4f49]">
         إنهاء ومتابعة
       </button>
     </div>
 
     <!-- Questions List -->
-    <div class="space-y-6 mb-8">
+    <div class="mb-8 space-y-6">
       @for (question of examData.questions; track question.id) {
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <div class="flex items-start justify-between gap-4 mb-4">
+        <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+          <div class="mb-4 flex items-start justify-between gap-4">
             <div class="flex gap-3">
-              <div class="w-8 h-8 rounded-full bg-teal-50 text-[#1B6D63] flex items-center justify-center font-bold shrink-0">
+              <div
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal-50 font-bold text-[#1B6D63]">
                 {{ $index + 1 }}
               </div>
               <div>
-                <p class="text-lg text-gray-900 font-medium leading-relaxed">{{ question.text }}</p>
-                <span class="text-xs text-gray-400 mt-1 inline-block bg-gray-50 px-2 py-0.5 rounded">{{ question.type }}</span>
+                <p class="text-lg leading-relaxed font-medium text-gray-900">{{ question.text }}</p>
+                <span
+                  class="mt-1 inline-block rounded bg-gray-50 px-2 py-0.5 text-xs text-gray-400">
+                  {{ question.type }}
+                </span>
               </div>
             </div>
-            
-            <button (click)="openRefineModal(question)" class="shrink-0 text-sm px-3 py-1.5 bg-purple-50 text-[#7C3AED] hover:bg-purple-100 rounded-lg font-medium transition-colors flex items-center gap-1">
-              <i class="pi pi-sparkles"></i> تحسين
+
+            <button
+              (click)="openRefineModal(question)"
+              class="flex shrink-0 items-center gap-1 rounded-lg bg-purple-50 px-3 py-1.5 text-sm font-medium text-[#7C3AED] transition-colors hover:bg-purple-100">
+              <i class="pi pi-sparkles"></i>
+              تحسين
             </button>
           </div>
 
           <div class="ps-11">
             <!-- MCQ & TrueFalse -->
-            @if (question.type === 'MCQ' || question.type === 'MultipleChoice' || question.type === 'TrueFalse') {
-              <div class="space-y-2 mt-4">
+            @if (
+              question.type === 'MCQ' ||
+              question.type === 'MultipleChoice' ||
+              question.type === 'TrueFalse'
+            ) {
+              <div class="mt-4 space-y-2">
                 @if (!question.options || question.options.length === 0) {
-                  <div class="p-4 bg-orange-50 text-orange-600 rounded-xl border border-orange-100 text-sm flex items-center gap-2">
+                  <div
+                    class="flex items-center gap-2 rounded-xl border border-orange-100 bg-orange-50 p-4 text-sm text-orange-600">
                     <i class="pi pi-info-circle"></i>
                     لم يقم الخادم بإرجاع أي خيارات لهذا السؤال.
                   </div>
                 } @else {
                   @for (option of question.options; track $index) {
-                    <div class="flex items-center gap-3 p-3 rounded-xl border" [class.border-green-200]="option.isCorrect" [class.bg-green-50]="option.isCorrect" [class.border-gray-100]="!option.isCorrect">
-                      <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0" [class.border-green-500]="option.isCorrect" [class.border-gray-300]="!option.isCorrect">
+                    <div
+                      class="flex items-center gap-3 rounded-xl border p-3"
+                      [class.border-green-200]="option.isCorrect"
+                      [class.bg-green-50]="option.isCorrect"
+                      [class.border-gray-100]="!option.isCorrect">
+                      <div
+                        class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2"
+                        [class.border-green-500]="option.isCorrect"
+                        [class.border-gray-300]="!option.isCorrect">
                         @if (option.isCorrect) {
-                          <div class="w-2.5 h-2.5 bg-green-500 rounded-full"></div>
+                          <div class="h-2.5 w-2.5 rounded-full bg-green-500"></div>
                         }
                       </div>
-                      <span class="text-gray-700" [class.font-medium]="option.isCorrect">{{ option.text }}</span>
+                      <span class="text-gray-700" [class.font-medium]="option.isCorrect">
+                        {{ option.text }}
+                      </span>
                     </div>
                   }
                 }
               </div>
             }
-            
+
             <!-- Fill In The Blank -->
             @else if (question.type === 'FillInTheBlank') {
-              <div class="mt-4 p-4 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 text-gray-400">
+              <div
+                class="mt-4 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 p-4 text-gray-400">
                 [مساحة مخصصة لإجابة الطالب]
               </div>
               @if (question.rubric) {
-                <div class="mt-3 text-sm text-green-600 bg-green-50 p-3 rounded-lg flex gap-2 items-start">
+                <div
+                  class="mt-3 flex items-start gap-2 rounded-lg bg-green-50 p-3 text-sm text-green-600">
                   <i class="pi pi-check-circle mt-0.5"></i>
-                  <span><strong>الإجابة النموذجية:</strong> {{ question.rubric }}</span>
+                  <span>
+                    <strong>الإجابة النموذجية:</strong>
+                    {{ question.rubric }}
+                  </span>
                 </div>
               }
             }
 
             <!-- Essay & ShortAnswer -->
             @else {
-              <div class="mt-4 p-4 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 text-gray-400 min-h-[100px]">
+              <div
+                class="mt-4 min-h-[100px] rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 p-4 text-gray-400">
                 [مساحة مخصصة للإجابة المقالية]
               </div>
               @if (question.rubric) {
-                <div class="mt-3 text-sm text-green-600 bg-green-50 p-3 rounded-lg flex gap-2 items-start">
+                <div
+                  class="mt-3 flex items-start gap-2 rounded-lg bg-green-50 p-3 text-sm text-green-600">
                   <i class="pi pi-check-circle mt-0.5"></i>
-                  <span><strong>معيار التقييم (Rubric):</strong> {{ question.rubric }}</span>
+                  <span>
+                    <strong>معيار التقييم (Rubric):</strong>
+                    {{ question.rubric }}
+                  </span>
                 </div>
               }
             }
@@ -99,10 +150,9 @@
   }
 </div>
 
-<draya-refine-question-modal 
+<draya-refine-question-modal
   [isOpen]="isRefineModalOpen()"
   [examId]="exam()?.id ?? ''"
   [question]="selectedQuestionForRefine()"
   (modalClosed)="closeRefineModal()"
-  (questionRefined)="onQuestionRefined($event)">
-</draya-refine-question-modal>
+  (questionRefined)="onQuestionRefined($event)"></draya-refine-question-modal>

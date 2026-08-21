@@ -150,13 +150,15 @@ export class ClassroomService {
       next: (res) => {
         this._classroomsResult.set(res);
         this._isLoading.set(false);
-      }
+      },
     });
   }
 
   /** Retrieve all classrooms for the logged-in teacher without updating internal signals */
   getTeacherClassrooms(page = 1, size = 100): Observable<ClassroomDtoPagedResult> {
-    return this.http.get<ClassroomDtoPagedResult>(`${this.baseUrl}?pageNumber=${page}&pageSize=${size}`);
+    return this.http.get<ClassroomDtoPagedResult>(
+      `${this.baseUrl}?pageNumber=${page}&pageSize=${size}`,
+    );
   }
 
   /** Upload a cover image for a classroom */

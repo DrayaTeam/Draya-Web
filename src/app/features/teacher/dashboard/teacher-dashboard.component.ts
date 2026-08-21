@@ -2,8 +2,8 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
 import { ToastService } from '../../../core/services/toast.service';
 import { TeacherDashboardService } from '../services/teacher-dashboard.service';
-
 import { TeacherWelcomeHeaderComponent } from './components/teacher-welcome-header/teacher-welcome-header.component';
+import { Router } from '@angular/router';
 import { TeacherAiReportsBannerComponent } from './components/teacher-ai-reports-banner/teacher-ai-reports-banner.component';
 import { TeacherKpiGridComponent } from './components/teacher-kpi-grid/teacher-kpi-grid.component';
 import { TeacherSubmissionsChartComponent } from './components/teacher-submissions-chart/teacher-submissions-chart.component';
@@ -32,6 +32,7 @@ import { TeacherRecentSubmissionsTableComponent } from './components/teacher-rec
 export class TeacherDashboardComponent implements OnInit {
   protected readonly dashboardService = inject(TeacherDashboardService);
   private readonly toast = inject(ToastService);
+  private readonly router = inject(Router);
 
   readonly aiAlert = this.dashboardService.aiAlert;
   readonly kpiStats = this.dashboardService.kpiStats;
@@ -56,19 +57,19 @@ export class TeacherDashboardComponent implements OnInit {
   }
 
   handleCreateAiExam(): void {
-    this.toast.info('إنشاء امتحان ذكي', 'جارٍ فتح معالج توليد الامتحانات الآلي.');
+    this.router.navigate(['/teacher/exams/generate']);
   }
 
   handleNewLecture(): void {
-    this.toast.info('محاضرة جديدة', 'جارٍ إعداد شاشة رفع ومشاركة المحاضرة.');
+    this.router.navigate(['/teacher/classrooms']);
   }
 
   handleFollowupStudents(): void {
-    this.toast.info('متابعة الطلاب', 'جارٍ الانتقال لجدول متابعة الطلاب.');
+    this.router.navigate(['/teacher/students']);
   }
 
   handleOpenReports(): void {
-    this.toast.info('التقارير الشاملة', 'جارٍ التوجيه لصفحة التقارير.');
+    this.router.navigate(['/teacher/reports']);
   }
 
   handleNotificationClick(): void {

@@ -4,12 +4,12 @@
   <div class="stripe-card">
     <div class="card-top">
       <div class="card-header">
-        <h3 class="card-label">أرباح الكورسات المتاحة</h3>
-        <span class="status-indicator">متاح للسحب</span>
+        <h3 class="card-label">{{ 'TEACHER.WALLET.AI_BALANCE.EARNED_BALANCE_TITLE' | translate }}</h3>
+        <span class="status-indicator">{{ 'TEACHER.WALLET.AI_BALANCE.AVAILABLE_FOR_WITHDRAWAL' | translate }}</span>
       </div>
 
       <div class="card-amount-row">
-        <span class="currency">ج.م</span>
+        <span class="currency">{{ 'ADMIN.DASHBOARD.CURRENCY' | translate }}</span>
         <span class="amount">{{ balance()?.availableEarnedBalance ?? 0 }}</span>
       </div>
     </div>
@@ -28,27 +28,44 @@
           <polyline points="19 12 12 19 5 12"></polyline>
           <line x1="12" y1="19" x2="12" y2="5"></line>
         </svg>
-        سحب إلى Instapay
+        {{ 'TEACHER.WALLET.AI_BALANCE.WITHDRAW_INSTAPAY' | translate }}
       </button>
     </div>
   </div>
 
-  <!-- Purchased Balance Card -->
-  <div class="stripe-card">
+  <!-- AI (Purchased) Balance Card -->
+  <div class="stripe-card" [class.ai-card-warning]="isLowAiBalance()">
     <div class="card-top">
       <div class="card-header">
-        <h3 class="card-label">رصيد المنصة (الذكاء الاصطناعي)</h3>
-        <span class="status-indicator ai-indicator">مخصص للمنصة</span>
+        <h3 class="card-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="ai-icon-inline">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          {{ 'TEACHER.WALLET.AI_BALANCE.CARD_TITLE' | translate }}
+        </h3>
+        @if (isLowAiBalance()) {
+          <span class="status-indicator low-balance-badge">{{ 'TEACHER.WALLET.AI_BALANCE.LOW_BADGE' | translate }}</span>
+        } @else {
+          <span class="status-indicator ai-indicator">{{ 'TEACHER.WALLET.AI_BALANCE.PLATFORM_DEDICATED' | translate }}</span>
+        }
       </div>
 
       <div class="card-amount-row">
-        <span class="currency">ج.م</span>
-        <span class="amount">{{ balance()?.purchasedBalance ?? 0 }}</span>
+        <span class="currency">{{ 'ADMIN.DASHBOARD.CURRENCY' | translate }}</span>
+        <span class="amount" [class.amount-zero]="isLowAiBalance()">
+          {{ balance()?.purchasedBalance ?? 0 }}
+        </span>
       </div>
+
+      @if (isLowAiBalance()) {
+        <p class="low-balance-hint">
+          {{ 'TEACHER.WALLET.AI_BALANCE.INSUFFICIENT_DESC_WALLET' | translate }}
+        </p>
+      }
     </div>
 
     <div class="card-bottom">
-      <button class="stripe-btn-outline" (click)="topUp.emit()">
+      <button class="stripe-btn-outline ai-topup-btn" (click)="topUp.emit()">
         <svg
           width="14"
           height="14"
@@ -61,7 +78,7 @@
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-        إضافة رصيد
+        {{ 'TEACHER.WALLET.AI_BALANCE.TOPUP_BTN' | translate }}
       </button>
     </div>
   </div>

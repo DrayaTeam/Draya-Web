@@ -6,7 +6,7 @@ import {
   OnInit,
   signal,
   DestroyRef,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -108,14 +108,14 @@ export class TeacherWalletComponent implements OnInit {
   onWithdrawalSuccess(): void {
     // Reload balance and transactions after successful withdrawal
     this.loadBalance();
-    
+
     // Slight delay to allow backend CQRS/database to sync the read model
     setTimeout(() => {
       if (this.transactionsComponent) {
         this.transactionsComponent.loadTransactions(1);
       }
     }, 1500);
-    
+
     this.toastService.success('نجاح', 'تم تقديم طلب السحب بنجاح. سيتم المراجعة من قبل الإدارة.');
   }
 }

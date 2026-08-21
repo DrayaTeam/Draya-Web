@@ -1,7 +1,7 @@
 // src/app/features/teacher/services/wallet.service.ts
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import {
   WalletBalance,
@@ -18,9 +18,20 @@ export class WalletService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiBaseUrl}/wallet`;
 
-  /** Retrieves the teacher's current wallet balance. */
+  // ─── Cached AI balance signal ─────────────────────────────────────────────
+  // Updated on every getBalance() call so other pages (e.g. generate-exam) can
+  // read the teacher's purchased (AI) balance without an extra HTTP round-trip.
+  private readonly _purchasedBalance = signal<number | null>(null);
+  /** Read-only purchased (AI) balance in EGP. `null` means not yet fetched. */
+  readonly purchasedBalance = this._purchasedBalance.asReadonly();
+
+  /** Retrieves the teacher's current wallet balance and updates the cached signal. */
   getBalance(): Observable<WalletBalance> {
-    return this.http.get<WalletBalance>(`${this.baseUrl}/balance`);
+    return this.http.get<WalletBalance>(`${this.baseUrl}/balance`).pipe(
+      tap((balance) => {
+        this._purchasedBalance.set(balance.purchasedBalance);
+      }),
+    );
   }
 
   /** Retrieves the teacher's wallet transaction history. */

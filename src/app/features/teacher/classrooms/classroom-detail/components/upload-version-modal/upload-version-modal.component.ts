@@ -4,7 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { finalize } from 'rxjs/operators';
 import { MaterialService } from '../../../../services/material.service';
-import { MaterialVersionDto, ClassroomMaterialDto } from '../../../../../../core/models/material.model';
+import {
+  MaterialVersionDto,
+  ClassroomMaterialDto,
+} from '../../../../../../core/models/material.model';
 import { TeacherModalComponent } from '../../../../components/teacher-modal/teacher-modal.component';
 
 @Component({
@@ -50,11 +53,11 @@ export class UploadVersionModalComponent {
   submit(): void {
     const mat = this.material();
     if (!mat) return;
-    
+
     this.fileError.set(null);
 
     const formData = new FormData();
-    
+
     if (mat.materialType === 'PDF' || mat.materialType === 'Video') {
       const file = this.selectedFile();
       if (!file) {
@@ -98,12 +101,12 @@ export class UploadVersionModalComponent {
         },
       });
   }
-  
+
   onCancel(): void {
     this.resetState();
     this.cancelUpload.emit();
   }
-  
+
   private resetState(): void {
     this.selectedFile.set(null);
     this.linkUrl.set('');

@@ -1,64 +1,87 @@
-<div class="tracker-page max-w-3xl w-full mx-auto p-4 md:p-12 mt-12">
-  <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 text-center relative overflow-hidden">
-    
+<div class="tracker-page mx-auto mt-12 w-full max-w-3xl p-4 md:p-12">
+  <div
+    class="relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-lg">
     <!-- Top decorative element -->
-    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#1B6D63] to-[#0f4f49]"></div>
+    <div
+      class="absolute top-0 left-0 h-2 w-full bg-gradient-to-r from-[#1B6D63] to-[#0f4f49]"></div>
 
     <!-- Error State -->
     @if (currentStatus() === Status.DataUnavailable || currentStatus() === Status.Failed) {
-      <div class="py-8 animate-fade-in">
-        <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div class="animate-fade-in py-8">
+        <div
+          class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-50 text-red-500">
           <i class="pi pi-exclamation-triangle text-4xl"></i>
         </div>
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">فشل الإنشاء</h2>
-        <p class="text-gray-600 mb-8 max-w-md mx-auto leading-relaxed">{{ errorMessage() }}</p>
-        <a routerLink="/teacher/exams/generate" class="inline-flex items-center gap-2 px-6 py-3 bg-[#1B6D63] text-white rounded-xl font-medium hover:bg-[#0f4f49] transition-all">
+        <h2 class="mb-4 text-2xl font-bold text-gray-900">فشل الإنشاء</h2>
+        <p class="mx-auto mb-8 max-w-md leading-relaxed text-gray-600">{{ errorMessage() }}</p>
+        <a
+          routerLink="/teacher/exams/generate"
+          class="inline-flex items-center gap-2 rounded-xl bg-[#1B6D63] px-6 py-3 font-medium text-white transition-all hover:bg-[#0f4f49]">
           <i class="pi pi-refresh"></i>
           المحاولة مرة أخرى
         </a>
       </div>
-    } 
+    }
     <!-- Success State -->
-    @else if (currentStatus() === Status.Completed || currentStatus() === Status.CompletedWithWarning) {
-      <div class="py-8 animate-fade-in">
-        <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+    @else if (
+      currentStatus() === Status.Completed || currentStatus() === Status.CompletedWithWarning
+    ) {
+      <div class="animate-fade-in py-8">
+        <div
+          class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-50 text-green-500">
           <i class="pi pi-check-circle text-4xl"></i>
         </div>
-        <h2 class="text-2xl font-bold text-gray-900 mb-2">اكتمل الإنشاء بنجاح!</h2>
-        <p class="text-gray-500 mb-8">جاري تحويلك لمعاينة الامتحان...</p>
+        <h2 class="mb-2 text-2xl font-bold text-gray-900">اكتمل الإنشاء بنجاح!</h2>
+        <p class="mb-8 text-gray-500">جاري تحويلك لمعاينة الامتحان...</p>
         <div class="flex justify-center">
-          <i class="pi pi-spinner pi-spin text-[#1B6D63] text-2xl"></i>
+          <i class="pi pi-spinner pi-spin text-2xl text-[#1B6D63]"></i>
         </div>
       </div>
-    } 
+    }
     <!-- Loading State -->
     @else {
       <div class="py-8">
         <div class="mb-8">
-          <div class="relative w-32 h-32 mx-auto mb-6">
-            <svg class="animate-spin w-full h-full text-[#1B6D63]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          <div class="relative mx-auto mb-6 h-32 w-32">
+            <svg
+              class="h-full w-full animate-spin text-[#1B6D63]"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24">
+              <circle
+                class="opacity-20"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
             <div class="absolute inset-0 flex items-center justify-center">
-              <i class="pi pi-sparkles text-[#1B6D63] text-3xl animate-pulse"></i>
+              <i class="pi pi-sparkles animate-pulse text-3xl text-[#1B6D63]"></i>
             </div>
           </div>
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">جاري العمل بالذكاء الاصطناعي</h2>
+          <h2 class="mb-2 text-2xl font-bold text-gray-900">جاري العمل بالذكاء الاصطناعي</h2>
           <p class="text-gray-500">يرجى الانتظار، قد تستغرق العملية بضع ثوانٍ...</p>
         </div>
 
         <!-- Progress Steps -->
-        <div class="max-w-md mx-auto space-y-4 text-right">
+        <div class="mx-auto max-w-md space-y-4 text-right">
           <!-- Retrieving step -->
-          <div class="flex items-center gap-4" [class.opacity-50]="currentStatus() < Status.Retrieving">
-            <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
-                 [class.bg-[#1B6D63]]="currentStatus() > Status.Retrieving"
-                 [class.text-white]="currentStatus() > Status.Retrieving"
-                 [class.bg-blue-100]="currentStatus() === Status.Retrieving"
-                 [class.text-blue-600]="currentStatus() === Status.Retrieving"
-                 [class.bg-gray-100]="currentStatus() < Status.Retrieving"
-                 [class.text-gray-400]="currentStatus() < Status.Retrieving">
+          <div
+            class="flex items-center gap-4"
+            [class.opacity-50]="currentStatus() < Status.Retrieving">
+            <div
+              class="flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold"
+              [class.bg-[#1B6D63]]="currentStatus() > Status.Retrieving"
+              [class.text-white]="currentStatus() > Status.Retrieving"
+              [class.bg-blue-100]="currentStatus() === Status.Retrieving"
+              [class.text-blue-600]="currentStatus() === Status.Retrieving"
+              [class.bg-gray-100]="currentStatus() < Status.Retrieving"
+              [class.text-gray-400]="currentStatus() < Status.Retrieving">
               @if (currentStatus() > Status.Retrieving) {
                 <i class="pi pi-check"></i>
               } @else {
@@ -68,20 +91,25 @@
             <div class="flex-1">
               <p class="font-medium text-gray-800">قراءة المواد التعليمية</p>
               @if (currentStatus() === Status.Retrieving) {
-                <p class="text-xs text-[#1B6D63] mt-1 animate-pulse">يتم الآن البحث في سياق الفصل...</p>
+                <p class="mt-1 animate-pulse text-xs text-[#1B6D63]">
+                  يتم الآن البحث في سياق الفصل...
+                </p>
               }
             </div>
           </div>
 
           <!-- Generating step -->
-          <div class="flex items-center gap-4" [class.opacity-50]="currentStatus() < Status.Generating">
-            <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
-                 [class.bg-[#1B6D63]]="currentStatus() > Status.Generating"
-                 [class.text-white]="currentStatus() > Status.Generating"
-                 [class.bg-blue-100]="currentStatus() === Status.Generating"
-                 [class.text-blue-600]="currentStatus() === Status.Generating"
-                 [class.bg-gray-100]="currentStatus() < Status.Generating"
-                 [class.text-gray-400]="currentStatus() < Status.Generating">
+          <div
+            class="flex items-center gap-4"
+            [class.opacity-50]="currentStatus() < Status.Generating">
+            <div
+              class="flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold"
+              [class.bg-[#1B6D63]]="currentStatus() > Status.Generating"
+              [class.text-white]="currentStatus() > Status.Generating"
+              [class.bg-blue-100]="currentStatus() === Status.Generating"
+              [class.text-blue-600]="currentStatus() === Status.Generating"
+              [class.bg-gray-100]="currentStatus() < Status.Generating"
+              [class.text-gray-400]="currentStatus() < Status.Generating">
               @if (currentStatus() > Status.Generating) {
                 <i class="pi pi-check"></i>
               } @else {
@@ -91,20 +119,25 @@
             <div class="flex-1">
               <p class="font-medium text-gray-800">صياغة الأسئلة</p>
               @if (currentStatus() === Status.Generating) {
-                <p class="text-xs text-[#1B6D63] mt-1 animate-pulse">يقوم النموذج ببناء الأسئلة المطلوبة...</p>
+                <p class="mt-1 animate-pulse text-xs text-[#1B6D63]">
+                  يقوم النموذج ببناء الأسئلة المطلوبة...
+                </p>
               }
             </div>
           </div>
 
           <!-- Validating step -->
-          <div class="flex items-center gap-4" [class.opacity-50]="currentStatus() < Status.Validating">
-            <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
-                 [class.bg-[#1B6D63]]="currentStatus() > Status.Validating"
-                 [class.text-white]="currentStatus() > Status.Validating"
-                 [class.bg-blue-100]="currentStatus() === Status.Validating"
-                 [class.text-blue-600]="currentStatus() === Status.Validating"
-                 [class.bg-gray-100]="currentStatus() < Status.Validating"
-                 [class.text-gray-400]="currentStatus() < Status.Validating">
+          <div
+            class="flex items-center gap-4"
+            [class.opacity-50]="currentStatus() < Status.Validating">
+            <div
+              class="flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold"
+              [class.bg-[#1B6D63]]="currentStatus() > Status.Validating"
+              [class.text-white]="currentStatus() > Status.Validating"
+              [class.bg-blue-100]="currentStatus() === Status.Validating"
+              [class.text-blue-600]="currentStatus() === Status.Validating"
+              [class.bg-gray-100]="currentStatus() < Status.Validating"
+              [class.text-gray-400]="currentStatus() < Status.Validating">
               @if (currentStatus() > Status.Validating) {
                 <i class="pi pi-check"></i>
               } @else {
@@ -114,13 +147,14 @@
             <div class="flex-1">
               <p class="font-medium text-gray-800">مراجعة وتوثيق</p>
               @if (currentStatus() === Status.Validating) {
-                <p class="text-xs text-[#1B6D63] mt-1 animate-pulse">التأكد من جودة الامتحان وملاءمته...</p>
+                <p class="mt-1 animate-pulse text-xs text-[#1B6D63]">
+                  التأكد من جودة الامتحان وملاءمته...
+                </p>
               }
             </div>
           </div>
         </div>
       </div>
     }
-
   </div>
 </div>

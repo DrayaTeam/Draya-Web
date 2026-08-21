@@ -12,7 +12,21 @@ export class GlobalErrorHandler implements ErrorHandler {
     console.error('Unhandled Exception Caught:', error);
 
     zone.run(() => {
-      const message = error instanceof Error ? error.message : String(error);
+      let message = 'An unexpected error occurred';
+      if (error instanceof Error) {
+        message = error.message;
+      } else if (typeof error === 'string') {
+        message = error;
+      } else if (typeof error === 'object' && error !== null && 'message' in error) {
+        message = String((error as Record<string, unknown>)['message']);
+      } else {
+        try {
+          message = JSON.stringify(error);
+        } catch {
+          message = String(error);
+        }
+      }
+
       router.navigate(['/error'], {
         skipLocationChange: true,
         state: { error: message },

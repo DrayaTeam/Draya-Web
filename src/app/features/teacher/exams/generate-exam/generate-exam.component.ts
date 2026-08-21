@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   inject,
   signal,
+  computed,
   OnInit,
   DestroyRef,
 } from '@angular/core';
@@ -16,11 +17,12 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { ClassroomService } from '../../services/classroom.service';
 import { SectionService } from '../../services/section.service';
 import { ExamGenerationService } from '../../services/exam-generation.service';
+import { WalletService } from '../../services/wallet.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { ClassroomDto } from '../../../../core/models/classroom.model';
 import { ClassroomSectionDto } from '../../../../core/models/section.model';
@@ -33,6 +35,7 @@ import {
 import { AuthService } from '../../../../features/auth/services/auth.service';
 
 import { Select } from 'primeng/select';
+import { TranslatePipe } from '@ngx-translate/core';
 
 export function futureDateValidator(control: AbstractControl): ValidationErrors | null {
   if (!control.value) return null;
@@ -44,7 +47,7 @@ export function futureDateValidator(control: AbstractControl): ValidationErrors 
 @Component({
   selector: 'draya-generate-exam',
   standalone: true,
-  imports: [ReactiveFormsModule, Select],
+  imports: [ReactiveFormsModule, Select, RouterLink, TranslatePipe],
   templateUrl: './generate-exam.component.html',
   styleUrl: './generate-exam.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,13 +58,23 @@ export class GenerateExamComponent implements OnInit {
   private readonly classroomService = inject(ClassroomService);
   private readonly sectionService = inject(SectionService);
   private readonly examGenService = inject(ExamGenerationService);
+  private readonly walletService = inject(WalletService);
   private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly isSubmitting = signal(false);
+  readonly isLoadingBalance = signal(false);
   readonly classrooms = signal<ClassroomDto[]>([]);
   readonly sections = signal<ClassroomSectionDto[]>([]);
+
+  /** Purchased (AI) balance from the shared WalletService signal */
+  readonly purchasedBalance = this.walletService.purchasedBalance;
+  /** True when balance is zero or not loaded — shows the warning banner */
+  readonly isLowAiBalance = computed(() => {
+    const bal = this.purchasedBalance();
+    return bal !== null && bal <= 0;
+  });
 
   readonly questionTypes: QuestionType[] = [
     'MCQ',
@@ -105,6 +118,15 @@ export class GenerateExamComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadClassrooms();
+    // Always fetch fresh wallet balance on init (to show accurate AI balance status bar)
+    this.isLoadingBalance.set(true);
+    this.walletService
+      .getBalance()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.isLoadingBalance.set(false),
+        error: () => this.isLoadingBalance.set(false),
+      });
 
     // Listen to classroom changes to load sections
     this.form
@@ -206,6 +228,10 @@ export class GenerateExamComponent implements OnInit {
       next: (res) => {
         this.toast.success('تم إرسال طلب توليد الامتحان بنجاح');
         this.isSubmitting.set(false);
+        // Refresh AI balance after successful generation (backend deducts it)
+        // We omit takeUntilDestroyed here because we want this HTTP call to complete
+        // even though we immediately navigate away (which destroys the component).
+        this.walletService.getBalance().subscribe();
         this.router.navigate(['/teacher/exams/generations', res.generationId, 'tracking']);
       },
       error: (err) => {

@@ -39,7 +39,7 @@ export class WithdrawalModalComponent {
   amount = signal<number | null>(null);
   isSubmitting = signal<boolean>(false);
   errorMessage = signal<string>('');
-  
+
   // Accounts State
   accounts = signal<PayoutAccount[]>([]);
   isLoadingAccounts = signal<boolean>(false);
@@ -49,9 +49,9 @@ export class WithdrawalModalComponent {
   activeAccount = computed(() => {
     if (this.targetAccount()) return this.targetAccount();
     if (this.selectedAccountId()) {
-      return this.accounts().find(a => a.id === this.selectedAccountId()) || null;
+      return this.accounts().find((a) => a.id === this.selectedAccountId()) || null;
     }
-    return this.accounts().find(a => a.isDefault) || this.accounts()[0] || null;
+    return this.accounts().find((a) => a.isDefault) || this.accounts()[0] || null;
   });
 
   constructor() {
@@ -67,9 +67,10 @@ export class WithdrawalModalComponent {
 
   loadAccounts(): void {
     if (this.targetAccount()) return; // No need to load if parent passed one
-    
+
     this.isLoadingAccounts.set(true);
-    this.walletService.getPayoutAccounts()
+    this.walletService
+      .getPayoutAccounts()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
@@ -79,7 +80,7 @@ export class WithdrawalModalComponent {
         error: () => {
           this.isLoadingAccounts.set(false);
           // Just fail silently for now, activeAccount will be null
-        }
+        },
       });
   }
 

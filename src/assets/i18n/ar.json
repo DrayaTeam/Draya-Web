@@ -440,7 +440,7 @@
       "ACTIONS": {
         "TITLE": "إجراءات سريعة",
         "CREATE_AI_EXAM": "إنشاء امتحان بـ AI",
-        "NEW_LECTURE": "محاضرة جديدة",
+        "NEW_LECTURE": "انشاء فصل جديد",
         "FOLLOWUP_STUDENTS": "متابعة الطلبة",
         "REPORTS": "التقارير"
       },
@@ -531,6 +531,23 @@
       "RATINGS": "تقييم",
       "ALL_REVIEWS": "أحدث التقييمات",
       "ANONYMOUS": "طالب غير معروف"
+    },
+    "WALLET": {
+      "AI_BALANCE": {
+        "LOADING": "جاري تحميل رصيد الذكاء الاصطناعي...",
+        "INSUFFICIENT_TITLE": "رصيد الذكاء الاصطناعي غير كافٍ",
+        "CURRENT_BALANCE": "رصيدك الحالي:",
+        "INSUFFICIENT_DESC_EXAM": "— لا يمكن إنشاء امتحان بدون رصيد كافٍ في محفظتك. قم بشحن رصيدك أولاً.",
+        "TOPUP_BTN": "شحن رصيد AI",
+        "AVAILABLE_BALANCE": "رصيد AI المتاح:",
+        "CARD_TITLE": "رصيد الذكاء الاصطناعي",
+        "LOW_BADGE": "رصيد منخفض ⚠️",
+        "PLATFORM_DEDICATED": "مخصص للمنصة",
+        "INSUFFICIENT_DESC_WALLET": "رصيدك غير كافٍ لتوليد امتحان بالذكاء الاصطناعي. قم بشحن رصيدك لمواصلة الاستخدام.",
+        "EARNED_BALANCE_TITLE": "أرباح الكورسات المتاحة",
+        "AVAILABLE_FOR_WITHDRAWAL": "متاح للسحب",
+        "WITHDRAW_INSTAPAY": "سحب إلى Instapay"
+      }
     }
   },
   "STUDENT": {

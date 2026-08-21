@@ -48,7 +48,6 @@ export class ClassroomQaComponent {
     return name.trim().charAt(0) || 'م';
   });
 
-
   readonly questions = signal<QuestionDto[]>([]);
   readonly isLoading = signal<boolean>(false);
 

@@ -7,30 +7,6 @@
       </span>
     </div>
 
-    <!-- Time Range Switcher -->
-    <div class="time-range-switcher">
-      <button
-        type="button"
-        [class.active]="timeRange() === 'week'"
-        (click)="rangeChange.emit('week')"
-        class="range-btn">
-        {{ 'TEACHER.DASHBOARD.CHART.RANGE_WEEK' | translate }}
-      </button>
-      <button
-        type="button"
-        [class.active]="timeRange() === 'month'"
-        (click)="rangeChange.emit('month')"
-        class="range-btn">
-        {{ 'TEACHER.DASHBOARD.CHART.RANGE_MONTH' | translate }}
-      </button>
-      <button
-        type="button"
-        [class.active]="timeRange() === 'quarter'"
-        (click)="rangeChange.emit('quarter')"
-        class="range-btn">
-        {{ 'TEACHER.DASHBOARD.CHART.RANGE_QUARTER' | translate }}
-      </button>
-    </div>
   </div>
 
   <!-- Chart Metrics Highlights Bar -->
@@ -72,23 +48,44 @@
       </defs>
 
       <polygon
-        points="60,160 160,150 260,165 360,140 460,155 560,130 560,180 60,180"
+        [attr.points]="submissionsPolygon()"
         fill="url(#subGrad)" />
 
       <path
-        d="M 60 160 Q 110 150, 160 150 T 260 165 T 360 140 T 460 155 T 560 130"
+        [attr.d]="submissionsPath()"
         fill="none"
         stroke="#1B6D63"
         stroke-width="3"
         stroke-linecap="round" />
 
       <path
-        d="M 60 85 Q 160 80, 260 82 T 360 75 T 460 70 T 560 65"
+        [attr.d]="averagePath()"
         fill="none"
         stroke="#52B6A8"
         stroke-width="2.5"
         stroke-dasharray="6,4"
         stroke-linecap="round" />
+        
+      <!-- Data Point Circles -->
+      @for (pt of submissionCircles(); track $index) {
+        <circle
+          [attr.cx]="pt.x"
+          [attr.cy]="pt.y"
+          r="4"
+          fill="#fff"
+          stroke="#1B6D63"
+          stroke-width="2" />
+      }
+      
+      @for (pt of averageCircles(); track $index) {
+        <circle
+          [attr.cx]="pt.x"
+          [attr.cy]="pt.y"
+          r="4"
+          fill="#fff"
+          stroke="#52B6A8"
+          stroke-width="2" />
+      }
     </svg>
 
     <div class="x-axis-labels">

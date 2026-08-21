@@ -1,5 +1,10 @@
 import { Injectable, inject, signal, OnDestroy } from '@angular/core';
-import { HubConnection, HubConnectionBuilder, LogLevel, HttpTransportType } from '@microsoft/signalr';
+import {
+  HubConnection,
+  HubConnectionBuilder,
+  LogLevel,
+  HttpTransportType,
+} from '@microsoft/signalr';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../auth/services/auth.service';
 import { GenerationStatus } from '../../../core/models/exam-generation.model';
@@ -13,15 +18,15 @@ export interface GenerationProgressDto {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ExamHubService implements OnDestroy {
   private readonly authService = inject(AuthService);
   private connection: HubConnection | null = null;
-  
+
   private readonly _progress = signal<GenerationProgressDto | null>(null);
   private readonly _isConnected = signal<boolean>(false);
-  
+
   readonly progress = this._progress.asReadonly();
   readonly isConnected = this._isConnected.asReadonly();
 
@@ -36,15 +41,15 @@ export class ExamHubService implements OnDestroy {
     }
 
     const hubUrl = environment.examHubUrl;
-    
-    // In dev mode, we might be hitting a proxied /hubs endpoint. 
+
+    // In dev mode, we might be hitting a proxied /hubs endpoint.
     // SignalR usually works fine with relative URLs if the proxy is configured.
     // If not, we might need to prepend window.location.origin, but relative usually works.
 
     this.connection = new HubConnectionBuilder()
       .withUrl(hubUrl, {
         accessTokenFactory: () => this.authService.accessToken() || '',
-        transport: HttpTransportType.LongPolling // Forced due to backend 401 on WebSockets
+        transport: HttpTransportType.LongPolling, // Forced due to backend 401 on WebSockets
       })
       .withAutomaticReconnect()
       .configureLogging(LogLevel.Information)

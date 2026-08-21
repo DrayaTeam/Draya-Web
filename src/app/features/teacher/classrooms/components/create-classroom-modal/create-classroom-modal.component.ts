@@ -89,8 +89,8 @@ export class CreateClassroomModalComponent implements OnInit {
         this.imagePreview.set(null);
         if (this.form) {
           this.form.reset({ price: 0 });
-    this.selectedImage.set(null);
-    this.imagePreview.set(null); // Default price to 0
+          this.selectedImage.set(null);
+          this.imagePreview.set(null); // Default price to 0
         }
       }
     });
@@ -164,13 +164,12 @@ export class CreateClassroomModalComponent implements OnInit {
       });
   }
 
-  
   onImageSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
       this.selectedImage.set(file);
-      
+
       const reader = new FileReader();
       reader.onload = (e) => this.imagePreview.set(e.target?.result as string);
       reader.readAsDataURL(file);
@@ -208,18 +207,24 @@ export class CreateClassroomModalComponent implements OnInit {
       next: (res) => {
         const file = this.selectedImage();
         if (file) {
-          this.classroomService.uploadClassroomImage(res.classroomId, file).pipe(
-            finalize(() => {
-              this.isSubmitting.set(false);
-              this.toastService.success('نجاح', 'تم إنشاء المرحلة الدراسية وصورة الغلاف بنجاح!');
-              this.created.emit();
-              this.close();
-            })
-          ).subscribe({
-            error: () => {
-              this.toastService.warning('تحذير', 'تم إنشاء المرحلة الدراسية ولكن فشل رفع الصورة.');
-            }
-          });
+          this.classroomService
+            .uploadClassroomImage(res.classroomId, file)
+            .pipe(
+              finalize(() => {
+                this.isSubmitting.set(false);
+                this.toastService.success('نجاح', 'تم إنشاء المرحلة الدراسية وصورة الغلاف بنجاح!');
+                this.created.emit();
+                this.close();
+              }),
+            )
+            .subscribe({
+              error: () => {
+                this.toastService.warning(
+                  'تحذير',
+                  'تم إنشاء المرحلة الدراسية ولكن فشل رفع الصورة.',
+                );
+              },
+            });
         } else {
           this.isSubmitting.set(false);
           this.toastService.success('نجاح', 'تم إنشاء المرحلة الدراسية بنجاح!');
