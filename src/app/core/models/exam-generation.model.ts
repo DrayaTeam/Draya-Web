@@ -30,6 +30,8 @@ export interface GenerateExamRequest {
   questionRequirements: QuestionRequirement[];
   teacherInstructions: string;
   idempotencyKey: string;
+  teacherId: string;
+  isPracticeReview: boolean;
 }
 
 export interface GenerateExamResponse {

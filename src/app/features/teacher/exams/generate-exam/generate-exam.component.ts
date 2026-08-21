@@ -10,6 +10,7 @@ import { ToastService } from '../../../../core/services/toast.service';
 import { ClassroomDto } from '../../../../core/models/classroom.model';
 import { ClassroomSectionDto } from '../../../../core/models/section.model';
 import { QuestionType, DifficultyLevel, GenerateExamRequest, QuestionRequirement } from '../../../../core/models/exam-generation.model';
+import { AuthService } from '../../../../features/auth/services/auth.service';
 
 import { Select } from 'primeng/select';
 
@@ -23,6 +24,7 @@ import { Select } from 'primeng/select';
 })
 export class GenerateExamComponent implements OnInit {
   private readonly fb = inject(NonNullableFormBuilder);
+  private readonly authService = inject(AuthService);
   private readonly classroomService = inject(ClassroomService);
   private readonly sectionService = inject(SectionService);
   private readonly examGenService = inject(ExamGenerationService);
@@ -138,7 +140,9 @@ export class GenerateExamComponent implements OnInit {
       ...formValue,
       startDate: new Date(formValue.startDate).toISOString(),
       endDate: formValue.endDate ? new Date(formValue.endDate).toISOString() : undefined,
-      questionRequirements: formValue.questionRequirements as QuestionRequirement[]
+      questionRequirements: formValue.questionRequirements as QuestionRequirement[],
+      teacherId: this.authService.currentUser()?.userId || '',
+      isPracticeReview: true // Ensure this matches backend requirements
     };
 
     this.examGenService.generateExam(payload).subscribe({
