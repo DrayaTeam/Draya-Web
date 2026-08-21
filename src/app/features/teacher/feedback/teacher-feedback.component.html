@@ -42,7 +42,13 @@
           </div>
           <!-- Click outside overlay to close -->
           @if (isDropdownOpen()) {
-            <div class="dropdown-overlay" (click)="isDropdownOpen.set(false)"></div>
+            <div
+              class="dropdown-overlay"
+              (click)="isDropdownOpen.set(false)"
+              (keydown.escape)="isDropdownOpen.set(false)"
+              tabindex="-1"
+              role="button"
+              aria-label="Close dropdown"></div>
           }
 
         }

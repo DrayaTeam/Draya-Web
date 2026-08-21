@@ -148,9 +148,11 @@ export class GenerateExamComponent implements OnInit {
     const durationMinutes = Number(formValue.durationMinutes);
     const allowedAttempts = Number(formValue.allowedAttempts);
     
-    const questionReqs = (formValue.questionRequirements as any[]).map(req => ({
+    const questionReqs = (
+      formValue.questionRequirements as { type: 'MCQ' | 'Essay'; count: number }[]
+    ).map((req) => ({
       type: req.type,
-      count: Number(req.count)
+      count: Number(req.count),
     })) as QuestionRequirement[];
 
     // Ensure teacherInstructions isn't sent as undefined, send empty string to satisfy backend DTO

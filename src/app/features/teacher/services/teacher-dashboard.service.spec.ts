@@ -1,4 +1,5 @@
-// src/app/features/teacher/services/teacher-dashboard.service.spec.ts
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { TeacherDashboardService } from './teacher-dashboard.service';
 
@@ -7,7 +8,7 @@ describe('TeacherDashboardService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [TeacherDashboardService],
+      providers: [TeacherDashboardService, provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(TeacherDashboardService);
   });
