@@ -23,16 +23,12 @@ export class StudentExamResultComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
 
   readonly resultReport = this.examService.examResult;
+  private attemptId: string | null = null;
 
   ngOnInit(): void {
-    const attemptIdParam = this.route.snapshot.queryParams['attemptId'];
-    if (attemptIdParam) {
-      this.examService.fetchAttemptResults(attemptIdParam).subscribe();
-
-      // Poll once after 2.5s to ensure AI background grading has updated
-      setTimeout(() => {
-        this.examService.fetchAttemptResults(attemptIdParam).subscribe();
-      }, 2500);
+    this.attemptId = this.route.snapshot.queryParams['attemptId'] || null;
+    if (this.attemptId) {
+      this.examService.fetchAttemptResults(this.attemptId).subscribe();
     } else {
       const scoreParam = this.route.snapshot.queryParams['score'];
       if (scoreParam !== undefined && scoreParam !== null) {
@@ -48,9 +44,22 @@ export class StudentExamResultComponent implements OnInit {
             scorePercentage: numericScore,
             gradeLabel,
             isPassed: numericScore >= 50,
+            isGradingPending: false,
           }));
         }
       }
+    }
+  }
+
+  onRecheckResult(): void {
+    if (this.attemptId) {
+      this.toastService.info('جارٍ التحقق...', 'يتم الآن فحص أحدث تقرير تصحيح من الخادم.');
+      this.examService.isGradingInProgress.set(true);
+      this.examService.gradingStage.set('ai_evaluating');
+      this.examService.gradingProgressPercent.set(50);
+      this.examService.pollAttemptResultsDirectly(this.attemptId, 3);
+    } else {
+      this.toastService.warning('تنبيه', 'لا يوجد معرف محاولة للتحقق منه.');
     }
   }
 
@@ -64,3 +73,4 @@ export class StudentExamResultComponent implements OnInit {
     this.router.navigate(['/student/exams']);
   }
 }
+

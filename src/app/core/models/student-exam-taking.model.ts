@@ -137,6 +137,7 @@ export interface ExamReviewItem {
   readonly maxScore?: number;
   readonly isAiGraded?: boolean;
   readonly needsTeacherReview?: boolean;
+  readonly isPendingGrading?: boolean;
 }
 
 export interface ExamResultReport {
@@ -151,4 +152,7 @@ export interface ExamResultReport {
   readonly submittedAt: string;
   readonly weaknessTopics: readonly ExamWeaknessTopic[];
   readonly reviewQuestions: readonly ExamReviewItem[];
+  readonly isGradingPending?: boolean;
+  readonly isGradingFailed?: boolean;
+  readonly gradingStatusMessage?: string;
 }
