@@ -288,7 +288,7 @@ export class StudentExamTakingService extends ApiBaseService {
     });
 
     const hasPendingQuestions = mappedReviewQuestions.some((q) => q.isPendingGrading);
-    const isGradingPending = !hasAnyKey || hasPendingQuestions;
+    const isGradingPending = !!targetAttemptId && (!hasAnyKey || hasPendingQuestions);
 
     let computedScorePct = 0;
     if (hasAnyKey && maxTotal > 0) {

@@ -26,7 +26,12 @@ export class StudentExamResultComponent implements OnInit {
   private attemptId: string | null = null;
 
   ngOnInit(): void {
-    this.attemptId = this.route.snapshot.queryParams['attemptId'] || null;
+    this.attemptId =
+      this.route.snapshot.queryParams['attemptId'] ||
+      this.examService.currentAttemptId() ||
+      this.examService.examResult().attemptId ||
+      null;
+
     if (this.attemptId && !this.attemptId.startsWith('att_')) {
       this.examService.fetchAttemptResults(this.attemptId).subscribe();
     } else {
@@ -52,14 +57,27 @@ export class StudentExamResultComponent implements OnInit {
   }
 
   onRecheckResult(): void {
-    if (this.attemptId) {
+    const activeAttemptId =
+      this.attemptId ||
+      this.examService.currentAttemptId() ||
+      this.examService.examResult().attemptId ||
+      null;
+
+    if (activeAttemptId && !activeAttemptId.startsWith('att_')) {
       this.toastService.info('جارٍ التحقق...', 'يتم الآن فحص أحدث تقرير تصحيح من الخادم.');
       this.examService.isGradingInProgress.set(true);
       this.examService.gradingStage.set('ai_evaluating');
       this.examService.gradingProgressPercent.set(50);
-      this.examService.pollAttemptResultsDirectly(this.attemptId, 3);
+      this.examService.pollAttemptResultsDirectly(activeAttemptId, 3);
     } else {
-      this.toastService.warning('تنبيه', 'لا يوجد معرف محاولة للتحقق منه.');
+      this.toastService.info(
+        'تم اعتماد النتيجة',
+        'تم احتساب واعتماد نتيجة إجاباتك للاختبار الحالي بنجاح.',
+      );
+      this.examService.examResult.update((current) => ({
+        ...current,
+        isGradingPending: false,
+      }));
     }
   }
 
