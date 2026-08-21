@@ -6,6 +6,7 @@ import { tap, finalize } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
   ClassroomDto,
+  CreateClassroomRequest,
   UpdateClassroomRequest,
   ClassroomTypeDto,
   GradeLevelDto,
@@ -13,6 +14,7 @@ import {
   ClassroomDtoPagedResult,
 } from '../../../core/models/classroom.model';
 import { StudentRosterItemDtoPagedResult } from '../../../core/models/student-roster.model';
+import { ClassroomFeedbackSummaryDto } from '../../../core/models/student-courses.model';
 
 export interface ClassroomFilters {
   pageNumber: number;
@@ -73,7 +75,7 @@ export class ClassroomService {
   }
 
   /** Creates a new classroom */
-  createClassroom(payload: import('../../../core/models/classroom.model').CreateClassroomRequest): Observable<ClassroomDto> {
+  createClassroom(payload: CreateClassroomRequest): Observable<ClassroomDto> {
     return this.http.post<ClassroomDto>(this.baseUrl, payload);
   }
 
@@ -162,5 +164,19 @@ export class ClassroomService {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post<{ imageUrl: string }>(`${this.baseUrl}/${classroomId}/image`, formData);
+  }
+
+  /** Retrieves the paginated feedback summary for a classroom */
+  getClassroomFeedback(
+    classroomId: string,
+    pageNumber: number,
+    pageSize: number,
+  ): Observable<ClassroomFeedbackSummaryDto> {
+    const params = new URLSearchParams();
+    params.set('page', pageNumber.toString());
+    params.set('pageSize', pageSize.toString());
+    return this.http.get<ClassroomFeedbackSummaryDto>(
+      `${this.baseUrl}/${classroomId}/feedback?${params.toString()}`,
+    );
   }
 }

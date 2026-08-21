@@ -4,8 +4,13 @@
     (reviewAiClick)="handleReviewAiReports()"
     (notificationsClick)="handleNotificationClick()" />
 
-  <!-- AI Action Banner Card -->
-  <draya-teacher-ai-reports-banner [aiAlert]="aiAlert()" (reviewClick)="handleReviewAiReports()" />
+  <!-- Optional AI Action Banner -->
+  @if (aiAlert()) {
+    <draya-teacher-ai-reports-banner
+      [aiAlert]="aiAlert()!"
+      (reviewClick)="handleReviewAiReports()">
+    </draya-teacher-ai-reports-banner>
+  }
 
   <!-- 4 KPI Stat Cards Grid -->
   <draya-teacher-kpi-grid [stats]="kpiStats()" />

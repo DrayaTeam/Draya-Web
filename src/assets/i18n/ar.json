@@ -131,7 +131,15 @@
     "EDIT": "تعديل",
     "BACK": "رجوع",
     "CLOSE": "إغلاق",
-    "NO_DATA": "لا توجد بيانات متاحة"
+    "NO_DATA": "لا توجد بيانات متاحة",
+    "NO_DATA_DESC": "لا توجد عناصر لعرضها حالياً."
+  },
+  "STUDENT": {
+    "CHANNEL": {
+      "NO_QUESTIONS_TITLE": "لا توجد أسئلة حتى الآن في هذه المجموعة",
+      "NO_QUESTIONS_DESC": "كن أول من يطرح استفساراً على المعلم والزملاء في هذه الشعبة الدراسية!",
+      "ASK_FIRST_QUESTION": "طرح أول سؤال الآن 💬"
+    }
   },
   "common": {
     "loading": "جارٍ التحميل...",
@@ -521,6 +529,16 @@
       "CREATE_SUCCESS": "تم إنشاء القسم بنجاح.",
       "UPDATE_SUCCESS": "تم تحديث القسم بنجاح.",
       "DELETE_SUCCESS": "تم حذف القسم بنجاح."
+    },
+    "FEEDBACK": {
+      "CLASSROOMS": "الفصول الدراسية",
+      "NO_CLASSROOMS": "لا توجد فصول دراسية متاحة.",
+      "SELECT_CLASSROOM_PROMPT": "اختر فصلاً دراسياً",
+      "REVIEWS_FOR": "آراء وتقييمات الطلاب",
+      "NO_FEEDBACK_YET": "لا توجد تقييمات حتى الآن",
+      "RATINGS": "تقييم",
+      "ALL_REVIEWS": "أحدث التقييمات",
+      "ANONYMOUS": "طالب غير معروف"
     }
   },
   "STUDENT": {

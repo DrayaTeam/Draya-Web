@@ -298,14 +298,13 @@
           </div>
         </article>
       } @empty {
-        <div class="empty-channel-box">
-          <div class="empty-icon">💬</div>
-          <h3>لا توجد أسئلة حتى الآن في هذه المجموعة</h3>
-          <p>كن أول من يطرح استفساراً على المعلم والزملاء في هذه الشعبة الدراسية!</p>
-          <button type="button" class="btn-ask-secondary" (click)="openAskModal()">
-            طرح أول سؤال الآن
-          </button>
-        </div>
+        <draya-empty-state
+          icon="pi pi-comments"
+          titleKey="STUDENT.CHANNEL.NO_QUESTIONS_TITLE"
+          descriptionKey="STUDENT.CHANNEL.NO_QUESTIONS_DESC"
+          primaryActionLabelKey="STUDENT.CHANNEL.ASK_FIRST_QUESTION"
+          (primaryActionClick)="openAskModal()">
+        </draya-empty-state>
       }
     }
   </section>

@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators, FormArray, FormGroup } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators, FormArray, FormGroup, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ClassroomService } from '../../services/classroom.service';
@@ -10,8 +10,16 @@ import { ToastService } from '../../../../core/services/toast.service';
 import { ClassroomDto } from '../../../../core/models/classroom.model';
 import { ClassroomSectionDto } from '../../../../core/models/section.model';
 import { QuestionType, DifficultyLevel, GenerateExamRequest, QuestionRequirement } from '../../../../core/models/exam-generation.model';
+import { AuthService } from '../../../../features/auth/services/auth.service';
 
 import { Select } from 'primeng/select';
+
+export function futureDateValidator(control: AbstractControl): ValidationErrors | null {
+  if (!control.value) return null;
+  const selectedDate = new Date(control.value).getTime();
+  const now = new Date().getTime();
+  return selectedDate <= now ? { futureDate: true } : null;
+}
 
 @Component({
   selector: 'draya-generate-exam',
@@ -23,6 +31,7 @@ import { Select } from 'primeng/select';
 })
 export class GenerateExamComponent implements OnInit {
   private readonly fb = inject(NonNullableFormBuilder);
+  private readonly authService = inject(AuthService);
   private readonly classroomService = inject(ClassroomService);
   private readonly sectionService = inject(SectionService);
   private readonly examGenService = inject(ExamGenerationService);
@@ -57,7 +66,7 @@ export class GenerateExamComponent implements OnInit {
     topic: ['', [Validators.required, Validators.maxLength(200)]],
     difficultyLevel: ['Medium' as DifficultyLevel, Validators.required],
     durationMinutes: [60, [Validators.required, Validators.min(1)]],
-    startDate: ['', Validators.required],
+    startDate: ['', [Validators.required, futureDateValidator]],
     endDate: [''],
     allowedAttempts: [1, [Validators.required, Validators.min(1)]],
     teacherInstructions: ['', Validators.maxLength(1000)],
@@ -94,8 +103,18 @@ export class GenerateExamComponent implements OnInit {
 
   private loadSections(classroomId: string): void {
     this.sectionService.getSections(classroomId).subscribe({
-      next: (res) => this.sections.set(res),
-      error: () => this.toast.error('فشل في تحميل أقسام الفصل'),
+      next: (res) => {
+        const mappedSections = res.map(s => {
+          const hasMaterial = (s.documents && s.documents.length > 0) || (s.videos && s.videos.length > 0);
+          return {
+            ...s,
+            title: hasMaterial ? s.title : `${s.title} (غير متاح - لا يوجد محتوى)`,
+            disabled: !hasMaterial
+          };
+        });
+        this.sections.set(mappedSections);
+      },
+      error: () => this.toast.error('حدث خطأ أثناء تحميل الوحدات'),
     });
   }
 
@@ -124,21 +143,59 @@ export class GenerateExamComponent implements OnInit {
 
     this.isSubmitting.set(true);
     const formValue = this.form.getRawValue();
+    
+    // Ensure numeric fields are actually parsed as numbers
+    const durationMinutes = Number(formValue.durationMinutes);
+    const allowedAttempts = Number(formValue.allowedAttempts);
+    
+    const questionReqs = (
+      formValue.questionRequirements as { type: 'MCQ' | 'Essay'; count: number }[]
+    ).map((req) => ({
+      type: req.type,
+      count: Number(req.count),
+    })) as QuestionRequirement[];
+
+    // Ensure teacherInstructions isn't sent as undefined, send empty string to satisfy backend DTO
+    const teacherInstructions = formValue.teacherInstructions || '';
+
     const payload: Omit<GenerateExamRequest, 'idempotencyKey'> = {
       ...formValue,
+      durationMinutes,
+      allowedAttempts,
       startDate: new Date(formValue.startDate).toISOString(),
       endDate: formValue.endDate ? new Date(formValue.endDate).toISOString() : undefined,
-      questionRequirements: formValue.questionRequirements as QuestionRequirement[]
+      questionRequirements: questionReqs,
+      teacherInstructions,
+      teacherId: this.authService.currentUser()?.userId || '',
+      isPracticeReview: true // Ensure this matches backend requirements
     };
+
+    console.log('[Generate Exam] PAYLOAD:', payload);
 
     this.examGenService.generateExam(payload).subscribe({
       next: (res) => {
-        this.toast.success('تم إرسال طلب إنشاء الامتحان بنجاح');
+        this.toast.success('تم إرسال طلب توليد الامتحان بنجاح');
         this.isSubmitting.set(false);
         this.router.navigate(['/teacher/exams/generations', res.generationId, 'tracking']);
       },
       error: (err) => {
-        this.toast.error(err?.error?.message || 'فشل في إنشاء الامتحان');
+        console.error('[Generate Exam] API Error:', err);
+        let errorMessage = 'حدث خطأ أثناء إرسال الطلب';
+        if (err?.error?.errors) {
+           // ASP.NET Core validation errors
+           const firstErrorKey = Object.keys(err.error.errors)[0];
+           if (firstErrorKey) {
+             errorMessage = `${firstErrorKey}: ${err.error.errors[firstErrorKey][0]}`;
+           }
+        } else if (err?.error?.detail) {
+           errorMessage = err.error.detail;
+        } else if (err?.error?.message) {
+           errorMessage = err.error.message;
+        } else if (typeof err?.error === 'string') {
+           errorMessage = err.error;
+        }
+
+        this.toast.error(errorMessage);
         this.isSubmitting.set(false);
       },
     });
