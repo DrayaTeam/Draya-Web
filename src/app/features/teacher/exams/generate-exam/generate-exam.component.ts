@@ -153,8 +153,8 @@ export class GenerateExamComponent implements OnInit {
       count: Number(req.count)
     })) as QuestionRequirement[];
 
-    // Ensure teacherInstructions isn't sent as empty string if backend hates it
-    const teacherInstructions = formValue.teacherInstructions ? formValue.teacherInstructions : undefined;
+    // Ensure teacherInstructions isn't sent as undefined, send empty string to satisfy backend DTO
+    const teacherInstructions = formValue.teacherInstructions || '';
 
     const payload: Omit<GenerateExamRequest, 'idempotencyKey'> = {
       ...formValue,
