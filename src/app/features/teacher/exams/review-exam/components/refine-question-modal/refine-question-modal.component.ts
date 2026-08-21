@@ -1,9 +1,10 @@
 import { Component, ChangeDetectionStrategy, inject, signal, input, output } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ExamQuestionDto, UpdateQuestionRequest } from '../../../../../../core/models/teacher-exam.model';
+import {
+  ExamQuestionDto,
+} from '../../../../../../core/models/teacher-exam.model';
 import { TeacherExamService } from '../../../../services/teacher-exam.service';
 import { ToastService } from '../../../../../../core/services/toast.service';
-import { switchMap, map } from 'rxjs';
 
 @Component({
   selector: 'draya-refine-question-modal',
@@ -28,7 +29,7 @@ export class RefineQuestionModalComponent {
   readonly isSubmitting = signal(false);
 
   readonly form = this.fb.group({
-    instruction: ['', [Validators.required, Validators.maxLength(500)]]
+    instruction: ['', [Validators.required, Validators.maxLength(500)]],
   });
 
   closeModal(): void {
@@ -48,25 +49,7 @@ export class RefineQuestionModalComponent {
     this.isSubmitting.set(true);
     const payload = this.form.getRawValue();
 
-    this.examService.refineQuestion(this.examId(), currentQuestion.id, payload).pipe(
-      switchMap(generatedQuestion => {
-        const updatePayload: UpdateQuestionRequest = {
-          text: generatedQuestion.text,
-          type: generatedQuestion.type,
-          difficulty: generatedQuestion.difficulty,
-          rubric: generatedQuestion.rubric || '',
-          options: (generatedQuestion.options || []).map((opt: { text?: string }, index: number) => ({
-            text: opt.text || '',
-            isCorrect: index === generatedQuestion.correctAnswerIndex
-          }))
-        };
-        // Call the PUT endpoint to save it to the database
-        return this.examService.updateQuestion(this.examId(), currentQuestion.id, updatePayload).pipe(
-          // Return the generatedQuestion so the UI can update itself
-          map(() => generatedQuestion)
-        );
-      })
-    ).subscribe({
+    this.examService.refineQuestion(this.examId(), currentQuestion.id, payload).subscribe({
       next: (generatedQuestion) => {
         this.isSubmitting.set(false);
         this.form.reset();
@@ -76,9 +59,11 @@ export class RefineQuestionModalComponent {
       error: (err) => {
         console.error('=== BACKEND ERROR DETAILS ===', err);
         console.error('RAW ERROR BODY:', err?.error);
-        this.toast.error(err?.message || err?.error?.title || 'فشل التحسين (Bad Request).');
+        const backendErrorMsg =
+          err?.error?.message || err?.error?.title || err?.message || 'فشل التحسين (Bad Request).';
+        this.toast.error(backendErrorMsg);
         this.isSubmitting.set(false);
-      }
+      },
     });
   }
 }
