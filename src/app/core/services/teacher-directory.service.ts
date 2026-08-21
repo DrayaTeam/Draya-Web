@@ -131,7 +131,10 @@ export class TeacherDirectoryService extends ApiBaseService {
               subjectCategory: cat,
               subjectName: realSubject,
               rating: 5.0,
-              avatarUrl: t.pictureUrl || TEACHER_AVATARS[idx % TEACHER_AVATARS.length],
+              avatarUrl:
+                t.pictureUrl && t.pictureUrl.trim().length > 0
+                  ? t.pictureUrl
+                  : 'assets/images/default-teacher-avatar.svg',
               isVerified: true,
               bio: bio,
               packagesCount: 1,
