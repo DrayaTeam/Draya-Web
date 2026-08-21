@@ -161,6 +161,8 @@ export class GenerateExamComponent implements OnInit {
       isPracticeReview: true // Ensure this matches backend requirements
     };
 
+    console.log('[Generate Exam] PAYLOAD:', payload);
+
     this.examGenService.generateExam(payload).subscribe({
       next: (res) => {
         this.toast.success('تم إرسال طلب توليد الامتحان بنجاح');
@@ -168,17 +170,20 @@ export class GenerateExamComponent implements OnInit {
         this.router.navigate(['/teacher/exams/generations', res.generationId, 'tracking']);
       },
       error: (err) => {
+        console.error('[Generate Exam] API Error:', err);
         let errorMessage = 'حدث خطأ أثناء إرسال الطلب';
         if (err?.error?.errors) {
            // ASP.NET Core validation errors
            const firstErrorKey = Object.keys(err.error.errors)[0];
            if (firstErrorKey) {
-             errorMessage = err.error.errors[firstErrorKey][0];
+             errorMessage = `${firstErrorKey}: ${err.error.errors[firstErrorKey][0]}`;
            }
         } else if (err?.error?.detail) {
            errorMessage = err.error.detail;
         } else if (err?.error?.message) {
            errorMessage = err.error.message;
+        } else if (typeof err?.error === 'string') {
+           errorMessage = err.error;
         }
 
         this.toast.error(errorMessage);
