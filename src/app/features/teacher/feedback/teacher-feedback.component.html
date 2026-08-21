@@ -1,130 +1,124 @@
-<div class="page-wrapper">
-  <div class="bento-container">
-    
-    <!-- Left/Sidebar Pane (Classrooms) -->
-    <aside class="bento-sidebar">
-      <div class="sidebar-header">
-        <h2 class="title">{{ 'TEACHER.FEEDBACK.CLASSROOMS' | translate }}</h2>
-        <div class="badge">{{ classrooms().length }}</div>
-      </div>
-
-      <div class="classroom-list">
-        @if (isLoadingClassrooms()) {
-          @for (i of [1,2,3,4]; track i) {
-            <div class="skeleton-item shimmer"></div>
-          }
-        } @else if (classrooms().length === 0) {
-          <div class="empty-list">
-            <p>{{ 'TEACHER.FEEDBACK.NO_CLASSROOMS' | translate }}</p>
-          </div>
-        } @else {
-          @for (cls of classrooms(); track cls.classroomId) {
-            <button 
-              class="classroom-btn" 
-              [class.active]="selectedClassroom()?.classroomId === cls.classroomId"
-              (click)="selectClassroom(cls)">
-              <div class="info">
-                <span class="name">{{ cls.name }}</span>
-                @if (cls.subjectName) {
-                  <span class="subject">{{ cls.subjectName }}</span>
-                }
-              </div>
-              <i class="pi pi-chevron-left arrow"></i>
-            </button>
-          }
-        }
-      </div>
-    </aside>
-
-    <!-- Right/Main Pane -->
-    <main class="bento-main">
-      @if (!selectedClassroom()) {
-        <div class="empty-state-bento">
-          <i class="pi pi-inbox icon-empty"></i>
-          <h3>{{ 'TEACHER.FEEDBACK.SELECT_CLASSROOM_PROMPT' | translate }}</h3>
-          <p>اختر أحد الفصول من القائمة لعرض آراء وتقييمات الطلاب</p>
-        </div>
-      } @else {
-        <div class="dashboard-content fade-in">
-          
-          <!-- Bento Header Split Layout -->
-          <header class="bento-header-split">
-            <!-- Title Box -->
-            <div class="bento-box title-box">
-              <span class="eyebrow">{{ 'TEACHER.FEEDBACK.REVIEWS_FOR' | translate }}</span>
-              <h1>{{ selectedClassroom()?.name }}</h1>
-            </div>
-
-            <!-- Rating Box -->
-            @if (!isLoadingFeedback() && feedback() && feedback()!.totalCount > 0) {
-              <div class="bento-box rating-box">
-                <div class="rating-value">{{ feedback()!.averageRating | number:'1.1-1' }}</div>
-                <div class="rating-info">
-                  <div class="stars">
-                    @for (star of getStars(); track star) {
-                      <i class="pi" [ngClass]="star <= feedback()!.averageRating ? 'pi-star-fill text-yellow-500' : 'pi-star text-gray-300'"></i>
-                    }
-                  </div>
-                  <span class="count">{{ feedback()!.totalCount }} {{ 'TEACHER.FEEDBACK.RATINGS' | translate }}</span>
-                </div>
-              </div>
+<div class="feed-page-container" dir="rtl">
+  
+  <!-- Sticky Header & Classroom Selector -->
+  <header class="feed-header">
+    <div class="header-inner">
+      <h1 class="page-title">{{ 'TEACHER.FEEDBACK.REVIEWS_FOR' | translate }}</h1>
+      
+      @if (isLoadingClassrooms()) {
+        <div class="skeleton-dropdown shimmer"></div>
+      } @else if (classrooms().length > 0) {
+        <div class="custom-select-wrapper">
+          <select class="classroom-select" (change)="onDropdownChange($event)">
+            <option value="" disabled [selected]="!selectedClassroom()">
+              {{ 'TEACHER.FEEDBACK.SELECT_CLASSROOM_PROMPT' | translate }}
+            </option>
+            @for (cls of classrooms(); track cls.classroomId) {
+              <option 
+                [value]="cls.classroomId" 
+                [selected]="selectedClassroom()?.classroomId === cls.classroomId">
+                {{ cls.name }}
+              </option>
             }
-          </header>
-
-          <!-- Reviews Section -->
-          <div class="reviews-wrapper">
-            <div class="reviews-header">
-              <h3 class="section-title">{{ 'TEACHER.FEEDBACK.ALL_REVIEWS' | translate }}</h3>
-            </div>
-            
-            @if (isLoadingFeedback()) {
-              <div class="bento-reviews-grid">
-                @for (i of [1,2,3,4]; track i) {
-                  <div class="skeleton-card shimmer"></div>
-                }
-              </div>
-            } @else if (!feedback() || feedback()!.totalCount === 0) {
-              <div class="empty-reviews-bento">
-                <i class="pi pi-comment text-3xl text-gray-300 mb-3"></i>
-                <h4>{{ 'TEACHER.FEEDBACK.NO_FEEDBACK_YET' | translate }}</h4>
-                <p>لم يقم أي طالب بكتابة تقييم لهذا الفصل حتى الآن.</p>
-              </div>
-            } @else {
-              <div class="bento-reviews-grid">
-                @for (item of feedback()!.items; track item.feedbackId) {
-                  <div class="bento-review-card">
-                    <div class="card-header">
-                      <div class="user">
-                        @if (item.studentAvatarUrl) {
-                          <img [src]="item.studentAvatarUrl" class="avatar" alt="Avatar" />
-                        } @else {
-                          <div class="avatar-placeholder">{{ item.studentName?.charAt(0) ?? 'ط' }}</div>
-                        }
-                        <div class="user-meta">
-                          <span class="name">{{ item.studentName ?? ('TEACHER.FEEDBACK.ANONYMOUS' | translate) }}</span>
-                          <span class="date">{{ item.createdAt | date:'mediumDate' }}</span>
-                        </div>
-                      </div>
-                      <div class="stars">
-                        @for (star of getStars(); track star) {
-                          <i class="pi text-sm" [ngClass]="star <= item.rating ? 'pi-star-fill text-yellow-500' : 'pi-star text-gray-300'"></i>
-                        }
-                      </div>
-                    </div>
-                    
-                    @if (item.comment) {
-                      <p class="comment">{{ item.comment }}</p>
-                    } @else {
-                      <p class="comment empty">اكتفى الطالب بالتقييم بالنجوم دون كتابة تعليق.</p>
-                    }
-                  </div>
-                }
-              </div>
-            }
-          </div>
-
+          </select>
+          <i class="pi pi-chevron-down drop-icon"></i>
         </div>
       }
-    </main>
-  </div>
+    </div>
+  </header>
+
+  <main class="feed-main-area">
+    @if (!selectedClassroom()) {
+      <!-- Welcome / Prompt State -->
+      <div class="feed-empty-state">
+        <div class="icon-bubble">
+          <i class="pi pi-comments"></i>
+        </div>
+        <h3>اختر فصلاً للبدء</h3>
+        <p>قم باختيار أحد الفصول من القائمة العلوية لاستعراض تقييمات الطلاب وتحديثاتهم في شكل خط زمني مبسط.</p>
+      </div>
+    } @else {
+      
+      <!-- Stats Overview for Selected Classroom -->
+      @if (!isLoadingFeedback() && feedback() && feedback()!.totalCount > 0) {
+        <div class="feed-stats-banner fade-in">
+          <div class="stat-main">
+            <span class="rating-number">{{ feedback()!.averageRating | number:'1.1-1' }}</span>
+            <div class="stars">
+              @for (star of getStars(); track star) {
+                <i class="pi" [ngClass]="star <= feedback()!.averageRating ? 'pi-star-fill text-yellow-500' : 'pi-star text-gray-300'"></i>
+              }
+            </div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-meta">
+            <span class="count">{{ feedback()!.totalCount }}</span>
+            <span class="label">إجمالي التقييمات</span>
+          </div>
+        </div>
+      }
+
+      <!-- Feed / Timeline of Reviews -->
+      <div class="feed-timeline">
+        @if (isLoadingFeedback()) {
+          @for (i of [1,2,3]; track i) {
+            <div class="feed-skeleton-post shimmer"></div>
+          }
+        } @else if (!feedback() || feedback()!.totalCount === 0) {
+          <div class="feed-empty-state">
+            <div class="icon-bubble">
+              <i class="pi pi-star"></i>
+            </div>
+            <h3>لا توجد تقييمات</h3>
+            <p>لم يقم أي طالب بكتابة تقييم لهذا الفصل حتى الآن.</p>
+          </div>
+        } @else {
+          <div class="feed-posts-list">
+            @for (item of feedback()!.items; track item.feedbackId; let i = $index) {
+              <article class="feed-post fade-in" [style.animation-delay.ms]="i * 50">
+                
+                <!-- Post Header (User) -->
+                <div class="post-header">
+                  <div class="user-block">
+                    @if (item.studentAvatarUrl) {
+                      <img [src]="item.studentAvatarUrl" class="avatar" alt="Avatar" />
+                    } @else {
+                      <div class="avatar-placeholder">
+                        {{ item.studentName?.charAt(0) ?? 'ط' }}
+                      </div>
+                    }
+                    <div class="user-info">
+                      <span class="name">{{ item.studentName ?? ('TEACHER.FEEDBACK.ANONYMOUS' | translate) }}</span>
+                      <span class="time">{{ item.createdAt | date:'mediumDate' }}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="post-rating">
+                    @for (star of getStars(); track star) {
+                      <i class="pi text-sm" [ngClass]="star <= item.rating ? 'pi-star-fill text-yellow-500' : 'pi-star text-gray-300'"></i>
+                    }
+                  </div>
+                </div>
+
+                <!-- Post Body (Comment) -->
+                <div class="post-body">
+                  @if (item.comment) {
+                    <p class="comment-text">{{ item.comment }}</p>
+                  } @else {
+                    <p class="comment-text empty-comment">اكتفى بالتقييم بالنجوم.</p>
+                  }
+                </div>
+
+                <!-- Post Action / Divider -->
+                <div class="post-footer">
+                  <!-- Just a clean bottom border or subtle actions could go here -->
+                </div>
+              </article>
+            }
+          </div>
+        }
+      </div>
+
+    }
+  </main>
 </div>

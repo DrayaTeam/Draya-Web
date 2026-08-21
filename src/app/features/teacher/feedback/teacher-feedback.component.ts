@@ -48,6 +48,15 @@ export class TeacherFeedbackComponent implements OnInit {
     this.loadFeedback(classroom.classroomId);
   }
 
+  onDropdownChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const classId = select.value;
+    const cls = this.classrooms().find(c => c.classroomId === classId);
+    if (cls) {
+      this.selectClassroom(cls);
+    }
+  }
+
   private loadFeedback(classroomId: string): void {
     this.isLoadingFeedback.set(true);
     this.classroomService.getClassroomFeedback(classroomId, 1, 100).subscribe({
