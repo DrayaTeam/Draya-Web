@@ -170,13 +170,13 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
 
   onSubmitExam(): void {
     const attemptId = this.examService.currentAttemptId() || undefined;
-    const finalScore = this.examService.submitExam(attemptId);
+    this.examService.submitExam(attemptId);
     this.toastService.success(
       'تم تسليم الامتحان بنجاح! 🎉',
       'جارٍ استخراج تقرير التحليل الذكي للدرجات والمهارات...',
     );
     this.router.navigate(['/student/exams', this.examId, 'result'], {
-      queryParams: { score: finalScore, attemptId },
+      queryParams: attemptId ? { attemptId } : {},
     });
   }
 }

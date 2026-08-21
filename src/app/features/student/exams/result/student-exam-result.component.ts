@@ -27,13 +27,13 @@ export class StudentExamResultComponent implements OnInit {
 
   ngOnInit(): void {
     this.attemptId = this.route.snapshot.queryParams['attemptId'] || null;
-    if (this.attemptId) {
+    if (this.attemptId && !this.attemptId.startsWith('att_')) {
       this.examService.fetchAttemptResults(this.attemptId).subscribe();
     } else {
       const scoreParam = this.route.snapshot.queryParams['score'];
-      if (scoreParam !== undefined && scoreParam !== null) {
+      if (scoreParam !== undefined && scoreParam !== null && scoreParam !== '') {
         const numericScore = Number(scoreParam);
-        if (!isNaN(numericScore)) {
+        if (!isNaN(numericScore) && numericScore > 0) {
           let gradeLabel = 'راسب — ضعيف جداً';
           if (numericScore >= 85) gradeLabel = 'ممتاز جداً 🌟';
           else if (numericScore >= 65) gradeLabel = 'جيد جداً 👍';
