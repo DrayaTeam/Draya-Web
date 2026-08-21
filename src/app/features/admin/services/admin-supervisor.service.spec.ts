@@ -93,7 +93,7 @@ describe('AdminSupervisorService', () => {
 
     const req = httpMock.expectOne((r) => r.url.endsWith('/admin/students'));
     expect(req.request.method).toBe('GET');
-    expect(req.request.params.get('searchTerm')).toBe('Ahmed');
+    expect(req.request.params.get('q')).toBe('Ahmed');
     expect(req.request.params.get('page')).toBe('1');
     expect(req.request.params.get('pageSize')).toBe('20');
     req.flush({

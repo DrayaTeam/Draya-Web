@@ -123,7 +123,7 @@ export class AdminSupervisorService extends ApiBaseService {
   }): Observable<AdminStudentPagedResponse> {
     const queryParams: Record<string, string | number> = {};
     if (params?.searchTerm && params.searchTerm.trim()) {
-      queryParams['searchTerm'] = params.searchTerm.trim();
+      queryParams['q'] = params.searchTerm.trim();
     }
     if (params?.page) queryParams['page'] = params.page;
     if (params?.pageSize) queryParams['pageSize'] = params.pageSize;

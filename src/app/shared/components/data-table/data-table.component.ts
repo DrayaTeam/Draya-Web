@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
-import { EmptyStateComponent } from '../../ui/empty-state/empty-state.component';
+import { EmptyStateComponent } from '../empty-state/empty-state.component';
 
 export interface Column<T = Record<string, unknown>> {
   header: string;
@@ -16,7 +16,9 @@ export interface Column<T = Record<string, unknown>> {
   imports: [CommonModule, ButtonComponent, EmptyStateComponent],
   template: `
     @if (data.length === 0) {
-      <app-empty-state [title]="emptyTitle" [description]="emptyDescription"></app-empty-state>
+      <draya-empty-state
+        [titleKey]="emptyTitle"
+        [descriptionKey]="emptyDescription"></draya-empty-state>
     } @else {
       <div class="flex w-full flex-col gap-4">
         <div class="border-border bg-card w-full overflow-x-auto rounded-xl border">
