@@ -28,7 +28,7 @@ export interface GenerateExamRequest {
   topic: string;
   difficultyLevel: DifficultyLevel;
   questionRequirements: QuestionRequirement[];
-  teacherInstructions: string;
+  teacherInstructions?: string;
   idempotencyKey: string;
   teacherId: string;
   isPracticeReview: boolean;

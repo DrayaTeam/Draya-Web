@@ -136,23 +136,52 @@ export class GenerateExamComponent implements OnInit {
 
     this.isSubmitting.set(true);
     const formValue = this.form.getRawValue();
+    
+    // Ensure numeric fields are actually parsed as numbers
+    const durationMinutes = Number(formValue.durationMinutes);
+    const allowedAttempts = Number(formValue.allowedAttempts);
+    
+    const questionReqs = (formValue.questionRequirements as any[]).map(req => ({
+      type: req.type,
+      count: Number(req.count)
+    })) as QuestionRequirement[];
+
+    // Ensure teacherInstructions isn't sent as empty string if backend hates it
+    const teacherInstructions = formValue.teacherInstructions ? formValue.teacherInstructions : undefined;
+
     const payload: Omit<GenerateExamRequest, 'idempotencyKey'> = {
       ...formValue,
+      durationMinutes,
+      allowedAttempts,
       startDate: new Date(formValue.startDate).toISOString(),
       endDate: formValue.endDate ? new Date(formValue.endDate).toISOString() : undefined,
-      questionRequirements: formValue.questionRequirements as QuestionRequirement[],
+      questionRequirements: questionReqs,
+      teacherInstructions,
       teacherId: this.authService.currentUser()?.userId || '',
       isPracticeReview: true // Ensure this matches backend requirements
     };
 
     this.examGenService.generateExam(payload).subscribe({
       next: (res) => {
-        this.toast.success('تم إرسال طلب إنشاء الامتحان بنجاح');
+        this.toast.success('تم إرسال طلب توليد الامتحان بنجاح');
         this.isSubmitting.set(false);
         this.router.navigate(['/teacher/exams/generations', res.generationId, 'tracking']);
       },
       error: (err) => {
-        this.toast.error(err?.error?.message || 'فشل في إنشاء الامتحان');
+        let errorMessage = 'حدث خطأ أثناء إرسال الطلب';
+        if (err?.error?.errors) {
+           // ASP.NET Core validation errors
+           const firstErrorKey = Object.keys(err.error.errors)[0];
+           if (firstErrorKey) {
+             errorMessage = err.error.errors[firstErrorKey][0];
+           }
+        } else if (err?.error?.detail) {
+           errorMessage = err.error.detail;
+        } else if (err?.error?.message) {
+           errorMessage = err.error.message;
+        }
+
+        this.toast.error(errorMessage);
         this.isSubmitting.set(false);
       },
     });
