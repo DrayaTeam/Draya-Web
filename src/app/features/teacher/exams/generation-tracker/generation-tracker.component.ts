@@ -67,6 +67,15 @@ export class GenerationTrackerComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('[Tracker] Polling error:', err);
+        // Stop polling if the backend throws a 500 (Internal Server Error) or 404
+        // to prevent console spamming if the endpoint isn't fully implemented or crashes.
+        if (err?.status === 500 || err?.status === 404) {
+          console.warn('[Tracker] Stopping fallback polling due to backend 500/404 error. Relying entirely on SignalR.');
+          if (this.pollingInterval) {
+            clearInterval(this.pollingInterval);
+            this.pollingInterval = null;
+          }
+        }
       }
     });
   }
