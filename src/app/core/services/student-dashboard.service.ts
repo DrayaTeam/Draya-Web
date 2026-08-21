@@ -47,7 +47,7 @@ export class StudentDashboardService extends ApiBaseService {
   private readonly _error = signal<string | null>(null);
 
   private readonly _summary = signal<StudentDashboardSummary>({
-    studentName: '',
+    studentName: 'الطالب',
     currentDateText: formatArabicDate(new Date()),
     scheduledExamsCount: 0,
     streakDays: 0,
@@ -62,7 +62,7 @@ export class StudentDashboardService extends ApiBaseService {
   private readonly _upcomingExams = signal<UpcomingExamItem[]>([]);
   private readonly _weaknessTopics = signal<WeaknessTopicItem[]>([]);
 
-  // ── Public readonly signals (same names — component doesn't change) ────────
+  // ── Public readonly signals ───────────────────────────────────────────────
   readonly loading = this._loading.asReadonly();
   readonly error = this._error.asReadonly();
   readonly summary = this._summary.asReadonly();
@@ -72,12 +72,18 @@ export class StudentDashboardService extends ApiBaseService {
 
   // ── API call ───────────────────────────────────────────────────────────────
 
-  /** Load dashboard data by aggregating real Swagger endpoints (auth/me, classrooms, exams, materials). */
+  /**
+   * Loads dashboard data by querying GET /dashboard/student and enriching
+   * with /auth/me, /classrooms, /students/exams, and /students/materials.
+   */
   loadDashboard(): void {
     this._loading.set(true);
     this._error.set(null);
 
     forkJoin({
+      dash: this.get<StudentDashboardApiResponse>('/dashboard/student').pipe(
+        catchError(() => of(null)),
+      ),
       me: this.get<{ fullName?: string; gradeLevelName?: string; pictureUrl?: string }>(
         '/auth/me',
       ).pipe(catchError(() => of(null))),
@@ -101,208 +107,110 @@ export class StudentDashboardService extends ApiBaseService {
           imageUrl?: string;
         }[];
       }>('/classrooms').pipe(catchError(() => of(null))),
-      exams: this.get<{ id: string; title?: string; topic?: string; createdAt?: string }[]>(
-        '/exams',
-      ).pipe(catchError(() => of(null))),
+      exams: this.get<
+        | { id: string; title?: string; topic?: string; startDate?: string }[]
+        | { items: { id: string; title?: string; topic?: string; startDate?: string }[] }
+      >('/students/exams').pipe(catchError(() => of(null))),
       materials: this.get<{ totalCount?: number }>('/students/materials').pipe(
         catchError(() => of(null)),
       ),
     })
       .pipe(
-        tap(({ me, classrooms, exams, materials }) => {
-          const fallback = this.getMockDashboard();
-          const enrolledItems = classrooms?.items || [];
-          const examItems = Array.isArray(exams) ? exams : [];
+        tap(({ dash, me, classrooms, exams, materials }) => {
+          const rawEnrolled = classrooms?.items || [];
+          const rawExams = Array.isArray(exams) ? exams : exams?.items || [];
 
-          const apiResponse: StudentDashboardApiResponse = {
-            studentName: me?.fullName || fallback.studentName,
-            streakDays: fallback.streakDays,
-            cumulativeAverage: fallback.cumulativeAverage,
-            completedLessonsCount: materials?.totalCount || fallback.completedLessonsCount,
-            subscribedPackagesCount:
-              enrolledItems.length > 0 ? enrolledItems.length : fallback.subscribedPackagesCount,
-            scheduledExamsCount:
-              examItems.length > 0 ? examItems.length : fallback.scheduledExamsCount,
-            monthlyGrowthPercent: fallback.monthlyGrowthPercent,
-            percentileRanking: fallback.percentileRanking,
-            enrolledCourses:
-              enrolledItems.length > 0
-                ? enrolledItems.map((c) => {
-                    const prog =
-                      typeof c.studentProgress === 'object' && c.studentProgress !== null
-                        ? c.studentProgress
-                        : null;
-                    const progressPercent =
-                      typeof c.studentProgress === 'number'
-                        ? c.studentProgress
-                        : (prog?.progressPercent ?? prog?.percentage ?? 0);
-                    const totalLessons = prog?.totalLessons ?? prog?.totalCount ?? 1;
-                    const completedLessons = prog?.completedLessons ?? prog?.completedCount ?? 0;
+          const enrolledList: EnrolledCourseItem[] =
+            dash?.enrolledCourses && dash.enrolledCourses.length > 0
+              ? dash.enrolledCourses.map((c, i) => ({
+                  id: c.id,
+                  title: c.title,
+                  teacherName: c.teacherName,
+                  subjectName: c.subjectName,
+                  completedLessons: c.completedLessons ?? 0,
+                  totalLessons: c.totalLessons ?? 0,
+                  progressPercent: c.progressPercent ?? 0,
+                  thumbnailUrl: c.thumbnailUrl ?? 'assets/images/default-classroom.svg',
+                  progressGradient: COURSE_GRADIENTS[i % COURSE_GRADIENTS.length],
+                }))
+              : rawEnrolled.map((c, i) => {
+                  const prog =
+                    typeof c.studentProgress === 'object' && c.studentProgress !== null
+                      ? c.studentProgress
+                      : null;
+                  const progressPercent =
+                    typeof c.studentProgress === 'number'
+                      ? c.studentProgress
+                      : (prog?.progressPercent ?? prog?.percentage ?? 0);
+                  const totalLessons = prog?.totalLessons ?? prog?.totalCount ?? 1;
+                  const completedLessons = prog?.completedLessons ?? prog?.completedCount ?? 0;
 
-                    return {
-                      id: c.classroomId || c.id || 'crs-1',
-                      title: c.name || 'الفصل الدراسي',
-                      teacherName: c.teacherName || 'أستاذ المادة',
-                      subjectName: c.subjectName || 'المنهج',
-                      completedLessons: isNaN(completedLessons) ? 0 : completedLessons,
-                      totalLessons: isNaN(totalLessons) || totalLessons === 0 ? 1 : totalLessons,
-                      progressPercent: isNaN(progressPercent) ? 0 : progressPercent,
-                      thumbnailUrl: c.imageUrl || 'assets/images/default-classroom.svg',
-                    };
-                  })
-                : fallback.enrolledCourses,
-            upcomingExams:
-              examItems.length > 0
-                ? examItems.map((e, idx) => ({
-                    id: e.id,
-                    title: e.title || 'امتحان تفاعلي',
-                    timeText: 'متاح للحل الآن',
-                    isImportant: idx === 0,
-                  }))
-                : fallback.upcomingExams,
-            weaknessTopics: fallback.weaknessTopics,
-          };
+                  return {
+                    id: c.classroomId || c.id || `crs-${i}`,
+                    title: c.name || 'الفصل الدراسي',
+                    teacherName: c.teacherName || 'أستاذ المادة',
+                    subjectName: c.subjectName || 'المنهج الدراسي',
+                    completedLessons: isNaN(completedLessons) ? 0 : completedLessons,
+                    totalLessons: isNaN(totalLessons) || totalLessons === 0 ? 1 : totalLessons,
+                    progressPercent: isNaN(progressPercent) ? 0 : progressPercent,
+                    thumbnailUrl: c.imageUrl || 'assets/images/default-classroom.svg',
+                    progressGradient: COURSE_GRADIENTS[i % COURSE_GRADIENTS.length],
+                  };
+                });
 
-          this.mapResponse(apiResponse);
+          const upcomingList: UpcomingExamItem[] =
+            dash?.upcomingExams && dash.upcomingExams.length > 0
+              ? dash.upcomingExams.map((e) => ({
+                  id: e.id,
+                  title: e.title,
+                  timeText: e.timeText ?? 'متاح للحل الآن',
+                  tagText: e.isImportant ? 'هام' : 'مراجعة',
+                  borderMarkerColor: examBorderColor(e.isImportant),
+                  isImportant: !!e.isImportant,
+                }))
+              : rawExams.map((e, idx) => ({
+                  id: e.id,
+                  title: e.title || 'امتحان تفاعلي',
+                  timeText: e.startDate
+                    ? `يبدأ ${new Date(e.startDate).toLocaleDateString('ar-EG', { month: 'short', day: 'numeric' })}`
+                    : 'متاح للحل الآن',
+                  tagText: idx === 0 ? 'هام' : 'تقييم',
+                  borderMarkerColor: examBorderColor(idx === 0),
+                  isImportant: idx === 0,
+                }));
+
+          const weaknessList: WeaknessTopicItem[] = (dash?.weaknessTopics ?? []).map((w) => ({
+            id: w.id,
+            topicTitle: w.topicTitle,
+            scorePercent: w.scorePercent ?? 0,
+            barColor: weaknessBarColor(w.scorePercent ?? 0),
+          }));
+
+          const studentName = me?.fullName?.split(' ')[0] || dash?.studentName || 'الطالب';
+
+          this._summary.set({
+            studentName,
+            currentDateText: formatArabicDate(new Date()),
+            scheduledExamsCount: dash?.scheduledExamsCount ?? upcomingList.length,
+            streakDays: dash?.streakDays ?? 1,
+            cumulativeAverage: dash?.cumulativeAverage ?? 0,
+            completedLessonsCount: materials?.totalCount ?? dash?.completedLessonsCount ?? 0,
+            subscribedPackagesCount: dash?.subscribedPackagesCount ?? enrolledList.length,
+            monthlyGrowthPercent: dash?.monthlyGrowthPercent ?? 0,
+            percentileRanking: dash?.percentileRanking ?? 0,
+          });
+
+          this._enrolledCourses.set(enrolledList);
+          this._upcomingExams.set(upcomingList);
+          this._weaknessTopics.set(weaknessList);
+          this._loading.set(false);
         }),
         catchError(() => {
-          const fallback = this.getMockDashboard();
-          this.mapResponse(fallback);
           this._loading.set(false);
-          return of(fallback);
+          this._error.set('تعذر تحميل بيانات لوحة التحكم');
+          return of(null);
         }),
       )
       .subscribe();
-  }
-
-  // ── Mapping ────────────────────────────────────────────────────────────────
-
-  private mapResponse(res: StudentDashboardApiResponse): void {
-    if (!res) {
-      this._loading.set(false);
-      return;
-    }
-
-    this._summary.set({
-      studentName: res.studentName ?? 'أحمد',
-      currentDateText: formatArabicDate(new Date()),
-      scheduledExamsCount: res.scheduledExamsCount ?? 2,
-      streakDays: res.streakDays ?? 5,
-      cumulativeAverage: res.cumulativeAverage ?? 87,
-      completedLessonsCount: res.completedLessonsCount ?? 37,
-      subscribedPackagesCount: res.subscribedPackagesCount ?? 3,
-      monthlyGrowthPercent: res.monthlyGrowthPercent ?? 4,
-      percentileRanking: res.percentileRanking ?? 92,
-    });
-
-    this._enrolledCourses.set(
-      (res.enrolledCourses ?? []).map((c, i) => ({
-        id: c.id,
-        title: c.title,
-        teacherName: c.teacherName,
-        subjectName: c.subjectName,
-        completedLessons: c.completedLessons ?? 0,
-        totalLessons: c.totalLessons ?? 0,
-        progressPercent: c.progressPercent ?? 0,
-        thumbnailUrl: c.thumbnailUrl ?? '',
-        progressGradient: COURSE_GRADIENTS[i % COURSE_GRADIENTS.length],
-      })),
-    );
-
-    this._upcomingExams.set(
-      (res.upcomingExams ?? []).map((e) => ({
-        id: e.id,
-        title: e.title,
-        timeText: e.timeText ?? '',
-        tagText: e.isImportant ? 'هام' : 'مراجعة',
-        borderMarkerColor: examBorderColor(e.isImportant),
-        isImportant: !!e.isImportant,
-      })),
-    );
-
-    this._weaknessTopics.set(
-      (res.weaknessTopics ?? []).map((w) => ({
-        id: w.id,
-        topicTitle: w.topicTitle,
-        scorePercent: w.scorePercent ?? 0,
-        barColor: weaknessBarColor(w.scorePercent ?? 0),
-      })),
-    );
-
-    this._loading.set(false);
-  }
-
-  private getMockDashboard(): StudentDashboardApiResponse {
-    return {
-      studentName: 'أحمد',
-      streakDays: 5,
-      cumulativeAverage: 87,
-      completedLessonsCount: 37,
-      subscribedPackagesCount: 3,
-      scheduledExamsCount: 2,
-      monthlyGrowthPercent: 4,
-      percentileRanking: 92,
-      enrolledCourses: [
-        {
-          id: 'crs-1',
-          title: 'الجبر وحساب المثلثات',
-          teacherName: 'أ. محمد علي',
-          subjectName: 'الرياضيات',
-          completedLessons: 12,
-          totalLessons: 18,
-          progressPercent: 68,
-          thumbnailUrl:
-            'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=400&auto=format&fit=crop',
-        },
-        {
-          id: 'crs-2',
-          title: 'الفيزياء الكهربية والحديثة',
-          teacherName: 'أ. سارة حسن',
-          subjectName: 'الفيزياء',
-          completedLessons: 8,
-          totalLessons: 20,
-          progressPercent: 40,
-          thumbnailUrl:
-            'https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?q=80&w=400&auto=format&fit=crop',
-        },
-        {
-          id: 'crs-3',
-          title: 'الكيمياء العضوية المتقدمة',
-          teacherName: 'أ. أحمد سامي',
-          subjectName: 'الكيمياء',
-          completedLessons: 17,
-          totalLessons: 20,
-          progressPercent: 85,
-          thumbnailUrl:
-            'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=400&auto=format&fit=crop',
-        },
-      ],
-      upcomingExams: [
-        {
-          id: 'ex-1',
-          title: 'اختبار الباب الثالث (جبر)',
-          timeText: 'غداً 10:00 ص',
-          isImportant: true,
-        },
-        {
-          id: 'ex-2',
-          title: 'مراجعة قانون كيرشوف (فيزياء)',
-          timeText: 'الخميس 11:00 ص',
-          isImportant: false,
-        },
-      ],
-      weaknessTopics: [
-        {
-          id: 'wk-1',
-          topicTitle: 'المشتقات والاتصال الرياضي',
-          scorePercent: 42,
-        },
-        {
-          id: 'wk-2',
-          topicTitle: 'الدوائر المغلقة وقوانين أوم',
-          scorePercent: 55,
-        },
-      ],
-    };
   }
 }

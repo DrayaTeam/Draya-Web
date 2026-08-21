@@ -74,6 +74,10 @@ describe('StudentExamTakingService', () => {
     expect(gradeReq.request.method).toBe('POST');
     gradeReq.flush({ id: 'job-1', status: 'Pending' });
 
+    const jobReq = httpMock.expectOne((r) => r.url.includes('/attempts/jobs/job-1'));
+    expect(jobReq.request.method).toBe('GET');
+    jobReq.flush({ id: 'job-1', status: 'Completed' });
+
     const resReq = httpMock.expectOne((r) => r.url.includes('/attempts/real-attempt-1/results'));
     expect(resReq.request.method).toBe('GET');
     resReq.flush({ attemptId: 'real-attempt-1', finalScore: 80, answers: [] });

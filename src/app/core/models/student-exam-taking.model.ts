@@ -133,6 +133,10 @@ export interface ExamReviewItem {
   readonly studentAnswerText: string;
   readonly correctAnswerText: string;
   readonly explanation?: string;
+  readonly earnedScore?: number;
+  readonly maxScore?: number;
+  readonly isAiGraded?: boolean;
+  readonly needsTeacherReview?: boolean;
 }
 
 export interface ExamResultReport {

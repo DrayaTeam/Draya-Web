@@ -197,6 +197,9 @@ export class StudentExamTakingService extends ApiBaseService {
       this.remainingSeconds.update((s) => {
         if (s <= 1) {
           this.stopTimer();
+          if (!this.isSubmitted()) {
+            this.submitExam();
+          }
           return 0;
         }
         return s - 1;
@@ -255,7 +258,7 @@ export class StudentExamTakingService extends ApiBaseService {
 
   /**
    * Submits the student's answers to POST /api/v1/attempts/{attemptId}/submit
-   * and triggers background AI grading.
+   * and triggers background AI grading with status polling.
    */
   submitExam(customAttemptId?: string): number {
     this.stopTimer();
@@ -356,21 +359,58 @@ export class StudentExamTakingService extends ApiBaseService {
       };
       this.post<SubmitAttemptResponseDto>(`/attempts/${targetAttemptId}/submit`, payload)
         .pipe(
-          switchMap(() =>
+          switchMap((subRes) =>
             this.post<GradingJobStatusDto>(`/attempts/${targetAttemptId}/grade`, {
               idempotencyKey: `grade_${Date.now()}`,
-            }).pipe(catchError(() => of(null))),
+            }).pipe(
+              map((gradeRes) => gradeRes?.id || subRes?.gradingJobId),
+              catchError(() => of(subRes?.gradingJobId || null)),
+            ),
           ),
           catchError(() => of(null)),
         )
         .subscribe({
-          next: () => {
-            this.fetchAttemptResults(targetAttemptId).subscribe();
+          next: (jobId) => {
+            if (jobId) {
+              this.pollGradingJob(jobId, targetAttemptId);
+            } else {
+              this.fetchAttemptResults(targetAttemptId).subscribe();
+            }
           },
         });
     }
 
     return finalScore;
+  }
+
+  /**
+   * Polls background AI grading job until status is Completed.
+   */
+  pollGradingJob(jobId: string, attemptId: string, maxAttempts = 6): void {
+    let attempts = 0;
+    let interval: ReturnType<typeof setInterval> | null = null;
+
+    const checkJob = () => {
+      attempts++;
+      this.get<GradingJobStatusDto>(`/attempts/jobs/${jobId}`)
+        .pipe(catchError(() => of(null)))
+        .subscribe((job) => {
+          if (
+            job?.status === 'Completed' ||
+            job?.status === 'CompletedWithWarning' ||
+            attempts >= maxAttempts
+          ) {
+            if (interval) {
+              clearInterval(interval);
+              interval = null;
+            }
+            this.fetchAttemptResults(attemptId).subscribe();
+          }
+        });
+    };
+
+    checkJob();
+    interval = setInterval(checkJob, 1500);
   }
 
   /**
@@ -403,7 +443,13 @@ export class StudentExamTakingService extends ApiBaseService {
 
             const grading = ans.gradingResult;
             const isGraded = !!grading;
-            const isCorrect = isGraded ? grading.score > 0 : false;
+            const earnedScore = grading?.score ?? 0;
+            const maxScore = grading?.maxScore ?? (isEssay ? 10 : 1);
+            const isCorrect = isGraded
+              ? maxScore > 0
+                ? earnedScore / maxScore >= 0.5
+                : earnedScore > 0
+              : false;
 
             let studentAnswerText = ans.answerText || '';
             if (!studentAnswerText && ans.selectedOptionId && questionDef?.options) {
@@ -414,13 +460,13 @@ export class StudentExamTakingService extends ApiBaseService {
               studentAnswerText = 'لم يتم الإجابة';
             }
 
-            let correctAnswerText = isCorrect
-              ? studentAnswerText
-              : isEssay
-                ? 'تخضع لمعايير التقييم الذكي'
-                : 'الإجابة النموذجية';
+            let correctAnswerText = isEssay
+              ? isCorrect
+                ? 'إجابة مقبولة ومطابقة لمعايير التقييم'
+                : 'إجابة بحاجة لتحسين — يرجى مراجعة المعايير والملاحظات'
+              : 'الإجابة النموذجية';
 
-            if (!isCorrect && questionDef?.correctOptionId) {
+            if (!isEssay && questionDef?.correctOptionId) {
               const correctOpt = questionDef.options.find(
                 (o) => o.id === questionDef.correctOptionId,
               );
@@ -436,6 +482,10 @@ export class StudentExamTakingService extends ApiBaseService {
               studentAnswerText,
               correctAnswerText,
               explanation: grading?.rationale || undefined,
+              earnedScore,
+              maxScore,
+              isAiGraded: grading?.isAiGraded,
+              needsTeacherReview: grading?.needsTeacherReview,
             };
           });
         } else {

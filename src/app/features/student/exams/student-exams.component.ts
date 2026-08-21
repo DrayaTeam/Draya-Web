@@ -1,14 +1,15 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { StudentExamsService } from '../../../core/services/student-exams.service';
 import { ExamCardComponent } from './components/exam-card/exam-card.component';
-import { StudentExamItem } from '../../../core/models/student-exam.model';
+import { StudentExamItem, ExamStatusType } from '../../../core/models/student-exam.model';
 import { ToastService } from '../../../core/services/toast.service';
-import { Router } from '@angular/router';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'draya-student-exams',
   standalone: true,
-  imports: [ExamCardComponent],
+  imports: [ExamCardComponent, EmptyStateComponent],
   templateUrl: './student-exams.component.html',
   styleUrl: './student-exams.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,13 +22,19 @@ export class StudentExamsComponent implements OnInit {
   readonly headerInfo = this.examsService.headerInfo;
   readonly exams = this.examsService.filteredExams;
   readonly selectedFilter = this.examsService.selectedFilter;
+  readonly searchQuery = this.examsService.searchQuery;
 
   ngOnInit(): void {
     this.examsService.loadExams();
   }
 
-  setFilter(filter: 'all' | 'available' | 'scheduled' | 'completed'): void {
+  setFilter(filter: 'all' | ExamStatusType): void {
     this.examsService.selectedFilter.set(filter);
+  }
+
+  onSearchChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.examsService.searchQuery.set(input?.value || '');
   }
 
   onStartExam(exam: StudentExamItem): void {

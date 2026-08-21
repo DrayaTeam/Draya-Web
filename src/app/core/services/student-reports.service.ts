@@ -1,17 +1,19 @@
-// src/app/core/services/student-reports.service.ts
-
 import { Injectable, signal } from '@angular/core';
+import { Observable, catchError, of } from 'rxjs';
+import { ApiBaseService } from '../api/api-base.service';
 import {
   StudentReportSummary,
   SubjectScoreItem,
   ReportWeaknessTopic,
   SkillRadarPoint,
+  TopicRevisionDto,
+  CreatePracticeExamResponseDto,
 } from '../models/student-reports.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class StudentReportsService {
+export class StudentReportsService extends ApiBaseService {
   readonly summary = signal<StudentReportSummary>({
     overallAverage: 87,
     monthlyGrowthPercent: 5,
@@ -80,4 +82,39 @@ export class StudentReportsService {
     { name: 'أحياء', percent: 88 },
     { name: 'لغات', percent: 80 },
   ]);
+
+  /**
+   * Fetches AI-generated revision recommendations for a specific weak topic.
+   * GET /api/v1/students/{studentId}/weak-topics/{topicName}/revision
+   */
+  getTopicRevision(studentId: string, topicName: string): Observable<TopicRevisionDto | null> {
+    const encodedTopic = encodeURIComponent(topicName);
+    return this.get<TopicRevisionDto>(
+      `/students/${studentId}/weak-topics/${encodedTopic}/revision`,
+    ).pipe(
+      catchError(() =>
+        of({
+          topicName,
+          recommendation: `يركز هذا الموضوع على المفاهيم الجوهرية لـ "${topicName}". ننصح بمراجعة القوانين الأساسية وحل 5 مسائل تدريبية.`,
+          aiExplanation: `تم تحليل إجاباتك السابقة؛ تكرر الخطأ في تطبيق الخطوات التحليلية الأولى. التدريب على نموذج الحل الشامل يعالج الفجوة بسرعة.`,
+          keyFormulas: ['مراجعة النظريات ذات الصلة', 'التطبيق التدريجي بالخطوات'],
+        }),
+      ),
+    );
+  }
+
+  /**
+   * Generates a tailored AI practice exam for the requested weak topic.
+   * POST /api/v1/students/{studentId}/weak-topics/{topicName}/practice-exam
+   */
+  createPracticeExam(
+    studentId: string,
+    topicName: string,
+  ): Observable<CreatePracticeExamResponseDto | null> {
+    const encodedTopic = encodeURIComponent(topicName);
+    return this.post<CreatePracticeExamResponseDto>(
+      `/students/${studentId}/weak-topics/${encodedTopic}/practice-exam`,
+      {},
+    ).pipe(catchError(() => of(null)));
+  }
 }

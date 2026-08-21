@@ -34,3 +34,17 @@ export interface SkillRadarPoint {
   readonly name: string;
   readonly percent: number;
 }
+
+export interface TopicRevisionDto {
+  readonly topicName: string;
+  readonly recommendation?: string;
+  readonly aiExplanation?: string;
+  readonly keyFormulas?: readonly string[];
+}
+
+export interface CreatePracticeExamResponseDto {
+  readonly examId: string;
+  readonly attemptId?: string;
+  readonly title?: string;
+  readonly questionsCount?: number;
+}

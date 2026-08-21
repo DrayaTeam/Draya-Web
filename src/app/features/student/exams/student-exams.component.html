@@ -28,48 +28,93 @@
     <p class="page-subtitle">{{ headerInfo().subtitleText }}</p>
   </header>
 
-  <!-- Filter Pills Bar -->
-  <div class="filter-pills-bar">
-    <button
-      type="button"
-      class="filter-pill-btn"
-      [class.active]="selectedFilter() === 'all'"
-      (click)="setFilter('all')">
-      الكل ({{ examsService.exams().length }})
-    </button>
+  <!-- Search & Filter Bar -->
+  <div class="exams-toolbar">
+    <div class="search-box">
+      <svg
+        class="search-icon"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        type="search"
+        class="search-input"
+        placeholder="ابحث باسم الامتحان أو المادة أو المعلم..."
+        [value]="searchQuery()"
+        (input)="onSearchChange($event)" />
+    </div>
 
-    <button
-      type="button"
-      class="filter-pill-btn"
-      [class.active]="selectedFilter() === 'available'"
-      (click)="setFilter('available')">
-      متاح للحل الآن 🔥
-    </button>
+    <!-- Filter Pills Bar -->
+    <div class="filter-pills-bar">
+      <button
+        type="button"
+        class="filter-pill-btn"
+        [class.active]="selectedFilter() === 'all'"
+        (click)="setFilter('all')">
+        الكل ({{ examsService.exams().length }})
+      </button>
 
-    <button
-      type="button"
-      class="filter-pill-btn"
-      [class.active]="selectedFilter() === 'scheduled'"
-      (click)="setFilter('scheduled')">
-      مجدول لاحقاً 🕒
-    </button>
+      <button
+        type="button"
+        class="filter-pill-btn"
+        [class.active]="selectedFilter() === 'available'"
+        (click)="setFilter('available')">
+        متاح للحل الآن 🔥
+      </button>
 
-    <button
-      type="button"
-      class="filter-pill-btn"
-      [class.active]="selectedFilter() === 'completed'"
-      (click)="setFilter('completed')">
-      مكتمل وحاصل على درجة ✨
-    </button>
+      <button
+        type="button"
+        class="filter-pill-btn"
+        [class.active]="selectedFilter() === 'scheduled'"
+        (click)="setFilter('scheduled')">
+        مجدول لاحقاً 🕒
+      </button>
+
+      <button
+        type="button"
+        class="filter-pill-btn"
+        [class.active]="selectedFilter() === 'completed'"
+        (click)="setFilter('completed')">
+        مكتمل وحاصل على درجة ✨
+      </button>
+
+      <button
+        type="button"
+        class="filter-pill-btn"
+        [class.active]="selectedFilter() === 'expired'"
+        (click)="setFilter('expired')">
+        منتهية الصلاحية ⛔
+      </button>
+    </div>
   </div>
 
-  <!-- Exams Cards Grid (2 Cards Row on 1440w desktop, 1 col on 390w mobile) -->
+  <!-- Exams Cards Grid / Empty State -->
   <main class="exams-cards-grid" aria-label="قائمة الامتحانات والواجبات المجدولة">
-    @for (exam of exams(); track exam.id) {
-      <draya-exam-card
-        [exam]="exam"
-        (startExam)="onStartExam($event)"
-        (viewResults)="onViewResults($event)" />
+    @if (exams().length > 0) {
+      @for (exam of exams(); track exam.id) {
+        <draya-exam-card
+          [exam]="exam"
+          (startExam)="onStartExam($event)"
+          (viewResults)="onViewResults($event)" />
+      }
+    } @else {
+      <div class="empty-state-container col-span-full w-full">
+        <draya-empty-state
+          icon="exam"
+          titleKey="لا توجد امتحانات في هذا القسم"
+          descriptionKey="لم يقم المعلم بجدولة أي اختبارات حالياً أو أن جميع الاختبارات المتاحة مكتملة."
+          primaryActionLabelKey="استعراض الفصول الدراسية"
+          primaryActionRoute="/student/courses"
+          size="lg" />
+      </div>
     }
   </main>
 </div>

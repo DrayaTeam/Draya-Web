@@ -1,7 +1,8 @@
-// src/app/features/student/library/student-library.component.spec.ts
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
+import { provideTranslateService } from '@ngx-translate/core';
 import { StudentLibraryComponent } from './student-library.component';
 import { StudentLibraryService } from '../../../core/services/student-library.service';
 import { ToastService } from '../../../core/services/toast.service';
@@ -18,6 +19,8 @@ describe('StudentLibraryComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideRouter([]),
+        provideTranslateService(),
         MessageService,
         ToastService,
         StudentLibraryService,

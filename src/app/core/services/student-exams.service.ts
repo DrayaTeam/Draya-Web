@@ -23,43 +23,6 @@ export interface ExamDto {
   teacherName?: string;
 }
 
-const DEFAULT_EXAMS: StudentExamItem[] = [
-  {
-    id: 'ex-1',
-    title: 'امتحان الجبر والتباديل والتوافيق',
-    teacherName: 'أ. أحمد السيد',
-    subjectName: 'الرياضيات',
-    status: 'available',
-    statusLabel: 'متاح للحل الآن 🔥',
-    durationMinutes: 45,
-    secondaryDetailText: 'جاهز للبدء',
-    cornerTintBg: '#0EA5E9',
-  },
-  {
-    id: 'ex-2',
-    title: 'مراجعة قوانين نيوتن والكهربية',
-    teacherName: 'أ. سارة حسن',
-    subjectName: 'الفيزياء',
-    status: 'scheduled',
-    statusLabel: 'مجدول لاحقاً ⏳',
-    durationMinutes: 60,
-    secondaryDetailText: 'الخميس القادم 11:00 ص',
-    cornerTintBg: '#8B5CF6',
-  },
-  {
-    id: 'ex-3',
-    title: 'امتحان الفصل الدراسي الأول التراكمي',
-    teacherName: 'أ. أحمد السيد',
-    subjectName: 'الرياضيات',
-    status: 'completed',
-    statusLabel: 'مكتمل وحاصل على درجة',
-    durationMinutes: 90,
-    secondaryDetailText: 'الدرجة: 85%',
-    scorePercent: 85,
-    cornerTintBg: '#10B981',
-  },
-];
-
 @Injectable({ providedIn: 'root' })
 export class StudentExamsService extends ApiBaseService {
   readonly headerInfo = signal<StudentExamsHeaderInfo>({
@@ -70,13 +33,29 @@ export class StudentExamsService extends ApiBaseService {
   });
 
   readonly selectedFilter = signal<'all' | ExamStatusType>('all');
+  readonly searchQuery = signal<string>('');
   readonly loading = signal<boolean>(false);
-  readonly exams = signal<StudentExamItem[]>(DEFAULT_EXAMS);
+  readonly exams = signal<StudentExamItem[]>([]);
 
   readonly filteredExams = computed(() => {
     const filter = this.selectedFilter();
-    if (filter === 'all') return this.exams();
-    return this.exams().filter((ex) => ex.status === filter);
+    const query = this.searchQuery().trim().toLowerCase();
+    let list = this.exams();
+
+    if (filter !== 'all') {
+      list = list.filter((ex) => ex.status === filter);
+    }
+
+    if (query) {
+      list = list.filter(
+        (ex) =>
+          ex.title.toLowerCase().includes(query) ||
+          ex.subjectName.toLowerCase().includes(query) ||
+          ex.teacherName.toLowerCase().includes(query),
+      );
+    }
+
+    return list;
   });
 
   /**
@@ -94,45 +73,45 @@ export class StudentExamsService extends ApiBaseService {
         tap((res) => {
           this.loading.set(false);
           const rawItems = Array.isArray(res) ? res : res?.items || [];
-          if (rawItems.length > 0) {
-            const colors = ['#0EA5E9', '#8B5CF6', '#10B981', '#F59E0B'];
-            const now = new Date();
-            const mapped: StudentExamItem[] = rawItems.map((ex, idx) => {
-              let status: ExamStatusType = 'available';
-              let statusLabel = 'متاح للحل الآن 🔥';
-              let secondaryDetailText = 'جاهز للبدء';
+          const colors = ['#0EA5E9', '#8B5CF6', '#10B981', '#F59E0B'];
+          const now = new Date();
+          const mapped: StudentExamItem[] = rawItems.map((ex, idx) => {
+            let status: ExamStatusType = 'available';
+            let statusLabel = 'متاح للحل الآن 🔥';
+            let secondaryDetailText = 'جاهز للبدء';
 
-              if (ex.startDate && new Date(ex.startDate) > now) {
-                status = 'scheduled';
-                const startD = new Date(ex.startDate);
-                statusLabel = 'مجدول لاحقاً ⏳';
-                secondaryDetailText = `يبدأ ${startD.toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
-              } else if (ex.endDate && new Date(ex.endDate) < now) {
-                status = 'completed';
-                statusLabel = 'انتهى موعد الامتحان ⛔';
-                secondaryDetailText = 'انتهت الفترة';
-              } else if (ex.endDate) {
-                const endD = new Date(ex.endDate);
-                secondaryDetailText = `ينتهي ${endD.toLocaleDateString('ar-EG', { month: 'short', day: 'numeric' })}`;
-              }
+            if (ex.startDate && new Date(ex.startDate) > now) {
+              status = 'scheduled';
+              const startD = new Date(ex.startDate);
+              statusLabel = 'مجدول لاحقاً ⏳';
+              secondaryDetailText = `يبدأ ${startD.toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
+            } else if (ex.endDate && new Date(ex.endDate) < now) {
+              status = 'expired';
+              statusLabel = 'انتهى موعد الامتحان ⛔';
+              secondaryDetailText = 'انتهت الفترة';
+            } else if (ex.endDate) {
+              const endD = new Date(ex.endDate);
+              secondaryDetailText = `ينتهي ${endD.toLocaleDateString('ar-EG', { month: 'short', day: 'numeric' })}`;
+            }
 
-              return {
-                id: ex.id,
-                title: ex.title || 'امتحان تفاعلي',
-                teacherName: ex.teacherName || 'أستاذ المادة',
-                subjectName: ex.topic || 'المنهج الدراسي',
-                status,
-                statusLabel,
-                durationMinutes: ex.durationMinutes || 45,
-                secondaryDetailText,
-                cornerTintBg: colors[idx % colors.length],
-              };
-            });
-            this.exams.set(mapped);
-          }
+            return {
+              id: ex.id,
+              title: ex.title || 'امتحان تفاعلي',
+              teacherName: ex.teacherName || 'أستاذ المادة',
+              subjectName: ex.topic || 'المنهج الدراسي',
+              status,
+              statusLabel,
+              durationMinutes: ex.durationMinutes || 45,
+              secondaryDetailText,
+              cornerTintBg: colors[idx % colors.length],
+              allowedAttempts: ex.allowedAttempts ?? 1,
+            };
+          });
+          this.exams.set(mapped);
         }),
         catchError(() => {
           this.loading.set(false);
+          this.exams.set([]);
           return of(null);
         }),
       )

@@ -1,6 +1,6 @@
 // src/app/core/models/student-exam.model.ts
 
-export type ExamStatusType = 'available' | 'scheduled' | 'completed';
+export type ExamStatusType = 'available' | 'scheduled' | 'completed' | 'expired';
 
 export interface StudentExamItem {
   readonly id: string;
@@ -13,6 +13,8 @@ export interface StudentExamItem {
   readonly secondaryDetailText: string;
   readonly scorePercent?: number;
   readonly cornerTintBg: string;
+  readonly allowedAttempts?: number;
+  readonly attemptsTaken?: number;
 }
 
 export interface StudentExamsHeaderInfo {

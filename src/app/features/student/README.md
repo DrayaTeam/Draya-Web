@@ -1,86 +1,76 @@
-﻿# 🎓 Draya Web — Student Module (eature/student-module)
+# 🎓 Draya Web — Student Module (`feat/student-module-enhancements`)
 
 ## 🌟 Executive Overview
 
-The **Student Module** of the Draya Learning Platform delivers a comprehensive, responsive educational experience for enrolled students. Built with modern **Angular 20 (Standalone Components, Signals, OnPush Change Detection)** and polished **Tailwind CSS + SCSS**, this module provides end-to-end features for live examination taking, interactive classroom discussions, verified teacher ratings, digital asset streaming, and multi-channel parental communication.
+The **Student Module** of the Draya Learning Platform delivers a comprehensive, responsive educational experience for enrolled students. Built with modern **Angular 20 (Standalone Components, Signals, OnPush Change Detection)** and polished **Tailwind CSS + SCSS**, this module provides end-to-end features for live examination taking, AI diagnostic grading with async job polling, interactive weakness revision, hybrid dashboard enrichment, digital asset streaming, and behavioral empty-state guidance.
 
 ---
 
 ## 🏛️ Module Architecture & Sub-Features
 
-`src/app/features/student/
-├── dashboard/                     # Academic overview, joined courses, upcoming exams & stats
+```
+src/app/features/student/
+├── dashboard/                     # Academic overview with hybrid enrichment & motivational empty states
 ├── channel/                       # Q&A discussion forum & community channel
-│   └── README.md                  # Feature documentation for Q&A Forum
-├── exams/                         # Exam taking engine, timer, AI diagnostic breakdown & results
-│   └── README.md                  # Feature documentation for Exam Taking
+├── exams/                         # Exam taking engine, timer, auto-submit, AI job polling & results review
+├── courses/                       # Subscribed courses & package progress
 ├── packages/                      # Package catalog, chapter syllabi & 5-star rating reviews
-│   └── package-details/
-│       └── README.md              # Feature documentation for Package Details & Feedback
 ├── library/                       # Digital library, PDF readers, and video streaming player
-│   └── README.md                  # Feature documentation for Library & Streaming
-├── profile/                       # Student account settings, Cloudinary avatar uploads & parent contact sync
-│   └── README.md                  # Feature documentation for Profile & Parent Sync
+├── reports/                       # Academic analytics, radar charts, and AI interactive topic revision
+├── profile/                       # Student account settings, avatar uploads & parent contact sync
 ├── student-layout.component.ts    # Main student application shell (Sidebar, Topbar & Navigation)
 ├── student.routes.ts              # Lazy-loaded child routing definitions
-└── README.md                      # This master module documentation`
+└── README.md                      # Master student module documentation
+```
 
 ---
 
-## 🔌 Complete API Integration Matrix (24+ Endpoints)
+## 🔌 Complete API Integration Matrix
 
-| Feature Area            | Method | Endpoint                                     | Description                                               |
-| ----------------------- | ------ | -------------------------------------------- | --------------------------------------------------------- |
-| **Exams & AI Grading**  | GET    | /api/v1/exams/{id}                           | Retrieve exam metadata, questions, and duration           |
-|                         | POST   | /api/v1/exams/{id}/attempt                   | Start live exam attempt with auto-timer                   |
-|                         | POST   | /api/v1/exams/{id}/submit                    | Submit answers and trigger AI diagnostic grading          |
-|                         | GET    | /api/v1/exams/attempts/{attemptId}           | Retrieve score breakdown, question feedback & analytics   |
-| **Q&A Discussions**     | GET    | /api/v1/classrooms/{id}/questions            | Paginated questions feed with author and vote counts      |
-|                         | POST   | /api/v1/classrooms/{id}/questions            | Post text discussion thread                               |
-|                         | POST   | /api/v1/classrooms/{id}/questions/with-photo | Post photo-attached question (FormData)                   |
-|                         | POST   | /api/v1/questions/{id}/replies               | Submit reply to a discussion thread                       |
-|                         | POST   | /api/v1/questions/{id}/replies/with-photo    | Submit photo reply to discussion                          |
-|                         | POST   | /api/v1/questions/{id}/vote                  | Toggle upvote on question                                 |
-|                         | DELETE | /api/v1/questions/{id}                       | Delete own question                                       |
-| **Packages & Feedback** | GET    | /api/v1/classrooms/{id}                      | Classroom details, syllabus chapters, and pricing         |
-|                         | GET    | /api/v1/classrooms/{id}/feedback             | Average ratings and student review distribution           |
-|                         | POST   | /api/v1/classrooms/{id}/feedback             | Submit 1-to-5 star rating with feedback comment           |
-|                         | POST   | /api/v1/classrooms/enroll                    | Redeem paper center code ({ enrollmentCode })             |
-|                         | POST   | /api/v1/classrooms/{id}/checkout             | Initiate Paymob electronic payment session                |
-| **Library & Streaming** | GET    | /api/v1/students/materials                   | Digital repository of enrolled classroom materials        |
-|                         | GET    | /api/v1/materials/{id}                       | Single material metadata and parsing status               |
-|                         | GET    | /api/v1/materials/{id}/stream                | Authenticated time-limited video/audio streaming token    |
-| **Profile & Parents**   | GET    | /api/v1/auth/me                              | Fetch student credentials, grade, avatar, and parent info |
-|                         | PUT    | /api/v1/students/profile                     | Update profile details and parent guardian contact        |
-|                         | POST   | /api/v1/students/profile/picture             | Upload profile avatar to cloud storage                    |
-|                         | POST   | /api/v1/auth/change-password                 | Rotate account password                                   |
-|                         | POST   | /api/v1/auth/register/student                | Register student with parent guardian contact fields      |
+| Feature Area                     | Method | Endpoint                                                  | Description                                                      |
+| -------------------------------- | ------ | --------------------------------------------------------- | ---------------------------------------------------------------- |
+| **Exams Lifecycle & AI Grading** | GET    | `/api/v1/students/exams`                                  | Retrieve student exams with date filtering and pagination        |
+|                                  | POST   | `/api/v1/attempts/start`                                  | Start live exam attempt with auto-timer                          |
+|                                  | POST   | `/api/v1/attempts/{attemptId}/submit`                     | Submit answers and trigger AI diagnostic grading                 |
+|                                  | POST   | `/api/v1/attempts/{attemptId}/grade`                      | Trigger asynchronous AI grading pipeline                         |
+|                                  | GET    | `/api/v1/attempts/jobs/{jobId}`                           | Poll async AI grading job status until completed                 |
+|                                  | GET    | `/api/v1/attempts/{attemptId}/results`                    | Fetch complete score breakdown, AI rationale & question feedback |
+| **Weakness & AI Revision**       | GET    | `/api/v1/students/{id}/weak-topics/{topic}/revision`      | AI-generated revision recommendations & formulas                 |
+|                                  | POST   | `/api/v1/students/{id}/weak-topics/{topic}/practice-exam` | Generate personalized AI practice exam for weak topic            |
+| **Hybrid Dashboard Enrichment**  | GET    | `/api/v1/dashboard/student`                               | Fetch core student performance metrics & streaks                 |
+|                                  | GET    | `/api/v1/auth/me`                                         | Fetch verified student profile name & metadata                   |
+|                                  | GET    | `/api/v1/classrooms`                                      | Fetch enrolled classrooms, lessons count & progress              |
+|                                  | GET    | `/api/v1/students/materials`                              | Aggregate total study materials & completed count                |
+| **Library & Streaming**          | GET    | `/api/v1/students/materials`                              | Digital repository of enrolled classroom materials               |
+|                                  | GET    | `/api/v1/materials/{id}/stream`                           | Authenticated video streaming token & URL                        |
+| **Courses & Classes**            | GET    | `/api/v1/classrooms`                                      | Enrolled classrooms list and syllabus tracking                   |
 
 ---
 
-## 🛡️ Routing & Security Guard Architecture
+## 🚀 Key Improvements & Fixes in this Release
 
-- **uthGuard**: Protects all student routes against unauthenticated sessions, redirecting unauthenticated visitors to /auth/login.
-- **
-  oleGuard**: Enforces data: { roles: ['student'] } authorization to guarantee isolation from Teacher and Admin operational panels.
+1. **Exam Lifecycle A-Z & Essay Grading Engine**:
+   - **Auto-Submission**: When the countdown timer reaches `00:00`, the active exam is automatically submitted without data loss.
+   - **Async AI Grading Polling**: Submissions trigger `POST /attempts/{attemptId}/grade` and poll `GET /attempts/jobs/{jobId}` every 1.5s until `status === 'Completed'`, ensuring full AI grading results and rationales are rendered.
+   - **Essay Scoring Fix**: Fixed binary grading flaw by mapping partial marks (`grading.score / grading.maxScore >= 0.5`) and rendering AI feedback explanations instead of echoing student answers as model answers.
+2. **Exams List Search & Filtering**:
+   - Dynamic status tabs: `الكل`, `متاح للحل الآن 🔥`, `مجدول لاحقاً 🕒`, `مكتمل وحاصل على درجة ✨`, `منتهية الصلاحية ⛔`.
+   - Real-time search query filtering across exam titles, subjects, and teacher names.
+3. **Hybrid Dashboard Enrichment**:
+   - Zero hardcoded mock fallback data; seamlessly queries `/dashboard/student` and enriches with `/auth/me`, `/classrooms`, `/students/exams`, and `/students/materials`.
+   - Replaced empty sections with interactive `<draya-empty-state>` components guiding students to browse courses and start practice exams.
+4. **AI Interactive Revision & Practice Exams**:
+   - Integrated `StudentReportsService` with `/students/{id}/weak-topics/{topic}/revision` and `/students/{id}/weak-topics/{topic}/practice-exam`.
 
 ---
 
 ## 🧪 Comprehensive Verification Matrix
 
-All features within the student module have been strictly validated against [WORKFLOW_RULES.md](file:///e:/ITI/Draya/Draya-Web/WORKFLOW_RULES.md):
+All features within the student module have been strictly validated against `WORKFLOW_RULES.md`:
 
-- [x] **Step A (Code Linting):**
-      px ng lint (0 errors, 0 warnings across all module files).
-- [x] **Step B (Code Formatting):** 100% formatted using Prettier standards.
+- [x] **Step A (Code Linting):** `npx ng lint` (0 errors, 0 warnings).
+- [x] **Step B (Code Formatting):** 100% formatted with Prettier.
 - [x] **Step C (Console & Runtime Inspection):** 0 unhandled console errors, 0 runtime exceptions.
-- [x] **Step D (Karma Unit Tests):** **217 / 217 specs passed (100% Pass Rate)**.
-- [x] **Step E (Integration Tests):** Full HTTP TestBed mocks and SignalR client integration.
-- [x] **Step F (Playwright E2E Suite):**
-  - e2e/student-exam-flow.spec.ts (Passed)
-  - e2e/student-qa-channel.spec.ts (Passed)
-  - e2e/student-package-details.spec.ts (Passed)
-  - e2e/student-library.spec.ts (Passed)
-  - e2e/student-profile.spec.ts (Passed)
-- [x] **Step G (Production Build):**
-      px ng build --configuration=production (Exit Code 0).
+- [x] **Step D (Karma Unit Tests):** **286 / 286 specs passed (100% Pass Rate)**.
+- [x] **Step E (Integration Tests):** Full HTTP TestBed mocks and API client integrations.
+- [x] **Step G (Production Build):** `npx ng build --configuration=production` (Exit Code 0, bundle size optimized).

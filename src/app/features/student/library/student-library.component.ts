@@ -10,12 +10,13 @@ import {
 } from '../../../core/services/student-library.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { BookCardComponent } from './components/book-card/book-card.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { LibraryBookItem } from '../../../core/models/student-library.model';
 
 @Component({
   selector: 'app-student-library',
   standalone: true,
-  imports: [CommonModule, FormsModule, BookCardComponent],
+  imports: [CommonModule, FormsModule, BookCardComponent, EmptyStateComponent],
   templateUrl: './student-library.component.html',
   styleUrl: './student-library.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
