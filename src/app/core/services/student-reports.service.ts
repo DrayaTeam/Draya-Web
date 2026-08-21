@@ -1,6 +1,7 @@
-import { Injectable, signal } from '@angular/core';
-import { Observable, catchError, of } from 'rxjs';
+import { Injectable, inject, signal } from '@angular/core';
+import { Observable, catchError, forkJoin, map, of, tap } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
+import { AuthService } from '../../features/auth/services/auth.service';
 import {
   StudentReportSummary,
   SubjectScoreItem,
@@ -8,80 +9,133 @@ import {
   SkillRadarPoint,
   TopicRevisionDto,
   CreatePracticeExamResponseDto,
+  StudentAnalyticsDto,
+  PerformanceReportDto,
 } from '../models/student-reports.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StudentReportsService extends ApiBaseService {
+  private readonly authService = inject(AuthService);
+
+  readonly isLoading = signal<boolean>(false);
+
   readonly summary = signal<StudentReportSummary>({
-    overallAverage: 87,
-    monthlyGrowthPercent: 5,
-    completedExamsCount: 12,
-    topScorePercent: 94,
-    topSkillSubjectName: 'الكيمياء',
-    topSkillScorePercent: 91,
+    overallAverage: 0,
+    monthlyGrowthPercent: 0,
+    completedExamsCount: 0,
+    topScorePercent: 0,
+    topSkillSubjectName: 'لا يوجد',
+    topSkillScorePercent: 0,
   });
 
-  readonly subjectScores = signal<readonly SubjectScoreItem[]>([
-    {
-      id: 'math',
-      subjectName: 'الرياضيات',
-      scorePercent: 87,
-      progressGradient: 'linear-gradient(90deg, #00A6F4 0%, #4F39F6 100%)',
-      textColor: '#0084D1',
-      bgColor: '#F0F9FF',
-    },
-    {
-      id: 'physics',
-      subjectName: 'الفيزياء',
-      scorePercent: 82,
-      progressGradient: 'linear-gradient(90deg, #AD46FF 0%, #E60076 100%)',
-      textColor: '#9810FA',
-      bgColor: '#FAF5FF',
-    },
-    {
-      id: 'chemistry',
-      subjectName: 'الكيمياء',
-      scorePercent: 91,
-      progressGradient: 'linear-gradient(90deg, #00BC7D 0%, #009689 100%)',
-      textColor: '#009966',
-      bgColor: '#ECFDF5',
-    },
-  ]);
+  readonly subjectScores = signal<readonly SubjectScoreItem[]>([]);
+  readonly weaknessTopics = signal<readonly ReportWeaknessTopic[]>([]);
+  readonly skillRadarPoints = signal<readonly SkillRadarPoint[]>([]);
 
-  readonly weaknessTopics = signal<readonly ReportWeaknessTopic[]>([
-    {
-      id: 'weakness-1',
-      topicTitle: 'المشتقات والتكامل وتطبيقات المساحات',
-      subjectName: 'الرياضيات',
-      badgeText: 'تحتاج تحسين عاجل',
-      scorePercent: 42,
-      barMarkerColor: '#FF2056',
-      badgeBgColor: '#FFE4E6',
-      badgeTextColor: '#A50036',
-      scoreTextColor: '#EC003F',
-    },
-    {
-      id: 'weakness-2',
-      topicTitle: 'الدوائر الكهربية وقانون أوم للمغلقة',
-      subjectName: 'الفيزياء',
-      badgeText: 'في طور التحسن',
-      scorePercent: 55,
-      barMarkerColor: '#FE9A00',
-      badgeBgColor: '#FEF3C6',
-      badgeTextColor: '#973C00',
-      scoreTextColor: '#E17100',
-    },
-  ]);
+  /**
+   * Loads real analytics and latest performance report from backend.
+   */
+  loadReports(studentId?: string): Observable<boolean> {
+    const targetStudentId = studentId || this.authService.currentUser()?.userId;
+    this.isLoading.set(true);
 
-  readonly skillRadarPoints = signal<readonly SkillRadarPoint[]>([
-    { name: 'رياضيات', percent: 85 },
-    { name: 'فيزياء', percent: 78 },
-    { name: 'كيمياء', percent: 91 },
-    { name: 'أحياء', percent: 88 },
-    { name: 'لغات', percent: 80 },
-  ]);
+    if (!targetStudentId) {
+      this.isLoading.set(false);
+      return of(false);
+    }
+
+    return forkJoin({
+      analytics: this.get<StudentAnalyticsDto>(`/students/${targetStudentId}/analytics`).pipe(
+        catchError(() => of(null)),
+      ),
+      report: this.get<PerformanceReportDto>(
+        `/students/${targetStudentId}/performance-reports/latest`,
+      ).pipe(catchError(() => of(null))),
+    }).pipe(
+      tap(({ analytics, report }) => {
+        this.isLoading.set(false);
+        const subjects = analytics?.subjectProficiencies || report?.subjectProficiencies || [];
+        const weakTopicsList = analytics?.weakTopics || report?.weakTopics || [];
+
+        let topSubjectName = 'لا يوجد';
+        let topScore = 0;
+        if (subjects.length > 0) {
+          const sorted = [...subjects].sort(
+            (a, b) =>
+              (b.scorePercentage || b.proficiencyScore || 0) -
+              (a.scorePercentage || a.proficiencyScore || 0),
+          );
+          topSubjectName = sorted[0].subjectName || 'عام';
+          topScore = Math.round(sorted[0].scorePercentage || sorted[0].proficiencyScore || 0);
+        }
+
+        const avg = analytics?.overallAverage ?? 0;
+        const examsCount = analytics?.completedExams ?? 0;
+        const highest = analytics?.highestScore ?? topScore;
+
+        this.summary.set({
+          overallAverage: Math.round(avg),
+          monthlyGrowthPercent: 0,
+          completedExamsCount: examsCount,
+          topScorePercent: Math.round(highest),
+          topSkillSubjectName: topSubjectName,
+          topSkillScorePercent: topScore,
+        });
+
+        // Subject scores breakdown
+        const gradients = [
+          'linear-gradient(90deg, #00A6F4 0%, #4F39F6 100%)',
+          'linear-gradient(90deg, #AD46FF 0%, #E60076 100%)',
+          'linear-gradient(90deg, #00BC7D 0%, #009689 100%)',
+          'linear-gradient(90deg, #F59E0B 0%, #D97706 100%)',
+        ];
+        const textColors = ['#0084D1', '#9810FA', '#009966', '#D97706'];
+        const bgColors = ['#F0F9FF', '#FAF5FF', '#ECFDF5', '#FEF3C7'];
+
+        const mappedSubjects: SubjectScoreItem[] = subjects.map((s, idx) => ({
+          id: s.subjectId || `sub_${idx}`,
+          subjectName: s.subjectName || `مادة ${idx + 1}`,
+          scorePercent: Math.round(s.scorePercentage || s.proficiencyScore || 0),
+          progressGradient: gradients[idx % gradients.length],
+          textColor: textColors[idx % textColors.length],
+          bgColor: bgColors[idx % bgColors.length],
+        }));
+        this.subjectScores.set(mappedSubjects);
+
+        // Weakness topics
+        const mappedWeak: ReportWeaknessTopic[] = weakTopicsList.map((w, idx) => {
+          const score = Math.round(w.accuracyPercentage ?? 40);
+          const isSevere = score < 50;
+          return {
+            id: w.topicId || `weak_${idx}`,
+            topicTitle: w.topicTitle || w.topicName || `موضوع ${idx + 1}`,
+            subjectName: w.subjectName || 'عام',
+            badgeText: w.statusLabel || (isSevere ? 'تحتاج تحسين عاجل' : 'في طور التحسن'),
+            scorePercent: score,
+            barMarkerColor: isSevere ? '#FF2056' : '#FE9A00',
+            badgeBgColor: isSevere ? '#FFE4E6' : '#FEF3C6',
+            badgeTextColor: isSevere ? '#A50036' : '#973C00',
+            scoreTextColor: isSevere ? '#EC003F' : '#E17100',
+          };
+        });
+        this.weaknessTopics.set(mappedWeak);
+
+        // Skill radar points
+        const radar: SkillRadarPoint[] = subjects.map((s) => ({
+          name: s.subjectName || '',
+          percent: Math.round(s.scorePercentage || s.proficiencyScore || 0),
+        }));
+        this.skillRadarPoints.set(radar);
+      }),
+      map(() => true),
+      catchError(() => {
+        this.isLoading.set(false);
+        return of(false);
+      }),
+    );
+  }
 
   /**
    * Fetches AI-generated revision recommendations for a specific weak topic.

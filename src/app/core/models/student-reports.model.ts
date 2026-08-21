@@ -48,3 +48,41 @@ export interface CreatePracticeExamResponseDto {
   readonly title?: string;
   readonly questionsCount?: number;
 }
+
+export interface SubjectProficiencyResult {
+  readonly subjectId?: string;
+  readonly subjectName?: string;
+  readonly proficiencyScore?: number;
+  readonly scorePercentage?: number;
+}
+
+export interface TrendPointResult {
+  readonly monthName?: string;
+  readonly averageScore?: number;
+}
+
+export interface WeakTopicResult {
+  readonly topicId?: string;
+  readonly topicTitle?: string;
+  readonly topicName?: string;
+  readonly subjectName?: string;
+  readonly accuracyPercentage?: number;
+  readonly statusLabel?: string;
+}
+
+export interface StudentAnalyticsDto {
+  readonly overallAverage?: number;
+  readonly highestScore?: number;
+  readonly completedExams?: number;
+  readonly subjectProficiencies?: SubjectProficiencyResult[];
+  readonly trendPoints?: TrendPointResult[];
+  readonly weakTopics?: WeakTopicResult[];
+}
+
+export interface PerformanceReportDto {
+  readonly id?: string;
+  readonly generatedAt?: string;
+  readonly summaryText?: string;
+  readonly weakTopics?: WeakTopicResult[];
+  readonly subjectProficiencies?: SubjectProficiencyResult[];
+}

@@ -1,6 +1,4 @@
-// src/app/features/student/reports/student-reports.component.ts
-
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StudentReportsService } from '../../../core/services/student-reports.service';
 import { ToastService } from '../../../core/services/toast.service';
@@ -16,7 +14,7 @@ import { ReportWeaknessTopic } from '../../../core/models/student-reports.model'
   styleUrl: './student-reports.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StudentReportsComponent {
+export class StudentReportsComponent implements OnInit {
   protected readonly reportsService = inject(StudentReportsService);
   private readonly toastService = inject(ToastService);
 
@@ -24,6 +22,14 @@ export class StudentReportsComponent {
   readonly subjectScores = this.reportsService.subjectScores;
   readonly weaknessTopics = this.reportsService.weaknessTopics;
   readonly skillPoints = this.reportsService.skillRadarPoints;
+  readonly isLoading = this.reportsService.isLoading;
+
+  ngOnInit(): void {
+    this.reportsService.loadReports().subscribe({
+      next: () => void 0,
+      error: () => void 0,
+    });
+  }
 
   onStartReview(topic: ReportWeaknessTopic): void {
     this.toastService.info(

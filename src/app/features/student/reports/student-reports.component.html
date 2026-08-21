@@ -210,6 +210,10 @@
               [style.background]="subj.progressGradient"></div>
           </div>
         </div>
+      } @empty {
+        <div class="empty-state-card">
+          <p>لا توجد درجات مسجلة للمواد الدراسية بعد. ابدأ بأداء الامتحانات لتظهر تحليلاتك هنا.</p>
+        </div>
       }
     </div>
   </section>
@@ -222,6 +226,10 @@
         <app-report-weakness-topic
           [topic]="topic"
           (startReview)="onStartReview($event)"></app-report-weakness-topic>
+      } @empty {
+        <div class="empty-state-card">
+          <p>أداء ممتاز! لا توجد نقاط ضعف أو مهارات متعثرة مسجلة حالياً.</p>
+        </div>
       }
     </div>
   </section>

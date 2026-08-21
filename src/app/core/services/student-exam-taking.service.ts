@@ -81,14 +81,22 @@ export class StudentExamTakingService extends ApiBaseService {
     this.isLoading.set(true);
     this.currentExamId.set(examId);
 
-    this.post<StartAttemptResponseDto>(`/attempts/start`, { examId })
-      .pipe(catchError(() => of(null)))
-      .subscribe((att) => {
-        const id = att?.attemptId || att?.id;
-        if (id) {
-          this.currentAttemptId.set(id);
-        }
-      });
+    const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(examId);
+    if (isGuid) {
+      this.post<StartAttemptResponseDto>(`/attempts/start`, { examId })
+        .pipe(
+          catchError((err) => {
+            console.warn('Attempt start server notification:', err?.error?.message || err?.message || err);
+            return of(null);
+          }),
+        )
+        .subscribe((att) => {
+          const id = att?.attemptId || att?.id;
+          if (id) {
+            this.currentAttemptId.set(id);
+          }
+        });
+    }
 
     return this.get<StudentExamDto>(`/students/exams/${examId}`).pipe(
       catchError(() => this.get<StudentExamDto>(`/exams/${examId}`)),
