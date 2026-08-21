@@ -8,9 +8,11 @@ import {
   StudentEnrollmentService,
   PackageDetailsView,
   LessonItem,
+} from '../../../../core/services/student-enrollment.service';
+import {
   ClassroomFeedbackSummaryDto,
   ClassroomFeedbackItemDto
-} from '../../../../core/services/student-enrollment.service';
+} from '../../../../core/models/student-courses.model';
 import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
