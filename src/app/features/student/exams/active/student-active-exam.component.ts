@@ -78,15 +78,13 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
 
   constructor() {
     effect(() => {
-      const remaining = this.examService.remainingSeconds();
       const isSub = this.examService.isSubmitted();
       const isLoading = this.examService.isLoading();
-      if (remaining === 0 && !isSub && !isLoading) {
-        this.toastService.warning(
-          'انتهى وقت الامتحان! ⌛',
-          'تم إرسال وتسليم إجاباتك تلقائياً للحفاظ على درجاتك قبل انتهاء المهلة.',
-        );
-        this.onSubmitExam();
+      if (isSub && !isLoading) {
+        const attemptId = this.examService.currentAttemptId() || undefined;
+        this.router.navigate(['/student/exams', this.examId, 'result'], {
+          queryParams: attemptId ? { attemptId } : {},
+        });
       }
     });
   }
@@ -149,12 +147,29 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
     this.examService.goToQuestion(index);
   }
 
+  onSelectQuestionNav(index: number): void {
+    this.examService.goToQuestion(index);
+  }
+
   onNextQuestion(): void {
     this.examService.nextQuestion();
   }
 
   onPrevQuestion(): void {
     this.examService.prevQuestion();
+  }
+
+  onTriggerSubmit(): void {
+    this.showSubmitConfirm.set(true);
+  }
+
+  onCancelSubmit(): void {
+    this.showSubmitConfirm.set(false);
+  }
+
+  onConfirmSubmit(): void {
+    this.showSubmitConfirm.set(false);
+    this.onSubmitExam();
   }
 
   onReturnToExams(): void {
@@ -168,15 +183,16 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
     });
   }
 
+  onRetryLoading(): void {
+    this.onRetryLoad();
+  }
+
   onSubmitExam(): void {
     const attemptId = this.examService.currentAttemptId() || undefined;
-    this.examService.submitExam(attemptId);
     this.toastService.success(
       'تم تسليم الامتحان بنجاح! 🎉',
       'جارٍ استخراج تقرير التحليل الذكي للدرجات والمهارات...',
     );
-    this.router.navigate(['/student/exams', this.examId, 'result'], {
-      queryParams: attemptId ? { attemptId } : {},
-    });
+    this.examService.submitExam(attemptId);
   }
 }

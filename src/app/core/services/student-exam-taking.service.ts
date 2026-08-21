@@ -378,11 +378,15 @@ export class StudentExamTakingService extends ApiBaseService {
     if (targetAttemptId && !targetAttemptId.startsWith('att_')) {
       const payload: SubmitAttemptRequestDto = {
         idempotencyKey: `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-        answers: questionsList.map((q): AnswerSubmissionDto => ({
-          examQuestionId: q.id,
-          selectedOptionId: q.selectedOptionId || undefined,
-          answerText: q.answerText || (q.selectedOptionId ? undefined : ''),
-        })),
+        answers: questionsList.map((q): AnswerSubmissionDto => {
+          const selectedOpt = q.options.find((o) => o.id === q.selectedOptionId);
+          const text = q.answerText?.trim() || selectedOpt?.text || ' ';
+          return {
+            examQuestionId: q.id,
+            selectedOptionId: q.selectedOptionId || undefined,
+            answerText: text,
+          };
+        }),
       };
 
       this.post<SubmitAttemptResponseDto>(`/attempts/${targetAttemptId}/submit`, payload)
