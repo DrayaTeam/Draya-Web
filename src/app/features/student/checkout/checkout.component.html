@@ -169,10 +169,12 @@
             <span class="row-label">الفصل الدراسي:</span>
             <span class="row-val">{{ pkgName }}</span>
           </div>
-          <div class="summary-row">
-            <span class="row-label">المعلم المدرس:</span>
-            <span class="row-val">{{ teacherName }}</span>
-          </div>
+          @if (teacherName) {
+            <div class="summary-row">
+              <span class="row-label">المعلم المدرس:</span>
+              <span class="row-val">{{ teacherName }}</span>
+            </div>
+          }
           <div class="summary-row">
             <span class="row-label">السعر الأصلي:</span>
             <span class="row-val">{{ originalPrice }} جنيه</span>
@@ -189,7 +191,7 @@
         <div class="promo-box">
           <input
             type="text"
-            placeholder="كود الخصم (جرب draya)"
+            placeholder="كود الخصم"
             [(ngModel)]="promoCode"
             name="promoCode"
             class="input-promo" />

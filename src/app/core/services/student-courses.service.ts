@@ -68,7 +68,7 @@ export class StudentCoursesService extends ApiBaseService {
                 title: c.name || 'فصل دراسي',
                 teacherName:
                   c.teacherName ||
-                  (c.gradeLevelName ? `أستاذ ${c.subjectName || ''}` : 'معلم دراية'),
+                  (c.subjectName ? `أستاذ ${c.subjectName}` : 'معلم المادة'),
                 subjectName: c.subjectName || 'المادة الدراسية',
                 statusText: c.isActive ? 'سارية ومفعّلة' : 'غير نشطة',
                 isActive: c.isActive,

@@ -161,13 +161,13 @@ export class StudentEnrollmentService extends ApiBaseService {
           classroomList = classroomsRes.items;
         }
 
-        const name = profile?.fullName ? `أ. ${profile.fullName}` : 'معلم دراية';
+        const name = profile?.fullName ? `أ. ${profile.fullName}` : 'معلم المادة';
         const subject = profile?.specialization || 'المادة الدراسية';
         const bio =
           profile?.description ||
           (profile?.specialization
-            ? `معلم متخصص في مادة ${profile.specialization} على منصة دراية.`
-            : 'معلم معتمد في منصة دراية التعليمية.');
+            ? `معلم متخصص في مادة ${profile.specialization}.`
+            : 'معلم معتمد في المنصة التعليمية.');
         const avatarUrl =
           'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=300&auto=format&fit=crop';
         const rating = 5.0;
@@ -338,12 +338,12 @@ export class StudentEnrollmentService extends ApiBaseService {
           };
         };
 
-        const teacherName = classroom?.gradeLevelName
-          ? `أستاذ ${classroom.subjectName || ''}`
-          : 'معلم دراية';
+        const teacherName =
+          classroom?.teacherName ||
+          (classroom?.subjectName ? `أستاذ ${classroom.subjectName}` : '');
         const subject = classroom?.subjectName || 'المادة الدراسية';
-        const name = classroom?.name || 'الباقة الدراسية';
-        const price = classroom?.price || 0;
+        const name = classroom?.name || 'فصل دراسي';
+        const price = classroom?.price ?? 0;
 
         const allLessons: LessonItem[] = rawMaterials.map((m, idx) => mapMaterialToLesson(m, idx));
 

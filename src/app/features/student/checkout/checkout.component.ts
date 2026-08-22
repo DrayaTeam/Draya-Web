@@ -38,10 +38,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   readonly paymobUrl = signal<string>('');
   readonly verifyingManually = signal<boolean>(false);
 
-  pkgId = 'pkg_1';
-  pkgName = 'باقة دراسية';
-  teacherName = 'معلم دراية';
-  originalPrice = 150;
+  pkgId = '';
+  pkgName = 'جارٍ التحميل...';
+  teacherName = '';
+  originalPrice = 0;
   promoCode = '';
 
   private popupRef: Window | null = null;
@@ -49,7 +49,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private messageListener?: (event: MessageEvent) => void;
 
   ngOnInit(): void {
-    this.pkgId = this.route.snapshot.paramMap.get('id') || 'pkg_1';
+    this.pkgId = this.route.snapshot.paramMap.get('id') || '';
 
     // 1. Check if redirected back with status query params
     const queryParams = this.route.snapshot.queryParams;
@@ -68,16 +68,25 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       this.toast.error('فشلت عملية الدفع', 'لم يتم خصم أي مبالغ، يرجى المحاولة مرة أخرى.');
     }
 
-    // 2. Fetch package details
-    this.enrollmentService.getPackageDetails(this.pkgId).subscribe({
-      next: (p) => {
-        if (p) {
-          this.pkgName = p.name;
-          this.teacherName = p.teacherName;
-          this.originalPrice = p.price;
-        }
-      },
-    });
+    // 2. Fetch real package details
+    if (this.pkgId) {
+      this.enrollmentService.getPackageDetails(this.pkgId).subscribe({
+        next: (p) => {
+          if (p) {
+            this.pkgName = p.name || 'فصل دراسي';
+            this.teacherName = p.teacherName || '';
+            this.originalPrice = p.price ?? 0;
+          }
+        },
+        error: () => {
+          this.pkgName = 'فصل دراسي';
+          this.teacherName = '';
+          this.originalPrice = 0;
+        },
+      });
+    } else {
+      this.pkgName = 'فصل دراسي';
+    }
   }
 
   ngOnDestroy(): void {
