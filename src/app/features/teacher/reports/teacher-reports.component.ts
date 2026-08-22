@@ -123,7 +123,7 @@ export class TeacherReportsComponent implements OnInit {
 
   approveReport(): void {
     const report = this.latestReport();
-    if (!report) return;
+    if (!report?.id) return;
 
     this.isApproving.set(true);
     this.reportsService.approveReport(report.id).subscribe({

@@ -212,7 +212,7 @@
                         <span class="score-badge">{{ topic.proficiencyPercent | number: '1.0-1' }}%</span>
                       </td>
                       <td class="text-xs text-slate-500" dir="ltr">
-                        @if (topic.exampleIncorrectAnswers.length) {
+                        @if (topic.exampleIncorrectAnswers && topic.exampleIncorrectAnswers.length > 0) {
                           {{ topic.exampleIncorrectAnswers[0] }}
                           @if (topic.exampleIncorrectAnswers.length > 1) {
                             <span class="text-slate-400">
