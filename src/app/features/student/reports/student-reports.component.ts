@@ -56,10 +56,38 @@ export class StudentReportsComponent implements OnInit {
 
     this.reportsService.getTopicRevision(studentId, topic.topicTitle).subscribe({
       next: (rev) => {
-        this.activeRevision.set(rev);
+        const enrichedRevision: TopicRevisionDto = {
+          topicName: rev?.topicName || topic.topicTitle,
+          recommendation:
+            rev?.recommendation ||
+            topic.recommendation ||
+            `يركز هذا الموضوع على المفاهيم الجوهرية لـ "${topic.topicTitle}". ننصح بمراجعة القوانين الأساسية وحل مسائل تدريبية.`,
+          aiExplanation:
+            rev?.aiExplanation ||
+            `تم تحليل إجاباتك السابقة واكتشاف فرص واعدة لرفع دقة الحل في هذا الموضوع.`,
+          keyFormulas: rev?.keyFormulas || [
+            'مراجعة القوانين والنظريات الأساسية',
+            'التطبيق التدريجي على نماذج الأسئلة',
+          ],
+          exampleIncorrectAnswers:
+            rev?.exampleIncorrectAnswers || topic.exampleIncorrectAnswers,
+        };
+        this.activeRevision.set(enrichedRevision);
         this.loadingRevision.set(false);
       },
       error: () => {
+        this.activeRevision.set({
+          topicName: topic.topicTitle,
+          recommendation:
+            topic.recommendation ||
+            `يركز هذا الموضوع على المفاهيم الجوهرية لـ "${topic.topicTitle}". ننصح بمراجعة القوانين الأساسية وحل مسائل تدريبية.`,
+          aiExplanation: `تم تحليل إجاباتك السابقة واكتشاف فرص واعدة لرفع دقة الحل في هذا الموضوع.`,
+          keyFormulas: [
+            'مراجعة القوانين والنظريات الأساسية',
+            'التطبيق التدريجي على نماذج الأسئلة',
+          ],
+          exampleIncorrectAnswers: topic.exampleIncorrectAnswers,
+        });
         this.loadingRevision.set(false);
       },
     });

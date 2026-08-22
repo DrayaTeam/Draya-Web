@@ -7,6 +7,9 @@ export interface StudentReportSummary {
   readonly topScorePercent: number;
   readonly topSkillSubjectName: string;
   readonly topSkillScorePercent: number;
+  readonly summaryText?: string;
+  readonly generatedAt?: string;
+  readonly reportId?: string;
 }
 
 export interface SubjectScoreItem {
@@ -28,6 +31,8 @@ export interface ReportWeaknessTopic {
   readonly badgeBgColor: string;
   readonly badgeTextColor: string;
   readonly scoreTextColor: string;
+  readonly recommendation?: string;
+  readonly exampleIncorrectAnswers?: readonly string[];
 }
 
 export interface SkillRadarPoint {
@@ -40,6 +45,11 @@ export interface TopicRevisionDto {
   readonly recommendation?: string;
   readonly aiExplanation?: string;
   readonly keyFormulas?: readonly string[];
+  readonly exampleIncorrectAnswers?: readonly string[];
+}
+
+export interface PracticeExamRequest {
+  readonly subjectId?: string;
 }
 
 export interface CreatePracticeExamResponseDto {
@@ -54,9 +64,16 @@ export interface SubjectProficiencyResult {
   readonly subjectName?: string;
   readonly proficiencyScore?: number;
   readonly scorePercentage?: number;
+  readonly proficiencyPercent?: number;
+}
+
+export interface SubjectProficiencyDto {
+  readonly subjectName?: string;
+  readonly proficiencyPercent?: number;
 }
 
 export interface TrendPointResult {
+  readonly month?: string;
   readonly monthName?: string;
   readonly averageScore?: number;
 }
@@ -67,7 +84,17 @@ export interface WeakTopicResult {
   readonly topicName?: string;
   readonly subjectName?: string;
   readonly accuracyPercentage?: number;
+  readonly proficiencyPercent?: number;
+  readonly status?: string;
   readonly statusLabel?: string;
+  readonly recommendation?: string;
+  readonly exampleIncorrectAnswers?: string[];
+}
+
+export interface WeakTopicDto {
+  readonly topicName?: string;
+  readonly proficiencyPercent?: number;
+  readonly recommendation?: string;
 }
 
 export interface StudentAnalyticsDto {
@@ -83,6 +110,7 @@ export interface PerformanceReportDto {
   readonly id?: string;
   readonly generatedAt?: string;
   readonly summaryText?: string;
-  readonly weakTopics?: WeakTopicResult[];
-  readonly subjectProficiencies?: SubjectProficiencyResult[];
+  readonly weakTopics?: WeakTopicDto[] | WeakTopicResult[];
+  readonly subjectProficiencies?: SubjectProficiencyDto[] | SubjectProficiencyResult[];
 }
+

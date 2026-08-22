@@ -7,7 +7,9 @@ import {
   SubjectScoreItem,
   ReportWeaknessTopic,
   SkillRadarPoint,
+  TrendPointResult,
   TopicRevisionDto,
+  PracticeExamRequest,
   CreatePracticeExamResponseDto,
   StudentAnalyticsDto,
   PerformanceReportDto,
@@ -28,14 +30,20 @@ export class StudentReportsService extends ApiBaseService {
     topScorePercent: 0,
     topSkillSubjectName: 'لا يوجد',
     topSkillScorePercent: 0,
+    summaryText: undefined,
+    generatedAt: undefined,
+    reportId: undefined,
   });
 
+  readonly latestReport = signal<PerformanceReportDto | null>(null);
+  readonly trendPoints = signal<readonly TrendPointResult[]>([]);
   readonly subjectScores = signal<readonly SubjectScoreItem[]>([]);
   readonly weaknessTopics = signal<readonly ReportWeaknessTopic[]>([]);
   readonly skillRadarPoints = signal<readonly SkillRadarPoint[]>([]);
 
   /**
    * Loads real analytics and latest performance report from backend.
+   * Calls GET /api/v1/students/{studentId}/analytics & GET /api/v1/students/{studentId}/performance-reports/latest
    */
   loadReports(studentId?: string): Observable<boolean> {
     const targetStudentId = studentId || this.authService.currentUser()?.userId;
@@ -56,19 +64,25 @@ export class StudentReportsService extends ApiBaseService {
     }).pipe(
       tap(({ analytics, report }) => {
         this.isLoading.set(false);
+        this.latestReport.set(report);
+
         const subjects = analytics?.subjectProficiencies || report?.subjectProficiencies || [];
         const weakTopicsList = analytics?.weakTopics || report?.weakTopics || [];
+        const trends = analytics?.trendPoints || [];
+
+        this.trendPoints.set(trends);
 
         let topSubjectName = 'لا يوجد';
         let topScore = 0;
         if (subjects.length > 0) {
           const sorted = [...subjects].sort(
             (a, b) =>
-              (b.scorePercentage || b.proficiencyScore || 0) -
-              (a.scorePercentage || a.proficiencyScore || 0),
+              ((b as { proficiencyPercent?: number }).proficiencyPercent || (b as { scorePercentage?: number }).scorePercentage || (b as { proficiencyScore?: number }).proficiencyScore || 0) -
+              ((a as { proficiencyPercent?: number }).proficiencyPercent || (a as { scorePercentage?: number }).scorePercentage || (a as { proficiencyScore?: number }).proficiencyScore || 0),
           );
           topSubjectName = sorted[0].subjectName || 'عام';
-          topScore = Math.round(sorted[0].scorePercentage || sorted[0].proficiencyScore || 0);
+          const rawTop = (sorted[0] as { proficiencyPercent?: number }).proficiencyPercent || (sorted[0] as { scorePercentage?: number }).scorePercentage || (sorted[0] as { proficiencyScore?: number }).proficiencyScore || 0;
+          topScore = Math.round(rawTop);
         }
 
         const avg = analytics?.overallAverage ?? 0;
@@ -82,6 +96,9 @@ export class StudentReportsService extends ApiBaseService {
           topScorePercent: Math.round(highest),
           topSkillSubjectName: topSubjectName,
           topSkillScorePercent: topScore,
+          summaryText: report?.summaryText || undefined,
+          generatedAt: report?.generatedAt || undefined,
+          reportId: report?.id || undefined,
         });
 
         // Subject scores breakdown
@@ -94,39 +111,50 @@ export class StudentReportsService extends ApiBaseService {
         const textColors = ['#0084D1', '#9810FA', '#009966', '#D97706'];
         const bgColors = ['#F0F9FF', '#FAF5FF', '#ECFDF5', '#FEF3C7'];
 
-        const mappedSubjects: SubjectScoreItem[] = subjects.map((s, idx) => ({
-          id: s.subjectId || `sub_${idx}`,
-          subjectName: s.subjectName || `مادة ${idx + 1}`,
-          scorePercent: Math.round(s.scorePercentage || s.proficiencyScore || 0),
-          progressGradient: gradients[idx % gradients.length],
-          textColor: textColors[idx % textColors.length],
-          bgColor: bgColors[idx % bgColors.length],
-        }));
+        const mappedSubjects: SubjectScoreItem[] = subjects.map((s, idx) => {
+          const rawScore = (s as { proficiencyPercent?: number }).proficiencyPercent || (s as { scorePercentage?: number }).scorePercentage || (s as { proficiencyScore?: number }).proficiencyScore || 0;
+          return {
+            id: (s as { subjectId?: string }).subjectId || `sub_${idx}`,
+            subjectName: s.subjectName || `مادة ${idx + 1}`,
+            scorePercent: Math.round(rawScore),
+            progressGradient: gradients[idx % gradients.length],
+            textColor: textColors[idx % textColors.length],
+            bgColor: bgColors[idx % bgColors.length],
+          };
+        });
         this.subjectScores.set(mappedSubjects);
 
         // Weakness topics
         const mappedWeak: ReportWeaknessTopic[] = weakTopicsList.map((w, idx) => {
-          const score = Math.round(w.accuracyPercentage ?? 40);
+          const rawScore = (w as { proficiencyPercent?: number }).proficiencyPercent || (w as { accuracyPercentage?: number }).accuracyPercentage || 40;
+          const score = Math.round(rawScore);
           const isSevere = score < 50;
+          const topicName = (w as { topicTitle?: string }).topicTitle || w.topicName || `موضوع ${idx + 1}`;
+          const status = (w as { statusLabel?: string }).statusLabel || (w as { status?: string }).status;
           return {
-            id: w.topicId || `weak_${idx}`,
-            topicTitle: w.topicTitle || w.topicName || `موضوع ${idx + 1}`,
-            subjectName: w.subjectName || 'عام',
-            badgeText: w.statusLabel || (isSevere ? 'تحتاج تحسين عاجل' : 'في طور التحسن'),
+            id: (w as { topicId?: string }).topicId || `weak_${idx}`,
+            topicTitle: topicName,
+            subjectName: (w as { subjectName?: string }).subjectName || 'عام',
+            badgeText: status || (isSevere ? 'تحتاج تحسين عاجل' : 'في طور التحسن'),
             scorePercent: score,
             barMarkerColor: isSevere ? '#FF2056' : '#FE9A00',
             badgeBgColor: isSevere ? '#FFE4E6' : '#FEF3C6',
             badgeTextColor: isSevere ? '#A50036' : '#973C00',
             scoreTextColor: isSevere ? '#EC003F' : '#E17100',
+            recommendation: (w as { recommendation?: string }).recommendation,
+            exampleIncorrectAnswers: (w as { exampleIncorrectAnswers?: string[] }).exampleIncorrectAnswers,
           };
         });
         this.weaknessTopics.set(mappedWeak);
 
         // Skill radar points
-        const radar: SkillRadarPoint[] = subjects.map((s) => ({
-          name: s.subjectName || '',
-          percent: Math.round(s.scorePercentage || s.proficiencyScore || 0),
-        }));
+        const radar: SkillRadarPoint[] = subjects.map((s) => {
+          const rawScore = (s as { proficiencyPercent?: number }).proficiencyPercent || (s as { scorePercentage?: number }).scorePercentage || (s as { proficiencyScore?: number }).proficiencyScore || 0;
+          return {
+            name: s.subjectName || '',
+            percent: Math.round(rawScore),
+          };
+        });
         this.skillRadarPoints.set(radar);
       }),
       map(() => true),
@@ -134,6 +162,17 @@ export class StudentReportsService extends ApiBaseService {
         this.isLoading.set(false);
         return of(false);
       }),
+    );
+  }
+
+  /**
+   * Approves a performance report.
+   * POST /api/v1/Reports/{reportId}/approve
+   */
+  approveReport(reportId: string): Observable<boolean> {
+    return this.post<void>(`/Reports/${reportId}/approve`, {}).pipe(
+      map(() => true),
+      catchError(() => of(false)),
     );
   }
 
@@ -149,7 +188,7 @@ export class StudentReportsService extends ApiBaseService {
       catchError(() =>
         of({
           topicName,
-          recommendation: `يركز هذا الموضوع على المفاهيم الجوهرية لـ "${topicName}". ننصح بمراجعة القوانين الأساسية وحل 5 مسائل تدريبية.`,
+          recommendation: `يركز هذا الموضوع على المفاهيم الجوهرية لـ "${topicName}". ننصح بمراجعة القوانين الأساسية وحل مسائل تدريبية.`,
           aiExplanation: `تم تحليل إجاباتك السابقة؛ تكرر الخطأ في تطبيق الخطوات التحليلية الأولى. التدريب على نموذج الحل الشامل يعالج الفجوة بسرعة.`,
           keyFormulas: ['مراجعة النظريات ذات الصلة', 'التطبيق التدريجي بالخطوات'],
         }),
@@ -164,11 +203,13 @@ export class StudentReportsService extends ApiBaseService {
   createPracticeExam(
     studentId: string,
     topicName: string,
+    payload?: PracticeExamRequest,
   ): Observable<CreatePracticeExamResponseDto | null> {
     const encodedTopic = encodeURIComponent(topicName);
     return this.post<CreatePracticeExamResponseDto>(
       `/students/${studentId}/weak-topics/${encodedTopic}/practice-exam`,
-      {},
+      payload || {},
     ).pipe(catchError(() => of(null)));
   }
 }
+
