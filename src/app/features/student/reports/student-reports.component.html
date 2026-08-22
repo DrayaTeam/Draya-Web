@@ -266,51 +266,86 @@
   <!-- AI Interactive Revision Modal -->
   @if (showRevisionModal()) {
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm animate-fade-in"
+      class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6"
       role="dialog"
-      aria-modal="true">
-      <div class="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl animate-scale-up">
-        <!-- Modal Header -->
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-          <div class="flex items-center gap-2.5">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
+      aria-modal="true"
+      aria-labelledby="revisionModalTitle">
+      <!-- Backdrop Button -->
+      <button
+        type="button"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm animate-fade-in cursor-default w-full h-full border-0"
+        tabindex="-1"
+        aria-label="إغلاق الخلفية"
+        (click)="closeRevisionModal()">
+      </button>
+
+      <!-- Modal Card -->
+      <div
+        class="relative z-10 flex flex-col w-full max-w-2xl lg:max-w-3xl max-h-[88vh] rounded-2xl bg-white shadow-2xl overflow-hidden animate-scale-up border border-slate-100">
+        <!-- Modal Header (Fixed) -->
+        <div class="flex flex-shrink-0 items-center justify-between border-b border-slate-100 px-5 sm:px-6 py-4 bg-white">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-700 shadow-sm border border-teal-100">
               <span class="text-xl">🤖</span>
             </div>
             <div>
-              <h3 class="text-lg font-bold text-slate-900">مراجعة وتشخيص الذكاء الاصطناعي</h3>
-              <p class="text-xs text-slate-500">{{ currentTopicTitle() }}</p>
+              <h3 id="revisionModalTitle" class="text-base sm:text-lg font-bold text-slate-900">مراجعة وتشخيص الذكاء الاصطناعي</h3>
+              <p class="text-xs font-medium text-teal-700">{{ currentTopicTitle() }}</p>
             </div>
           </div>
           <button
             type="button"
-            class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+            class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
+            aria-label="إغلاق النافذة"
             (click)="closeRevisionModal()">
             ✕
           </button>
         </div>
 
-        <!-- Modal Body -->
-        <div class="py-5 space-y-4">
+        <!-- Modal Body (Scrollable with max-height constraint) -->
+        <div class="flex-1 overflow-y-auto min-h-0 px-5 sm:px-6 py-5 space-y-4 custom-scrollbar">
           @if (loadingRevision()) {
-            <div class="flex flex-col items-center justify-center py-8 text-center text-slate-500">
-              <div class="h-8 w-8 animate-spin rounded-full border-3 border-teal-600 border-t-transparent mb-3"></div>
-              <p class="text-sm font-medium">جارٍ استخراج التوصيات والمراجعة الذكية...</p>
+            <div class="flex flex-col items-center justify-center py-12 text-center text-slate-500">
+              <div class="h-9 w-9 animate-spin rounded-full border-3 border-teal-600 border-t-transparent mb-3"></div>
+              <p class="text-sm font-medium">جارٍ استخراج التوصيات والمراجعة الذكية وتحليل المنهج...</p>
             </div>
           } @else if (activeRevision()) {
-            <div class="rounded-xl bg-teal-50/70 p-4 border border-teal-100">
-              <h4 class="text-sm font-bold text-teal-900 mb-1">💡 التوصية الأكاديمية:</h4>
-              <p class="text-xs leading-relaxed text-teal-800">{{ activeRevision()!.recommendation }}</p>
-            </div>
+            <!-- Academic Recommendation -->
+            @if (activeRevision()!.recommendation) {
+              <div class="rounded-xl bg-teal-50/80 p-4 sm:p-5 border border-teal-200/70 shadow-sm">
+                <h4 class="text-sm font-bold text-teal-900 mb-2 flex items-center gap-1.5">
+                  <span>💡</span>
+                  <span>التوصية الأكاديمية:</span>
+                </h4>
+                <draya-markdown-renderer
+                  [content]="activeRevision()!.recommendation"
+                  variant="teal">
+                </draya-markdown-renderer>
+              </div>
+            }
 
-            <div class="rounded-xl bg-slate-50 p-4 border border-slate-200">
-              <h4 class="text-sm font-bold text-slate-900 mb-1">🔍 التحليل التشخيصي:</h4>
-              <p class="text-xs leading-relaxed text-slate-700">{{ activeRevision()!.aiExplanation }}</p>
-            </div>
+            <!-- Diagnostic AI Analysis -->
+            @if (activeRevision()!.aiExplanation) {
+              <div class="rounded-xl bg-slate-50 p-4 sm:p-5 border border-slate-200 shadow-sm">
+                <h4 class="text-sm font-bold text-slate-900 mb-2 flex items-center gap-1.5">
+                  <span>🔍</span>
+                  <span>التحليل التشخيصي والمفاهيم الجوهرية:</span>
+                </h4>
+                <draya-markdown-renderer
+                  [content]="activeRevision()!.aiExplanation"
+                  variant="slate">
+                </draya-markdown-renderer>
+              </div>
+            }
 
+            <!-- Inaccurate Answers Examples -->
             @if (activeRevision()!.exampleIncorrectAnswers && activeRevision()!.exampleIncorrectAnswers!.length > 0) {
-              <div class="rounded-xl bg-rose-50/70 p-4 border border-rose-200">
-                <h4 class="text-sm font-bold text-rose-900 mb-1.5">⚠️ أمثلة على الإجابات غير الدقيقة:</h4>
-                <ul class="list-disc list-inside text-xs space-y-1 text-rose-800">
+              <div class="rounded-xl bg-rose-50/80 p-4 sm:p-5 border border-rose-200 shadow-sm">
+                <h4 class="text-sm font-bold text-rose-900 mb-2 flex items-center gap-1.5">
+                  <span>⚠️</span>
+                  <span>أمثلة على الإجابات غير الدقيقة:</span>
+                </h4>
+                <ul class="list-disc list-inside text-xs sm:text-sm space-y-1.5 text-rose-900/90 leading-relaxed">
                   @for (ans of activeRevision()!.exampleIncorrectAnswers!; track ans) {
                     <li>{{ ans }}</li>
                   }
@@ -318,10 +353,14 @@
               </div>
             }
 
+            <!-- Key Formulas and Concepts -->
             @if (activeRevision()!.keyFormulas && activeRevision()!.keyFormulas!.length > 0) {
-              <div class="rounded-xl bg-amber-50/60 p-4 border border-amber-200">
-                <h4 class="text-sm font-bold text-amber-900 mb-1.5">📌 القوانين والنقاط المفتاحية:</h4>
-                <ul class="list-disc list-inside text-xs space-y-1 text-amber-800">
+              <div class="rounded-xl bg-amber-50/80 p-4 sm:p-5 border border-amber-200 shadow-sm">
+                <h4 class="text-sm font-bold text-amber-900 mb-2 flex items-center gap-1.5">
+                  <span>📌</span>
+                  <span>القوانين والنقاط المفتاحية:</span>
+                </h4>
+                <ul class="list-disc list-inside text-xs sm:text-sm space-y-1.5 text-amber-900/90 leading-relaxed">
                   @for (formula of activeRevision()!.keyFormulas!; track formula) {
                     <li>{{ formula }}</li>
                   }
@@ -331,11 +370,11 @@
           }
         </div>
 
-        <!-- Modal Footer -->
-        <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+        <!-- Modal Footer (Fixed) -->
+        <div class="flex flex-shrink-0 flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 sm:px-6 py-4 bg-slate-50/80">
           <button
             type="button"
-            class="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            class="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 shadow-sm transition"
             (click)="closeRevisionModal()">
             إغلاق
           </button>
@@ -345,6 +384,7 @@
             [disabled]="generatingPractice() || loadingRevision()"
             (click)="onLaunchPracticeExam()">
             @if (generatingPractice()) {
+              <span class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
               <span>جارٍ التجهيز...</span>
             } @else {
               <span>خوض اختبار تدريبي مخصص 🚀</span>
@@ -355,3 +395,4 @@
     </div>
   }
 </div>
+

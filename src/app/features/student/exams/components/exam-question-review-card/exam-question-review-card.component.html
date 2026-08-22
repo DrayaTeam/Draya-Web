@@ -57,7 +57,10 @@
         </svg>
         <span>تقييم وتوجيه الذكاء الاصطناعي:</span>
       </div>
-      <p class="explanation-text">{{ reviewItem().explanation }}</p>
+      <draya-markdown-renderer
+        [content]="reviewItem().explanation"
+        variant="teal">
+      </draya-markdown-renderer>
     </div>
   }
 </div>

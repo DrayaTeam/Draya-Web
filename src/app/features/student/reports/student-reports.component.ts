@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { StudentReportsService } from '../../../core/services/student-reports.service';
@@ -7,6 +7,7 @@ import { ToastService } from '../../../core/services/toast.service';
 import { ReportKpiCardComponent } from './components/report-kpi-card/report-kpi-card.component';
 import { ReportWeaknessTopicComponent } from './components/report-weakness-topic/report-weakness-topic.component';
 import { DrayaEmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { MarkdownRendererComponent } from '../../../shared/components/markdown-renderer/markdown-renderer.component';
 import { ReportWeaknessTopic, TopicRevisionDto } from '../../../core/models/student-reports.model';
 
 @Component({
@@ -17,6 +18,7 @@ import { ReportWeaknessTopic, TopicRevisionDto } from '../../../core/models/stud
     ReportKpiCardComponent,
     ReportWeaknessTopicComponent,
     DrayaEmptyStateComponent,
+    MarkdownRendererComponent,
   ],
   templateUrl: './student-reports.component.html',
   styleUrl: './student-reports.component.scss',
@@ -27,6 +29,13 @@ export class StudentReportsComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
+
+  @HostListener('document:keydown.escape')
+  onEscapePress(): void {
+    if (this.showRevisionModal()) {
+      this.closeRevisionModal();
+    }
+  }
 
   readonly summary = this.reportsService.summary;
   readonly subjectScores = this.reportsService.subjectScores;
