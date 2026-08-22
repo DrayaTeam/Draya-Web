@@ -60,6 +60,7 @@ export interface WeeklySubmissionsActivityDto {
 export interface NeedsAttentionDto {
   studentId: string;
   studentName: string;
+  classroomName?: string;
   overallAverage: number;
 }
 

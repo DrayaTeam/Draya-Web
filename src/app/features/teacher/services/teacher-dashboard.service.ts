@@ -156,7 +156,7 @@ export class TeacherDashboardService {
             id: s.studentId,
             studentName: s.studentName,
             initials: initials.toUpperCase(),
-            courseName: 'عام', // Or map from backend if provided in future
+            courseName: s.classroomName || 'عام',
             averageScore: Number(s.overallAverage.toFixed(1)),
             riskLevel: s.overallAverage < 2.5 ? 'high' : 'medium',
           };
