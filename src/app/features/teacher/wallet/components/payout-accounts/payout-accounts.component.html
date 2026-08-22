@@ -125,17 +125,26 @@
               (click)="withdrawRequested.emit(account)">
               طلب سحب
             </button>
-            <button
-              class="flex h-8 w-8 items-center justify-center rounded-[10px] text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors"
-              (click)="deleteAccount(account.id)"
-              title="حذف الحساب">
-              <i class="pi pi-trash text-sm"></i>
-            </button>
+            @if (deletingAccountId() === account.id) {
+              <button
+                class="flex h-8 items-center justify-center rounded-[10px] bg-red-50 px-3 text-xs font-bold text-red-600 transition-colors hover:bg-red-100 active:scale-[0.98]"
+                (click)="deleteAccount(account.id)">
+                تأكيد الحذف؟
+              </button>
+            } @else {
+              <button
+                class="flex h-8 w-8 items-center justify-center rounded-[10px] text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600 active:scale-[0.98]"
+                (click)="confirmDelete(account.id)"
+                title="حذف الحساب">
+                <i class="pi pi-trash text-sm"></i>
+              </button>
+            }
           </div>
         </div>
       }
     </div>
   }
 </div>
+
 
 

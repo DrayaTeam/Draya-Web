@@ -49,6 +49,7 @@ export class PayoutAccountsComponent implements OnInit {
   newAccountName = signal<string>('');
   newAccountIdentifier = signal<string>('');
   isSubmitting = signal<boolean>(false);
+  deletingAccountId = signal<string | null>(null);
 
   // Enum access for template
   AccountType = AccountType;
@@ -134,8 +135,17 @@ export class PayoutAccountsComponent implements OnInit {
       });
   }
 
+  confirmDelete(id: string): void {
+    this.deletingAccountId.set(id);
+    setTimeout(() => {
+      if (this.deletingAccountId() === id) {
+        this.deletingAccountId.set(null);
+      }
+    }, 3000);
+  }
+
   deleteAccount(id: string): void {
-    if (!confirm('ظ‡ظ„ ط£ظ†طھ ظ…طھط£ظƒط¯ ظ…ظ† ط­ط°ظپ ط­ط³ط§ط¨ ط§ظ„ط³ط­ط¨ ظ‡ط°ط§طں')) return;
+    this.deletingAccountId.set(null);
 
     this.walletService
       .deletePayoutAccount(id)
@@ -152,4 +162,5 @@ export class PayoutAccountsComponent implements OnInit {
       });
   }
 }
+
 
