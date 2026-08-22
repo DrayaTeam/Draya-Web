@@ -51,7 +51,7 @@
         @for (c of classrooms(); track c.classroomId) {
           <button
             type="button"
-            class="classroom-pill rounded-full border px-4 py-2 text-sm font-medium transition-colors"
+            class="classroom-pill rounded-[12px] border px-4 py-2 text-sm font-medium transition-colors"
             [ngClass]="
               selectedClassroomId() === c.classroomId
                 ? 'border-[#1B6D63] bg-[#1B6D63] text-white'
