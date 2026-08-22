@@ -1,83 +1,64 @@
-<!-- src/app/features/teacher/wallet/components/wallet-balance-card/wallet-balance-card.component.html -->
-<div class="stripe-grid animate-fade-in" dir="rtl">
+﻿<div class="grid grid-cols-1 md:grid-cols-2 gap-6" dir="rtl">
   <!-- Earned Balance Card -->
-  <div class="stripe-card">
-    <div class="card-top">
-      <div class="card-header">
-        <h3 class="card-label">{{ 'TEACHER.WALLET.AI_BALANCE.EARNED_BALANCE_TITLE' | translate }}</h3>
-        <span class="status-indicator">{{ 'TEACHER.WALLET.AI_BALANCE.AVAILABLE_FOR_WITHDRAWAL' | translate }}</span>
+  <div class="flex flex-col justify-between rounded-[12px] border border-gray-200 bg-white p-6 md:p-8 min-h-[220px]">
+    <div>
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-sm font-bold text-gray-500">{{ 'TEACHER.WALLET.AI_BALANCE.EARNED_BALANCE_TITLE' | translate }}</h3>
+        <span class="rounded-[8px] bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-600 border border-gray-200">{{ 'TEACHER.WALLET.AI_BALANCE.AVAILABLE_FOR_WITHDRAWAL' | translate }}</span>
       </div>
-
-      <div class="card-amount-row">
-        <span class="currency">{{ 'ADMIN.DASHBOARD.CURRENCY' | translate }}</span>
-        <span class="amount">{{ balance()?.availableEarnedBalance ?? 0 }}</span>
+      <div class="flex items-baseline gap-2">
+        <span class="text-5xl font-black text-gray-900 tracking-tight">{{ balance()?.availableEarnedBalance ?? 0 }}</span>
+        <span class="text-lg font-medium text-gray-400">{{ 'ADMIN.DASHBOARD.CURRENCY' | translate }}</span>
       </div>
     </div>
-
-    <div class="card-bottom">
-      <button class="stripe-btn-outline" (click)="withdraw.emit()">
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round">
-          <polyline points="19 12 12 19 5 12"></polyline>
-          <line x1="12" y1="19" x2="12" y2="5"></line>
-        </svg>
+    
+    <div class="mt-8">
+      <button 
+        class="flex w-full md:w-auto items-center justify-center gap-2 rounded-[12px] bg-gray-900 px-6 py-[10px] text-sm font-medium text-white transition-colors hover:bg-gray-800 active:scale-[0.98]"
+        (click)="withdraw.emit()">
+        <i class="pi pi-arrow-down-left"></i>
         {{ 'TEACHER.WALLET.AI_BALANCE.WITHDRAW_INSTAPAY' | translate }}
       </button>
     </div>
   </div>
 
-  <!-- AI (Purchased) Balance Card -->
-  <div class="stripe-card" [class.ai-card-warning]="isLowAiBalance()">
-    <div class="card-top">
-      <div class="card-header">
-        <h3 class="card-label">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="ai-icon-inline">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-          </svg>
+  <!-- Purchased Balance Card -->
+  <div class="flex flex-col justify-between rounded-[12px] border p-6 md:p-8 min-h-[220px]" 
+       [class.border-gray-200]="!isLowAiBalance()" 
+       [class.bg-white]="!isLowAiBalance()"
+       [class.border-red-200]="isLowAiBalance()" 
+       [class.bg-red-50]="isLowAiBalance()">
+    <div>
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-sm font-bold flex items-center gap-2" [class.text-red-600]="isLowAiBalance()" [class.text-gray-500]="!isLowAiBalance()">
+          <i class="pi pi-sparkles"></i>
           {{ 'TEACHER.WALLET.AI_BALANCE.CARD_TITLE' | translate }}
         </h3>
         @if (isLowAiBalance()) {
-          <span class="status-indicator low-balance-badge">{{ 'TEACHER.WALLET.AI_BALANCE.LOW_BADGE' | translate }}</span>
+          <span class="rounded-[8px] bg-red-100 px-3 py-1.5 text-xs font-bold text-red-700 border border-red-200">{{ 'TEACHER.WALLET.AI_BALANCE.LOW_BADGE' | translate }}</span>
         } @else {
-          <span class="status-indicator ai-indicator">{{ 'TEACHER.WALLET.AI_BALANCE.PLATFORM_DEDICATED' | translate }}</span>
+          <span class="rounded-[8px] bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-600 border border-gray-200">{{ 'TEACHER.WALLET.AI_BALANCE.PLATFORM_DEDICATED' | translate }}</span>
         }
       </div>
-
-      <div class="card-amount-row">
-        <span class="currency">{{ 'ADMIN.DASHBOARD.CURRENCY' | translate }}</span>
-        <span class="amount" [class.amount-zero]="isLowAiBalance()">
+      <div class="flex items-baseline gap-2">
+        <span class="text-5xl font-black tracking-tight" [class.text-red-700]="isLowAiBalance()" [class.text-gray-900]="!isLowAiBalance()">
           {{ balance()?.purchasedBalance ?? 0 }}
         </span>
+        <span class="text-lg font-medium" [class.text-red-400]="isLowAiBalance()" [class.text-gray-400]="!isLowAiBalance()">
+          {{ 'ADMIN.DASHBOARD.CURRENCY' | translate }}
+        </span>
       </div>
-
       @if (isLowAiBalance()) {
-        <p class="low-balance-hint">
-          {{ 'TEACHER.WALLET.AI_BALANCE.INSUFFICIENT_DESC_WALLET' | translate }}
-        </p>
+        <p class="mt-2 text-xs font-medium text-red-600">{{ 'TEACHER.WALLET.AI_BALANCE.INSUFFICIENT_DESC_WALLET' | translate }}</p>
       }
     </div>
-
-    <div class="card-bottom">
-      <button class="stripe-btn-outline ai-topup-btn" (click)="topUp.emit()">
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
+    
+    <div class="mt-8">
+      <button 
+        class="flex w-full md:w-auto items-center justify-center gap-2 rounded-[12px] border px-6 py-[10px] text-sm font-medium transition-colors active:scale-[0.98]"
+        [class]="isLowAiBalance() ? 'border-red-200 bg-white text-red-700 hover:bg-red-50' : 'border-gray-200 bg-white text-gray-900 hover:bg-gray-50'"
+        (click)="topUp.emit()">
+        <i class="pi pi-plus"></i>
         {{ 'TEACHER.WALLET.AI_BALANCE.TOPUP_BTN' | translate }}
       </button>
     </div>
