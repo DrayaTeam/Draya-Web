@@ -1,12 +1,23 @@
-<div class="review-card" [class.wrong]="!reviewItem().isCorrect">
+<div
+  class="review-card"
+  [class.wrong]="!reviewItem().isCorrect && !reviewItem().isPendingGrading"
+  [class.correct]="reviewItem().isCorrect"
+  [class.pending-review]="reviewItem().isPendingGrading">
   <!-- Top Header Row -->
   <div class="card-header">
     <span class="question-number-tag">سؤال {{ reviewItem().questionIndex }}</span>
     <span
       class="status-pill"
       [class.correct]="reviewItem().isCorrect"
-      [class.wrong]="!reviewItem().isCorrect">
-      {{ reviewItem().isCorrect ? 'إجابة صحيحة' : 'إجابة خاطئة' }}
+      [class.wrong]="!reviewItem().isCorrect && !reviewItem().isPendingGrading"
+      [class.pending]="reviewItem().isPendingGrading">
+      {{
+        reviewItem().isPendingGrading
+          ? '⏳ قيد التقييم'
+          : reviewItem().isCorrect
+            ? 'إجابة صحيحة'
+            : 'إجابة خاطئة'
+      }}
     </span>
   </div>
 
@@ -20,14 +31,15 @@
     <!-- Student Answer Box -->
     <div
       class="answer-box student-box"
-      [class.wrong-box]="!reviewItem().isCorrect"
-      [class.correct-box]="reviewItem().isCorrect">
+      [class.wrong-box]="!reviewItem().isCorrect && !reviewItem().isPendingGrading"
+      [class.correct-box]="reviewItem().isCorrect"
+      [class.pending-box]="reviewItem().isPendingGrading">
       <span class="box-label">إجابتك:</span>
       <span class="box-val">{{ reviewItem().studentAnswerText }}</span>
     </div>
 
-    <!-- Correct Answer Box (Only shown if student answer was wrong) -->
-    @if (!reviewItem().isCorrect) {
+    <!-- Correct Answer Box (Only shown if student answer was graded as wrong) -->
+    @if (!reviewItem().isCorrect && !reviewItem().isPendingGrading) {
       <div class="answer-box correct-box">
         <span class="box-label">الإجابة الصحيحة:</span>
         <span class="box-val">{{ reviewItem().correctAnswerText }}</span>
@@ -51,7 +63,9 @@
         </svg>
         <span>تقييم وتوجيه الذكاء الاصطناعي:</span>
       </div>
-      <p class="explanation-text">{{ reviewItem().explanation }}</p>
+      <draya-markdown-renderer
+        [content]="reviewItem().explanation"
+        variant="teal"></draya-markdown-renderer>
     </div>
   }
 </div>

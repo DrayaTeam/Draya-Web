@@ -21,11 +21,25 @@ export interface ExamGenerationCompletedEvent {
 
 /** Emitted when AI grading of a student attempt finishes. */
 export interface GradingCompletedEvent {
-  readonly attemptId: string;
-  readonly examId: string;
-  readonly gradingStatus: 'Completed' | 'Failed';
-  readonly totalScore: number;
-  readonly maxScore: number;
+  readonly attemptId?: string;
+  readonly studentExamAttemptId?: string;
+  readonly examId?: string;
+  readonly jobId?: string;
+  readonly status?: 'Completed' | 'Failed' | string;
+  readonly gradingStatus?: 'Completed' | 'Failed' | string;
+  readonly totalScore?: number;
+  readonly maxScore?: number;
+}
+
+/** Emitted during AI practice/exam generation progress from /hubs/exam-generation. */
+export interface GenerationProgressEvent {
+  readonly generationId?: string;
+  readonly status:
+    'InProgress' | 'Validating' | 'Completed' | 'DataUnavailable' | 'Failed' | string;
+  readonly examId?: string;
+  readonly progress?: number;
+  readonly message?: string;
+  readonly error?: string;
 }
 
 /** Emitted when a new chat message is posted in a classroom. */

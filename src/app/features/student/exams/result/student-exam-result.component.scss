@@ -8,6 +8,313 @@
   min-height: 100vh;
 }
 
+/* ==========================================================================
+   1. AI GRADING INTERACTIVE LOADER OVERLAY
+   ========================================================================== */
+.grading-loader-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  padding: 24px;
+}
+
+.grading-loader-card {
+  width: 100%;
+  max-width: 680px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 48px 36px;
+  text-align: center;
+  box-shadow: 0 20px 40px -15px rgba(27, 109, 99, 0.08);
+}
+
+.ai-pulse-sphere {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .glow-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.25) 0%, rgba(27, 109, 99, 0) 70%);
+    animation: pulseRing 2s infinite ease-in-out;
+  }
+
+  .inner-icon-box {
+    position: relative;
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed 0%, #1b6d63 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.4);
+
+    .ai-spark-svg {
+      width: 32px;
+      height: 32px;
+      animation: spinSlow 8s linear infinite;
+    }
+  }
+}
+
+@keyframes pulseRing {
+  0%,
+  100% {
+    transform: scale(0.95);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.grading-main-title {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  color: #151b19;
+  margin: 0 0 10px;
+}
+
+.grading-lead-text {
+  font-family: 'Cairo', sans-serif;
+  font-size: 14px;
+  line-height: 24px;
+  color: #64748b;
+  margin: 0 0 32px;
+}
+
+/* Progress bar */
+.progress-bar-container {
+  margin-bottom: 36px;
+
+  .progress-bar-track {
+    width: 100%;
+    height: 10px;
+    background: #f1f5f9;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1b6d63 0%, #7c3aed 100%);
+    border-radius: 999px;
+    transition: width 0.5s ease-out;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+
+    .progress-number {
+      color: #1b6d63;
+      font-size: 14px;
+    }
+  }
+}
+
+/* Steps Timeline */
+.grading-steps-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: right;
+}
+
+.step-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px solid #f1f5f9;
+  background: #f8fafc;
+  transition: all 0.3s ease;
+
+  &.completed {
+    border-color: #d1fae5;
+    background: #f0fdf4;
+
+    .step-badge {
+      background: #10b981;
+      color: #ffffff;
+    }
+
+    .step-title {
+      color: #065f46;
+    }
+  }
+
+  &.active {
+    border-color: #ddd6fe;
+    background: #faf5ff;
+
+    .step-badge {
+      background: #7c3aed;
+      color: #ffffff;
+    }
+
+    .step-title {
+      color: #5b21b6;
+    }
+  }
+
+  .step-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    flex-shrink: 0;
+
+    .spinner-dot {
+      width: 10px;
+      height: 10px;
+      border: 2px solid #ffffff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+  }
+
+  .step-info {
+    flex: 1;
+
+    .step-title {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: #334155;
+      margin: 0 0 2px;
+    }
+
+    .step-desc {
+      font-family: 'Cairo', sans-serif;
+      font-size: 12px;
+      color: #64748b;
+      margin: 0;
+      line-height: 18px;
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   2. PENDING EVALUATION BANNER
+   ========================================================================== */
+.pending-eval-banner {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 16px;
+  padding: 18px 24px;
+  margin-bottom: 28px;
+
+  .pending-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #fef3c7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    .pending-svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .pending-text-wrap {
+    flex: 1;
+
+    .pending-title {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: #92400e;
+      margin: 0 0 4px;
+    }
+
+    .pending-desc {
+      font-family: 'Cairo', sans-serif;
+      font-size: 13px;
+      line-height: 20px;
+      color: #b45309;
+      margin: 0;
+    }
+  }
+
+  .pending-actions {
+    flex-shrink: 0;
+
+    .btn-recheck-eval {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 38px;
+      padding: 0 16px;
+      background: #ffffff;
+      border: 1px solid #d97706;
+      border-radius: 999px;
+      color: #92400e;
+      font-family: 'Cairo', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #d97706;
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+/* ==========================================================================
+   3. RESULT HEADER & SECTIONS
+   ========================================================================== */
 .page-header {
   display: flex;
   align-items: center;
@@ -79,10 +386,24 @@
   gap: 16px;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .page-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
+  }
+
+  .pending-eval-banner {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .pending-actions {
+      width: 100%;
+
+      .btn-recheck-eval {
+        width: 100%;
+        justify-content: center;
+      }
+    }
   }
 }

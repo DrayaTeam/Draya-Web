@@ -45,105 +45,28 @@
     <section class="teachers-grid-section" aria-label="قائمة المعلمين">
       @if (loading()) {
         <!-- Skeleton Loading Grid -->
-        <div class="teachers-card-grid skeleton-grid">
-          @for (item of skeletonCards; track item) {
-            <div class="teacher-skeleton-card">
-              <!-- Top ambient placeholder -->
-              <div class="skeleton-blob shimmer"></div>
-
-              <!-- Header: Avatar + Details -->
-              <div class="skeleton-header">
-                <div class="skeleton-avatar shimmer"></div>
-                <div class="skeleton-header-info">
-                  <div class="skeleton-name shimmer"></div>
-                  <div class="skeleton-meta-row">
-                    <div class="skeleton-badge shimmer"></div>
-                    <div class="skeleton-rating shimmer"></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Bio Lines -->
-              <div class="skeleton-bio-row">
-                <div class="skeleton-line shimmer full"></div>
-                <div class="skeleton-line shimmer half"></div>
-              </div>
-
-              <!-- Divider -->
-              <div class="skeleton-divider"></div>
-
-              <!-- Stats Row -->
-              <div class="skeleton-stats-row">
-                <div class="skeleton-stat-pill shimmer"></div>
-                <div class="skeleton-stat-pill shimmer"></div>
-              </div>
-
-              <!-- Action Button -->
-              <div class="skeleton-btn shimmer"></div>
-            </div>
-          }
-        </div>
+        <draya-card-skeleton type="teacher" [count]="6" />
       } @else if (filteredTeachers().length > 0) {
         <div class="teachers-card-grid animate-fade-in">
           @for (teacher of paginatedTeachers(); track teacher.id) {
-            <draya-teacher-card [teacher]="teacher" (viewPackages)="onViewPackages($event)" />
+            <div
+              class="card-wrapper animate-fade-in-up"
+              [style.animation-delay]="$index * 40 + 'ms'">
+              <draya-teacher-card [teacher]="teacher" (viewPackages)="onViewPackages($event)" />
+            </div>
           }
         </div>
 
         <!-- Pagination Controls -->
-        @if (totalPages() > 1) {
-          <div class="pagination-bar">
-            <button
-              type="button"
-              class="pagination-btn prev-btn"
-              [disabled]="currentPage() === 1"
-              (click)="prevPage()"
-              aria-label="الصفحة السابقة">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-              <span>السابق</span>
-            </button>
-
-            <div class="page-numbers-list">
-              @for (p of pageNumbers(); track p) {
-                <button
-                  type="button"
-                  class="page-num-btn"
-                  [class.active]="currentPage() === p"
-                  (click)="goToPage(p)">
-                  {{ p }}
-                </button>
-              }
-            </div>
-
-            <button
-              type="button"
-              class="pagination-btn next-btn"
-              [disabled]="currentPage() === totalPages()"
-              (click)="nextPage()"
-              aria-label="الصفحة التالية">
-              <span>التالي</span>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-            </button>
+        @if (filteredTeachers().length > pageSize()) {
+          <div class="animate-fade-in mt-6">
+            <draya-pagination
+              [totalItems]="filteredTeachers().length"
+              [pageSize]="pageSize()"
+              [currentPage]="currentPage()"
+              [pageSizeOptions]="[4, 8, 16, 20]"
+              (pageChange)="goToPage($event)"
+              (pageSizeChange)="pageSize.set($event); currentPage.set(1)" />
           </div>
         }
       } @else {

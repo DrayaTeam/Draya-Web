@@ -16,6 +16,15 @@ export class TeacherCardComponent {
 
   readonly viewPackages = output<TeacherDirectoryItem>();
 
+  readonly defaultAvatar = 'assets/images/default-teacher-avatar.svg';
+
+  onAvatarError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target && target.src !== this.defaultAvatar) {
+      target.src = this.defaultAvatar;
+    }
+  }
+
   onViewPackages(): void {
     this.viewPackages.emit(this.teacher());
   }

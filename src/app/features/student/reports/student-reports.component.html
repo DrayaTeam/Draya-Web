@@ -25,204 +25,412 @@
       استعرض كشف درجات الامتحانات والواجبات ونسب الإتقان للمهارات المختلفة المحددة بالذكاء
       الاصطناعي.
     </p>
+
+    <!-- Latest AI Performance Report Summary Banner -->
+    @if (summary().summaryText) {
+      <div
+        class="animate-fade-in mt-4 rounded-2xl border border-teal-500/20 bg-gradient-to-r from-teal-900/90 to-emerald-950/90 p-5 text-white shadow-xl backdrop-blur-md">
+        <div class="flex items-start gap-3.5">
+          <div
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-500/20 text-teal-300">
+            <span class="text-xl">📊</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-sm font-bold text-teal-200">
+                التقرير التشخيصي الشامل بالذكاء الاصطناعي
+              </h3>
+              @if (summary().generatedAt) {
+                <span class="rounded-full bg-teal-500/20 px-2 py-0.5 text-[10px] text-teal-300">
+                  {{ summary().generatedAt | date: 'dd/MM/yyyy' }}
+                </span>
+              }
+            </div>
+            <p class="mt-1.5 text-xs leading-relaxed text-slate-200">
+              {{ summary().summaryText }}
+            </p>
+          </div>
+        </div>
+      </div>
+    }
   </header>
 
-  <!-- Row 1: KPI Cards Grid -->
-  <section class="kpi-grid">
-    <app-report-kpi-card
-      title="المتوسط الكلي"
-      [value]="summary().overallAverage + '%'"
-      variant="average"
-      [badgeText]="'+' + summary().monthlyGrowthPercent + '%'"></app-report-kpi-card>
-
-    <app-report-kpi-card
-      title="امتحانات مكتملة"
-      [value]="summary().completedExamsCount + ' اختبار'"
-      variant="exams"></app-report-kpi-card>
-
-    <app-report-kpi-card
-      title="أعلى درجة مسجلة"
-      [value]="summary().topScorePercent + '%'"
-      variant="topScore"></app-report-kpi-card>
-  </section>
-
-  <!-- Row 2: Analytics Charts Section -->
-  <section class="charts-grid">
-    <!-- Performance Evolution Curve Card -->
-    <div class="chart-card evolution-card">
-      <div class="chart-header">
-        <div>
-          <h2 class="chart-title">منحنى تطور الأداء الأكاديمي</h2>
-          <p class="chart-subtitle">تغير المتوسط التراكمي لآخر 3 أشهر</p>
-        </div>
-        <span class="growth-pill">تطور إيجابي مستمر ✨</span>
-      </div>
-
-      <!-- Area Chart SVG Visualization -->
-      <div class="chart-body">
-        <svg viewBox="0 0 500 200" class="h-full w-full" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="#0F4F49" stop-opacity="0.25" />
-              <stop offset="100%" stop-color="#0EA5E9" stop-opacity="0.0" />
-            </linearGradient>
-          </defs>
-
-          <!-- Dashed Grid Lines -->
-          <line x1="40" y1="30" x2="480" y2="30" stroke="#F1F5F9" stroke-dasharray="4 4" />
-          <line x1="40" y1="70" x2="480" y2="70" stroke="#F1F5F9" stroke-dasharray="4 4" />
-          <line x1="40" y1="110" x2="480" y2="110" stroke="#F1F5F9" stroke-dasharray="4 4" />
-          <line x1="40" y1="150" x2="480" y2="150" stroke="#F1F5F9" stroke-dasharray="4 4" />
-
-          <!-- Axis Y Labels -->
-          <text x="30" y="34" fill="#64748B" font-size="10" text-anchor="end">100</text>
-          <text x="30" y="74" fill="#64748B" font-size="10" text-anchor="end">75</text>
-          <text x="30" y="114" fill="#64748B" font-size="10" text-anchor="end">50</text>
-          <text x="30" y="154" fill="#64748B" font-size="10" text-anchor="end">25</text>
-          <text x="30" y="180" fill="#64748B" font-size="10" text-anchor="end">0</text>
-
-          <!-- Area Shape & Line -->
-          <path
-            d="M 60 110 Q 180 65 300 55 T 460 50 L 460 170 L 60 170 Z"
-            fill="url(#areaGradient)" />
-          <path
-            d="M 60 110 Q 180 65 300 55 T 460 50"
-            fill="none"
-            stroke="#0F4F49"
-            stroke-width="3" />
-
-          <!-- Data Points -->
-          <circle cx="60" cy="110" r="4" fill="#0F4F49" />
-          <circle cx="260" cy="60" r="4" fill="#0F4F49" />
-          <circle cx="460" cy="50" r="4" fill="#0F4F49" />
-
-          <!-- Axis X Labels -->
-          <text x="60" y="190" fill="#64748B" font-size="11" text-anchor="middle">مايو</text>
-          <text x="260" y="190" fill="#64748B" font-size="11" text-anchor="middle">يونيو</text>
-          <text x="460" y="190" fill="#64748B" font-size="11" text-anchor="middle">يوليو</text>
-        </svg>
-      </div>
+  <!-- Row 1: KPI Cards Grid / Skeleton -->
+  @if (isLoading()) {
+    <div class="animate-fade-in mt-4 space-y-6" dir="rtl">
+      <draya-card-skeleton
+        type="stat"
+        [count]="3"
+        [gridClass]="'grid grid-cols-1 sm:grid-cols-3 gap-6'" />
+      <draya-card-skeleton
+        type="generic"
+        [count]="2"
+        [gridClass]="'grid grid-cols-1 lg:grid-cols-2 gap-6'" />
+      <draya-card-skeleton type="generic" [count]="3" [gridClass]="'grid grid-cols-1 gap-4'" />
     </div>
+  } @else {
+    <section class="kpi-grid">
+      <app-report-kpi-card
+        title="المتوسط الكلي"
+        [value]="summary().overallAverage + '%'"
+        variant="average"
+        [badgeText]="'+' + summary().monthlyGrowthPercent + '%'"></app-report-kpi-card>
 
-    <!-- Skill Distribution Radar Map Card -->
-    <div class="chart-card radar-card">
-      <div class="chart-header">
-        <div>
-          <h2 class="chart-title">خريطة توزيع المهارات</h2>
-          <p class="chart-subtitle">نسب إتقان المهارات الأكاديمية</p>
-        </div>
-      </div>
+      <app-report-kpi-card
+        title="امتحانات مكتملة"
+        [value]="summary().completedExamsCount + ' اختبار'"
+        variant="exams"></app-report-kpi-card>
 
-      <!-- Radar Web Pentagon SVG Visualization -->
-      <div class="radar-body">
-        <svg viewBox="0 0 240 220" class="mx-auto h-[190px] w-full max-w-[240px]">
-          <!-- Pentagon Concentric Rings -->
-          <polygon
-            points="120,20 200,75 170,165 70,165 40,75"
-            fill="none"
-            stroke="#E2E8F0"
-            stroke-width="1" />
-          <polygon
-            points="120,40 180,82 158,150 82,150 60,82"
-            fill="none"
-            stroke="#E2E8F0"
-            stroke-width="1" />
-          <polygon
-            points="120,60 160,88 145,135 95,135 80,88"
-            fill="none"
-            stroke="#E2E8F0"
-            stroke-width="1" />
+      <app-report-kpi-card
+        title="أعلى درجة مسجلة"
+        [value]="summary().topScorePercent + '%'"
+        variant="topScore"></app-report-kpi-card>
+    </section>
 
-          <!-- Radial Spokes -->
-          <line x1="120" y1="100" x2="120" y2="20" stroke="#E2E8F0" stroke-width="1" />
-          <line x1="120" y1="100" x2="200" y2="75" stroke="#E2E8F0" stroke-width="1" />
-          <line x1="120" y1="100" x2="170" y2="165" stroke="#E2E8F0" stroke-width="1" />
-          <line x1="120" y1="100" x2="70" y2="165" stroke="#E2E8F0" stroke-width="1" />
-          <line x1="120" y1="100" x2="40" y2="75" stroke="#E2E8F0" stroke-width="1" />
-
-          <!-- Filled Skill Area -->
-          <polygon
-            points="120,32 188,78 160,155 75,158 52,80"
-            fill="rgba(139, 92, 246, 0.3)"
-            stroke="#8B5CF6"
-            stroke-width="2.5" />
-
-          <!-- Subject Labels -->
-          <text
-            x="120"
-            y="14"
-            fill="#334155"
-            font-size="10"
-            font-weight="bold"
-            text-anchor="middle">
-            رياضيات
-          </text>
-          <text x="210" y="78" fill="#334155" font-size="10" font-weight="bold" text-anchor="start">
-            فيزياء
-          </text>
-          <text
-            x="178"
-            y="180"
-            fill="#334155"
-            font-size="10"
-            font-weight="bold"
-            text-anchor="middle">
-            كيمياء
-          </text>
-          <text
-            x="62"
-            y="180"
-            fill="#334155"
-            font-size="10"
-            font-weight="bold"
-            text-anchor="middle">
-            أحياء
-          </text>
-          <text x="30" y="78" fill="#334155" font-size="10" font-weight="bold" text-anchor="end">
-            لغات
-          </text>
-        </svg>
-
-        <div class="radar-note-pill">
-          أعلى مادة في المهارات: {{ summary().topSkillSubjectName }} ({{
-            summary().topSkillScorePercent
-          }}%) 🧪
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Row 3: Subject Scores Breakdown Card -->
-  <section class="subject-scores-card">
-    <h2 class="section-title">النتائج والدرجات حسب المواد الدراسية</h2>
-    <div class="subjects-grid">
-      @for (subj of subjectScores(); track subj.id) {
-        <div class="subject-box" [style.background-color]="subj.bgColor">
-          <div class="subject-box-header">
-            <span class="subj-name">{{ subj.subjectName }}</span>
-            <span class="subj-score" [style.color]="subj.textColor">{{ subj.scorePercent }}%</span>
+    <!-- Row 2: Analytics Charts Section -->
+    <section class="charts-grid">
+      <!-- Performance Evolution Curve Card -->
+      <div class="chart-card evolution-card">
+        <div class="chart-header">
+          <div>
+            <h2 class="chart-title">منحنى تطور الأداء الأكاديمي</h2>
+            <p class="chart-subtitle">تغير المتوسط التراكمي لآخر 3 أشهر</p>
           </div>
+          <span class="growth-pill">تطور إيجابي مستمر ✨</span>
+        </div>
 
-          <div class="progress-track">
+        <!-- Area Chart SVG Visualization -->
+        <div class="chart-body">
+          <svg viewBox="0 0 500 200" class="h-full w-full" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#0F4F49" stop-opacity="0.25" />
+                <stop offset="100%" stop-color="#0EA5E9" stop-opacity="0.0" />
+              </linearGradient>
+            </defs>
+
+            <!-- Dashed Grid Lines -->
+            <line x1="40" y1="30" x2="480" y2="30" stroke="#F1F5F9" stroke-dasharray="4 4" />
+            <line x1="40" y1="70" x2="480" y2="70" stroke="#F1F5F9" stroke-dasharray="4 4" />
+            <line x1="40" y1="110" x2="480" y2="110" stroke="#F1F5F9" stroke-dasharray="4 4" />
+            <line x1="40" y1="150" x2="480" y2="150" stroke="#F1F5F9" stroke-dasharray="4 4" />
+
+            <!-- Axis Y Labels -->
+            <text x="30" y="34" fill="#64748B" font-size="10" text-anchor="end">100</text>
+            <text x="30" y="74" fill="#64748B" font-size="10" text-anchor="end">75</text>
+            <text x="30" y="114" fill="#64748B" font-size="10" text-anchor="end">50</text>
+            <text x="30" y="154" fill="#64748B" font-size="10" text-anchor="end">25</text>
+            <text x="30" y="180" fill="#64748B" font-size="10" text-anchor="end">0</text>
+
+            <!-- Area Shape & Line -->
+            <path
+              d="M 60 110 Q 180 65 300 55 T 460 50 L 460 170 L 60 170 Z"
+              fill="url(#areaGradient)" />
+            <path
+              d="M 60 110 Q 180 65 300 55 T 460 50"
+              fill="none"
+              stroke="#0F4F49"
+              stroke-width="3" />
+
+            <!-- Data Points -->
+            <circle cx="60" cy="110" r="4" fill="#0F4F49" />
+            <circle cx="260" cy="60" r="4" fill="#0F4F49" />
+            <circle cx="460" cy="50" r="4" fill="#0F4F49" />
+
+            <!-- Axis X Labels -->
+            <text x="60" y="190" fill="#64748B" font-size="11" text-anchor="middle">مايو</text>
+            <text x="260" y="190" fill="#64748B" font-size="11" text-anchor="middle">يونيو</text>
+            <text x="460" y="190" fill="#64748B" font-size="11" text-anchor="middle">يوليو</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Skill Distribution Radar Map Card -->
+      <div class="chart-card radar-card">
+        <div class="chart-header">
+          <div>
+            <h2 class="chart-title">خريطة توزيع المهارات</h2>
+            <p class="chart-subtitle">نسب إتقان المهارات الأكاديمية</p>
+          </div>
+        </div>
+
+        <!-- Radar Web Pentagon SVG Visualization -->
+        <div class="radar-body">
+          <svg viewBox="0 0 240 220" class="mx-auto h-[190px] w-full max-w-[240px]">
+            <!-- Pentagon Concentric Rings -->
+            <polygon
+              points="120,20 200,75 170,165 70,165 40,75"
+              fill="none"
+              stroke="#E2E8F0"
+              stroke-width="1" />
+            <polygon
+              points="120,40 180,82 158,150 82,150 60,82"
+              fill="none"
+              stroke="#E2E8F0"
+              stroke-width="1" />
+            <polygon
+              points="120,60 160,88 145,135 95,135 80,88"
+              fill="none"
+              stroke="#E2E8F0"
+              stroke-width="1" />
+
+            <!-- Radial Spokes -->
+            <line x1="120" y1="100" x2="120" y2="20" stroke="#E2E8F0" stroke-width="1" />
+            <line x1="120" y1="100" x2="200" y2="75" stroke="#E2E8F0" stroke-width="1" />
+            <line x1="120" y1="100" x2="170" y2="165" stroke="#E2E8F0" stroke-width="1" />
+            <line x1="120" y1="100" x2="70" y2="165" stroke="#E2E8F0" stroke-width="1" />
+            <line x1="120" y1="100" x2="40" y2="75" stroke="#E2E8F0" stroke-width="1" />
+
+            <!-- Filled Skill Area -->
+            <polygon
+              points="120,32 188,78 160,155 75,158 52,80"
+              fill="rgba(139, 92, 246, 0.3)"
+              stroke="#8B5CF6"
+              stroke-width="2.5" />
+
+            <!-- Subject Labels -->
+            <text
+              x="120"
+              y="14"
+              fill="#334155"
+              font-size="10"
+              font-weight="bold"
+              text-anchor="middle">
+              رياضيات
+            </text>
+            <text
+              x="210"
+              y="78"
+              fill="#334155"
+              font-size="10"
+              font-weight="bold"
+              text-anchor="start">
+              فيزياء
+            </text>
+            <text
+              x="178"
+              y="180"
+              fill="#334155"
+              font-size="10"
+              font-weight="bold"
+              text-anchor="middle">
+              كيمياء
+            </text>
+            <text
+              x="62"
+              y="180"
+              fill="#334155"
+              font-size="10"
+              font-weight="bold"
+              text-anchor="middle">
+              أحياء
+            </text>
+            <text x="30" y="78" fill="#334155" font-size="10" font-weight="bold" text-anchor="end">
+              لغات
+            </text>
+          </svg>
+
+          <div class="radar-note-pill">
+            أعلى مادة في المهارات: {{ summary().topSkillSubjectName }} ({{
+              summary().topSkillScorePercent
+            }}%) 🧪
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Row 3: Subject Scores Breakdown Card -->
+    <section class="subject-scores-card">
+      <h2 class="section-title">النتائج والدرجات حسب المواد الدراسية</h2>
+      <div class="subjects-grid">
+        @for (subj of subjectScores(); track subj.id) {
+          <div class="subject-box" [style.background-color]="subj.bgColor">
+            <div class="subject-box-header">
+              <span class="subj-name">{{ subj.subjectName }}</span>
+              <span class="subj-score" [style.color]="subj.textColor">
+                {{ subj.scorePercent }}%
+              </span>
+            </div>
+
+            <div class="progress-track">
+              <div
+                class="progress-bar"
+                [style.width.%]="subj.scorePercent"
+                [style.background]="subj.progressGradient"></div>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-state-card">
+            <p>
+              لا توجد درجات مسجلة للمواد الدراسية بعد. ابدأ بأداء الامتحانات لتظهر تحليلاتك هنا.
+            </p>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Row 4: Weakness Focus Topics Card -->
+    <section class="weakness-section">
+      <h2 class="section-title">موضوعات ومهارات تحتاج إلى مراجعة وتطوير</h2>
+      <div class="topics-list">
+        @for (topic of weaknessTopics(); track topic.id) {
+          <app-report-weakness-topic
+            [topic]="topic"
+            (startReview)="onStartReview($event)"></app-report-weakness-topic>
+        } @empty {
+          <div class="empty-state-wrapper w-full">
+            <draya-empty-state
+              icon="pi pi-bolt"
+              titleKey="STUDENT.REPORTS.EMPTY_WEAKNESS_TITLE"
+              descriptionKey="STUDENT.REPORTS.EMPTY_WEAKNESS_DESC"
+              primaryActionLabelKey="STUDENT.EXAMS.TAKE_PRACTICE"
+              primaryActionRoute="/student/exams" />
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- AI Interactive Revision Modal -->
+  @if (showRevisionModal()) {
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="revisionModalTitle">
+      <!-- Backdrop Button -->
+      <button
+        type="button"
+        class="animate-fade-in fixed inset-0 h-full w-full cursor-default border-0 bg-slate-900/60 backdrop-blur-sm"
+        tabindex="-1"
+        aria-label="إغلاق الخلفية"
+        (click)="closeRevisionModal()"></button>
+
+      <!-- Modal Card -->
+      <div
+        class="animate-scale-up relative z-10 flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-2xl lg:max-w-3xl">
+        <!-- Modal Header (Fixed) -->
+        <div
+          class="flex flex-shrink-0 items-center justify-between border-b border-slate-100 bg-white px-5 py-4 sm:px-6">
+          <div class="flex items-center gap-3">
             <div
-              class="progress-bar"
-              [style.width.%]="subj.scorePercent"
-              [style.background]="subj.progressGradient"></div>
+              class="flex h-10 w-10 items-center justify-center rounded-xl border border-teal-100 bg-teal-50 text-teal-700 shadow-sm">
+              <span class="text-xl">🤖</span>
+            </div>
+            <div>
+              <h3 id="revisionModalTitle" class="text-base font-bold text-slate-900 sm:text-lg">
+                مراجعة وتشخيص الذكاء الاصطناعي
+              </h3>
+              <p class="text-xs font-medium text-teal-700">{{ currentTopicTitle() }}</p>
+            </div>
           </div>
+          <button
+            type="button"
+            class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+            aria-label="إغلاق النافذة"
+            (click)="closeRevisionModal()">
+            ✕
+          </button>
         </div>
-      }
-    </div>
-  </section>
 
-  <!-- Row 4: Weakness Focus Topics Card -->
-  <section class="weakness-section">
-    <h2 class="section-title">موضوعات ومهارات تحتاج إلى مراجعة وتطوير</h2>
-    <div class="topics-list">
-      @for (topic of weaknessTopics(); track topic.id) {
-        <app-report-weakness-topic
-          [topic]="topic"
-          (startReview)="onStartReview($event)"></app-report-weakness-topic>
-      }
+        <!-- Modal Body (Scrollable with max-height constraint) -->
+        <div class="custom-scrollbar min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-5 sm:px-6">
+          @if (loadingRevision()) {
+            <div class="flex flex-col items-center justify-center py-12 text-center text-slate-500">
+              <div
+                class="mb-3 h-9 w-9 animate-spin rounded-full border-3 border-teal-600 border-t-transparent"></div>
+              <p class="text-sm font-medium">
+                جارٍ استخراج التوصيات والمراجعة الذكية وتحليل المنهج...
+              </p>
+            </div>
+          } @else if (activeRevision()) {
+            <!-- Academic Recommendation -->
+            @if (activeRevision()!.recommendation) {
+              <div class="rounded-xl border border-teal-200/70 bg-teal-50/80 p-4 shadow-sm sm:p-5">
+                <h4 class="mb-2 flex items-center gap-1.5 text-sm font-bold text-teal-900">
+                  <span>💡</span>
+                  <span>التوصية الأكاديمية:</span>
+                </h4>
+                <draya-markdown-renderer
+                  [content]="activeRevision()!.recommendation"
+                  variant="teal"></draya-markdown-renderer>
+              </div>
+            }
+
+            <!-- Diagnostic AI Analysis -->
+            @if (activeRevision()!.aiExplanation) {
+              <div class="rounded-xl border border-slate-200 bg-slate-50 p-4 shadow-sm sm:p-5">
+                <h4 class="mb-2 flex items-center gap-1.5 text-sm font-bold text-slate-900">
+                  <span>🔍</span>
+                  <span>التحليل التشخيصي والمفاهيم الجوهرية:</span>
+                </h4>
+                <draya-markdown-renderer
+                  [content]="activeRevision()!.aiExplanation"
+                  variant="slate"></draya-markdown-renderer>
+              </div>
+            }
+
+            <!-- Inaccurate Answers Examples -->
+            @if (
+              activeRevision()!.exampleIncorrectAnswers &&
+              activeRevision()!.exampleIncorrectAnswers!.length > 0
+            ) {
+              <div class="rounded-xl border border-rose-200 bg-rose-50/80 p-4 shadow-sm sm:p-5">
+                <h4 class="mb-2 flex items-center gap-1.5 text-sm font-bold text-rose-900">
+                  <span>⚠️</span>
+                  <span>أمثلة على الإجابات غير الدقيقة:</span>
+                </h4>
+                <ul
+                  class="list-inside list-disc space-y-1.5 text-xs leading-relaxed text-rose-900/90 sm:text-sm">
+                  @for (ans of activeRevision()!.exampleIncorrectAnswers!; track ans) {
+                    <li>{{ ans }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            <!-- Key Formulas and Concepts -->
+            @if (activeRevision()!.keyFormulas && activeRevision()!.keyFormulas!.length > 0) {
+              <div class="rounded-xl border border-amber-200 bg-amber-50/80 p-4 shadow-sm sm:p-5">
+                <h4 class="mb-2 flex items-center gap-1.5 text-sm font-bold text-amber-900">
+                  <span>📌</span>
+                  <span>القوانين والنقاط المفتاحية:</span>
+                </h4>
+                <ul
+                  class="list-inside list-disc space-y-1.5 text-xs leading-relaxed text-amber-900/90 sm:text-sm">
+                  @for (formula of activeRevision()!.keyFormulas!; track formula) {
+                    <li>{{ formula }}</li>
+                  }
+                </ul>
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Modal Footer (Fixed) -->
+        <div
+          class="flex flex-shrink-0 flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/80 px-5 py-4 sm:px-6">
+          <button
+            type="button"
+            class="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
+            (click)="closeRevisionModal()">
+            إغلاق
+          </button>
+          <button
+            type="button"
+            class="flex items-center gap-2 rounded-xl bg-teal-700 px-5 py-2.5 text-sm font-bold text-white shadow-md transition hover:bg-teal-800 active:scale-95 disabled:opacity-50"
+            [disabled]="generatingPractice() || loadingRevision()"
+            (click)="onLaunchPracticeExam()">
+            @if (generatingPractice()) {
+              <span
+                class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+              <span>{{ generatingStatusText() }}</span>
+            } @else {
+              <span>خوض اختبار تدريبي مخصص 🚀</span>
+            }
+          </button>
+        </div>
+      </div>
     </div>
-  </section>
+  }
 </div>

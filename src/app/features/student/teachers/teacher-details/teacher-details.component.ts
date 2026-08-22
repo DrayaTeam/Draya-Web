@@ -24,6 +24,14 @@ export class TeacherDetailsComponent implements OnInit {
 
   readonly loading = signal<boolean>(true);
   readonly teacher = signal<TeacherDetailsView | null>(null);
+  readonly defaultAvatar = 'assets/images/default-teacher-avatar.svg';
+
+  onAvatarError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target && target.src !== this.defaultAvatar) {
+      target.src = this.defaultAvatar;
+    }
+  }
 
   ngOnInit(): void {
     const teacherId = this.route.snapshot.paramMap.get('id') || 'tch-1';

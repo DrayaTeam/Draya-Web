@@ -177,11 +177,10 @@ export class GenerateExamComponent implements OnInit {
     // Ensure numeric fields are actually parsed as numbers
     const durationMinutes = Number(formValue.durationMinutes);
     const allowedAttempts = Number(formValue.allowedAttempts);
-
     const questionReqs = (
-      formValue.questionRequirements as { type: string; count: string | number }[]
+      formValue.questionRequirements as { type: QuestionType; count: string | number }[]
     ).map((req) => ({
-      type: req.type,
+      type: req.type as QuestionType,
       count: Number(req.count),
     })) as QuestionRequirement[];
 

@@ -14,11 +14,12 @@ import {
   ClassroomFeedbackSummaryDto,
 } from '../../../../core/models/student-courses.model';
 import { ToastService } from '../../../../core/services/toast.service';
+import { DrayaCardSkeletonComponent } from '../../../../shared/components/card-skeleton/card-skeleton.component';
 
 @Component({
   selector: 'draya-package-details',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, DrayaCardSkeletonComponent],
   templateUrl: './package-details.component.html',
   styleUrl: './package-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

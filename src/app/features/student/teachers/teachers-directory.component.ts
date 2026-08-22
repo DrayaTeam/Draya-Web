@@ -13,11 +13,19 @@ import { TeacherFilterComponent } from './components/teacher-filter/teacher-filt
 import { TeacherCardComponent } from './components/teacher-card/teacher-card.component';
 import { TeacherDirectoryItem, TeacherSubjectCategory } from '../../../core/models/teacher.model';
 import { ToastService } from '../../../core/services/toast.service';
+import { DrayaCardSkeletonComponent } from '../../../shared/components/card-skeleton/card-skeleton.component';
+import { DrayaPaginationComponent } from '../../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'draya-teachers-directory',
   standalone: true,
-  imports: [TranslatePipe, TeacherFilterComponent, TeacherCardComponent],
+  imports: [
+    TranslatePipe,
+    TeacherFilterComponent,
+    TeacherCardComponent,
+    DrayaCardSkeletonComponent,
+    DrayaPaginationComponent,
+  ],
   templateUrl: './teachers-directory.component.html',
   styleUrl: './teachers-directory.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,7 +43,7 @@ export class TeachersDirectoryComponent implements OnInit {
   readonly subjectOptions = this.teacherService.subjectOptions;
 
   // Pagination
-  readonly pageSize = signal<number>(6);
+  readonly pageSize = signal<number>(8);
   readonly currentPage = signal<number>(1);
 
   readonly totalPages = computed(() => {

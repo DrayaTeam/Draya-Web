@@ -6,7 +6,6 @@ import {
   OnDestroy,
   HostListener,
   signal,
-  effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -76,25 +75,18 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
   private examId = 'exam-1';
   private visibilityListener: (() => void) | null = null;
 
-  constructor() {
-    effect(() => {
-      const remaining = this.examService.remainingSeconds();
-      const isSub = this.examService.isSubmitted();
-      const isLoading = this.examService.isLoading();
-      if (remaining === 0 && !isSub && !isLoading) {
-        this.toastService.warning(
-          'انتهى وقت الامتحان! ⌛',
-          'تم إرسال وتسليم إجاباتك تلقائياً للحفاظ على درجاتك قبل انتهاء المهلة.',
-        );
-        this.onSubmitExam();
-      }
-    });
-  }
-
   ngOnInit(): void {
     this.examId = this.route.snapshot.paramMap.get('id') || 'exam-1';
     this.examService.loadExamSession(this.examId).subscribe({
-      next: () => void 0,
+      next: () => {
+        if (this.examService.isAttemptAlreadyCompleted()) {
+          this.toastService.info(
+            'تم تسليم الامتحان مسبقاً 📋',
+            'لقد قمت بإجراء وتسليم هذا الامتحان بالفعل. جاري نقلك لتقرير النتيجة والتصحيح...',
+          );
+          this.router.navigate(['/student/exams', this.examId, 'result']);
+        }
+      },
       error: () => void 0,
     });
 
@@ -149,12 +141,29 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
     this.examService.goToQuestion(index);
   }
 
+  onSelectQuestionNav(index: number): void {
+    this.examService.goToQuestion(index);
+  }
+
   onNextQuestion(): void {
     this.examService.nextQuestion();
   }
 
   onPrevQuestion(): void {
     this.examService.prevQuestion();
+  }
+
+  onTriggerSubmit(): void {
+    this.showSubmitConfirm.set(true);
+  }
+
+  onCancelSubmit(): void {
+    this.showSubmitConfirm.set(false);
+  }
+
+  onConfirmSubmit(): void {
+    this.showSubmitConfirm.set(false);
+    this.onSubmitExam();
   }
 
   onReturnToExams(): void {
@@ -168,15 +177,19 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
     });
   }
 
+  onRetryLoading(): void {
+    this.onRetryLoad();
+  }
+
   onSubmitExam(): void {
     const attemptId = this.examService.currentAttemptId() || undefined;
-    const finalScore = this.examService.submitExam(attemptId);
     this.toastService.success(
       'تم تسليم الامتحان بنجاح! 🎉',
       'جارٍ استخراج تقرير التحليل الذكي للدرجات والمهارات...',
     );
+    this.examService.submitExam(attemptId);
     this.router.navigate(['/student/exams', this.examId, 'result'], {
-      queryParams: { score: finalScore, attemptId },
+      queryParams: attemptId ? { attemptId } : {},
     });
   }
 }

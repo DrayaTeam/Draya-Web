@@ -1,4 +1,5 @@
-// src/app/features/teacher/dashboard/teacher-dashboard.component.spec.ts
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
@@ -18,6 +19,8 @@ describe('TeacherDashboardComponent', () => {
       providers: [
         TeacherDashboardService,
         MessageService,
+        provideHttpClient(),
+        provideHttpClientTesting(),
         provideRouter([]),
         provideTranslateService(),
         provideHttpClient(),

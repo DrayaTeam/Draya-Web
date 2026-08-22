@@ -50,10 +50,11 @@
             <div
               class="dropdown-overlay"
               (click)="isDropdownOpen.set(false)"
+              (keydown.escape)="isDropdownOpen.set(false)"
               (keyup.enter)="isDropdownOpen.set(false)"
               tabindex="0"
               role="button"
-              aria-label="Close dropdown"></div>
+              aria-label="إغلاق القائمة"></div>
           }
         }
       </div>
