@@ -1,50 +1,61 @@
 <!-- src/app/features/teacher/classrooms/teacher-classrooms.component.html -->
 <div class="classrooms-container" dir="rtl">
-  <!-- Header Section (Option 2 + Option 3 Button + Bold Title) -->
-  <div class="header-row">
-    <div class="flex items-stretch gap-3">
-      <div class="w-[3px] bg-teal-600 rounded-full"></div>
-      <div class="flex flex-col gap-1 py-1">
-        <h1 class="text-3xl font-bold text-teal-700 m-0">الفصول الدراسية</h1>
-        <p class="text-sm text-slate-500 m-0">إدارة المراحل الدراسية ومتابعة المجموعات وإجمالي أعداد الطلبة المنضمين لكل مرحلة.</p>
+  <!-- Top Section Group (Header & Search) -->
+  <div class="flex flex-col gap-8 pb-8 border-b border-slate-200/80 mb-2">
+    <!-- Header Section (Option 2 + Option 3 Button + Bold Title) -->
+    <div class="header-row">
+      <div class="flex items-stretch gap-3">
+        <div class="w-[3px] bg-teal-600 rounded-full"></div>
+        <div class="flex flex-col gap-1 py-1">
+          <h1 class="text-3xl font-bold text-teal-700 m-0">الفصول الدراسية</h1>
+          <p class="text-sm text-slate-500 m-0">إدارة المراحل الدراسية ومتابعة المجموعات وإجمالي أعداد الطلبة المنضمين لكل مرحلة.</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button class="create-btn" (click)="openCreateModal()">+ إنشاء مرحلة دراسية جديدة</button>
       </div>
     </div>
-    
-    <div class="header-actions">
-      <button class="create-btn" (click)="openCreateModal()">+ إنشاء مرحلة دراسية جديدة</button>
+
+    <!-- Search Row -->
+    <div class="search-row !mb-0">
+      <div class="modern-search-bar group">
+        <!-- Search Icon -->
+        <div class="search-icon-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </div>
+        
+        <!-- Input -->
+        <input
+          type="text"
+          class="search-input"
+          placeholder="ابحث باسم المرحلة الدراسية..."
+          (input)="onSearch($event)" />
+          
+        <!-- Decorative Keyboard Shortcut -->
+        <div class="search-shortcut hidden md:flex">
+          <kbd>Ctrl</kbd>
+          <span>+</span>
+          <kbd>K</kbd>
+        </div>
+        
+        <!-- Divider -->
+        <div class="search-divider hidden md:block"></div>
+        
+        <!-- Filter Action -->
+        <button class="search-filter-btn hidden md:flex">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+          <span>تصفية</span>
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Search Row -->
-  <div class="search-row">
-    <div class="modern-search-bar group">
-      <!-- Search Icon -->
-      <div class="search-icon-box">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      </div>
-      
-      <!-- Input -->
-      <input
-        type="text"
-        class="search-input"
-        placeholder="ابحث باسم المرحلة الدراسية..."
-        (input)="onSearch($event)" />
-        
-      <!-- Decorative Keyboard Shortcut -->
-      <div class="search-shortcut hidden md:flex">
-        <kbd>Ctrl</kbd>
-        <span>+</span>
-        <kbd>K</kbd>
-      </div>
-      
-      <!-- Divider -->
-      <div class="search-divider hidden md:block"></div>
-      
-      <!-- Filter Action -->
-      <button class="search-filter-btn hidden md:flex">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
-        <span>تصفية</span>
-      </button>
+  <!-- Content Header -->
+  <div class="flex items-center justify-between mb-2">
+    <h2 class="text-lg font-bold text-slate-800 m-0">قائمة الفصول المتاحة</h2>
+    <div class="text-sm font-semibold text-teal-700 bg-teal-50 px-3 py-1 rounded-lg border border-teal-100">
+      {{ classroomsResult()?.totalCount || 0 }} فصل نشط
     </div>
   </div>
 
