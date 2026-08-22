@@ -1,4 +1,4 @@
-// src/app/features/teacher/wallet/components/withdrawal-modal/withdrawal-modal.component.ts
+﻿// src/app/features/teacher/wallet/components/withdrawal-modal/withdrawal-modal.component.ts
 import {
   Component,
   ChangeDetectionStrategy,
@@ -11,6 +11,7 @@ import {
   computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Select } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { WalletService } from '../../../services/wallet.service';
@@ -19,7 +20,7 @@ import { PayoutAccount } from '../../../../../core/models/wallet.model';
 @Component({
   selector: 'draya-withdrawal-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Select],
   templateUrl: './withdrawal-modal.component.html',
   styleUrl: './withdrawal-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -91,18 +92,18 @@ export class WithdrawalModalComponent {
   submit(): void {
     const val = this.amount();
     if (!val || val <= 0) {
-      this.errorMessage.set('يرجى إدخال مبلغ صالح.');
+      this.errorMessage.set('ظٹط±ط¬ظ‰ ط¥ط¯ط®ط§ظ„ ظ…ط¨ظ„ط؛ طµط§ظ„ط­.');
       return;
     }
 
     if (val > this.maxAmount()) {
-      this.errorMessage.set('المبلغ المطلوب أكبر من رصيدك المتاح.');
+      this.errorMessage.set('ط§ظ„ظ…ط¨ظ„ط؛ ط§ظ„ظ…ط·ظ„ظˆط¨ ط£ظƒط¨ط± ظ…ظ† ط±طµظٹط¯ظƒ ط§ظ„ظ…طھط§ط­.');
       return;
     }
 
     const account = this.activeAccount();
     if (!account) {
-      this.errorMessage.set('يرجى تحديد حساب السحب أو إضافة حساب جديد أولاً.');
+      this.errorMessage.set('ظٹط±ط¬ظ‰ طھط­ط¯ظٹط¯ ط­ط³ط§ط¨ ط§ظ„ط³ط­ط¨ ط£ظˆ ط¥ط¶ط§ظپط© ط­ط³ط§ط¨ ط¬ط¯ظٹط¯ ط£ظˆظ„ط§ظ‹.');
       return;
     }
 
@@ -120,8 +121,9 @@ export class WithdrawalModalComponent {
         },
         error: (err) => {
           this.isSubmitting.set(false);
-          this.errorMessage.set(err?.message || 'حدث خطأ أثناء طلب السحب.');
+          this.errorMessage.set(err?.message || 'ط­ط¯ط« ط®ط·ط£ ط£ط«ظ†ط§ط، ط·ظ„ط¨ ط§ظ„ط³ط­ط¨.');
         },
       });
   }
 }
+
