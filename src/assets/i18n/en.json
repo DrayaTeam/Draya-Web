@@ -548,6 +548,20 @@
         "AVAILABLE_FOR_WITHDRAWAL": "Available for Withdrawal",
         "WITHDRAW_INSTAPAY": "Withdraw to Instapay"
       }
+    },
+    "REPORTS": {
+      "TITLE": "Student Performance Reports",
+      "ANALYTICS_OVERVIEW": "Review and analyze student exam performance",
+      "SELECT_CLASSROOM": "Select Classroom",
+      "SELECT_STUDENT": "Select Student",
+      "STUDENT_PERFORMANCE": "Student Performance:",
+      "OVERALL_AVERAGE": "Overall Average",
+      "HIGHEST_SCORE": "Highest Score",
+      "COMPLETED_EXAMS": "Completed Exams",
+      "SUBJECT_PROFICIENCY": "Subject Proficiency",
+      "LATEST_REPORT": "Latest AI Report",
+      "APPROVE_SEND": "Approve & Send Report",
+      "SEND_ALL": "Send Reports to All Students"
     }
   },
   "STUDENT": {
