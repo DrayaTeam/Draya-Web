@@ -11,6 +11,7 @@ import type {
   SubmissionsChartMeta,
   SubmissionChartPoint,
   TeacherDashboardDto,
+  TeacherUrgentAlert,
 } from '../models/teacher-dashboard.model';
 
 @Injectable({ providedIn: 'root' })
@@ -97,6 +98,9 @@ export class TeacherDashboardService {
   private readonly _studentsNeedingFollowup = signal<StudentNeedFollowup[]>([]);
   readonly studentsNeedingFollowup = this._studentsNeedingFollowup.asReadonly();
 
+  private readonly _urgentAlerts = signal<TeacherUrgentAlert[]>([]);
+  readonly urgentAlerts = this._urgentAlerts.asReadonly();
+
   private readonly _recentSubmissions = signal<RecentSubmission[]>([]);
   readonly recentSubmissions = this._recentSubmissions.asReadonly();
 
@@ -182,6 +186,37 @@ export class TeacherDashboardService {
           averageScore: Number(w.averageScore.toFixed(1)),
         }));
         this._weeklyChartPoints.set(chartPoints);
+
+        // Derive Urgent Alerts
+        const urgentAlerts: TeacherUrgentAlert[] = [];
+        if (data.examsAwaitingReview > 0) {
+          urgentAlerts.push({
+            id: 'exams-awaiting',
+            titleKey: 'TEACHER.DASHBOARD.ALERTS.EXAMS_WAITING',
+            titleParams: { count: data.examsAwaitingReview },
+            tagKey: 'TEACHER.DASHBOARD.ALERTS.TAG_DEADLINE',
+            isDanger: true,
+          });
+        }
+        if (data.reportsReadyForReview > 0) {
+          urgentAlerts.push({
+            id: 'reports-ready',
+            titleKey: 'TEACHER.DASHBOARD.ALERTS.REPORTS_READY',
+            titleParams: { count: data.reportsReadyForReview },
+            tagKey: 'TEACHER.DASHBOARD.ALERTS.TAG_WARNING',
+            isWarning: true,
+          });
+        }
+        if (studentsNeedingFollowup.length >= 3) {
+          urgentAlerts.push({
+            id: 'students-at-risk',
+            titleKey: 'TEACHER.DASHBOARD.ALERTS.STUDENTS_AT_RISK',
+            titleParams: { count: studentsNeedingFollowup.length },
+            tagKey: 'TEACHER.DASHBOARD.ALERTS.TAG_FOLLOWUP',
+            isDanger: true,
+          });
+        }
+        this._urgentAlerts.set(urgentAlerts);
 
         return true;
       }),

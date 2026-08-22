@@ -554,7 +554,18 @@
       },
       "AI_REPORTS_READY": "AI Reports Ready for Review",
       "AI_REPORTS_READY_DESC": "There are AI-generated student reports that require your review and approval.",
-      "VIEW_REPORTS": "Review Reports"
+      "VIEW_REPORTS": "Review Reports",
+      "ALERTS": {
+        "TITLE": "Urgent Alerts & Deadlines",
+        "NEW_TODAY": "New Alerts",
+        "EXAMS_WAITING": "{{count}} exams awaiting grading",
+        "TAG_DEADLINE": "Deadline",
+        "REPORTS_READY": "AI reports for {{count}} students ready for review",
+        "TAG_WARNING": "Warning",
+        "STUDENTS_AT_RISK": "{{count}} students need performance followup",
+        "TAG_FOLLOWUP": "Follow-up",
+        "NO_ALERTS": "No alerts at this time."
+      }
     },
     "DAYS": {
       "SATURDAY": "Sat",

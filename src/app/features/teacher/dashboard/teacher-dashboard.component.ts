@@ -40,6 +40,7 @@ export class TeacherDashboardComponent implements OnInit {
   readonly timeRange = this.dashboardService.timeRange;
   readonly studentsNeedingFollowup = this.dashboardService.studentsNeedingFollowup;
   readonly recentSubmissions = this.dashboardService.recentSubmissions;
+  readonly urgentAlerts = this.dashboardService.urgentAlerts;
 
   ngOnInit(): void {
     this.dashboardService.getDashboardData().subscribe();

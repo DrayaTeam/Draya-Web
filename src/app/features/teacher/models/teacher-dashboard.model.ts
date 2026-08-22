@@ -82,3 +82,14 @@ export interface TeacherDashboardDto {
   needsAttentionList: NeedsAttentionDto[];
   recentSubmissions: RecentSubmissionDto[];
 }
+
+export interface TeacherUrgentAlert {
+  id: string;
+  titleKey: string;
+  titleParams?: Record<string, string | number>;
+  timeKey?: string;
+  tagKey: string;
+  isDanger?: boolean;
+  isWarning?: boolean;
+}
+
