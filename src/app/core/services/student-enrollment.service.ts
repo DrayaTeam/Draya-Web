@@ -221,8 +221,36 @@ export class StudentEnrollmentService extends ApiBaseService {
       sectionsRes: this.get<SectionItemDto[] | { items?: SectionItemDto[] }>(
         `/classrooms/${classroomId}/sections`,
       ).pipe(catchError(() => of(null))),
+      examsRes: this.get<
+        | {
+            id?: string;
+            examId?: string;
+            sectionId?: string;
+            title?: string;
+            topic?: string;
+            durationMinutes?: number;
+            allowedAttempts?: number;
+            questionsCount?: number;
+            startDate?: string;
+            endDate?: string;
+          }[]
+        | {
+            items?: {
+              id?: string;
+              examId?: string;
+              sectionId?: string;
+              title?: string;
+              topic?: string;
+              durationMinutes?: number;
+              allowedAttempts?: number;
+              questionsCount?: number;
+              startDate?: string;
+              endDate?: string;
+            }[];
+          }
+      >(`/exams`, { classroomId }).pipe(catchError(() => of(null))),
     }).pipe(
-      map(({ classroom, materialsRes, sectionsRes }) => {
+      map(({ classroom, materialsRes, sectionsRes, examsRes }) => {
         let rawMaterials: {
           id?: string;
           materialId?: string;
@@ -243,15 +271,24 @@ export class StudentEnrollmentService extends ApiBaseService {
           rawMaterials = materialsRes.items;
         }
 
-        const rawExams: {
+        let rawExams: {
           id?: string;
           examId?: string;
           sectionId?: string;
           title?: string;
           topic?: string;
+          durationMinutes?: number;
+          allowedAttempts?: number;
           questionsCount?: number;
           questions?: unknown[];
+          startDate?: string;
+          endDate?: string;
         }[] = [];
+        if (Array.isArray(examsRes)) {
+          rawExams = examsRes;
+        } else if (examsRes && 'items' in examsRes && Array.isArray(examsRes.items)) {
+          rawExams = examsRes.items;
+        }
 
         const mapMaterialToLesson = (
           m: (typeof rawMaterials)[0],
