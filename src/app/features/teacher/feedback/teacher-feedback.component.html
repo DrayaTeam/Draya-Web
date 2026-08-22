@@ -1,21 +1,50 @@
 ﻿<div class="feedback-page-container mx-auto w-full max-w-[1280px] p-4 md:p-8" dir="rtl">
   <!-- Page Header -->
-  <header class="mb-8">
-    <div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-      <div class="flex items-center gap-4">
-        <div class="bg-teal-50 text-teal-600 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl">
-          <i class="pi pi-star text-2xl"></i>
+  <header class="mb-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+    <div class="flex items-center gap-4">
+      <div class="bg-teal-50 text-teal-600 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl">
+        <i class="pi pi-star text-2xl"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <h1 class="m-0 text-3xl font-bold text-teal-700">{{ 'TEACHER.FEEDBACK.REVIEWS_FOR' | translate }}</h1>
         </div>
-        <div>
-          <div class="flex items-center gap-2 mb-1">
-            <h1 class="m-0 text-3xl font-bold text-teal-700">{{ 'TEACHER.FEEDBACK.REVIEWS_FOR' | translate }}</h1>
-          </div>
-          <p class="m-0 mt-1 text-gray-500">
-            تابع آراء وتقييمات طلابك لتحسين جودة محتواك التعليمي.
-          </p>
-        </div>
+        <p class="m-0 mt-1 text-gray-500">
+          تابع آراء وتقييمات طلابك لتحسين جودة محتواك التعليمي.
+        </p>
       </div>
     </div>
+
+    <!-- Classroom Dropdown Selector -->
+    @if (!isLoadingClassrooms() && classrooms().length > 0) {
+      <div class="w-full md:w-80 relative z-50">
+        <p-select
+          [options]="classrooms()"
+          [ngModel]="selectedClassroom()"
+          (onChange)="onPrimeSelectChange($event)"
+          optionLabel="name"
+          placeholder="اختر الفصل الدراسي"
+          [style]="{ width: '100%', borderRadius: '12px' }"
+          [pt]="{
+            root: { class: '!rounded-[12px] !border-gray-200 hover:!border-[#1B6D63] focus-within:!border-[#1B6D63] focus-within:!ring-1 focus-within:!ring-[#1B6D63]' },
+            list: { class: '!py-2' },
+            option: { class: '!py-2.5 !px-4 hover:!bg-teal-50 hover:!text-teal-700' }
+          }">
+          <ng-template #selectedItem let-selectedOption>
+            <div class="flex items-center gap-2">
+              <i class="pi pi-book text-teal-600"></i>
+              <span>{{ selectedOption.name }}</span>
+            </div>
+          </ng-template>
+          <ng-template #item let-option>
+            <div class="flex items-center gap-2">
+              <i class="pi pi-book text-gray-400"></i>
+              <span>{{ option.name }}</span>
+            </div>
+          </ng-template>
+        </p-select>
+      </div>
+    }
   </header>
 
   @if (isLoadingClassrooms()) {
@@ -30,35 +59,6 @@
       <p class="text-gray-600">لا يوجد لديك فصول حالياً.</p>
     </div>
   } @else {
-    <!-- Classroom Subject Selector Pills -->
-    <section class="classrooms-selector mb-8 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-      <div class="mb-3 flex items-center gap-3 border-b border-gray-100 pb-2">
-        <div class="text-gray-500">
-          <i class="pi pi-users text-lg"></i>
-        </div>
-        <span class="font-bold text-gray-700">تصفية حسب الصف</span>
-        <span class="rounded-full bg-[#1B6D63]/10 px-2 py-0.5 text-xs font-semibold text-[#1B6D63]">
-          {{ classrooms().length }} فصل
-        </span>
-      </div>
-
-      <div class="flex flex-wrap gap-2">
-        @for (c of classrooms(); track c.classroomId) {
-          <button
-            type="button"
-            class="classroom-pill rounded-[12px] border px-4 py-2 text-sm font-medium transition-colors"
-            [ngClass]="
-              selectedClassroom()?.classroomId === c.classroomId
-                ? 'border-[#1B6D63] bg-[#1B6D63] text-white'
-                : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
-            "
-            (click)="selectClassroom(c)">
-            <span class="pill-text">{{ c.name }}</span>
-          </button>
-        }
-      </div>
-    </section>
-
     <main class="feed-main-area">
       @if (!selectedClassroom()) {
         <div class="rounded-2xl border border-gray-200 bg-white p-12 text-center shadow-sm">
