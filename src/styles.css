@@ -24,6 +24,22 @@ input[type="reset"] {
   cursor: pointer;
 }
 
+/* ── Hide Theme & Translation Buttons for All Pages ── */
+.theme-toggle-btn,
+.lang-toggle-btn,
+.nav-icon-btn,
+.lang-pill,
+.btn-drawer-action,
+.topbar-icon-btn,
+[class*="theme-toggle"],
+[class*="lang-toggle"],
+button[aria-label*="الوضع"],
+button[aria-label*="Theme"],
+button[aria-label*="Switch to English"],
+button[aria-label*="التحويل إلى العربية"] {
+  display: none !important;
+}
+
 /* ── Global Keyframes & Animations ── */
 @keyframes drayaFadeInUp {
   from {
