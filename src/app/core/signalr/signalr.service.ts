@@ -127,6 +127,15 @@ export class SignalRService {
     this.connection.on('GradingCompleted', (payload: GradingCompletedEvent) =>
       this._gradingCompleted.set(payload),
     );
+    this.connection.on('GradingJobCompleted', (payload: GradingCompletedEvent) =>
+      this._gradingCompleted.set(payload),
+    );
+    this.connection.on('AttemptGraded', (payload: GradingCompletedEvent) =>
+      this._gradingCompleted.set(payload),
+    );
+    this.connection.on('ExamGraded', (payload: GradingCompletedEvent) =>
+      this._gradingCompleted.set(payload),
+    );
     this.connection.on('NewChatMessage', (payload: NewChatMessageEvent) =>
       this._newChatMessage.set(payload),
     );

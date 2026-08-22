@@ -1,8 +1,9 @@
 // src/app/core/services/student-exam-taking.service.ts
 
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
+import { SignalRService } from '../signalr/signalr.service';
 import {
   AnswerSubmissionDto,
   AttemptResultResponseDto,
@@ -20,6 +21,8 @@ import {
   providedIn: 'root',
 })
 export class StudentExamTakingService extends ApiBaseService {
+  private readonly signalR = inject(SignalRService);
+
   readonly examTitle = signal<string>('جارٍ تحميل تفاصيل الامتحان...');
   readonly examLevelText = signal<string>('بيئة اختبار تفاعلية مؤمنة');
   readonly remainingSeconds = signal<number>(2700); // 45:00
@@ -73,6 +76,42 @@ export class StudentExamTakingService extends ApiBaseService {
 
   private timerInterval: ReturnType<typeof setInterval> | null = null;
   readonly violations = signal<number>(0);
+
+  constructor() {
+    super();
+
+    // ── SignalR Real-Time AI Grading Listener ──────────────────────────────
+    // Listens to real-time events from SignalR and immediately fetches final grading results
+    effect(() => {
+      const gradingEvent = this.signalR.gradingCompleted();
+      if (!gradingEvent) return;
+
+      const activeAttemptId = this.currentAttemptId() || this.examResult().attemptId;
+      const eventAttemptId = gradingEvent.attemptId || gradingEvent.studentExamAttemptId;
+
+      const isMatching =
+        !eventAttemptId ||
+        !activeAttemptId ||
+        eventAttemptId.toLowerCase() === activeAttemptId.toLowerCase() ||
+        (gradingEvent.examId &&
+          gradingEvent.examId.toLowerCase() === this.currentExamId().toLowerCase());
+
+      const isCompleted =
+        gradingEvent.status === 'Completed' ||
+        gradingEvent.gradingStatus === 'Completed' ||
+        gradingEvent.totalScore !== undefined ||
+        !gradingEvent.status;
+
+      if (isMatching && isCompleted && activeAttemptId && !activeAttemptId.startsWith('att_')) {
+        console.log(
+          '[SignalR] AI Grading completed event received. Fetching results for attempt:',
+          activeAttemptId,
+        );
+        this.gradingProgressPercent.set(100);
+        this.fetchAttemptResults(activeAttemptId).subscribe();
+      }
+    });
+  }
 
   /**
    * Resets all exam state, attempts, questions, and timers to allow starting fresh exams.
@@ -671,6 +710,13 @@ export class StudentExamTakingService extends ApiBaseService {
               })
             : this.examResult().submittedAt,
         };
+
+        if (!isGradingPending || hasAnyGradedOrLocalKey) {
+          this.isGradingInProgress.set(false);
+          this.gradingStage.set(isGradingPending ? 'pending_review' : 'completed');
+          this.gradingProgressPercent.set(100);
+        }
+
         this.examResult.set(updated);
         return updated;
       }),
