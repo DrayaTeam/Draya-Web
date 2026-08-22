@@ -1,9 +1,8 @@
-// src/app/core/services/student-exam-taking.service.ts
-
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
 import { SignalRService } from '../signalr/signalr.service';
+import { ToastService } from './toast.service';
 import {
   AnswerSubmissionDto,
   AttemptResultResponseDto,
@@ -22,6 +21,7 @@ import {
 })
 export class StudentExamTakingService extends ApiBaseService {
   private readonly signalR = inject(SignalRService);
+  private readonly toastService = inject(ToastService);
 
   readonly examTitle = signal<string>('جارٍ تحميل تفاصيل الامتحان...');
   readonly examLevelText = signal<string>('بيئة اختبار تفاعلية مؤمنة');
@@ -456,13 +456,43 @@ export class StudentExamTakingService extends ApiBaseService {
             ),
           ),
           catchError((err) => {
-            console.warn('Submit attempt notification:', err?.message || err);
-            return of(null);
+            const errorMsg =
+              err?.error?.message ||
+              err?.error?.title ||
+              err?.error?.detail ||
+              err?.message ||
+              'تعذر تسليم الامتحان';
+            console.warn('Submit attempt notification:', errorMsg);
+
+            if (typeof errorMsg === 'string' && errorMsg.toLowerCase().includes('expired')) {
+              this.toastService.error(
+                'انتهت مدة الامتحان ⏱️',
+                'انتهت المدة الزمنية المسموح بها لهذا الاختبار على الخادم ولم يعد من الممكن التسليم المتأخر.',
+              );
+            } else if (typeof errorMsg === 'string' && errorMsg.includes('already been submitted')) {
+              this.toastService.info('تم التسليم مسبقاً', 'تم استلام إجابات هذا الاختبار مسبقاً.');
+            } else {
+              this.toastService.warning('تنبيه تسليم الامتحان', errorMsg);
+            }
+
+            // Immediately finish grading spinner so student can view the review interface
+            this.isGradingInProgress.set(false);
+            this.gradingStage.set(isGradingPending ? 'pending_review' : 'completed');
+            this.gradingProgressPercent.set(100);
+
+            return of('SUBMIT_FAILED');
           }),
         )
         .subscribe({
           next: (jobId) => {
-            if (jobId) {
+            if (jobId === 'SUBMIT_FAILED') {
+              // Try fetching existing results once, if any exist
+              this.fetchAttemptResults(targetAttemptId).subscribe(() => {
+                this.isGradingInProgress.set(false);
+                this.gradingStage.set('completed');
+                this.gradingProgressPercent.set(100);
+              });
+            } else if (jobId) {
               this.pollGradingJob(jobId, targetAttemptId);
             } else {
               this.pollAttemptResultsDirectly(targetAttemptId);
