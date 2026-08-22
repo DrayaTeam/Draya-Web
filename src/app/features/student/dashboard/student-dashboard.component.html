@@ -21,16 +21,30 @@
 
   <!-- ── Loading Skeleton ──────────────────────────────────────────────────── -->
   @if (loading()) {
-    <div class="dashboard-skeleton">
+    <div class="dashboard-skeleton animate-fade-in" dir="rtl">
+      <!-- Hero Banner Skeleton -->
       <div class="skeleton-hero shimmer"></div>
-      <div class="skeleton-cards-row">
-        <div class="skeleton-card shimmer"></div>
-        <div class="skeleton-card shimmer"></div>
-        <div class="skeleton-card shimmer"></div>
+
+      <!-- Quick KPI Stats Skeletons -->
+      <draya-card-skeleton
+        type="stat"
+        [count]="3"
+        [gridClass]="'grid grid-cols-1 md:grid-cols-3 gap-4'" />
+
+      <!-- Courses Section Skeleton -->
+      <div class="mt-2 space-y-4">
+        <div class="skeleton-shimmer h-6 w-48 rounded-md"></div>
+        <draya-card-skeleton
+          type="package"
+          [count]="2"
+          [gridClass]="'grid grid-cols-1 md:grid-cols-2 gap-6'" />
       </div>
-      <div class="skeleton-course shimmer"></div>
-      <div class="skeleton-course shimmer"></div>
-      <div class="skeleton-course shimmer"></div>
+
+      <!-- Upcoming Exams & Weakness Topics Skeletons -->
+      <div class="mt-2 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <draya-card-skeleton type="exam" [count]="2" [gridClass]="'grid grid-cols-1 gap-4'" />
+        <draya-card-skeleton type="generic" [count]="2" [gridClass]="'grid grid-cols-1 gap-4'" />
+      </div>
     </div>
   }
 
@@ -291,9 +305,9 @@
             <div class="empty-state-card rounded-2xl border border-[#EBEFEF] bg-white p-6">
               <draya-empty-state
                 icon="course"
-                titleKey="لا توجد فصول دراسية بعد"
-                descriptionKey="اشترك في أحد الفصول الدراسية للبدء في متابعة دروسك وامتحاناتك اليومية."
-                primaryActionLabelKey="تصفح المعلمين والفصول"
+                titleKey="STUDENT.DASHBOARD.EMPTY_COURSES_TITLE"
+                descriptionKey="STUDENT.DASHBOARD.EMPTY_COURSES_DESC"
+                primaryActionLabelKey="STUDENT.COURSES.BROWSE_TEACHERS"
                 primaryActionRoute="/student/teachers"
                 size="md" />
             </div>

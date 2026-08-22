@@ -77,11 +77,21 @@ export class StudentReportsService extends ApiBaseService {
         if (subjects.length > 0) {
           const sorted = [...subjects].sort(
             (a, b) =>
-              ((b as { proficiencyPercent?: number }).proficiencyPercent || (b as { scorePercentage?: number }).scorePercentage || (b as { proficiencyScore?: number }).proficiencyScore || 0) -
-              ((a as { proficiencyPercent?: number }).proficiencyPercent || (a as { scorePercentage?: number }).scorePercentage || (a as { proficiencyScore?: number }).proficiencyScore || 0),
+              ((b as { proficiencyPercent?: number }).proficiencyPercent ||
+                (b as { scorePercentage?: number }).scorePercentage ||
+                (b as { proficiencyScore?: number }).proficiencyScore ||
+                0) -
+              ((a as { proficiencyPercent?: number }).proficiencyPercent ||
+                (a as { scorePercentage?: number }).scorePercentage ||
+                (a as { proficiencyScore?: number }).proficiencyScore ||
+                0),
           );
           topSubjectName = sorted[0].subjectName || 'عام';
-          const rawTop = (sorted[0] as { proficiencyPercent?: number }).proficiencyPercent || (sorted[0] as { scorePercentage?: number }).scorePercentage || (sorted[0] as { proficiencyScore?: number }).proficiencyScore || 0;
+          const rawTop =
+            (sorted[0] as { proficiencyPercent?: number }).proficiencyPercent ||
+            (sorted[0] as { scorePercentage?: number }).scorePercentage ||
+            (sorted[0] as { proficiencyScore?: number }).proficiencyScore ||
+            0;
           topScore = Math.round(rawTop);
         }
 
@@ -112,7 +122,11 @@ export class StudentReportsService extends ApiBaseService {
         const bgColors = ['#F0F9FF', '#FAF5FF', '#ECFDF5', '#FEF3C7'];
 
         const mappedSubjects: SubjectScoreItem[] = subjects.map((s, idx) => {
-          const rawScore = (s as { proficiencyPercent?: number }).proficiencyPercent || (s as { scorePercentage?: number }).scorePercentage || (s as { proficiencyScore?: number }).proficiencyScore || 0;
+          const rawScore =
+            (s as { proficiencyPercent?: number }).proficiencyPercent ||
+            (s as { scorePercentage?: number }).scorePercentage ||
+            (s as { proficiencyScore?: number }).proficiencyScore ||
+            0;
           return {
             id: (s as { subjectId?: string }).subjectId || `sub_${idx}`,
             subjectName: s.subjectName || `مادة ${idx + 1}`,
@@ -129,21 +143,28 @@ export class StudentReportsService extends ApiBaseService {
           !!val && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
 
         const mappedWeak: ReportWeaknessTopic[] = weakTopicsList.map((w, idx) => {
-          const rawScore = (w as { proficiencyPercent?: number }).proficiencyPercent || (w as { accuracyPercentage?: number }).accuracyPercentage || 40;
+          const rawScore =
+            (w as { proficiencyPercent?: number }).proficiencyPercent ||
+            (w as { accuracyPercentage?: number }).accuracyPercentage ||
+            40;
           const score = Math.round(rawScore);
           const isSevere = score < 50;
-          const topicName = (w as { topicTitle?: string }).topicTitle || w.topicName || `موضوع ${idx + 1}`;
-          const status = (w as { statusLabel?: string }).statusLabel || (w as { status?: string }).status;
+          const topicName =
+            (w as { topicTitle?: string }).topicTitle || w.topicName || `موضوع ${idx + 1}`;
+          const status =
+            (w as { statusLabel?: string }).statusLabel || (w as { status?: string }).status;
           const subjectName = (w as { subjectName?: string }).subjectName || 'عام';
 
           const directSubjectId = (w as { subjectId?: string }).subjectId;
           const matchedSubject = mappedSubjects.find(
-            (s) => s.subjectName.trim().toLowerCase() === subjectName.trim().toLowerCase() && isGuid(s.id),
+            (s) =>
+              s.subjectName.trim().toLowerCase() === subjectName.trim().toLowerCase() &&
+              isGuid(s.id),
           );
           const fallbackSubject = mappedSubjects.find((s) => isGuid(s.id));
           const resolvedSubjectId = isGuid(directSubjectId)
             ? directSubjectId
-            : (matchedSubject?.id || fallbackSubject?.id);
+            : matchedSubject?.id || fallbackSubject?.id;
 
           return {
             id: (w as { topicId?: string }).topicId || `weak_${idx}`,
@@ -157,14 +178,19 @@ export class StudentReportsService extends ApiBaseService {
             badgeTextColor: isSevere ? '#A50036' : '#973C00',
             scoreTextColor: isSevere ? '#EC003F' : '#E17100',
             recommendation: (w as { recommendation?: string }).recommendation,
-            exampleIncorrectAnswers: (w as { exampleIncorrectAnswers?: string[] }).exampleIncorrectAnswers,
+            exampleIncorrectAnswers: (w as { exampleIncorrectAnswers?: string[] })
+              .exampleIncorrectAnswers,
           };
         });
         this.weaknessTopics.set(mappedWeak);
 
         // Skill radar points
         const radar: SkillRadarPoint[] = subjects.map((s) => {
-          const rawScore = (s as { proficiencyPercent?: number }).proficiencyPercent || (s as { scorePercentage?: number }).scorePercentage || (s as { proficiencyScore?: number }).proficiencyScore || 0;
+          const rawScore =
+            (s as { proficiencyPercent?: number }).proficiencyPercent ||
+            (s as { scorePercentage?: number }).scorePercentage ||
+            (s as { proficiencyScore?: number }).proficiencyScore ||
+            0;
           return {
             name: s.subjectName || '',
             percent: Math.round(rawScore),
@@ -196,14 +222,15 @@ export class StudentReportsService extends ApiBaseService {
    * GET /api/v1/students/{studentId}/weak-topics/{topicName}/revision
    */
   getTopicRevision(studentId: string, topicName: string): Observable<TopicRevisionDto | null> {
-    const encodedTopic = encodeURIComponent(topicName);
+    const cleanTopic = (topicName || '').trim();
+    const encodedTopic = encodeURIComponent(cleanTopic);
     return this.get<TopicRevisionDto>(
       `/students/${studentId}/weak-topics/${encodedTopic}/revision`,
     ).pipe(
       catchError(() =>
         of({
-          topicName,
-          recommendation: `يركز هذا الموضوع على المفاهيم الجوهرية لـ "${topicName}". ننصح بمراجعة القوانين الأساسية وحل مسائل تدريبية.`,
+          topicName: cleanTopic,
+          recommendation: `يركز هذا الموضوع على المفاهيم الجوهرية لـ "${cleanTopic}". ننصح بمراجعة القوانين الأساسية وحل مسائل تدريبية.`,
           aiExplanation: `تم تحليل إجاباتك السابقة؛ تكرر الخطأ في تطبيق الخطوات التحليلية الأولى. التدريب على نموذج الحل الشامل يعالج الفجوة بسرعة.`,
           keyFormulas: ['مراجعة النظريات ذات الصلة', 'التطبيق التدريجي بالخطوات'],
         }),
@@ -220,11 +247,11 @@ export class StudentReportsService extends ApiBaseService {
     topicName: string,
     payload?: PracticeExamRequest,
   ): Observable<CreatePracticeExamResponseDto | null> {
-    const encodedTopic = encodeURIComponent(topicName);
+    const cleanTopic = (topicName || '').trim();
+    const encodedTopic = encodeURIComponent(cleanTopic);
     return this.post<CreatePracticeExamResponseDto>(
       `/students/${studentId}/weak-topics/${encodedTopic}/practice-exam`,
       payload || {},
     ).pipe(catchError(() => of(null)));
   }
 }
-

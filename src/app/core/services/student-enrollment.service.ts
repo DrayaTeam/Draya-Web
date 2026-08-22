@@ -221,34 +221,10 @@ export class StudentEnrollmentService extends ApiBaseService {
       sectionsRes: this.get<SectionItemDto[] | { items?: SectionItemDto[] }>(
         `/classrooms/${classroomId}/sections`,
       ).pipe(catchError(() => of(null))),
-      examsRes: this.get<
-        | {
-            id?: string;
-            examId?: string;
-            sectionId?: string;
-            title?: string;
-            topic?: string;
-            durationMinutes?: number;
-            allowedAttempts?: number;
-            questionsCount?: number;
-            startDate?: string;
-            endDate?: string;
-          }[]
-        | {
-            items?: {
-              id?: string;
-              examId?: string;
-              sectionId?: string;
-              title?: string;
-              topic?: string;
-              durationMinutes?: number;
-              allowedAttempts?: number;
-              questionsCount?: number;
-              startDate?: string;
-              endDate?: string;
-            }[];
-          }
-      >(`/exams`, { classroomId }).pipe(catchError(() => of(null))),
+      examsRes: this.get<{ items?: any[] }>('/students/exams', { page: 1, pageSize: 50 }).pipe(
+        map((res) => (Array.isArray(res) ? res : res?.items || [])),
+        catchError(() => of([])),
+      ),
     }).pipe(
       map(({ classroom, materialsRes, sectionsRes, examsRes }) => {
         let rawMaterials: {
@@ -286,8 +262,13 @@ export class StudentEnrollmentService extends ApiBaseService {
         }[] = [];
         if (Array.isArray(examsRes)) {
           rawExams = examsRes;
-        } else if (examsRes && 'items' in examsRes && Array.isArray(examsRes.items)) {
-          rawExams = examsRes.items;
+        } else if (
+          examsRes &&
+          typeof examsRes === 'object' &&
+          'items' in examsRes &&
+          Array.isArray((examsRes as { items: unknown[] }).items)
+        ) {
+          rawExams = (examsRes as { items: typeof rawExams }).items;
         }
 
         const mapMaterialToLesson = (

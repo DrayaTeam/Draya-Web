@@ -71,12 +71,11 @@ describe('StudentReportsService', () => {
   it('should request AI practice exam via POST /api/v1/students/{studentId}/weak-topics/{topicName}/practice-exam', () => {
     service.createPracticeExam('std-123', 'التفاضل', { subjectId: 'sub-1' }).subscribe();
 
-    const req = httpMock.expectOne((r) =>
-      r.url.includes('/students/std-123/weak-topics/') && r.url.includes('/practice-exam'),
+    const req = httpMock.expectOne(
+      (r) => r.url.includes('/students/std-123/weak-topics/') && r.url.includes('/practice-exam'),
     );
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ subjectId: 'sub-1' });
     req.flush({ examId: 'ex-123' });
   });
 });
-

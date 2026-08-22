@@ -1,7 +1,9 @@
 <div class="result-summary-grid">
   <!-- Right Card: Estimated Score & Grade -->
   <div class="score-card" [class.pending-card]="report().isGradingPending">
-    <span class="card-subtitle">{{ report().isGradingPending ? 'حالة التقييم' : 'النتيجة التقديرية' }}</span>
+    <span class="card-subtitle">
+      {{ report().isGradingPending ? 'حالة التقييم' : 'النتيجة التقديرية' }}
+    </span>
     <h2
       class="score-percentage"
       [class.passed]="report().isPassed"
@@ -36,11 +38,15 @@
       <h3 class="ai-card-title">المواضيع والمهارات الأضعف</h3>
     </div>
 
-    @if (report().isGradingPending && (!report().weaknessTopics || report().weaknessTopics.length === 0)) {
+    @if (
+      report().isGradingPending &&
+      (!report().weaknessTopics || report().weaknessTopics.length === 0)
+    ) {
       <div class="pending-ai-analysis-box">
         <span class="pending-analysis-icon">🤖</span>
         <p class="pending-analysis-text">
-          سيتم استخراج التقرير التفصيلي لنقاط القوة والضعف والمراجعات الموصى بها فور اعتماد نتيجة الامتحان بالكامل.
+          سيتم استخراج التقرير التفصيلي لنقاط القوة والضعف والمراجعات الموصى بها فور اعتماد نتيجة
+          الامتحان بالكامل.
         </p>
       </div>
     } @else {

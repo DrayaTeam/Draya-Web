@@ -1,6 +1,11 @@
-// src/app/features/student/library/student-library.component.ts
-
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+  computed,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -11,12 +16,21 @@ import {
 import { ToastService } from '../../../core/services/toast.service';
 import { BookCardComponent } from './components/book-card/book-card.component';
 import { DrayaEmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { DrayaCardSkeletonComponent } from '../../../shared/components/card-skeleton/card-skeleton.component';
+import { DrayaPaginationComponent } from '../../../shared/components/pagination/pagination.component';
 import { LibraryBookItem } from '../../../core/models/student-library.model';
 
 @Component({
   selector: 'app-student-library',
   standalone: true,
-  imports: [CommonModule, FormsModule, BookCardComponent, DrayaEmptyStateComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    BookCardComponent,
+    DrayaEmptyStateComponent,
+    DrayaCardSkeletonComponent,
+    DrayaPaginationComponent,
+  ],
   templateUrl: './student-library.component.html',
   styleUrl: './student-library.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,6 +41,34 @@ export class StudentLibraryComponent {
   private readonly sanitizer = inject(DomSanitizer);
 
   readonly books = this.libraryService.filteredBooks;
+
+  // Pagination
+  readonly currentPage = signal<number>(1);
+  readonly pageSize = signal<number>(8);
+
+  readonly paginatedBooks = computed(() => {
+    const list = this.books();
+    const start = (this.currentPage() - 1) * this.pageSize();
+    return list.slice(start, start + this.pageSize());
+  });
+
+  constructor() {
+    effect(() => {
+      this.libraryService.selectedFilter();
+      this.libraryService.searchQuery();
+      this.currentPage.set(1);
+    });
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage.set(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  onPageSizeChange(size: number): void {
+    this.pageSize.set(size);
+    this.currentPage.set(1);
+  }
 
   // PDF / Document Preview Reader Modal State
   readonly activePreviewBook = signal<LibraryBookItem | null>(null);

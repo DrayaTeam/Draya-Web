@@ -26,12 +26,23 @@ export class StudentExamResultComponent implements OnInit {
   private attemptId: string | null = null;
 
   ngOnInit(): void {
+    const examId = this.route.snapshot.params['id'];
     this.attemptId =
       this.route.snapshot.queryParams['attemptId'] ||
       this.examService.currentAttemptId() ||
       this.examService.examResult().attemptId ||
       null;
 
+    if (examId && this.examService.questions().length === 0) {
+      this.examService.getExamDetails(examId).subscribe(() => {
+        this.loadResultsData();
+      });
+    } else {
+      this.loadResultsData();
+    }
+  }
+
+  private loadResultsData(): void {
     if (this.attemptId && !this.attemptId.startsWith('att_')) {
       this.examService.fetchAttemptResults(this.attemptId).subscribe();
     } else {
@@ -57,6 +68,7 @@ export class StudentExamResultComponent implements OnInit {
   }
 
   onRecheckResult(): void {
+    const examId = this.route.snapshot.params['id'];
     const activeAttemptId =
       this.attemptId ||
       this.examService.currentAttemptId() ||
@@ -69,6 +81,11 @@ export class StudentExamResultComponent implements OnInit {
       this.examService.gradingStage.set('ai_evaluating');
       this.examService.gradingProgressPercent.set(50);
       this.examService.pollAttemptResultsDirectly(activeAttemptId, 3);
+    } else if (examId) {
+      this.toastService.info('جارٍ التحقق...', 'يتم الآن فحص وتحديث بيانات الامتحان من الخادم.');
+      this.examService.getExamDetails(examId).subscribe(() => {
+        this.loadResultsData();
+      });
     } else {
       this.toastService.info(
         'تم اعتماد النتيجة',
@@ -92,4 +109,3 @@ export class StudentExamResultComponent implements OnInit {
     this.router.navigate(['/student/exams']);
   }
 }
-

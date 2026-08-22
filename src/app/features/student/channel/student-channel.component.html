@@ -166,9 +166,8 @@
   <!-- Questions Feed List -->
   <section class="questions-feed">
     @if (qaService.loading()) {
-      <div class="loading-box">
-        <div class="spinner"></div>
-        <p>جارٍ تحميل أحدث الأسئلة والمناقشات...</p>
+      <div class="mt-2 space-y-4">
+        <draya-card-skeleton type="generic" [count]="4" [gridClass]="'grid grid-cols-1 gap-4'" />
       </div>
     } @else {
       @for (q of qaService.filteredQuestions(); track q.id) {
@@ -303,8 +302,7 @@
           titleKey="STUDENT.CHANNEL.NO_QUESTIONS_TITLE"
           descriptionKey="STUDENT.CHANNEL.NO_QUESTIONS_DESC"
           primaryActionLabelKey="STUDENT.CHANNEL.ASK_FIRST_QUESTION"
-          (primaryActionClick)="openAskModal()">
-        </draya-empty-state>
+          (primaryActionClick)="openAskModal()"></draya-empty-state>
       }
     }
   </section>

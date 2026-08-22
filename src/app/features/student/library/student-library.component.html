@@ -84,31 +84,48 @@
   </section>
 
   <!-- Books Grid -->
-  <section class="books-grid">
-    @if (libraryService.loading()) {
-      <div class="loading-state-box">
-        <div class="spinner"></div>
-        <p>جارٍ جلب وتحديث المحتوى والمذكرات المشترك بها من الخادم...</p>
-      </div>
-    } @else {
-      @for (book of books(); track book.id) {
-        <app-book-card
-          [book]="book"
-          (download)="onDownload($event)"
-          (preview)="onPreview($event)"></app-book-card>
+  @if (libraryService.loading()) {
+    <div class="mt-2">
+      <draya-card-skeleton
+        type="book"
+        [count]="8"
+        [gridClass]="'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'" />
+    </div>
+  } @else {
+    <section class="books-grid">
+      @for (book of paginatedBooks(); track book.id) {
+        <div class="card-entrance animate-fade-in-up" [style.animation-delay]="$index * 35 + 'ms'">
+          <app-book-card
+            [book]="book"
+            (download)="onDownload($event)"
+            (preview)="onPreview($event)"></app-book-card>
+        </div>
       } @empty {
-        <div class="empty-state-wrapper col-span-full w-full">
+        <div class="empty-state-wrapper animate-fade-in col-span-full w-full">
           <draya-empty-state
             icon="book"
-            titleKey="لا توجد مذكرات أو ملفات تعليمية"
-            descriptionKey="لم يقم معلموك برفع أي ملفات أو شروحات في هذا القسم بعد."
-            primaryActionLabelKey="تصفح الفصول الدراسية"
+            titleKey="STUDENT.LIBRARY.EMPTY_TITLE"
+            descriptionKey="STUDENT.LIBRARY.EMPTY_DESC"
+            primaryActionLabelKey="STUDENT.LIBRARY.EXPLORE_COURSES"
             primaryActionRoute="/student/courses"
             size="lg" />
         </div>
       }
+    </section>
+
+    <!-- Pagination Controls -->
+    @if (books().length > pageSize()) {
+      <div class="animate-fade-in mt-6">
+        <draya-pagination
+          [totalItems]="books().length"
+          [pageSize]="pageSize()"
+          [currentPage]="currentPage()"
+          [pageSizeOptions]="[4, 8, 16, 20]"
+          (pageChange)="onPageChange($event)"
+          (pageSizeChange)="onPageSizeChange($event)" />
+      </div>
     }
-  </section>
+  }
 
   <!-- Video Streaming Modal -->
   @if (activeVideoBook(); as v) {

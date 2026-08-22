@@ -36,7 +36,7 @@ describe('TeachersDirectoryComponent', () => {
 
   it('should render skeleton cards while loading', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    const skeletons = compiled.querySelectorAll('.teacher-skeleton-card');
-    expect(skeletons.length).toBe(6);
+    const skeletons = compiled.querySelector('draya-card-skeleton');
+    expect(skeletons).toBeTruthy();
   });
 });

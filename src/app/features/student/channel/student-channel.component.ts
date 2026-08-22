@@ -24,11 +24,12 @@ import {
 } from '../../../core/models/student-channel.model';
 
 import { DrayaEmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { DrayaCardSkeletonComponent } from '../../../shared/components/card-skeleton/card-skeleton.component';
 
 @Component({
   selector: 'app-student-channel',
   standalone: true,
-  imports: [CommonModule, FormsModule, DrayaEmptyStateComponent],
+  imports: [CommonModule, FormsModule, DrayaEmptyStateComponent, DrayaCardSkeletonComponent],
   templateUrl: './student-channel.component.html',
   styleUrl: './student-channel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

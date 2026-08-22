@@ -1,15 +1,30 @@
-import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  OnInit,
+  signal,
+  computed,
+  effect,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { StudentExamsService } from '../../../core/services/student-exams.service';
 import { ExamCardComponent } from './components/exam-card/exam-card.component';
 import { StudentExamItem, ExamStatusType } from '../../../core/models/student-exam.model';
 import { ToastService } from '../../../core/services/toast.service';
 import { DrayaEmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { DrayaCardSkeletonComponent } from '../../../shared/components/card-skeleton/card-skeleton.component';
+import { DrayaPaginationComponent } from '../../../shared/components/pagination/pagination.component';
 
 @Component({
   selector: 'draya-student-exams',
   standalone: true,
-  imports: [ExamCardComponent, DrayaEmptyStateComponent],
+  imports: [
+    ExamCardComponent,
+    DrayaEmptyStateComponent,
+    DrayaCardSkeletonComponent,
+    DrayaPaginationComponent,
+  ],
   templateUrl: './student-exams.component.html',
   styleUrl: './student-exams.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,6 +38,36 @@ export class StudentExamsComponent implements OnInit {
   readonly exams = this.examsService.filteredExams;
   readonly selectedFilter = this.examsService.selectedFilter;
   readonly searchQuery = this.examsService.searchQuery;
+  readonly loading = this.examsService.loading;
+
+  // Pagination
+  readonly currentPage = signal<number>(1);
+  readonly pageSize = signal<number>(8);
+
+  readonly paginatedExams = computed(() => {
+    const list = this.exams();
+    const start = (this.currentPage() - 1) * this.pageSize();
+    return list.slice(start, start + this.pageSize());
+  });
+
+  constructor() {
+    effect(() => {
+      // Auto reset to page 1 on filter or search change
+      this.selectedFilter();
+      this.searchQuery();
+      this.currentPage.set(1);
+    });
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage.set(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  onPageSizeChange(size: number): void {
+    this.pageSize.set(size);
+    this.currentPage.set(1);
+  }
 
   ngOnInit(): void {
     this.examsService.loadExams();

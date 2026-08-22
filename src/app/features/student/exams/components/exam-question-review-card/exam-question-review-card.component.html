@@ -11,7 +11,13 @@
       [class.correct]="reviewItem().isCorrect"
       [class.wrong]="!reviewItem().isCorrect && !reviewItem().isPendingGrading"
       [class.pending]="reviewItem().isPendingGrading">
-      {{ reviewItem().isPendingGrading ? '⏳ قيد التقييم' : (reviewItem().isCorrect ? 'إجابة صحيحة' : 'إجابة خاطئة') }}
+      {{
+        reviewItem().isPendingGrading
+          ? '⏳ قيد التقييم'
+          : reviewItem().isCorrect
+            ? 'إجابة صحيحة'
+            : 'إجابة خاطئة'
+      }}
     </span>
   </div>
 
@@ -59,8 +65,7 @@
       </div>
       <draya-markdown-renderer
         [content]="reviewItem().explanation"
-        variant="teal">
-      </draya-markdown-renderer>
+        variant="teal"></draya-markdown-renderer>
     </div>
   }
 </div>

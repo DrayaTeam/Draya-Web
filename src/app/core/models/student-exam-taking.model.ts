@@ -6,8 +6,8 @@ export interface StartAttemptRequestDto {
 
 export interface AnswerSubmissionDto {
   examQuestionId: string;
-  selectedOptionId?: string;
-  answerText?: string;
+  selectedOptionId?: string | null;
+  answerText?: string | null;
 }
 
 export interface SubmitAttemptRequestDto {

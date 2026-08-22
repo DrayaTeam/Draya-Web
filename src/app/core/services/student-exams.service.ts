@@ -65,8 +65,7 @@ export class StudentExamsService extends ApiBaseService {
 
   /**
    * Loads all exams available to the student from:
-   * 1. GET /api/v1/students/exams (Direct & global exams)
-   * 2. GET /api/v1/exams?classroomId=... (Exams attached to enrolled classrooms and sections)
+   * GET /api/v1/students/exams
    */
   loadExams(classroomId?: string, page = 1, pageSize = 50): void {
     this.loading.set(true);
@@ -76,68 +75,11 @@ export class StudentExamsService extends ApiBaseService {
       directParams['classroomId'] = classroomId;
     }
 
-    // 1. Direct student exams stream
-    const directExams$ = this.get<ExamDto[] | { items: ExamDto[] }>(
-      '/students/exams',
-      directParams,
-    ).pipe(
-      map((res) => (Array.isArray(res) ? res : res?.items || [])),
-      catchError(() => of([] as ExamDto[])),
-    );
-
-    // 2. Enrolled classrooms & their section exams stream
-    const classroomExams$ = classroomId
-      ? this.get<ExamDto[] | { items: ExamDto[] }>(`/exams`, { classroomId }).pipe(
-          map((res) => (Array.isArray(res) ? res : res?.items || [])),
-          catchError(() => of([] as ExamDto[])),
-        )
-      : this.get<{ items?: { classroomId?: string; id?: string; name?: string; teacherName?: string; subjectName?: string }[] }>(
-          '/classrooms',
-        ).pipe(
-          catchError(() => of(null)),
-          switchMap((classroomsRes) => {
-            const classrooms = classroomsRes?.items || [];
-            if (classrooms.length === 0) return of([] as ExamDto[]);
-
-            const examRequests = classrooms.map((c) => {
-              const cId = c.classroomId || c.id;
-              if (!cId) return of([] as ExamDto[]);
-              return this.get<ExamDto[] | { items: ExamDto[] }>(`/exams`, { classroomId: cId }).pipe(
-                map((res) => {
-                  const items = Array.isArray(res) ? res : res?.items || [];
-                  return items.map((e) => ({
-                    ...e,
-                    classroomId: cId,
-                    teacherName: e.teacherName || c.teacherName,
-                    subjectName: e.subjectName || c.subjectName || c.name,
-                  }));
-                }),
-                catchError(() => of([] as ExamDto[])),
-              );
-            });
-
-            return forkJoin(examRequests).pipe(map((nested) => nested.flat()));
-          }),
-        );
-
-    forkJoin({
-      direct: directExams$,
-      fromClassrooms: classroomExams$,
-    })
+    this.get<ExamDto[] | { items: ExamDto[] }>('/students/exams', directParams)
       .pipe(
-        tap(({ direct, fromClassrooms }) => {
+        map((res) => (Array.isArray(res) ? res : res?.items || [])),
+        tap((combined) => {
           this.loading.set(false);
-
-          // Deduplicate all exams by ID
-          const seen = new Set<string>();
-          const combined: ExamDto[] = [];
-
-          for (const ex of [...direct, ...fromClassrooms]) {
-            if (ex?.id && !seen.has(ex.id)) {
-              seen.add(ex.id);
-              combined.push(ex);
-            }
-          }
 
           const colors = ['#0EA5E9', '#8B5CF6', '#10B981', '#F59E0B', '#EC4899'];
           const now = new Date();
@@ -148,15 +90,19 @@ export class StudentExamsService extends ApiBaseService {
             let secondaryDetailText = 'جاهز للبدء';
 
             const normAttemptStatus = (ex.attemptStatus || '').toLowerCase();
-            if (
-              ex.hasSubmitted ||
+            const isCompleted =
+              Boolean(ex.hasSubmitted) ||
               normAttemptStatus === 'completed' ||
+              normAttemptStatus === 'submitted' ||
               normAttemptStatus === 'pendinggrading' ||
+              normAttemptStatus === 'graded' ||
               (ex.usedAttempts !== undefined &&
                 ex.allowedAttempts !== undefined &&
                 ex.usedAttempts >= ex.allowedAttempts &&
-                ex.usedAttempts > 0)
-            ) {
+                ex.usedAttempts > 0) ||
+              (ex.latestScore !== undefined && ex.latestScore !== null);
+
+            if (isCompleted) {
               status = 'completed';
               statusLabel = 'مكتمل ومصحح ✅';
               secondaryDetailText =
@@ -214,5 +160,21 @@ export class StudentExamsService extends ApiBaseService {
         }),
       )
       .subscribe();
+  }
+
+  markExamAsCompleted(examId: string, score?: number): void {
+    this.exams.update((list) =>
+      list.map((ex) =>
+        ex.id === examId
+          ? {
+              ...ex,
+              status: 'completed' as ExamStatusType,
+              statusLabel: 'مكتمل ومصحح ✅',
+              secondaryDetailText: score !== undefined ? `الدرجة: ${score}%` : 'تم التسليم',
+              scorePercent: score ?? ex.scorePercent,
+            }
+          : ex,
+      ),
+    );
   }
 }

@@ -33,7 +33,9 @@ export class StudentExamTakingService extends ApiBaseService {
   readonly currentQuestionIndex = signal<number>(0);
   readonly isSubmitted = signal<boolean>(false);
   readonly isGradingInProgress = signal<boolean>(false);
-  readonly gradingStage = signal<'submitting' | 'ai_evaluating' | 'completed' | 'pending_review'>('completed');
+  readonly gradingStage = signal<'submitting' | 'ai_evaluating' | 'completed' | 'pending_review'>(
+    'completed',
+  );
   readonly gradingProgressPercent = signal<number>(0);
 
   readonly questions = signal<readonly ExamQuestion[]>([]);
@@ -76,6 +78,7 @@ export class StudentExamTakingService extends ApiBaseService {
 
   private timerInterval: ReturnType<typeof setInterval> | null = null;
   readonly violations = signal<number>(0);
+  readonly isAttemptAlreadyCompleted = signal<boolean>(false);
 
   constructor() {
     super();
@@ -86,29 +89,31 @@ export class StudentExamTakingService extends ApiBaseService {
       const gradingEvent = this.signalR.gradingCompleted();
       if (!gradingEvent) return;
 
-      const activeAttemptId = this.currentAttemptId() || this.examResult().attemptId;
+      const currentAttempt = this.currentAttemptId() || this.examResult().attemptId;
       const eventAttemptId = gradingEvent.attemptId || gradingEvent.studentExamAttemptId;
-
-      const isMatching =
-        !eventAttemptId ||
-        !activeAttemptId ||
-        eventAttemptId.toLowerCase() === activeAttemptId.toLowerCase() ||
-        (gradingEvent.examId &&
-          gradingEvent.examId.toLowerCase() === this.currentExamId().toLowerCase());
-
-      const isCompleted =
-        gradingEvent.status === 'Completed' ||
-        gradingEvent.gradingStatus === 'Completed' ||
-        gradingEvent.totalScore !== undefined ||
-        !gradingEvent.status;
-
-      if (isMatching && isCompleted && activeAttemptId && !activeAttemptId.startsWith('att_')) {
-        console.log(
-          '[SignalR] AI Grading completed event received. Fetching results for attempt:',
-          activeAttemptId,
-        );
-        this.gradingProgressPercent.set(100);
-        this.fetchAttemptResults(activeAttemptId).subscribe();
+      if (
+        currentAttempt &&
+        eventAttemptId &&
+        (eventAttemptId === currentAttempt ||
+          eventAttemptId.toLowerCase() === currentAttempt.toLowerCase())
+      ) {
+        if (gradingEvent.status === 'Completed' || gradingEvent.status === 'CompletedWithWarning') {
+          this.toastService.success(
+            'اكتمل التقييم الذكي 🎉',
+            'تم الانتهاء من تصحيح إجاباتك وإعداد تقرير الأداء بنجاح.',
+          );
+          this.gradingStage.set('completed');
+          this.gradingProgressPercent.set(100);
+          this.isGradingInProgress.set(false);
+          this.fetchAttemptResults(currentAttempt).subscribe();
+        } else if (gradingEvent.status === 'Failed') {
+          this.toastService.warning(
+            'تنبيه التقييم ⚠️',
+            'تم استلام نتيجة التقييم الأولية وسيقوم المعلم باعتماد الدرجات النهائية.',
+          );
+          this.gradingStage.set('pending_review');
+          this.isGradingInProgress.set(false);
+        }
       }
     });
   }
@@ -119,6 +124,7 @@ export class StudentExamTakingService extends ApiBaseService {
   resetExamSession(): void {
     this.stopTimer();
     this.isSubmitted.set(false);
+    this.isAttemptAlreadyCompleted.set(false);
     this.currentAttemptId.set(null);
     this.currentQuestionIndex.set(0);
     this.isGradingInProgress.set(false);
@@ -148,7 +154,7 @@ export class StudentExamTakingService extends ApiBaseService {
     this.currentExamId.set(examId);
 
     const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(examId);
-    
+
     const startAttempt$ = isGuid
       ? this.post<StartAttemptResponseDto>(`/attempts/start`, { examId }).pipe(
           tap((att) => {
@@ -158,18 +164,21 @@ export class StudentExamTakingService extends ApiBaseService {
             }
           }),
           catchError((err) => {
-            console.warn('Attempt start server notification:', err?.error?.message || err?.message || err);
+            const status = err?.status;
+            if (status === 400 || status === 500 || status === 409) {
+              this.isAttemptAlreadyCompleted.set(true);
+            }
+            console.warn(
+              'Attempt start server notification:',
+              err?.error?.message || err?.message || err,
+            );
             return of(null);
           }),
         )
       : of(null);
 
     return startAttempt$.pipe(
-      switchMap(() =>
-        this.get<StudentExamDto>(`/students/exams/${examId}`).pipe(
-          catchError(() => this.get<StudentExamDto>(`/exams/${examId}`)),
-        ),
-      ),
+      switchMap(() => this.get<StudentExamDto>(`/students/exams/${examId}`)),
       tap((exam) => {
         this.isLoading.set(false);
         if (exam?.title) {
@@ -228,6 +237,52 @@ export class StudentExamTakingService extends ApiBaseService {
         this.startTimer();
         return of(false);
       }),
+    );
+  }
+
+  /**
+   * Fetches full exam details from GET /api/v1/students/exams/{id}
+   */
+  getExamDetails(examId: string): Observable<StudentExamDto | null> {
+    return this.get<StudentExamDto>(`/students/exams/${examId}`).pipe(
+      tap((exam) => {
+        if (!exam) return;
+        if (exam.title) this.examTitle.set(exam.title);
+        if (exam.topic) this.examLevelText.set(`الموضوع: ${exam.topic}`);
+        if (exam.questions && Array.isArray(exam.questions) && exam.questions.length > 0) {
+          const mapped: ExamQuestion[] = exam.questions.map((q, idx) => {
+            const rawOptions = (q.options || []) as {
+              id?: string;
+              text?: string;
+              isCorrect?: boolean;
+            }[];
+            const correctOpt = rawOptions.find((o) => o.isCorrect);
+            const questionType = q.type || (rawOptions.length > 0 ? 'MultipleChoice' : 'Essay');
+
+            return {
+              id: q.id || `q_${idx + 1}`,
+              index: idx + 1,
+              text: q.text || `سؤال رقم ${idx + 1}`,
+              type: questionType,
+              subjectTag:
+                q.type ||
+                q.difficulty ||
+                exam.topic ||
+                (questionType === 'Essay' ? 'مقالي' : 'اختيار من متعدد'),
+              isFlagged: false,
+              selectedOptionId: undefined,
+              answerText: undefined,
+              correctOptionId: correctOpt?.id,
+              options: rawOptions.map((o, optIdx) => ({
+                id: o.id || `opt_${optIdx + 1}`,
+                text: o.text || `الخيار ${optIdx + 1}`,
+              })),
+            };
+          });
+          this.questions.set(mapped);
+        }
+      }),
+      catchError(() => of(null)),
     );
   }
 
@@ -373,18 +428,36 @@ export class StudentExamTakingService extends ApiBaseService {
       else gradeLabel = 'راسب — ضعيف جداً';
     }
 
-    const wrongQuestions = mappedReviewQuestions.filter(
-      (q) => !q.isCorrect && !q.isPendingGrading,
-    );
+    const wrongQuestions = mappedReviewQuestions.filter((q) => !q.isCorrect && !q.isPendingGrading);
     const dynamicWeaknessTopics =
       wrongQuestions.length > 0
-        ? wrongQuestions.slice(0, 3).map((q, idx) => ({
-            id: `w${idx + 1}`,
-            title: `مراجعة: ${q.questionText.length > 50 ? q.questionText.slice(0, 50) + '...' : q.questionText}`,
-            accuracyPercentage: Math.max(0, Math.round(computedScorePct * 0.6)),
-            aiTip: `تم اختيار "${q.studentAnswerText}" — يوصى بمراجعة المفاهيم المتعلقة بهذا السؤال.`,
-            reviewLectureUrl: '/student/courses',
-          }))
+        ? wrongQuestions.slice(0, 3).map((q, idx) => {
+            const isEssay = (q.maxScore || 1) > 1;
+            const earned = q.earnedScore ?? 0;
+            const max = q.maxScore ?? (isEssay ? 10 : 1);
+            const qAccuracy =
+              max > 0 ? Math.round((earned / max) * 100) : q.isCorrect ? 100 : 0;
+
+            let customTip = q.explanation;
+            if (
+              !customTip ||
+              customTip.toLowerCase().includes('deterministic') ||
+              customTip.toLowerCase().includes('exact match')
+            ) {
+              customTip =
+                q.correctAnswerText && q.correctAnswerText !== 'الإجابة النموذجية'
+                  ? `الإجابة الصحيحة هي: "${q.correctAnswerText}" (إجابتك: "${q.studentAnswerText}")`
+                  : `تم اختيار "${q.studentAnswerText}" — يوصى بمراجعة المفاهيم المتعلقة بهذا السؤال.`;
+            }
+
+            return {
+              id: `w${idx + 1}`,
+              title: `مراجعة: ${q.questionText.length > 50 ? q.questionText.slice(0, 50) + '...' : q.questionText}`,
+              accuracyPercentage: qAccuracy,
+              aiTip: customTip,
+              reviewLectureUrl: '/student/courses',
+            };
+          })
         : isGradingPending
           ? []
           : [
@@ -416,23 +489,33 @@ export class StudentExamTakingService extends ApiBaseService {
       reviewQuestions: mappedReviewQuestions,
     });
 
-    // Fire backend submission if targetAttemptId exists
+    // Fire backend submission if targetAttemptId exists and is not a mock ID
     if (targetAttemptId && !targetAttemptId.startsWith('att_')) {
-      const payload: SubmitAttemptRequestDto = {
-        idempotencyKey: `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-        answers: questionsList.map((q): AnswerSubmissionDto => {
-          if (q.selectedOptionId) {
+      const answers: AnswerSubmissionDto[] = questionsList
+        .filter((q) => !!q.id)
+        .map((q): AnswerSubmissionDto => {
+          const isEssay =
+            (q.type || '').toLowerCase().includes('essay') || (q.options || []).length === 0;
+
+          if (isEssay) {
+            const text = q.answerText?.trim();
             return {
               examQuestionId: q.id,
-              selectedOptionId: q.selectedOptionId,
+              answerText: text && text.length > 0 ? text : null,
+              selectedOptionId: null,
+            };
+          } else {
+            return {
+              examQuestionId: q.id,
+              selectedOptionId: q.selectedOptionId || null,
+              answerText: null,
             };
           }
-          const text = q.answerText?.trim();
-          return {
-            examQuestionId: q.id,
-            answerText: text && text.length > 0 ? text : 'لم يتم إدخال إجابة',
-          };
-        }),
+        });
+
+      const payload: SubmitAttemptRequestDto = {
+        idempotencyKey: `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+        answers,
       };
 
       this.post<SubmitAttemptResponseDto>(`/attempts/${targetAttemptId}/submit`, payload)
@@ -469,7 +552,10 @@ export class StudentExamTakingService extends ApiBaseService {
                 'انتهت مدة الامتحان ⏱️',
                 'انتهت المدة الزمنية المسموح بها لهذا الاختبار على الخادم ولم يعد من الممكن التسليم المتأخر.',
               );
-            } else if (typeof errorMsg === 'string' && errorMsg.includes('already been submitted')) {
+            } else if (
+              typeof errorMsg === 'string' &&
+              errorMsg.includes('already been submitted')
+            ) {
               this.toastService.info('تم التسليم مسبقاً', 'تم استلام إجابات هذا الاختبار مسبقاً.');
             } else {
               this.toastService.warning('تنبيه تسليم الامتحان', errorMsg);
@@ -557,7 +643,8 @@ export class StudentExamTakingService extends ApiBaseService {
       tries++;
       this.gradingProgressPercent.set(Math.min(95, 60 + tries * 9));
       this.fetchAttemptResults(attemptId).subscribe((res) => {
-        const hasGrading = res && !res.isGradingPending && res.reviewQuestions.some((q) => !q.isPendingGrading);
+        const hasGrading =
+          res && !res.isGradingPending && res.reviewQuestions.some((q) => !q.isPendingGrading);
         if (hasGrading || tries >= maxTries) {
           if (interval) {
             clearInterval(interval);
@@ -656,13 +743,22 @@ export class StudentExamTakingService extends ApiBaseService {
               }
             }
 
+            let explanation = grading?.rationale || undefined;
+            if (
+              explanation &&
+              (explanation.toLowerCase().includes('deterministic') ||
+                explanation.toLowerCase().includes('exact match'))
+            ) {
+              explanation = undefined;
+            }
+
             return {
               questionIndex: questionDef?.index ?? idx + 1,
               questionText,
               isCorrect,
               studentAnswerText,
               correctAnswerText,
-              explanation: grading?.rationale || undefined,
+              explanation,
               earnedScore,
               maxScore,
               isAiGraded: grading?.isAiGraded,
@@ -670,8 +766,37 @@ export class StudentExamTakingService extends ApiBaseService {
               isPendingGrading,
             };
           });
-        } else {
+        } else if (this.examResult().reviewQuestions.length > 0) {
           mappedReviewQuestions = this.examResult().reviewQuestions as ExamReviewItem[];
+        } else if (questionsList.length > 0) {
+          mappedReviewQuestions = questionsList.map((q, idx) => {
+            const isEssay =
+              (q.type || '').toLowerCase().includes('essay') || (q.options || []).length === 0;
+            const selectedOpt = q.options.find((o) => o.id === q.selectedOptionId);
+            const correctOpt = q.options.find((o) => o.id === q.correctOptionId);
+            const isCorrect = !isEssay && q.selectedOptionId === q.correctOptionId;
+
+            return {
+              questionIndex: q.index || idx + 1,
+              questionText: q.text,
+              isCorrect,
+              studentAnswerText: isEssay
+                ? q.answerText || 'لم يتم إدخال إجابة'
+                : selectedOpt?.text || 'لم يتم اختيار إجابة',
+              correctAnswerText: isEssay
+                ? 'إجابة نموذجية معتمدة'
+                : correctOpt?.text || 'الإجابة النموذجية',
+              explanation: isEssay
+                ? 'تخضع لمراجعة واعتماد المعلم والذكاء الاصطناعي.'
+                : isCorrect
+                  ? 'إجابة صحيحة.'
+                  : 'إجابة خاطئة.',
+              earnedScore: isEssay ? 0 : isCorrect ? 1 : 0,
+              maxScore: isEssay ? 10 : 1,
+              isAiGraded: isEssay,
+              isPendingGrading: isEssay,
+            };
+          });
         }
 
         const hasPendingQuestions = mappedReviewQuestions.some((q) => q.isPendingGrading);
@@ -696,20 +821,48 @@ export class StudentExamTakingService extends ApiBaseService {
           else gradeLabel = 'راسب — ضعيف جداً';
         }
 
-        const wrongQuestions = mappedReviewQuestions.filter((q) => !q.isCorrect && !q.isPendingGrading);
+        const wrongQuestions = mappedReviewQuestions.filter(
+          (q) => !q.isCorrect && !q.isPendingGrading,
+        );
         const dynamicWeaknessTopics =
           wrongQuestions.length > 0
-            ? wrongQuestions.slice(0, 3).map((q, idx) => ({
-                id: `w${idx + 1}`,
-                title: `مراجعة: ${q.questionText.length > 50 ? q.questionText.slice(0, 50) + '...' : q.questionText}`,
-                accuracyPercentage: Math.max(0, Math.round(pct * 0.6)),
-                aiTip:
-                  q.explanation ||
-                  `تم اختيار "${q.studentAnswerText}" — يوصى بمراجعة المفاهيم المتعلقة بهذا السؤال.`,
-                reviewLectureUrl: '/student/courses',
-              }))
-            : isGradingPending
-              ? []
+            ? wrongQuestions.slice(0, 3).map((q, idx) => {
+                const isEssay = (q.maxScore || 1) > 1;
+                const earned = q.earnedScore ?? 0;
+                const max = q.maxScore ?? (isEssay ? 10 : 1);
+                const qAccuracy =
+                  max > 0 ? Math.round((earned / max) * 100) : q.isCorrect ? 100 : 0;
+
+                let customTip = q.explanation;
+                if (
+                  !customTip ||
+                  customTip.toLowerCase().includes('deterministic') ||
+                  customTip.toLowerCase().includes('exact match')
+                ) {
+                  customTip =
+                    q.correctAnswerText && q.correctAnswerText !== 'الإجابة النموذجية'
+                      ? `الإجابة الصحيحة هي: "${q.correctAnswerText}" (إجابتك: "${q.studentAnswerText}")`
+                      : `تم اختيار "${q.studentAnswerText}" — يوصى بمراجعة المفاهيم المتعلقة بهذا السؤال.`;
+                }
+
+                return {
+                  id: `w${idx + 1}`,
+                  title: `مراجعة: ${q.questionText.length > 50 ? q.questionText.slice(0, 50) + '...' : q.questionText}`,
+                  accuracyPercentage: qAccuracy,
+                  aiTip: customTip,
+                  reviewLectureUrl: '/student/courses',
+                };
+              })
+            : hasPendingQuestions
+              ? [
+                  {
+                    id: 'w_pending',
+                    title: `مراجعة وتقييم: ${this.examTitle()}`,
+                    accuracyPercentage: 50,
+                    aiTip: 'تم استلام إجاباتك المقالية وجارٍ فحصها واعتمادها من قِبل المعلم والذكاء الاصطناعي.',
+                    reviewLectureUrl: '/student/courses',
+                  },
+                ]
               : [
                   {
                     id: 'w1',

@@ -7,13 +7,15 @@ import { MessageService } from 'primeng/api';
 
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-
 import { provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
+import { StudentReportsService } from '../../../core/services/student-reports.service';
 
 describe('StudentReportsComponent', () => {
   let component: StudentReportsComponent;
   let fixture: ComponentFixture<StudentReportsComponent>;
+  let reportsService: StudentReportsService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -25,8 +27,13 @@ describe('StudentReportsComponent', () => {
         provideTranslateService(),
         MessageService,
         ToastService,
+        StudentReportsService,
       ],
     }).compileComponents();
+
+    reportsService = TestBed.inject(StudentReportsService);
+    spyOn(reportsService, 'loadReports').and.returnValue(of(null as any));
+    reportsService.isLoading.set(false);
 
     fixture = TestBed.createComponent(StudentReportsComponent);
     component = fixture.componentInstance;

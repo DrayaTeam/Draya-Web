@@ -96,25 +96,48 @@
     </div>
   </div>
 
-  <!-- Exams Cards Grid / Empty State -->
-  <main class="exams-cards-grid" aria-label="قائمة الامتحانات والواجبات المجدولة">
-    @if (exams().length > 0) {
-      @for (exam of exams(); track exam.id) {
-        <draya-exam-card
-          [exam]="exam"
-          (startExam)="onStartExam($event)"
-          (viewResults)="onViewResults($event)" />
+  <!-- Exams Cards Grid / Skeletons / Empty State -->
+  @if (loading()) {
+    <draya-card-skeleton type="exam" [count]="6" />
+  } @else {
+    <main
+      class="exams-cards-grid transition-all duration-300"
+      aria-label="قائمة الامتحانات والواجبات المجدولة">
+      @if (paginatedExams().length > 0) {
+        @for (exam of paginatedExams(); track exam.id) {
+          <div
+            class="card-entrance animate-fade-in-up"
+            [style.animation-delay]="$index * 40 + 'ms'">
+            <draya-exam-card
+              [exam]="exam"
+              (startExam)="onStartExam($event)"
+              (viewResults)="onViewResults($event)" />
+          </div>
+        }
+      } @else {
+        <div class="empty-state-container animate-fade-in col-span-full w-full">
+          <draya-empty-state
+            icon="exam"
+            titleKey="STUDENT.EXAMS.EMPTY_TITLE"
+            descriptionKey="STUDENT.EXAMS.EMPTY_DESC"
+            primaryActionLabelKey="STUDENT.DASHBOARD.BROWSE_CLASSES"
+            primaryActionRoute="/student/courses"
+            size="lg" />
+        </div>
       }
-    } @else {
-      <div class="empty-state-container col-span-full w-full">
-        <draya-empty-state
-          icon="exam"
-          titleKey="لا توجد امتحانات في هذا القسم"
-          descriptionKey="لم يقم المعلم بجدولة أي اختبارات حالياً أو أن جميع الاختبارات المتاحة مكتملة."
-          primaryActionLabelKey="استعراض الفصول الدراسية"
-          primaryActionRoute="/student/courses"
-          size="lg" />
+    </main>
+
+    <!-- Pagination Controls -->
+    @if (exams().length > pageSize()) {
+      <div class="animate-fade-in mt-6">
+        <draya-pagination
+          [totalItems]="exams().length"
+          [pageSize]="pageSize()"
+          [currentPage]="currentPage()"
+          [pageSizeOptions]="[4, 8, 16, 20]"
+          (pageChange)="onPageChange($event)"
+          (pageSizeChange)="onPageSizeChange($event)" />
       </div>
     }
-  </main>
+  }
 </div>

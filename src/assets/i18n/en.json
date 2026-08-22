@@ -79,7 +79,11 @@
       "SUBTITLE": "Enter your email address and we'll send you a password reset link",
       "SEND_BTN": "Send Reset Link",
       "SUCCESS_TITLE": "Reset Link Sent",
-      "SUCCESS_DESC": "Please check your email inbox to complete the password reset process."
+      "SUCCESS_DESC": "Please check your email inbox to complete the password reset process.",
+      "RESET_SUCCESS": "Password Reset Successfully",
+      "CONFIRM_ERROR": "Invalid or expired verification code",
+      "OTP_SENT": "Verification code sent to your email",
+      "ERROR": "Email is not registered"
     },
     "RESET_PASSWORD": {
       "TITLE": "Set New Password",
@@ -97,6 +101,10 @@
       "INVALID_DATE": "Invalid date",
       "FUTURE_DATE": "Date cannot be in the future",
       "MIN_AGE_ERROR": "Age must be at least 10 years"
+    },
+    "ACCEPT_INVITE": {
+      "SUCCESS_TITLE": "Invitation Accepted Successfully",
+      "ERROR": "An error occurred while accepting the invitation. Please verify the link and try again."
     }
   },
   "auth": {
@@ -135,10 +143,58 @@
     "NO_DATA_DESC": "No items available to display."
   },
   "STUDENT": {
+    "TEACHERS": {
+      "HEADER_BADGE": "Featured Teachers Constellation",
+      "HEADER_TITLE": "Partner Teachers",
+      "HEADER_SUBTITLE": "Browse top high school teachers and subscribe to their courses with regular tests & tracking.",
+      "SEARCH_PLACEHOLDER": "Search by teacher name or subject...",
+      "FILTER_ALL": "All Subjects",
+      "FILTER_MATH": "Mathematics",
+      "FILTER_PHYSICS": "Physics",
+      "FILTER_CHEMISTRY": "Chemistry",
+      "FILTER_BIOLOGY": "Biology",
+      "VIEW_PACKAGES": "View Teacher Packages"
+    },
     "CHANNEL": {
-      "NO_QUESTIONS_TITLE": "No questions yet in this classroom",
-      "NO_QUESTIONS_DESC": "Be the first to ask the teacher and classmates a question in this section!",
-      "ASK_FIRST_QUESTION": "Ask First Question Now 💬"
+      "TITLE": "Classroom Channel",
+      "SUBTITLE": "Interactive Q&A and discussions with teacher and peers",
+      "NO_QUESTIONS_TITLE": "No Questions Yet",
+      "NO_QUESTIONS_DESC": "Be the first to start the discussion and ask a question in this classroom!",
+      "ASK_FIRST_QUESTION": "Ask a Question",
+      "SEARCH_PLACEHOLDER": "Search questions and discussions...",
+      "TYPE_QUESTION": "Type your question here...",
+      "POST_QUESTION": "Post Question",
+      "FILTER_ALL": "All Questions",
+      "FILTER_RESOLVED": "Answered",
+      "FILTER_UNRESOLVED": "Unanswered",
+      "REPLIES": "replies",
+      "NO_REPLIES": "No replies yet"
+    },
+    "COURSES": {
+      "EMPTY_TITLE": "No Active Classrooms Yet",
+      "EMPTY_DESC": "Start your learning journey now and explore top teachers and curriculums.",
+      "BROWSE_TEACHERS": "Browse Teachers & Classrooms"
+    },
+    "DASHBOARD": {
+      "EMPTY_COURSES_TITLE": "You haven't joined any classrooms yet",
+      "EMPTY_COURSES_DESC": "Enroll in a classroom to start following your lessons and daily exams.",
+      "BROWSE_CLASSES": "Browse Classrooms",
+      "ENTER_CODE": "Enter Class Code"
+    },
+    "EXAMS": {
+      "EMPTY_TITLE": "No Exams In This Category",
+      "EMPTY_DESC": "The teacher has not scheduled any exams currently or all available exams are completed.",
+      "TAKE_PRACTICE": "Take Practice Exam"
+    },
+    "LIBRARY": {
+      "EMPTY_TITLE": "No Books or Resources Yet",
+      "EMPTY_DESC": "Your teachers haven't uploaded any files in this section yet.",
+      "EXPLORE_COURSES": "Browse Classrooms"
+    },
+    "REPORTS": {
+      "EMPTY_WEAKNESS_TITLE": "AI is waiting for your first exam",
+      "EMPTY_WEAKNESS_DESC": "AI is waiting for your first exam to diagnose strengths, weaknesses, and prepare personalized exercises!",
+      "START_EXAM": "Browse Exams"
     }
   },
   "common": {
@@ -333,7 +389,19 @@
         "DESC": "Student accounts are 100% free with zero platform fees. Students only pay the exact price of the classroom or course chosen via direct card payment with full access to lectures and exams."
       },
       "CTA_TEACHER": "Register as Teacher & Start Free",
-      "CTA_STUDENT": "Create Student Account"
+      "CTA_STUDENT": "Create Student Account",
+      "BASIC": {
+        "NAME": "Basic",
+        "PRICE_MONTHLY": "Free"
+      },
+      "PRO": {
+        "NAME": "Pro",
+        "PRICE_MONTHLY": "299 EGP"
+      },
+      "ENTERPRISE": {
+        "NAME": "Enterprise",
+        "PRICE_MONTHLY": "Custom"
+      }
     },
     "TESTIMONIALS": {
       "BADGE": "Testimonials",
@@ -539,20 +607,6 @@
       "RATINGS": "ratings",
       "ALL_REVIEWS": "Latest Reviews",
       "ANONYMOUS": "Anonymous Student"
-    }
-  },
-  "STUDENT": {
-    "TEACHERS": {
-      "HEADER_BADGE": "Featured Teachers Constellation",
-      "HEADER_TITLE": "Partner Teachers",
-      "HEADER_SUBTITLE": "Browse top high school teachers and subscribe to their courses with regular tests & tracking.",
-      "SEARCH_PLACEHOLDER": "Search by teacher name or subject...",
-      "FILTER_ALL": "All Subjects",
-      "FILTER_MATH": "Mathematics",
-      "FILTER_PHYSICS": "Physics",
-      "FILTER_CHEMISTRY": "Chemistry",
-      "FILTER_BIOLOGY": "Biology",
-      "VIEW_PACKAGES": "View Teacher Packages"
     }
   },
   "ADMIN": {
@@ -797,6 +851,42 @@
       "REJECTED": "Rejected",
       "CANCELLED": "Cancelled",
       "UNKNOWN": "Unknown"
+    },
+    "COMMON": {
+      "REASON_PLACEHOLDER": "Enter reason or note here..."
+    }
+  },
+  "admin": {
+    "status": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "PAID": "Paid",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled",
+      "UNKNOWN": "Unknown"
+    },
+    "shared": {
+      "CANCEL": "Cancel",
+      "SAVE": "Save",
+      "EDIT": "Edit",
+      "DELETE": "Delete",
+      "SEARCH": "Search...",
+      "PAGE_OF": "Page {{current}} of {{total}} ({{count}} items)",
+      "PREV_PAGE": "Previous",
+      "NEXT_PAGE": "Next",
+      "LOADING": "Loading...",
+      "EMPTY_STATE": "No data to display",
+      "CURRENCY": "EGP",
+      "PERCENTAGE": "%",
+      "STATUS_ACTIVE": "Active",
+      "STATUS_INACTIVE": "Inactive",
+      "STATUS_PENDING": "Pending",
+      "STATUS_APPROVED": "Approved",
+      "STATUS_REJECTED": "Rejected",
+      "STATUS_PAID": "Paid",
+      "STATUS_CANCELLED": "Cancelled"
     }
   }
 }

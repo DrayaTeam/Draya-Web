@@ -78,7 +78,15 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.examId = this.route.snapshot.paramMap.get('id') || 'exam-1';
     this.examService.loadExamSession(this.examId).subscribe({
-      next: () => void 0,
+      next: () => {
+        if (this.examService.isAttemptAlreadyCompleted()) {
+          this.toastService.info(
+            'تم تسليم الامتحان مسبقاً 📋',
+            'لقد قمت بإجراء وتسليم هذا الامتحان بالفعل. جاري نقلك لتقرير النتيجة والتصحيح...',
+          );
+          this.router.navigate(['/student/exams', this.examId, 'result']);
+        }
+      },
       error: () => void 0,
     });
 

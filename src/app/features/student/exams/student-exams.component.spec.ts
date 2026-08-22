@@ -28,6 +28,7 @@ describe('StudentExamsComponent', () => {
     }).compileComponents();
 
     examsService = TestBed.inject(StudentExamsService);
+    spyOn(examsService, 'loadExams').and.callFake(() => {});
     examsService.exams.set([
       {
         id: 'ex-1',
@@ -63,6 +64,7 @@ describe('StudentExamsComponent', () => {
         cornerTintBg: '#10B981',
       },
     ]);
+    examsService.loading.set(false);
 
     fixture = TestBed.createComponent(StudentExamsComponent);
     component = fixture.componentInstance;

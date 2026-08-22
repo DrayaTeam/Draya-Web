@@ -19,7 +19,13 @@
   </div>
 
   @if (loading()) {
-    <div class="loading-skeleton shimmer"></div>
+    <div class="animate-fade-in space-y-6" dir="rtl">
+      <!-- Hero Banner Skeleton -->
+      <div
+        class="h-64 animate-pulse rounded-3xl bg-gradient-to-r from-slate-100 via-slate-200 to-slate-100 p-8 shadow-sm"></div>
+      <!-- Accordion Curriculum Skeletons -->
+      <draya-card-skeleton type="generic" [count]="3" [gridClass]="'grid grid-cols-1 gap-4'" />
+    </div>
   } @else if (pkg(); as p) {
     <!-- Main Package Hero Card -->
     <div class="pkg-hero-card">

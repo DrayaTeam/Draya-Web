@@ -28,25 +28,49 @@
     <p class="page-subtitle">{{ headerInfo().subtitleText }}</p>
   </header>
 
-  <!-- Subscribed Packages Grid (2 Cards Row on 1440w desktop, 1 col on 390w mobile) -->
-  <main class="packages-cards-grid" aria-label="قائمة الباقات الدراسية">
-    @if (packages().length > 0) {
-      @for (pkg of packages(); track pkg.id) {
-        <draya-subscribed-package-card
-          [package]="pkg"
-          (openPackageDetails)="onOpenPackage($event)" />
+  <!-- Subscribed Packages Grid / Skeleton / Empty State -->
+  @if (loading()) {
+    <div class="mt-4">
+      <draya-card-skeleton
+        type="package"
+        [count]="4"
+        [gridClass]="'grid grid-cols-1 md:grid-cols-2 gap-6'" />
+    </div>
+  } @else {
+    <main class="packages-cards-grid" aria-label="قائمة الباقات الدراسية">
+      @if (paginatedPackages().length > 0) {
+        @for (pkg of paginatedPackages(); track pkg.id) {
+          <div class="card-wrapper animate-fade-in-up" [style.animation-delay]="$index * 50 + 'ms'">
+            <draya-subscribed-package-card
+              [package]="pkg"
+              (openPackageDetails)="onOpenPackage($event)" />
+          </div>
+        }
+      } @else {
+        <div class="empty-state-wrapper animate-fade-in col-span-full w-full">
+          <draya-empty-state
+            icon="pi pi-book"
+            titleKey="STUDENT.COURSES.EMPTY_TITLE"
+            descriptionKey="STUDENT.COURSES.EMPTY_DESC"
+            primaryActionLabelKey="STUDENT.COURSES.BROWSE_TEACHERS"
+            primaryActionRoute="/student/teachers"
+            secondaryActionLabelKey="STUDENT.DASHBOARD.ENTER_CODE"
+            secondaryActionRoute="/student/dashboard" />
+        </div>
       }
-    } @else {
-      <div class="empty-state-wrapper col-span-full w-full">
-        <draya-empty-state
-          icon="pi pi-book"
-          titleKey="لم تنضم إلى أي فصل دراسي بعد"
-          descriptionKey="ابدأ رحلتك التعليمية الآن واكتشف أفضل المعلمين والمناهج الدراسية."
-          primaryActionLabelKey="تصفح المعلمين"
-          primaryActionRoute="/student/teachers"
-          secondaryActionLabelKey="إدخال كود الفصل"
-          secondaryActionRoute="/student/dashboard" />
+    </main>
+
+    <!-- Pagination Controls -->
+    @if (packages().length > pageSize()) {
+      <div class="animate-fade-in mt-6">
+        <draya-pagination
+          [totalItems]="packages().length"
+          [pageSize]="pageSize()"
+          [currentPage]="currentPage()"
+          [pageSizeOptions]="[4, 8, 16, 20]"
+          (pageChange)="currentPage.set($event)"
+          (pageSizeChange)="pageSize.set($event); currentPage.set(1)" />
       </div>
     }
-  </main>
+  }
 </div>
