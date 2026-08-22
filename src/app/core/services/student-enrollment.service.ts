@@ -221,7 +221,36 @@ export class StudentEnrollmentService extends ApiBaseService {
       sectionsRes: this.get<SectionItemDto[] | { items?: SectionItemDto[] }>(
         `/classrooms/${classroomId}/sections`,
       ).pipe(catchError(() => of(null))),
-      examsRes: this.get<{ items?: any[] }>('/students/exams', { page: 1, pageSize: 50 }).pipe(
+      examsRes: this.get<
+        | {
+            items?: {
+              id?: string;
+              examId?: string;
+              sectionId?: string;
+              title?: string;
+              topic?: string;
+              durationMinutes?: number;
+              allowedAttempts?: number;
+              questionsCount?: number;
+              questions?: unknown[];
+              startDate?: string;
+              endDate?: string;
+            }[];
+          }
+        | {
+            id?: string;
+            examId?: string;
+            sectionId?: string;
+            title?: string;
+            topic?: string;
+            durationMinutes?: number;
+            allowedAttempts?: number;
+            questionsCount?: number;
+            questions?: unknown[];
+            startDate?: string;
+            endDate?: string;
+          }[]
+      >('/students/exams', { page: 1, pageSize: 50 }).pipe(
         map((res) => (Array.isArray(res) ? res : res?.items || [])),
         catchError(() => of([])),
       ),

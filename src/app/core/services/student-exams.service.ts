@@ -1,6 +1,6 @@
 // src/app/core/services/student-exams.service.ts
 import { Injectable, signal, computed } from '@angular/core';
-import { catchError, forkJoin, map, of, switchMap, tap } from 'rxjs';
+import { catchError, map, of, tap } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
 import {
   StudentExamItem,

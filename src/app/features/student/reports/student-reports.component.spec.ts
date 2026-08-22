@@ -32,7 +32,7 @@ describe('StudentReportsComponent', () => {
     }).compileComponents();
 
     reportsService = TestBed.inject(StudentReportsService);
-    spyOn(reportsService, 'loadReports').and.returnValue(of(null as any));
+    spyOn(reportsService, 'loadReports').and.returnValue(of(true));
     reportsService.isLoading.set(false);
 
     fixture = TestBed.createComponent(StudentReportsComponent);

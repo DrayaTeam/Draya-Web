@@ -28,7 +28,7 @@ describe('StudentExamsComponent', () => {
     }).compileComponents();
 
     examsService = TestBed.inject(StudentExamsService);
-    spyOn(examsService, 'loadExams').and.callFake(() => {});
+    spyOn(examsService, 'loadExams').and.returnValue(undefined);
     examsService.exams.set([
       {
         id: 'ex-1',
