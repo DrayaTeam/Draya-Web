@@ -50,10 +50,7 @@ export class TeacherDashboardComponent implements OnInit {
   }
 
   handleReviewAiReports(): void {
-    this.toast.info(
-      'مراجعة تقارير الذكاء الاصطناعي',
-      'جارٍ فتح شاشة مراجعة واعتماد التقارير قبل إرسالها للأولياء.',
-    );
+    this.router.navigate(['/teacher/reports']);
   }
 
   handleCreateAiExam(): void {

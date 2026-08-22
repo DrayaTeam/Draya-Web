@@ -551,7 +551,10 @@
         "32_MIN": "32 min ago",
         "55_MIN": "55 min ago",
         "1_HOUR": "1 hr ago"
-      }
+      },
+      "AI_REPORTS_READY": "AI Reports Ready for Review",
+      "AI_REPORTS_READY_DESC": "There are AI-generated student reports that require your review and approval.",
+      "VIEW_REPORTS": "Review Reports"
     },
     "DAYS": {
       "SATURDAY": "Sat",
