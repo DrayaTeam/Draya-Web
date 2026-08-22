@@ -52,7 +52,18 @@ export class AdminStatusBadgeComponent {
     if (str === '3') return 'paid';
     if (str === '4') return 'cancelled';
 
-    return str.toLowerCase();
+    const lower = str.toLowerCase();
+
+    // Arabic string normalization
+    if (str === 'نشط' || lower === 'active') return 'active';
+    if (str === 'غير نشط' || str === 'معطّل' || str === 'معطل' || lower === 'inactive') return 'inactive';
+    if (str === 'معلّق' || str === 'معلق' || str === 'قيد الانتظار' || lower === 'pending') return 'pending';
+    if (str === 'موافق عليه' || str === 'تمت الموافقة' || lower === 'approved') return 'approved';
+    if (str === 'مدفوع' || str === 'تم الصرف' || lower === 'paid') return 'paid';
+    if (str === 'مرفوض' || lower === 'rejected') return 'rejected';
+    if (str === 'ملغى' || str === 'ملغي' || lower === 'cancelled' || lower === 'canceled') return 'cancelled';
+
+    return lower;
   });
 
   readonly statusClass = computed(() => `status-${this.normalizedStatus()}`);

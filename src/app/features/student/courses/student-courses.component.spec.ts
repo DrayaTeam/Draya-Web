@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
+import { provideTranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { StudentCoursesComponent } from './student-courses.component';
 import { ToastService } from '../../../core/services/toast.service';
@@ -18,6 +19,7 @@ describe('StudentCoursesComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideRouter([]),
+        provideTranslateService(),
         MessageService,
         ToastService,
       ],

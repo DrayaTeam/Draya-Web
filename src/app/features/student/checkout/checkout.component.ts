@@ -6,6 +6,7 @@ import {
   OnInit,
   OnDestroy,
   signal,
+  computed,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -30,6 +31,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private readonly toast = inject(ToastService);
 
   readonly loading = signal<boolean>(false);
+  readonly isPackageLoading = signal<boolean>(true);
   readonly success = signal<boolean>(false);
   readonly discount = signal<number>(0);
 
@@ -38,18 +40,23 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   readonly paymobUrl = signal<string>('');
   readonly verifyingManually = signal<boolean>(false);
 
-  pkgId = 'pkg_1';
-  pkgName = 'باقة دراسية';
-  teacherName = 'معلم دراية';
-  originalPrice = 150;
+  readonly pkgId = signal<string>('');
+  readonly pkgName = signal<string>('جارٍ التحميل...');
+  readonly teacherName = signal<string>('');
+  readonly originalPrice = signal<number>(0);
   promoCode = '';
+
+  readonly finalPrice = computed<number>(() => {
+    return Math.max(0, this.originalPrice() - this.discount());
+  });
 
   private popupRef: Window | null = null;
   private pollingSubscription?: ReturnType<typeof setInterval>;
   private messageListener?: (event: MessageEvent) => void;
 
   ngOnInit(): void {
-    this.pkgId = this.route.snapshot.paramMap.get('id') || 'pkg_1';
+    const id = this.route.snapshot.paramMap.get('id') || '';
+    this.pkgId.set(id);
 
     // 1. Check if redirected back with status query params
     const queryParams = this.route.snapshot.queryParams;
@@ -68,16 +75,29 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       this.toast.error('فشلت عملية الدفع', 'لم يتم خصم أي مبالغ، يرجى المحاولة مرة أخرى.');
     }
 
-    // 2. Fetch package details
-    this.enrollmentService.getPackageDetails(this.pkgId).subscribe({
-      next: (p) => {
-        if (p) {
-          this.pkgName = p.name;
-          this.teacherName = p.teacherName;
-          this.originalPrice = p.price;
-        }
-      },
-    });
+    // 2. Fetch real package details
+    if (id) {
+      this.isPackageLoading.set(true);
+      this.enrollmentService.getPackageDetails(id).subscribe({
+        next: (p) => {
+          this.isPackageLoading.set(false);
+          if (p) {
+            this.pkgName.set(p.name || 'فصل دراسي');
+            this.teacherName.set(p.teacherName || '');
+            this.originalPrice.set(p.price ?? 0);
+          }
+        },
+        error: () => {
+          this.isPackageLoading.set(false);
+          this.pkgName.set('فصل دراسي');
+          this.teacherName.set('');
+          this.originalPrice.set(0);
+        },
+      });
+    } else {
+      this.isPackageLoading.set(false);
+      this.pkgName.set('فصل دراسي');
+    }
   }
 
   ngOnDestroy(): void {
@@ -85,16 +105,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.closePopupIfOpen();
   }
 
-  get finalPrice(): number {
-    return Math.max(0, this.originalPrice - this.discount());
-  }
-
   applyPromo(): void {
-    if (
-      this.promoCode.trim().toLowerCase() === 'student10' ||
-      this.promoCode.trim().toLowerCase() === 'draya'
-    ) {
-      const disc = Math.round(this.originalPrice * 0.15);
+    const code = this.promoCode.trim().toLowerCase();
+    if (code === 'student10' || code === 'draya') {
+      const disc = Math.round(this.originalPrice() * 0.15);
       this.discount.set(disc);
       this.toast.success('تم تطبيق الخصم', `تم خصم ${disc} جنيه بنجاح.`);
     } else {
@@ -103,6 +117,12 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   onSubmitPayment(): void {
+    const currentPkgId = this.pkgId();
+    if (!currentPkgId) {
+      this.toast.error('خطأ', 'معرف الفصل الدراسي غير موجود.');
+      return;
+    }
+
     this.loading.set(true);
 
     const redirectUrl =
@@ -110,12 +130,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         ? `${window.location.origin}/payment/result`
         : 'https://draya.com/payment/result';
 
-    this.enrollmentService.checkoutClassroom(this.pkgId, redirectUrl).subscribe({
+    this.enrollmentService.checkoutClassroom(currentPkgId, redirectUrl).subscribe({
       next: (res) => {
         this.loading.set(false);
         if (res.success && res.checkoutUrl) {
           this.toast.info('جاري تحويلك لبوابة الدفع', 'سيتم نقلك لصفحة الدفع الآمنة من Paymob...');
-          // Redirect to Paymob payment page (Phase 2 in guide)
           window.location.href = res.checkoutUrl;
         } else {
           this.toast.error(
@@ -157,10 +176,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.verifyingManually.set(false);
         const items = res?.items || [];
+        const targetId = this.pkgId();
         const isEnrolled = items.some(
           (c) =>
-            c.classroomId === this.pkgId ||
-            c.classroomId?.toLowerCase() === this.pkgId.toLowerCase(),
+            c.classroomId === targetId || c.classroomId?.toLowerCase() === targetId.toLowerCase(),
         );
         if (isEnrolled) {
           this.handleSuccessfulPayment();
@@ -200,10 +219,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       this.enrollmentService.getEnrolledClassrooms().subscribe({
         next: (res) => {
           const items = res?.items || [];
+          const targetId = this.pkgId();
           const isEnrolled = items.some(
             (c) =>
-              c.classroomId === this.pkgId ||
-              c.classroomId?.toLowerCase() === this.pkgId.toLowerCase(),
+              c.classroomId === targetId || c.classroomId?.toLowerCase() === targetId.toLowerCase(),
           );
           if (isEnrolled) {
             this.handleSuccessfulPayment();

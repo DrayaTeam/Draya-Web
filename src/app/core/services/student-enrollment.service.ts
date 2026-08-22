@@ -161,13 +161,13 @@ export class StudentEnrollmentService extends ApiBaseService {
           classroomList = classroomsRes.items;
         }
 
-        const name = profile?.fullName ? `أ. ${profile.fullName}` : 'معلم دراية';
+        const name = profile?.fullName ? `أ. ${profile.fullName}` : 'معلم المادة';
         const subject = profile?.specialization || 'المادة الدراسية';
         const bio =
           profile?.description ||
           (profile?.specialization
-            ? `معلم متخصص في مادة ${profile.specialization} على منصة دراية.`
-            : 'معلم معتمد في منصة دراية التعليمية.');
+            ? `معلم متخصص في مادة ${profile.specialization}.`
+            : 'معلم معتمد في المنصة التعليمية.');
         const avatarUrl =
           'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=300&auto=format&fit=crop';
         const rating = 5.0;
@@ -221,8 +221,41 @@ export class StudentEnrollmentService extends ApiBaseService {
       sectionsRes: this.get<SectionItemDto[] | { items?: SectionItemDto[] }>(
         `/classrooms/${classroomId}/sections`,
       ).pipe(catchError(() => of(null))),
+      examsRes: this.get<
+        | {
+            items?: {
+              id?: string;
+              examId?: string;
+              sectionId?: string;
+              title?: string;
+              topic?: string;
+              durationMinutes?: number;
+              allowedAttempts?: number;
+              questionsCount?: number;
+              questions?: unknown[];
+              startDate?: string;
+              endDate?: string;
+            }[];
+          }
+        | {
+            id?: string;
+            examId?: string;
+            sectionId?: string;
+            title?: string;
+            topic?: string;
+            durationMinutes?: number;
+            allowedAttempts?: number;
+            questionsCount?: number;
+            questions?: unknown[];
+            startDate?: string;
+            endDate?: string;
+          }[]
+      >('/students/exams', { page: 1, pageSize: 50 }).pipe(
+        map((res) => (Array.isArray(res) ? res : res?.items || [])),
+        catchError(() => of([])),
+      ),
     }).pipe(
-      map(({ classroom, materialsRes, sectionsRes }) => {
+      map(({ classroom, materialsRes, sectionsRes, examsRes }) => {
         let rawMaterials: {
           id?: string;
           materialId?: string;
@@ -243,15 +276,29 @@ export class StudentEnrollmentService extends ApiBaseService {
           rawMaterials = materialsRes.items;
         }
 
-        const rawExams: {
+        let rawExams: {
           id?: string;
           examId?: string;
           sectionId?: string;
           title?: string;
           topic?: string;
+          durationMinutes?: number;
+          allowedAttempts?: number;
           questionsCount?: number;
           questions?: unknown[];
+          startDate?: string;
+          endDate?: string;
         }[] = [];
+        if (Array.isArray(examsRes)) {
+          rawExams = examsRes;
+        } else if (
+          examsRes &&
+          typeof examsRes === 'object' &&
+          'items' in examsRes &&
+          Array.isArray((examsRes as { items: unknown[] }).items)
+        ) {
+          rawExams = (examsRes as { items: typeof rawExams }).items;
+        }
 
         const mapMaterialToLesson = (
           m: (typeof rawMaterials)[0],
@@ -338,12 +385,12 @@ export class StudentEnrollmentService extends ApiBaseService {
           };
         };
 
-        const teacherName = classroom?.gradeLevelName
-          ? `أستاذ ${classroom.subjectName || ''}`
-          : 'معلم دراية';
+        const teacherName =
+          classroom?.teacherName ||
+          (classroom?.subjectName ? `أستاذ ${classroom.subjectName}` : '');
         const subject = classroom?.subjectName || 'المادة الدراسية';
-        const name = classroom?.name || 'الباقة الدراسية';
-        const price = classroom?.price || 0;
+        const name = classroom?.name || 'فصل دراسي';
+        const price = classroom?.price ?? 0;
 
         const allLessons: LessonItem[] = rawMaterials.map((m, idx) => mapMaterialToLesson(m, idx));
 

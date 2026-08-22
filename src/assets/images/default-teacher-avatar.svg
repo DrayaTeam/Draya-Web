@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="avatarBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E2F4F2" />
+      <stop offset="100%" stop-color="#C5E8E4" />
+    </linearGradient>
+    <linearGradient id="personGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1B6D63" />
+      <stop offset="100%" stop-color="#0E4841" />
+    </linearGradient>
+  </defs>
+  <!-- Circular Background -->
+  <circle cx="64" cy="64" r="64" fill="url(#avatarBg)" />
+  <!-- Head Silhouette -->
+  <circle cx="64" cy="46" r="22" fill="url(#personGrad)" />
+  <!-- Glasses / Academic touch -->
+  <path d="M48 44 Q56 42 64 44 Q72 42 80 44" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.9" />
+  <circle cx="54" cy="46" r="6.5" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.9" />
+  <circle cx="74" cy="46" r="6.5" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.9" />
+  <!-- Shoulders / Body Silhouette -->
+  <path d="M26 108 C28 84, 46 76, 64 76 C82 76, 100 84, 102 108 C88 120, 40 120, 26 108 Z" fill="url(#personGrad)" />
+</svg>

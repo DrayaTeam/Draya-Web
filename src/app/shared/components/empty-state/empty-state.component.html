@@ -1,0 +1,59 @@
+<div class="draya-empty-state-root animate-fade-in" role="status">
+  <!-- Subtle Ambient Glow -->
+  <div class="ambient-glow" aria-hidden="true"></div>
+
+  <!-- Icon Container with Soft Tint -->
+  <div class="icon-bubble">
+    <i [class]="icon()" aria-hidden="true"></i>
+  </div>
+
+  <!-- Title & Description -->
+  <h3 class="empty-title">{{ titleKey() | translate }}</h3>
+  <p class="empty-description">{{ descriptionKey() | translate }}</p>
+
+  <!-- Optional Custom Projection -->
+  <div class="custom-content">
+    <ng-content></ng-content>
+  </div>
+
+  <!-- Actions Row -->
+  @if (primaryActionLabelKey() || secondaryActionLabelKey()) {
+    <div class="actions-row">
+      @if (primaryActionLabelKey()) {
+        @if (primaryActionRoute()) {
+          <a
+            [routerLink]="primaryActionRoute()"
+            class="btn-action-primary"
+            (click)="onPrimaryClick()">
+            <span>{{ primaryActionLabelKey()! | translate }}</span>
+          </a>
+        } @else {
+          <button
+            type="button"
+            class="btn-action-primary"
+            (click)="onPrimaryClick()">
+            <span>{{ primaryActionLabelKey()! | translate }}</span>
+          </button>
+        }
+      }
+
+      @if (secondaryActionLabelKey()) {
+        @if (secondaryActionRoute()) {
+          <a
+            [routerLink]="secondaryActionRoute()"
+            class="btn-action-secondary"
+            (click)="onSecondaryClick()">
+            <span>{{ secondaryActionLabelKey()! | translate }}</span>
+          </a>
+        } @else {
+          <button
+            type="button"
+            class="btn-action-secondary"
+            (click)="onSecondaryClick()">
+            <span>{{ secondaryActionLabelKey()! | translate }}</span>
+          </button>
+        }
+      }
+    </div>
+  }
+</div>

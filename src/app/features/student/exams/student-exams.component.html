@@ -28,48 +28,116 @@
     <p class="page-subtitle">{{ headerInfo().subtitleText }}</p>
   </header>
 
-  <!-- Filter Pills Bar -->
-  <div class="filter-pills-bar">
-    <button
-      type="button"
-      class="filter-pill-btn"
-      [class.active]="selectedFilter() === 'all'"
-      (click)="setFilter('all')">
-      الكل ({{ examsService.exams().length }})
-    </button>
+  <!-- Search & Filter Bar -->
+  <div class="exams-toolbar">
+    <div class="search-box">
+      <svg
+        class="search-icon"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        type="search"
+        class="search-input"
+        placeholder="ابحث باسم الامتحان أو المادة أو المعلم..."
+        [value]="searchQuery()"
+        (input)="onSearchChange($event)" />
+    </div>
 
-    <button
-      type="button"
-      class="filter-pill-btn"
-      [class.active]="selectedFilter() === 'available'"
-      (click)="setFilter('available')">
-      متاح للحل الآن 🔥
-    </button>
+    <!-- Filter Pills Bar -->
+    <div class="filter-pills-bar">
+      <button
+        type="button"
+        class="filter-pill-btn"
+        [class.active]="selectedFilter() === 'all'"
+        (click)="setFilter('all')">
+        الكل ({{ examsService.exams().length }})
+      </button>
 
-    <button
-      type="button"
-      class="filter-pill-btn"
-      [class.active]="selectedFilter() === 'scheduled'"
-      (click)="setFilter('scheduled')">
-      مجدول لاحقاً 🕒
-    </button>
+      <button
+        type="button"
+        class="filter-pill-btn"
+        [class.active]="selectedFilter() === 'available'"
+        (click)="setFilter('available')">
+        متاح للحل الآن 🔥
+      </button>
 
-    <button
-      type="button"
-      class="filter-pill-btn"
-      [class.active]="selectedFilter() === 'completed'"
-      (click)="setFilter('completed')">
-      مكتمل وحاصل على درجة ✨
-    </button>
+      <button
+        type="button"
+        class="filter-pill-btn"
+        [class.active]="selectedFilter() === 'scheduled'"
+        (click)="setFilter('scheduled')">
+        مجدول لاحقاً 🕒
+      </button>
+
+      <button
+        type="button"
+        class="filter-pill-btn"
+        [class.active]="selectedFilter() === 'completed'"
+        (click)="setFilter('completed')">
+        مكتمل وحاصل على درجة ✨
+      </button>
+
+      <button
+        type="button"
+        class="filter-pill-btn"
+        [class.active]="selectedFilter() === 'expired'"
+        (click)="setFilter('expired')">
+        منتهية الصلاحية ⛔
+      </button>
+    </div>
   </div>
 
-  <!-- Exams Cards Grid (2 Cards Row on 1440w desktop, 1 col on 390w mobile) -->
-  <main class="exams-cards-grid" aria-label="قائمة الامتحانات والواجبات المجدولة">
-    @for (exam of exams(); track exam.id) {
-      <draya-exam-card
-        [exam]="exam"
-        (startExam)="onStartExam($event)"
-        (viewResults)="onViewResults($event)" />
+  <!-- Exams Cards Grid / Skeletons / Empty State -->
+  @if (loading()) {
+    <draya-card-skeleton type="exam" [count]="6" />
+  } @else {
+    <main
+      class="exams-cards-grid transition-all duration-300"
+      aria-label="قائمة الامتحانات والواجبات المجدولة">
+      @if (paginatedExams().length > 0) {
+        @for (exam of paginatedExams(); track exam.id) {
+          <div
+            class="card-entrance animate-fade-in-up"
+            [style.animation-delay]="$index * 40 + 'ms'">
+            <draya-exam-card
+              [exam]="exam"
+              (startExam)="onStartExam($event)"
+              (viewResults)="onViewResults($event)" />
+          </div>
+        }
+      } @else {
+        <div class="empty-state-container animate-fade-in col-span-full w-full">
+          <draya-empty-state
+            icon="exam"
+            titleKey="STUDENT.EXAMS.EMPTY_TITLE"
+            descriptionKey="STUDENT.EXAMS.EMPTY_DESC"
+            primaryActionLabelKey="STUDENT.DASHBOARD.BROWSE_CLASSES"
+            primaryActionRoute="/student/courses"
+            size="lg" />
+        </div>
+      }
+    </main>
+
+    <!-- Pagination Controls -->
+    @if (exams().length > pageSize()) {
+      <div class="animate-fade-in mt-6">
+        <draya-pagination
+          [totalItems]="exams().length"
+          [pageSize]="pageSize()"
+          [currentPage]="currentPage()"
+          [pageSizeOptions]="[4, 8, 16, 20]"
+          (pageChange)="onPageChange($event)"
+          (pageSizeChange)="onPageSizeChange($event)" />
+      </div>
     }
-  </main>
+  }
 </div>
