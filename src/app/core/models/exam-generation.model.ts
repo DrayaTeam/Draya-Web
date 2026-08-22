@@ -41,8 +41,8 @@ export interface GenerateExamResponse {
 
 export interface AIExamQuotaDto {
   freeMonthlyQuota: number;
-  freeExamsUsed: number;
-  remainingFreeQuota: number;
+  freeExamsUsedThisMonth: number;
+  remainingFreeExams: number;
   aiExamPrice: number;
-  hasSufficientBalanceForPaid: boolean;
+  hasSufficientBalance: boolean;
 }

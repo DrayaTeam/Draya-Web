@@ -76,14 +76,22 @@ export class GenerateExamComponent implements OnInit {
   readonly hasInsufficientBalance = computed(() => {
     const q = this.quota();
     if (!q) return false;
-    return q.remainingFreeQuota === 0 && !q.hasSufficientBalanceForPaid;
+    return q.remainingFreeExams === 0 && !q.hasSufficientBalance;
   });
 
-  /** Purchased (AI) balance from the shared WalletService signal */
-  readonly purchasedBalance = this.walletService.purchasedBalance;
-  /** True when balance is zero or not loaded — shows the warning banner */
+  /** Full wallet balance from shared WalletService signal */
+  readonly walletBalance = this.walletService.walletBalance;
+
+  /** Combined balance that can be used for AI exams */
+  readonly totalAvailableBalance = computed(() => {
+    const bal = this.walletBalance();
+    if (!bal) return null;
+    return bal.availableEarnedBalance + bal.purchasedBalance;
+  });
+
+  /** True when balance is zero or not loaded */
   readonly isLowAiBalance = computed(() => {
-    const bal = this.purchasedBalance();
+    const bal = this.totalAvailableBalance();
     return bal !== null && bal <= 0;
   });
 
