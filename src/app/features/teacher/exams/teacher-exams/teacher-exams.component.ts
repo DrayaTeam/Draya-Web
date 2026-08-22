@@ -4,7 +4,7 @@ import {
   inject,
   OnInit,
   signal,
-  DestroyRef
+  DestroyRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';

@@ -48,3 +48,37 @@ export interface SubmissionsChartMeta {
   timeRange: 'week' | 'month' | 'quarter';
   chartPoints: SubmissionChartPoint[];
 }
+
+// ── Backend DTOs ──────────────────────────────────────────────────────────
+
+export interface WeeklySubmissionsActivityDto {
+  dayOfWeek: string;
+  submissionsCount: number;
+  averageScore: number;
+}
+
+export interface NeedsAttentionDto {
+  studentId: string;
+  studentName: string;
+  overallAverage: number;
+}
+
+export interface RecentSubmissionDto {
+  examAttemptId: string;
+  studentId: string;
+  studentName: string;
+  examTitle: string;
+  submittedAt: string;
+  score: number;
+}
+
+export interface TeacherDashboardDto {
+  examsAwaitingReview: number;
+  classAverage: number;
+  activeStudents: number;
+  reportsReadyForReview: number;
+  newMessagesCount: number;
+  weeklySubmissionsActivity: WeeklySubmissionsActivityDto[];
+  needsAttentionList: NeedsAttentionDto[];
+  recentSubmissions: RecentSubmissionDto[];
+}

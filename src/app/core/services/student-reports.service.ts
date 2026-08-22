@@ -109,6 +109,11 @@ export class StudentReportsService extends ApiBaseService {
           summaryText: report?.summaryText || undefined,
           generatedAt: report?.generatedAt || undefined,
           reportId: report?.id || undefined,
+          totalQuestionsAsked: report?.totalQuestionsAsked,
+          totalQuestionsReplied: report?.totalQuestionsReplied,
+          averageExamDurationMinutes: report?.averageExamDurationMinutes,
+          completedLessons: report?.completedLessons,
+          classroomPercentile: report?.classroomPercentile,
         });
 
         // Subject scores breakdown

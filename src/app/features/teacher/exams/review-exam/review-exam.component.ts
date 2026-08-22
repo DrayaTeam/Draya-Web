@@ -3,7 +3,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { TeacherExamService } from '../../services/teacher-exam.service';
 import { ToastService } from '../../../../core/services/toast.service';
-import { TeacherExamDto, ExamQuestionDto, GeneratedQuestionDto } from '../../../../core/models/teacher-exam.model';
+import {
+  TeacherExamDto,
+  ExamQuestionDto,
+  GeneratedQuestionDto,
+} from '../../../../core/models/teacher-exam.model';
 import { RefineQuestionModalComponent } from './components/refine-question-modal/refine-question-modal.component';
 
 @Component({
@@ -46,7 +50,7 @@ export class ReviewExamComponent implements OnInit {
       error: () => {
         this.toast.error('فشل في تحميل الامتحان');
         this.isLoading.set(false);
-      }
+      },
     });
   }
 
@@ -66,7 +70,7 @@ export class ReviewExamComponent implements OnInit {
     const originalQuestionId = originalQuestion?.id;
     const originalQuestionOrder = originalQuestion?.order ?? 0;
     this.closeRefineModal();
-    
+
     const currentExam = this.exam();
     if (currentExam && originalQuestionId && updatedQuestion) {
       this.isLoading.set(true);
@@ -76,10 +80,10 @@ export class ReviewExamComponent implements OnInit {
         type: updatedQuestion.type,
         difficulty: updatedQuestion.difficulty,
         rubric: updatedQuestion.rubric,
-        options: updatedQuestion.options?.map(opt => ({
+        options: updatedQuestion.options?.map((opt) => ({
           text: opt.text || '',
-          isCorrect: !!opt.isCorrect
-        }))
+          isCorrect: !!opt.isCorrect,
+        })),
       };
 
       this.examService.updateQuestion(currentExam.id, originalQuestionId, payload).subscribe({
@@ -91,16 +95,20 @@ export class ReviewExamComponent implements OnInit {
             type: updatedQuestion.type,
             difficultyLevel: updatedQuestion.difficulty,
             rubric: updatedQuestion.rubric,
-            correctAnswer: updatedQuestion.acceptedAnswers ? updatedQuestion.acceptedAnswers[0] : undefined,
+            correctAnswer: updatedQuestion.acceptedAnswers
+              ? updatedQuestion.acceptedAnswers[0]
+              : undefined,
             order: originalQuestionOrder,
-            options: updatedQuestion.options?.map((opt: { text?: string; isCorrect?: boolean }) => ({
-              text: opt.text || '',
-              isCorrect: !!opt.isCorrect
-            }))
+            options: updatedQuestion.options?.map(
+              (opt: { text?: string; isCorrect?: boolean }) => ({
+                text: opt.text || '',
+                isCorrect: !!opt.isCorrect,
+              }),
+            ),
           };
 
-          const updatedQuestions = (currentExam.questions || []).map(q => 
-            q.id === originalQuestionId ? mappedQuestion : q
+          const updatedQuestions = (currentExam.questions || []).map((q) =>
+            q.id === originalQuestionId ? mappedQuestion : q,
           );
           this.exam.set({ ...currentExam, questions: updatedQuestions });
           this.toast.success('تم حفظ التعديل بنجاح');
@@ -109,7 +117,7 @@ export class ReviewExamComponent implements OnInit {
         error: () => {
           this.toast.error('حدث خطأ أثناء حفظ التعديل');
           this.isLoading.set(false);
-        }
+        },
       });
     }
   }

@@ -3,9 +3,11 @@ import {
   ChangeDetectionStrategy,
   inject,
   signal,
+  computed,
   OnInit,
   DestroyRef,
 } from '@angular/core';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   NonNullableFormBuilder,
@@ -16,11 +18,12 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { ClassroomService } from '../../services/classroom.service';
 import { SectionService } from '../../services/section.service';
 import { ExamGenerationService } from '../../services/exam-generation.service';
+import { WalletService } from '../../services/wallet.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { ClassroomDto } from '../../../../core/models/classroom.model';
 import { ClassroomSectionDto } from '../../../../core/models/section.model';
@@ -29,10 +32,12 @@ import {
   DifficultyLevel,
   GenerateExamRequest,
   QuestionRequirement,
+  AIExamQuotaDto,
 } from '../../../../core/models/exam-generation.model';
 import { AuthService } from '../../../../features/auth/services/auth.service';
 
 import { Select } from 'primeng/select';
+import { TranslatePipe } from '@ngx-translate/core';
 
 export function futureDateValidator(control: AbstractControl): ValidationErrors | null {
   if (!control.value) return null;
@@ -44,7 +49,7 @@ export function futureDateValidator(control: AbstractControl): ValidationErrors 
 @Component({
   selector: 'draya-generate-exam',
   standalone: true,
-  imports: [ReactiveFormsModule, Select],
+  imports: [ReactiveFormsModule, RouterLink, Select, TranslatePipe, CommonModule, DecimalPipe],
   templateUrl: './generate-exam.component.html',
   styleUrl: './generate-exam.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,13 +60,53 @@ export class GenerateExamComponent implements OnInit {
   private readonly classroomService = inject(ClassroomService);
   private readonly sectionService = inject(SectionService);
   private readonly examGenService = inject(ExamGenerationService);
+  private readonly walletService = inject(WalletService);
   private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly isSubmitting = signal(false);
+  readonly isLoadingBalance = signal(false);
   readonly classrooms = signal<ClassroomDto[]>([]);
   readonly sections = signal<ClassroomSectionDto[]>([]);
+
+  readonly quota = signal<AIExamQuotaDto | null>(null);
+  readonly isLoadingQuota = signal(false);
+
+  /** True when user has no free quota and insufficient balance to pay */
+  readonly hasInsufficientBalance = computed(() => {
+    const q = this.quota();
+    if (!q) return false;
+
+    // If they have free exams, balance is irrelevant (always sufficient)
+    if (q.remainingFreeExams > 0) return false;
+
+    // Backend calculation fallback
+    if (q.hasSufficientBalance) return false;
+
+    // If backend says insufficient, check our locally aggregated wallet balance just in case
+    // it's a backend calculation issue (e.g., ignoring EarnedBalance).
+    const price = q.aiExamPrice || 20;
+    const totalBal = this.totalAvailableBalance() || 0;
+
+    return totalBal < price;
+  });
+
+  /** Full wallet balance from shared WalletService signal */
+  readonly walletBalance = this.walletService.walletBalance;
+
+  /** Combined balance that can be used for AI exams */
+  readonly totalAvailableBalance = computed(() => {
+    const bal = this.walletBalance();
+    if (!bal) return null;
+    return bal.availableEarnedBalance + bal.purchasedBalance;
+  });
+
+  /** True when balance is zero or not loaded */
+  readonly isLowAiBalance = computed(() => {
+    const bal = this.totalAvailableBalance();
+    return bal !== null && bal <= 0;
+  });
 
   readonly questionTypes: QuestionType[] = [
     'MCQ',
@@ -105,6 +150,29 @@ export class GenerateExamComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadClassrooms();
+    // Always fetch fresh wallet balance on init (to show accurate AI balance status bar)
+    this.isLoadingBalance.set(true);
+    this.walletService
+      .getBalance()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.isLoadingBalance.set(false),
+        error: () => this.isLoadingBalance.set(false),
+      });
+
+    this.isLoadingQuota.set(true);
+    this.examGenService
+      .getAIExamQuota()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.quota.set(res);
+          this.isLoadingQuota.set(false);
+        },
+        error: () => {
+          this.isLoadingQuota.set(false);
+        },
+      });
 
     // Listen to classroom changes to load sections
     this.form
@@ -205,6 +273,10 @@ export class GenerateExamComponent implements OnInit {
       next: (res) => {
         this.toast.success('تم إرسال طلب توليد الامتحان بنجاح');
         this.isSubmitting.set(false);
+        // Refresh AI balance after successful generation (backend deducts it)
+        // We omit takeUntilDestroyed here because we want this HTTP call to complete
+        // even though we immediately navigate away (which destroys the component).
+        this.walletService.getBalance().subscribe();
         this.router.navigate(['/teacher/exams/generations', res.generationId, 'tracking']);
       },
       error: (err) => {

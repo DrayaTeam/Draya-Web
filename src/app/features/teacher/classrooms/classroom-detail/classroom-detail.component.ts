@@ -9,7 +9,7 @@ import { ClassroomMaterialsComponent } from './components/classroom-materials/cl
 import { ClassroomQaComponent } from './components/classroom-qa/classroom-qa.component';
 import { ClassroomExamsComponent } from './components/classroom-exams/classroom-exams.component';
 import { EditClassroomModalComponent } from '../components/edit-classroom-modal/edit-classroom-modal.component';
-import { TeacherModalComponent } from '../../components/teacher-modal/teacher-modal.component'; 
+import { TeacherModalComponent } from '../../components/teacher-modal/teacher-modal.component';
 import { SharedModule } from 'primeng/api';
 
 @Component({
@@ -82,7 +82,7 @@ export class ClassroomDetailComponent implements OnInit {
     if (!current) return;
     this.isDeactivateModalOpen.set(true);
   }
-  
+
   executeDeactivateClassroom(): void {
     const current = this.classroom();
     if (!current) return;
@@ -116,7 +116,7 @@ export class ClassroomDetailComponent implements OnInit {
     if (!current) return;
     this.isRegenerateModalOpen.set(true);
   }
-  
+
   executeRegenerateCode(): void {
     const current = this.classroom();
     if (!current) return;
@@ -154,13 +154,21 @@ export class ClassroomDetailComponent implements OnInit {
     this.classroomService.uploadClassroomImage(this.classroom()!.classroomId, file).subscribe({
       next: (res) => {
         this.classroomService.setActiveClassroom({ ...this.classroom()!, imageUrl: res.imageUrl });
-        this.messageService?.add({ severity: 'success', summary: 'تم', detail: 'تم تحديث صورة الغلاف بنجاح.' });
+        this.messageService?.add({
+          severity: 'success',
+          summary: 'تم',
+          detail: 'تم تحديث صورة الغلاف بنجاح.',
+        });
         this.isUploadingImage.set(false);
         input.value = '';
       },
       error: (err) => {
         console.error('Failed to upload classroom image', err);
-        this.messageService?.add({ severity: 'error', summary: 'خطأ', detail: 'فشل رفع الصورة. حاول مرة أخرى.' });
+        this.messageService?.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: 'فشل رفع الصورة. حاول مرة أخرى.',
+        });
         this.isUploadingImage.set(false);
         input.value = '';
       },

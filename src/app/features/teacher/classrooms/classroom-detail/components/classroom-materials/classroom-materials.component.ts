@@ -23,13 +23,16 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { MaterialService } from '../../../../services/material.service';
 import { SectionService } from '../../../../services/section.service';
 import { ClassroomMaterialDto } from '../../../../../../core/models/material.model';
-import { ClassroomSectionDto, SectionMaterialDto } from '../../../../../../core/models/section.model';
+import {
+  ClassroomSectionDto,
+  SectionMaterialDto,
+} from '../../../../../../core/models/section.model';
 import { resolveMaterialUrl } from '../../../../../../core/services/student-library.service';
 
 import { UploadMaterialModalComponent } from '../upload-material-modal/upload-material-modal.component';
 import { UploadVersionModalComponent } from '../upload-version-modal/upload-version-modal.component';
 import { MaterialVersionsModalComponent } from '../material-versions-modal/material-versions-modal.component';
-import { TeacherModalComponent } from '../../../../components/teacher-modal/teacher-modal.component'; 
+import { TeacherModalComponent } from '../../../../components/teacher-modal/teacher-modal.component';
 import { SharedModule } from 'primeng/api';
 import { CreateSectionModalComponent } from '../create-section-modal/create-section-modal.component';
 import { EditSectionModalComponent } from '../edit-section-modal/edit-section-modal.component';
@@ -92,16 +95,16 @@ export class ClassroomMaterialsComponent implements OnInit, OnDestroy {
   readonly activeTabBySection = signal<Record<string, string>>({});
 
   setSectionTab(sectionId: string, tab: string): void {
-    this.activeTabBySection.update(current => ({
+    this.activeTabBySection.update((current) => ({
       ...current,
-      [sectionId]: tab
+      [sectionId]: tab,
     }));
   }
 
   getSectionTab(section: ClassroomSectionDto): string {
     const active = this.activeTabBySection()[section.id];
     if (active) return active;
-    
+
     // Default to the first available category
     if (section.videos?.length) return 'videos';
     if (section.documents?.length) return 'documents';
@@ -154,14 +157,14 @@ export class ClassroomMaterialsComponent implements OnInit, OnDestroy {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (sections) => {
-          const mappedSections = (sections || []).map(s => ({
+          const mappedSections = (sections || []).map((s) => ({
             ...s,
-            materials: [...(s.documents || []), ...(s.videos || [])]
+            materials: [...(s.documents || []), ...(s.videos || [])],
           }));
           this.sectionsResult.set(mappedSections);
           // Ensure all sections are expanded by default or keep previous state
           const newExpanded = { ...this.expandedSections() };
-          mappedSections.forEach(s => {
+          mappedSections.forEach((s) => {
             if (newExpanded[s.id] === undefined) {
               newExpanded[s.id] = true;
             }
@@ -176,9 +179,9 @@ export class ClassroomMaterialsComponent implements OnInit, OnDestroy {
   }
 
   toggleSection(sectionId: string): void {
-    this.expandedSections.update(current => ({
+    this.expandedSections.update((current) => ({
       ...current,
-      [sectionId]: !current[sectionId]
+      [sectionId]: !current[sectionId],
     }));
   }
 
@@ -208,7 +211,7 @@ export class ClassroomMaterialsComponent implements OnInit, OnDestroy {
     this.sectionToDelete.set(section.id);
     this.isDeleteSectionModalOpen.set(true);
   }
-  
+
   executeDeleteSection(): void {
     const id = this.sectionToDelete();
     if (!id) return;
@@ -233,7 +236,7 @@ export class ClassroomMaterialsComponent implements OnInit, OnDestroy {
           summary: 'خطأ',
           detail: 'حدث خطأ أثناء حذف القسم.',
         });
-      }
+      },
     });
   }
 
@@ -322,34 +325,36 @@ export class ClassroomMaterialsComponent implements OnInit, OnDestroy {
   private pollForReadyMaterial(materialId: string): void {
     this.isPreviewLoading.set(false);
     this.isProcessing.set(true);
-    
+
     // Poll every 3 seconds
-    timer(0, 3000).pipe(
-      takeUntil(this.cancelPolling$),
-      switchMap(() => this.materialService.getMaterialVersions(materialId))
-    ).subscribe({
-      next: (versions) => {
-        const latest = versions && versions.length > 0 ? versions[versions.length - 1] : null;
-        if (latest && latest.fileUrl) {
-          // Yay! The cloud has finished processing and we have a URL!
+    timer(0, 3000)
+      .pipe(
+        takeUntil(this.cancelPolling$),
+        switchMap(() => this.materialService.getMaterialVersions(materialId)),
+      )
+      .subscribe({
+        next: (versions) => {
+          const latest = versions && versions.length > 0 ? versions[versions.length - 1] : null;
+          if (latest && latest.fileUrl) {
+            // Yay! The cloud has finished processing and we have a URL!
+            this.isProcessing.set(false);
+            const fetchedUrl = latest.fileUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
+              String.fromCharCode(parseInt(hex, 16)),
+            );
+            this.activePreviewUrl.set(resolveMaterialUrl(fetchedUrl));
+            // Stop polling since we found it
+            this.cancelPolling$.next();
+          }
+          // If not found yet, it will just poll again in 3 seconds.
+        },
+        error: (err) => {
+          console.error('Polling failed', err);
+          // If there's an actual network failure, stop polling and show error
           this.isProcessing.set(false);
-          const fetchedUrl = latest.fileUrl.replace(/%([0-9A-Fa-f]{3,4})/g, (_, hex) =>
-            String.fromCharCode(parseInt(hex, 16)),
-          );
-          this.activePreviewUrl.set(resolveMaterialUrl(fetchedUrl));
-          // Stop polling since we found it
+          this.previewError.set('فشل في تحميل العرض. الرجاء المحاولة مرة أخرى.');
           this.cancelPolling$.next();
-        }
-        // If not found yet, it will just poll again in 3 seconds.
-      },
-      error: (err) => {
-        console.error('Polling failed', err);
-        // If there's an actual network failure, stop polling and show error
-        this.isProcessing.set(false);
-        this.previewError.set('فشل في تحميل العرض. الرجاء المحاولة مرة أخرى.');
-        this.cancelPolling$.next();
-      }
-    });
+        },
+      });
   }
 
   closePreview(): void {
@@ -385,8 +390,8 @@ export class ClassroomMaterialsComponent implements OnInit, OnDestroy {
         fileUrl: actualUrl,
         parseStatus: 'Parsed',
         uploadedAt: material.createdAt,
-        errorMessage: null
-      }
+        errorMessage: null,
+      },
     };
   }
 
@@ -409,7 +414,7 @@ export class ClassroomMaterialsComponent implements OnInit, OnDestroy {
     this.materialToDelete.set(material.id);
     this.isDeleteMaterialModalOpen.set(true);
   }
-  
+
   executeDeleteMaterial(): void {
     const id = this.materialToDelete();
     if (!id) return;

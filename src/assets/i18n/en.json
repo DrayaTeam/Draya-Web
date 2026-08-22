@@ -516,7 +516,7 @@
       "ACTIONS": {
         "TITLE": "Quick Actions",
         "CREATE_AI_EXAM": "Create AI Exam",
-        "NEW_LECTURE": "New Lecture",
+        "NEW_LECTURE": "Create New Classroom",
         "FOLLOWUP_STUDENTS": "Follow Up Students",
         "REPORTS": "Reports"
       },
@@ -607,6 +607,23 @@
       "RATINGS": "ratings",
       "ALL_REVIEWS": "Latest Reviews",
       "ANONYMOUS": "Anonymous Student"
+    },
+    "WALLET": {
+      "AI_BALANCE": {
+        "LOADING": "Loading AI balance...",
+        "INSUFFICIENT_TITLE": "Insufficient AI Balance",
+        "CURRENT_BALANCE": "Current balance:",
+        "INSUFFICIENT_DESC_EXAM": "— Cannot generate exam without sufficient balance. Please top up first.",
+        "TOPUP_BTN": "Top Up AI Balance",
+        "AVAILABLE_BALANCE": "Available AI Balance:",
+        "CARD_TITLE": "AI Balance",
+        "LOW_BADGE": "Low Balance ⚠️",
+        "PLATFORM_DEDICATED": "Platform Only",
+        "INSUFFICIENT_DESC_WALLET": "Your balance is insufficient to generate AI exams. Please top up to continue.",
+        "EARNED_BALANCE_TITLE": "Available Course Earnings",
+        "AVAILABLE_FOR_WITHDRAWAL": "Available for Withdrawal",
+        "WITHDRAW_INSTAPAY": "Withdraw to Instapay"
+      }
     }
   },
   "ADMIN": {

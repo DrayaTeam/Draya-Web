@@ -4,16 +4,14 @@
     [isOpen]="isCreateSectionModalVisible()"
     [classroomId]="classroomId()"
     (sectionCreated)="onSectionCreated()"
-    (modalClosed)="isCreateSectionModalVisible.set(false)">
-  </draya-create-section-modal>
+    (modalClosed)="isCreateSectionModalVisible.set(false)"></draya-create-section-modal>
 
   <!-- Edit Section Modal -->
   <draya-edit-section-modal
     [isOpen]="isEditSectionModalVisible()"
     [section]="selectedSection()"
     (sectionUpdated)="onSectionUpdated()"
-    (modalClosed)="isEditSectionModalVisible.set(false)">
-  </draya-edit-section-modal>
+    (modalClosed)="isEditSectionModalVisible.set(false)"></draya-edit-section-modal>
 
   <!-- Upload Material Modal -->
   @if (targetSectionIdForUpload()) {
@@ -21,8 +19,7 @@
       [isOpen]="isUploadModalVisible()"
       [sectionId]="targetSectionIdForUpload()!"
       (uploadSuccess)="onUploadSuccess()"
-      (cancelUpload)="isUploadModalVisible.set(false)">
-    </draya-upload-material-modal>
+      (cancelUpload)="isUploadModalVisible.set(false)"></draya-upload-material-modal>
   }
 
   <!-- Upload Version Modal -->
@@ -30,15 +27,13 @@
     [isOpen]="isUploadVersionModalVisible()"
     [material]="selectedMaterial()"
     (uploadSuccess)="onUploadVersionSuccess()"
-    (cancelUpload)="isUploadVersionModalVisible.set(false)">
-  </draya-upload-version-modal>
+    (cancelUpload)="isUploadVersionModalVisible.set(false)"></draya-upload-version-modal>
 
   <!-- Material Versions Modal -->
   <draya-material-versions-modal
     [isOpen]="isVersionsModalVisible()"
     [material]="selectedMaterial()"
-    (closeModal)="isVersionsModalVisible.set(false)">
-  </draya-material-versions-modal>
+    (closeModal)="isVersionsModalVisible.set(false)"></draya-material-versions-modal>
 
   <!-- Header Section -->
   <div class="materials-toolbar">
@@ -48,7 +43,15 @@
     </div>
     <div class="toolbar-right">
       <button class="btn-primary" (click)="openCreateSectionModal()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
@@ -68,8 +71,17 @@
     @if (!sectionsResult()?.length) {
       <div class="empty-state">
         <div class="empty-icon-wrap">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <path
+              d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
           </svg>
         </div>
         <h4 class="empty-title">{{ 'TEACHER.SECTIONS.EMPTY_TITLE' | translate }}</h4>
@@ -83,7 +95,6 @@
       <div class="sections-list">
         @for (section of sectionsResult(); track section.id) {
           <div class="section-card" [class.is-expanded]="expandedSections()[section.id]">
-            
             <!-- Section Header -->
             <div
               class="section-header"
@@ -94,7 +105,11 @@
               (keydown.space)="toggleSection(section.id)">
               <div class="sh-left">
                 <button type="button" class="sh-toggle-btn" aria-label="Toggle section">
-                  <i class="pi" [ngClass]="expandedSections()[section.id] ? 'pi-chevron-down' : 'pi-chevron-left'"></i>
+                  <i
+                    class="pi"
+                    [ngClass]="
+                      expandedSections()[section.id] ? 'pi-chevron-down' : 'pi-chevron-left'
+                    "></i>
                 </button>
                 <div class="sh-info">
                   <h4 class="sh-title">{{ section.title }}</h4>
@@ -104,14 +119,26 @@
                 </div>
               </div>
               <div class="sh-right">
-                <span class="sh-badge">{{ section.materials?.length || 0 }} {{ 'TEACHER.SECTIONS.MATERIAL_COUNT' | translate }}</span>
-                <button class="sh-action-btn" (click)="openUploadModal(section.id, $event)" title="إضافة مادة">
+                <span class="sh-badge">
+                  {{ section.materials?.length || 0 }}
+                  {{ 'TEACHER.SECTIONS.MATERIAL_COUNT' | translate }}
+                </span>
+                <button
+                  class="sh-action-btn"
+                  (click)="openUploadModal(section.id, $event)"
+                  title="إضافة مادة">
                   <i class="pi pi-plus"></i>
                 </button>
-                <button class="sh-action-btn edit-btn" (click)="openEditSectionModal(section, $event)" title="تعديل القسم">
+                <button
+                  class="sh-action-btn edit-btn"
+                  (click)="openEditSectionModal(section, $event)"
+                  title="تعديل القسم">
                   <i class="pi pi-pencil"></i>
                 </button>
-                <button class="sh-action-btn delete-btn" (click)="confirmDeleteSection(section, $event)" title="حذف القسم">
+                <button
+                  class="sh-action-btn delete-btn"
+                  (click)="confirmDeleteSection(section, $event)"
+                  title="حذف القسم">
                   <i class="pi pi-trash"></i>
                 </button>
               </div>
@@ -120,42 +147,50 @@
             <!-- Section Content (Materials) -->
             @if (expandedSections()[section.id]) {
               <div class="section-content modern-section-content">
-                @if (!section.documents?.length && !section.videos?.length && !section.exams?.length) {
+                @if (
+                  !section.documents?.length && !section.videos?.length && !section.exams?.length
+                ) {
                   <div class="section-empty">
                     <p>{{ 'TEACHER.SECTIONS.SECTION_EMPTY_MATERIALS' | translate }}</p>
                     <button class="btn-outline-sm mt-3" (click)="openUploadModal(section.id)">
-                      <i class="pi pi-plus"></i> {{ 'TEACHER.SECTIONS.ADD_MATERIAL' | translate }}
+                      <i class="pi pi-plus"></i>
+                      {{ 'TEACHER.SECTIONS.ADD_MATERIAL' | translate }}
                     </button>
                   </div>
                 } @else {
                   <div class="materials-tabs-layout">
-                    
                     <!-- Segmented Tabs Header -->
                     <div class="segmented-tabs">
                       @if (section.videos?.length) {
-                        <button class="segment-tab" 
-                                [class.active]="getSectionTab(section) === 'videos'"
-                                (click)="setSectionTab(section.id, 'videos')">
-                          <i class="pi pi-video"></i> فيديوهات الدرس
-                          <span class="tab-badge">{{section.videos?.length || 0}}</span>
+                        <button
+                          class="segment-tab"
+                          [class.active]="getSectionTab(section) === 'videos'"
+                          (click)="setSectionTab(section.id, 'videos')">
+                          <i class="pi pi-video"></i>
+                          فيديوهات الدرس
+                          <span class="tab-badge">{{ section.videos?.length || 0 }}</span>
                         </button>
                       }
-                      
+
                       @if (section.documents?.length) {
-                        <button class="segment-tab" 
-                                [class.active]="getSectionTab(section) === 'documents'"
-                                (click)="setSectionTab(section.id, 'documents')">
-                          <i class="pi pi-file-pdf"></i> مذكرات وملفات
-                          <span class="tab-badge">{{section.documents?.length || 0}}</span>
+                        <button
+                          class="segment-tab"
+                          [class.active]="getSectionTab(section) === 'documents'"
+                          (click)="setSectionTab(section.id, 'documents')">
+                          <i class="pi pi-file-pdf"></i>
+                          مذكرات وملفات
+                          <span class="tab-badge">{{ section.documents?.length || 0 }}</span>
                         </button>
                       }
 
                       @if (section.exams?.length) {
-                        <button class="segment-tab" 
-                                [class.active]="getSectionTab(section) === 'exams'"
-                                (click)="setSectionTab(section.id, 'exams')">
-                          <i class="pi pi-check-square"></i> اختبارات
-                          <span class="tab-badge">{{section.exams?.length || 0}}</span>
+                        <button
+                          class="segment-tab"
+                          [class.active]="getSectionTab(section) === 'exams'"
+                          (click)="setSectionTab(section.id, 'exams')">
+                          <i class="pi pi-check-square"></i>
+                          اختبارات
+                          <span class="tab-badge">{{ section.exams?.length || 0 }}</span>
                         </button>
                       }
                     </div>
@@ -165,7 +200,11 @@
                       @if (getSectionTab(section) === 'videos') {
                         <div class="materials-list-modern">
                           @for (material of section.videos; track material.id) {
-                            <ng-container *ngTemplateOutlet="materialRow; context: { material: material }"></ng-container>
+                            <ng-container
+                              *ngTemplateOutlet="
+                                materialRow;
+                                context: { material: material }
+                              "></ng-container>
                           }
                         </div>
                       }
@@ -173,18 +212,21 @@
                       @if (getSectionTab(section) === 'documents') {
                         <div class="materials-list-modern">
                           @for (material of section.documents; track material.id) {
-                            <ng-container *ngTemplateOutlet="materialRow; context: { material: material }"></ng-container>
+                            <ng-container
+                              *ngTemplateOutlet="
+                                materialRow;
+                                context: { material: material }
+                              "></ng-container>
                           }
                         </div>
                       }
-                      
+
                       @if (getSectionTab(section) === 'exams') {
                         <div class="materials-list-modern">
                           <!-- Exams logic will go here -->
                         </div>
                       }
                     </div>
-
                   </div>
                 }
               </div>
@@ -195,73 +237,82 @@
     }
   }
 
-<!-- Material Row Template -->
-<ng-template #materialRow let-material="material">
-  <div class="material-row-modern">
-    <div
-      class="row-icon-wrapper"
-      [ngClass]="{
-        'is-pdf': material.materialType === 'PDF',
-        'is-video': material.materialType === 'Video',
-        'is-link': material.materialType === 'Link'
-      }">
-      <i
-        class="pi"
+  <!-- Material Row Template -->
+  <ng-template #materialRow let-material="material">
+    <div class="material-row-modern">
+      <div
+        class="row-icon-wrapper"
         [ngClass]="{
-          'pi-file-pdf': material.materialType === 'PDF',
-          'pi-video': material.materialType === 'Video',
-          'pi-link': material.materialType === 'Link'
-        }"></i>
-    </div>
+          'is-pdf': material.materialType === 'PDF',
+          'is-video': material.materialType === 'Video',
+          'is-link': material.materialType === 'Link',
+        }">
+        <i
+          class="pi"
+          [ngClass]="{
+            'pi-file-pdf': material.materialType === 'PDF',
+            'pi-video': material.materialType === 'Video',
+            'pi-link': material.materialType === 'Link',
+          }"></i>
+      </div>
 
-    <div class="row-details flex-1">
-      <h4 class="row-title" [title]="material.title">{{ material.title }}</h4>
-      <div class="row-meta">
-        <i class="pi pi-calendar"></i>
-        <span>{{ material.createdAt | date: 'dd MMM yyyy' }}</span>
+      <div class="row-details flex-1">
+        <h4 class="row-title" [title]="material.title">{{ material.title }}</h4>
+        <div class="row-meta">
+          <i class="pi pi-calendar"></i>
+          <span>{{ material.createdAt | date: 'dd MMM yyyy' }}</span>
+        </div>
+      </div>
+
+      <div
+        class="row-actions card-menu-wrapper"
+        role="presentation"
+        tabindex="-1"
+        (click)="$event.stopPropagation()"
+        (keydown)="$event.stopPropagation()">
+        <!-- Primary quick action -->
+        <button
+          class="btn-quick-action"
+          (click)="openStream(material); $event.stopPropagation()"
+          title="فتح / تحميل">
+          <i class="pi pi-external-link"></i>
+        </button>
+
+        <!-- 3 dots menu -->
+        <button
+          class="action-btn-menu"
+          (click)="toggleMenu(material.id, $event)"
+          [attr.aria-expanded]="openMenuId() === material.id"
+          title="خيارات">
+          <i class="pi pi-ellipsis-v"></i>
+        </button>
+
+        @if (openMenuId() === material.id) {
+          <div class="custom-dropdown-menu modern-dropdown">
+            <button
+              class="dropdown-item"
+              (click)="openUploadVersionModal(material); toggleMenu(material.id, $event)">
+              <i class="pi pi-upload"></i>
+              <span class="dropdown-item-label">رفع اصدار جديد</span>
+            </button>
+            <button
+              class="dropdown-item"
+              (click)="openVersionHistoryModal(material); toggleMenu(material.id, $event)">
+              <i class="pi pi-history"></i>
+              <span class="dropdown-item-label">تاريخ الاصدارات</span>
+            </button>
+            <div class="dropdown-divider"></div>
+            <button
+              class="dropdown-item text-red-600 hover:bg-red-50"
+              (click)="confirmDeleteMaterial(material); toggleMenu(material.id, $event)">
+              <i class="pi pi-trash"></i>
+              <span class="dropdown-item-label">حذف المادة</span>
+            </button>
+          </div>
+        }
       </div>
     </div>
-
-    <div class="row-actions card-menu-wrapper"
-         role="presentation"
-         tabindex="-1"
-         (click)="$event.stopPropagation()"
-         (keydown)="$event.stopPropagation()">
-      
-      <!-- Primary quick action -->
-      <button class="btn-quick-action" (click)="openStream(material); $event.stopPropagation()" title="فتح / تحميل">
-        <i class="pi pi-external-link"></i>
-      </button>
-
-      <!-- 3 dots menu -->
-      <button
-        class="action-btn-menu"
-        (click)="toggleMenu(material.id, $event)"
-        [attr.aria-expanded]="openMenuId() === material.id"
-        title="خيارات">
-        <i class="pi pi-ellipsis-v"></i>
-      </button>
-
-      @if (openMenuId() === material.id) {
-        <div class="custom-dropdown-menu modern-dropdown">
-          <button class="dropdown-item" (click)="openUploadVersionModal(material); toggleMenu(material.id, $event)">
-            <i class="pi pi-upload"></i>
-            <span class="dropdown-item-label">رفع اصدار جديد</span>
-          </button>
-          <button class="dropdown-item" (click)="openVersionHistoryModal(material); toggleMenu(material.id, $event)">
-            <i class="pi pi-history"></i>
-            <span class="dropdown-item-label">تاريخ الاصدارات</span>
-          </button>
-          <div class="dropdown-divider"></div>
-          <button class="dropdown-item text-red-600 hover:bg-red-50" (click)="confirmDeleteMaterial(material); toggleMenu(material.id, $event)">
-            <i class="pi pi-trash"></i>
-            <span class="dropdown-item-label">حذف المادة</span>
-          </button>
-        </div>
-      }
-    </div>
-  </div>
-</ng-template>
+  </ng-template>
 
   <!-- Inline Material Preview Modal (Video & PDF) -->
   @if (activePreviewMaterial()) {
@@ -330,12 +381,14 @@
               <i class="pi pi-spin pi-spinner text-primary-600 mb-3 text-3xl"></i>
               <p>جاري تحضير المادة للمعاينة...</p>
             </div>
-                    } @else if (isProcessing()) {
+          } @else if (isProcessing()) {
             <div class="preview-processing">
-              <i class="pi pi-cloud-upload text-primary-600 mb-3 text-4xl" style="animation: bounce 2s infinite;"></i>
-              <p class="font-bold text-gray-800 text-lg">جاري معالجة الملف وتجهيزه للعرض</p>
-              <p class="text-sm text-gray-500 mt-1">يرجى الانتظار بضع ثوانٍ...</p>
-              <i class="pi pi-spin pi-spinner mt-4 text-primary-500"></i>
+              <i
+                class="pi pi-cloud-upload text-primary-600 mb-3 text-4xl"
+                style="animation: bounce 2s infinite"></i>
+              <p class="text-lg font-bold text-gray-800">جاري معالجة الملف وتجهيزه للعرض</p>
+              <p class="mt-1 text-sm text-gray-500">يرجى الانتظار بضع ثوانٍ...</p>
+              <i class="pi pi-spin pi-spinner text-primary-500 mt-4"></i>
             </div>
           } @else if (previewError()) {
             <div class="preview-error">
@@ -377,28 +430,39 @@
     </div>
   }
 
-<draya-teacher-modal
-  [isOpen]="isDeleteSectionModalOpen()"
-  title="تأكيد الحذف"
-  (modalClosed)="isDeleteSectionModalOpen.set(false)">
-  <div class="draya-form p-4">
-    <p class="text-gray-700 mb-4">هل أنت متأكد من أنك تريد حذف هذا القسم؟ سيتم حذف جميع المواد التعليمية بداخله.</p>
-  </div>
-  <div modal-footer class="flex gap-3">
-    <button class="btn-outline" (click)="isDeleteSectionModalOpen.set(false)">إلغاء</button>
-    <button class="btn-primary bg-red-600 hover:bg-red-700 border-none" (click)="executeDeleteSection()">نعم، احذف</button>
-  </div>
-</draya-teacher-modal>
+  <draya-teacher-modal
+    [isOpen]="isDeleteSectionModalOpen()"
+    title="تأكيد الحذف"
+    (modalClosed)="isDeleteSectionModalOpen.set(false)">
+    <div class="draya-form p-4">
+      <p class="mb-4 text-gray-700">
+        هل أنت متأكد من أنك تريد حذف هذا القسم؟ سيتم حذف جميع المواد التعليمية بداخله.
+      </p>
+    </div>
+    <div modal-footer class="flex gap-3">
+      <button class="btn-outline" (click)="isDeleteSectionModalOpen.set(false)">إلغاء</button>
+      <button
+        class="btn-primary border-none bg-red-600 hover:bg-red-700"
+        (click)="executeDeleteSection()">
+        نعم، احذف
+      </button>
+    </div>
+  </draya-teacher-modal>
 
-<draya-teacher-modal
-  [isOpen]="isDeleteMaterialModalOpen()"
-  title="تأكيد الحذف"
-  (modalClosed)="isDeleteMaterialModalOpen.set(false)">
-  <div class="draya-form p-4">
-    <p class="text-gray-700 mb-4">هل أنت متأكد من أنك تريد حذف هذه المادة؟</p>
-  </div>
-  <div modal-footer class="flex gap-3">
-    <button class="btn-outline" (click)="isDeleteMaterialModalOpen.set(false)">إلغاء</button>
-    <button class="btn-primary bg-red-600 hover:bg-red-700 border-none" (click)="executeDeleteMaterial()">نعم، احذف</button>
-  </div>
-</draya-teacher-modal>
+  <draya-teacher-modal
+    [isOpen]="isDeleteMaterialModalOpen()"
+    title="تأكيد الحذف"
+    (modalClosed)="isDeleteMaterialModalOpen.set(false)">
+    <div class="draya-form p-4">
+      <p class="mb-4 text-gray-700">هل أنت متأكد من أنك تريد حذف هذه المادة؟</p>
+    </div>
+    <div modal-footer class="flex gap-3">
+      <button class="btn-outline" (click)="isDeleteMaterialModalOpen.set(false)">إلغاء</button>
+      <button
+        class="btn-primary border-none bg-red-600 hover:bg-red-700"
+        (click)="executeDeleteMaterial()">
+        نعم، احذف
+      </button>
+    </div>
+  </draya-teacher-modal>
+</div>

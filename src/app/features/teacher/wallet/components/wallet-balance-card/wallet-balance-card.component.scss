@@ -12,10 +12,16 @@
 
 .stripe-card {
   background-color: #ffffff;
-  border: 1px solid #e5e7eb; /* Very thin, sharp light gray border */
-  border-radius: 8px; /* Structured, tighter radius */
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
+  transition: border-color 200ms ease;
+
+  &.ai-card-warning {
+    border-color: #FDE68A;
+    background-color: #FFFEF7;
+  }
 }
 
 .card-top {
@@ -47,8 +53,21 @@
 }
 
 .ai-indicator {
-  color: #4f46e5;
-  background-color: #e0e7ff;
+  color: #7C3AED;
+  background-color: #F7F3FF;
+}
+
+.low-balance-badge {
+  color: #B45309;
+  background-color: #FFFBEB;
+  border: 1px solid #FDE68A;
+  font-weight: 600;
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
 }
 
 .card-amount-row {
@@ -63,6 +82,24 @@
   color: #111827;
   line-height: 1;
   letter-spacing: -0.5px;
+
+  &.amount-zero {
+    color: #B45309;
+  }
+}
+
+.ai-icon-inline {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 4px;
+  color: #7C3AED;
+  flex-shrink: 0;
+}
+
+.card-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .currency {
@@ -102,6 +139,26 @@
   &:active {
     background-color: #e5e7eb;
   }
+
+  &.ai-topup-btn {
+    border-color: #7C3AED;
+    color: #7C3AED;
+
+    &:hover {
+      background-color: #F7F3FF;
+    }
+  }
+}
+
+.low-balance-hint {
+  font-size: 0.75rem;
+  color: #92400E;
+  margin-top: 8px;
+  line-height: 1.5;
+  padding: 8px 10px;
+  background-color: #FEF3C7;
+  border-radius: 6px;
+  border-right: 3px solid #F59E0B;
 }
 
 .animate-fade-in {

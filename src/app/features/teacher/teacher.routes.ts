@@ -75,25 +75,19 @@ export const teacherRoutes: Routes = [
       {
         path: 'exams/:id/review',
         loadComponent: () =>
-          import('./exams/review-exam/review-exam.component').then(
-            (m) => m.ReviewExamComponent,
-          ),
+          import('./exams/review-exam/review-exam.component').then((m) => m.ReviewExamComponent),
         title: 'مراجعة الامتحان — درايَة',
       },
       {
         path: 'channel',
         loadComponent: () =>
-          import('./channel/teacher-channel.component').then(
-            (m) => m.TeacherChannelComponent,
-          ),
+          import('./channel/teacher-channel.component').then((m) => m.TeacherChannelComponent),
         title: 'الأسئلة والنقاش',
       },
       {
         path: 'feedback',
         loadComponent: () =>
-          import('./feedback/teacher-feedback.component').then(
-            (m) => m.TeacherFeedbackComponent,
-          ),
+          import('./feedback/teacher-feedback.component').then((m) => m.TeacherFeedbackComponent),
         title: 'آراء وملاحظات — درايَة',
       },
       {

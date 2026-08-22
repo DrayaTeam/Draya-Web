@@ -1,12 +1,7 @@
 <aside [class.mobile-open]="isOpenMobile()" class="teacher-sidebar-root">
   <!-- Top Brand Box -->
   <div class="sidebar-header">
-    <draya-logo
-      size="sm"
-      textColor="primary"
-      [linkable]="false"
-      titleText="درايا">
-    </draya-logo>
+    <draya-logo size="sm" textColor="primary" [linkable]="false" titleText="درايا"></draya-logo>
 
     <!-- Mobile Close Button -->
     <button type="button" (click)="closeMobile.emit()" class="mobile-close-btn" aria-label="إغلاق">

@@ -1,30 +1,37 @@
 @if (isLoading()) {
   <div class="flex flex-col items-center justify-center py-20">
-    <i class="pi pi-spinner pi-spin text-4xl text-[#1B6D63] mb-4"></i>
+    <i class="pi pi-spinner pi-spin mb-4 text-4xl text-[#1B6D63]"></i>
     <p class="text-gray-500">جاري تحميل الامتحانات...</p>
   </div>
 } @else if (error()) {
-  <div class="p-6 bg-red-50 text-red-600 rounded-2xl flex items-center gap-3">
+  <div class="flex items-center gap-3 rounded-2xl bg-red-50 p-6 text-red-600">
     <i class="pi pi-exclamation-circle text-xl"></i>
     {{ error() }}
   </div>
 } @else {
-
   <!-- Header Controls -->
-  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+  <div class="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
     <!-- Section Filter -->
     @if (sections().length > 0) {
-      <div class="flex flex-wrap items-center gap-2 p-1 bg-gray-50 rounded-xl w-max">
-        <button 
-          class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-          [class]="selectedSectionId() === null ? 'bg-white text-[#1B6D63] shadow-sm' : 'text-gray-600 hover:bg-gray-100'"
+      <div class="flex w-max flex-wrap items-center gap-2 rounded-xl bg-gray-50 p-1">
+        <button
+          class="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+          [class]="
+            selectedSectionId() === null
+              ? 'bg-white text-[#1B6D63] shadow-sm'
+              : 'text-gray-600 hover:bg-gray-100'
+          "
           (click)="selectSection(null)">
           الكل
         </button>
         @for (section of sections(); track section.id) {
-          <button 
-            class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-            [class]="selectedSectionId() === section.id ? 'bg-white text-[#1B6D63] shadow-sm' : 'text-gray-600 hover:bg-gray-100'"
+          <button
+            class="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+            [class]="
+              selectedSectionId() === section.id
+                ? 'bg-white text-[#1B6D63] shadow-sm'
+                : 'text-gray-600 hover:bg-gray-100'
+            "
             (click)="selectSection(section.id)">
             {{ section.title }}
           </button>
@@ -33,52 +40,74 @@
     } @else {
       <div></div>
     }
-    
+
     <!-- Generate Button -->
-    <a routerLink="/teacher/exams/generate" class="inline-flex items-center gap-2 px-4 py-2 bg-[#7C3AED]/10 text-[#7C3AED] rounded-lg font-bold hover:bg-[#7C3AED]/20 transition-all text-sm shrink-0 border border-[#7C3AED]/20">
-      <i class="pi pi-sparkles"></i> توليد امتحان جديد
+    <a
+      routerLink="/teacher/exams/generate"
+      class="inline-flex shrink-0 items-center gap-2 rounded-lg border border-[#7C3AED]/20 bg-[#7C3AED]/10 px-4 py-2 text-sm font-bold text-[#7C3AED] transition-all hover:bg-[#7C3AED]/20">
+      <i class="pi pi-sparkles"></i>
+      توليد امتحان جديد
     </a>
   </div>
 
   @if (filteredExams().length === 0) {
-    <div class="text-center py-20 bg-gray-50 rounded-3xl border border-gray-100 border-dashed">
-      <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm text-gray-400">
+    <div class="rounded-3xl border border-dashed border-gray-100 bg-gray-50 py-20 text-center">
+      <div
+        class="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-white text-gray-400 shadow-sm">
         <i class="pi pi-file-edit text-3xl"></i>
       </div>
-      <h3 class="text-xl font-medium text-gray-900 mb-2">
+      <h3 class="mb-2 text-xl font-medium text-gray-900">
         {{ selectedSectionId() ? 'لا توجد امتحانات في هذه الوحدة' : 'لا توجد امتحانات' }}
       </h3>
-      <p class="text-gray-500 mb-6">لم تقم بإنشاء أي امتحانات بعد.</p>
-      <a routerLink="/teacher/exams/generate" class="inline-flex items-center gap-2 text-[#1B6D63] font-medium hover:underline">
-        قم بإنشاء امتحانك الأول <i class="pi pi-arrow-left text-sm"></i>
+      <p class="mb-6 text-gray-500">لم تقم بإنشاء أي امتحانات بعد.</p>
+      <a
+        routerLink="/teacher/exams/generate"
+        class="inline-flex items-center gap-2 font-medium text-[#1B6D63] hover:underline">
+        قم بإنشاء امتحانك الأول
+        <i class="pi pi-arrow-left text-sm"></i>
       </a>
     </div>
   } @else {
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       @for (exam of filteredExams(); track exam.id) {
-        <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm transition-all hover:shadow-md hover:border-[#1B6D63]/20 flex flex-col justify-between items-start h-full">
+        <div
+          class="flex h-full flex-col items-start justify-between rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all hover:border-[#1B6D63]/20 hover:shadow-md">
           <div class="w-full">
-            <div class="flex items-start justify-between w-full mb-3">
-              <h3 class="font-bold text-gray-900 text-lg line-clamp-2">{{ exam.topic || 'بدون عنوان' }}</h3>
-              <span class="px-2 py-1 bg-gray-50 text-gray-600 text-[10px] font-bold rounded-md whitespace-nowrap mr-3 border border-gray-100">
-                {{ exam.difficultyLevel === 'Easy' ? 'سهل' : exam.difficultyLevel === 'Medium' ? 'متوسط' : exam.difficultyLevel === 'Hard' ? 'صعب' : exam.difficultyLevel }}
+            <div class="mb-3 flex w-full items-start justify-between">
+              <h3 class="line-clamp-2 text-lg font-bold text-gray-900">
+                {{ exam.topic || 'بدون عنوان' }}
+              </h3>
+              <span
+                class="mr-3 rounded-md border border-gray-100 bg-gray-50 px-2 py-1 text-[10px] font-bold whitespace-nowrap text-gray-600">
+                {{
+                  exam.difficultyLevel === 'Easy'
+                    ? 'سهل'
+                    : exam.difficultyLevel === 'Medium'
+                      ? 'متوسط'
+                      : exam.difficultyLevel === 'Hard'
+                        ? 'صعب'
+                        : exam.difficultyLevel
+                }}
               </span>
             </div>
-            
-            <div class="flex items-center gap-3 text-xs text-gray-500 mb-5">
-              <span class="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded">
+
+            <div class="mb-5 flex items-center gap-3 text-xs text-gray-500">
+              <span class="flex items-center gap-1.5 rounded bg-gray-50 px-2 py-1">
                 <i class="pi pi-list text-gray-400"></i>
                 {{ exam.totalQuestions }} أسئلة
               </span>
-              <span class="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded">
+              <span class="flex items-center gap-1.5 rounded bg-gray-50 px-2 py-1">
                 <i class="pi pi-calendar text-gray-400"></i>
-                {{ exam.createdAt | date:'shortDate' }}
+                {{ exam.createdAt | date: 'shortDate' }}
               </span>
             </div>
           </div>
-          
-          <a [routerLink]="['/teacher/exams', exam.id, 'review']" class="mt-auto w-full inline-flex justify-center items-center gap-2 px-4 py-2 bg-gray-50 text-[#1B6D63] rounded-xl font-medium hover:bg-[#f0f9f8] transition-colors border border-gray-100 hover:border-[#1B6D63]/20">
-            <i class="pi pi-pencil text-sm"></i> عرض وتعديل
+
+          <a
+            [routerLink]="['/teacher/exams', exam.id, 'review']"
+            class="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-4 py-2 font-medium text-[#1B6D63] transition-colors hover:border-[#1B6D63]/20 hover:bg-[#f0f9f8]">
+            <i class="pi pi-pencil text-sm"></i>
+            عرض وتعديل
           </a>
         </div>
       }

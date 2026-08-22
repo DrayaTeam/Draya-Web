@@ -1,4 +1,13 @@
-import { Component, ChangeDetectionStrategy, inject, input, signal, computed, effect, untracked } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  input,
+  signal,
+  computed,
+  effect,
+  untracked,
+} from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
@@ -21,7 +30,7 @@ export class ClassroomExamsComponent {
   private readonly sectionService = inject(SectionService);
 
   readonly classroomId = input.required<string>();
-  
+
   readonly exams = signal<TeacherExamDto[]>([]);
   readonly sections = signal<ClassroomSectionDto[]>([]);
   readonly selectedSectionId = signal<string | null>(null);
@@ -33,15 +42,16 @@ export class ClassroomExamsComponent {
     const sectionId = this.selectedSectionId();
     const allExams = this.exams();
     if (!sectionId) return allExams;
-    
-    const activeSection = this.sections().find(s => s.id === sectionId);
-    
-    return allExams.filter(e => {
+
+    const activeSection = this.sections().find((s) => s.id === sectionId);
+
+    return allExams.filter((e) => {
       if (e.sectionId === sectionId) return true;
       if (!e.sectionId && activeSection && e.topic) {
         const topicLower = e.topic.toLowerCase();
         const sectionTitleLower = activeSection.title.toLowerCase();
-        if (topicLower.includes(sectionTitleLower) || sectionTitleLower.includes(topicLower)) return true;
+        if (topicLower.includes(sectionTitleLower) || sectionTitleLower.includes(topicLower))
+          return true;
       }
       return false;
     });
@@ -65,7 +75,9 @@ export class ClassroomExamsComponent {
 
     forkJoin({
       examsRes: this.examService.getExams(this.classroomId()).pipe(catchError(() => of(null))),
-      sectionsRes: this.sectionService.getSections(this.classroomId()).pipe(catchError(() => of([])))
+      sectionsRes: this.sectionService
+        .getSections(this.classroomId())
+        .pipe(catchError(() => of([]))),
     }).subscribe({
       next: ({ examsRes, sectionsRes }) => {
         const sections = sectionsRes || [];
@@ -82,7 +94,7 @@ export class ClassroomExamsComponent {
           if (s.exams && Array.isArray(s.exams)) {
             s.exams.forEach((sectionExam) => {
               const examObj = sectionExam as { id?: string; examId?: string } | string;
-              const examId = typeof examObj === 'string' ? examObj : (examObj.id || examObj.examId);
+              const examId = typeof examObj === 'string' ? examObj : examObj.id || examObj.examId;
               const match = extractedExams.find((e) => e.id === examId);
               if (match) match.sectionId = s.id;
             });
@@ -95,7 +107,7 @@ export class ClassroomExamsComponent {
       error: () => {
         this.error.set('حدث خطأ أثناء تحميل البيانات');
         this.isLoading.set(false);
-      }
+      },
     });
   }
 

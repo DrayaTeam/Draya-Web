@@ -1,8 +1,8 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
-import { Observable, of, forkJoin } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { ClassroomService } from './classroom.service';
-import { TeacherExamService } from './teacher-exam.service';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
 import type {
   TeacherKpiStat,
   TeacherAiAlertBanner,
@@ -10,12 +10,13 @@ import type {
   RecentSubmission,
   SubmissionsChartMeta,
   SubmissionChartPoint,
+  TeacherDashboardDto,
 } from '../models/teacher-dashboard.model';
 
 @Injectable({ providedIn: 'root' })
 export class TeacherDashboardService {
-  private readonly classroomService = inject(ClassroomService);
-  private readonly examService = inject(TeacherExamService);
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = `${environment.apiBaseUrl}/dashboard/teacher`;
 
   // 🟢 Signals State 🟢──────────────────────────────────────────────────────────
   private readonly _aiAlert = signal<TeacherAiAlertBanner | null>(null);
@@ -63,10 +64,31 @@ export class TeacherDashboardService {
   readonly chartMeta = computed<SubmissionsChartMeta>(() => {
     const range = this._timeRange();
     const points = this._weeklyChartPoints();
+    
+    if (!points || points.length === 0) {
+      return {
+        totalSubmissions: 0,
+        averagePerformance: 0,
+        peakDayKey: 'SHARED.TIME.NONE',
+        timeRange: range,
+        chartPoints: points,
+      };
+    }
+
+    const totalSubmissions = points.reduce((sum, p) => sum + p.submissionsCount, 0);
+    const avgScoreSum = points.reduce((sum, p) => sum + p.averageScore, 0);
+    const rawAverage = avgScoreSum / points.length;
+    // Assuming scores are out of 5, convert to percentage for the UI
+    const averagePerformance = Math.round((rawAverage / 5) * 100);
+    
+    const peakPoint = points.reduce((prev, current) => 
+      (prev.submissionsCount > current.submissionsCount) ? prev : current
+    );
+
     return {
-      totalSubmissions: 0,
-      averagePerformance: 0,
-      peakDayKey: '',
+      totalSubmissions,
+      averagePerformance,
+      peakDayKey: peakPoint.dayNameKey,
       timeRange: range,
       chartPoints: points,
     };
@@ -84,53 +106,89 @@ export class TeacherDashboardService {
   }
 
   getDashboardData(): Observable<boolean> {
-    forkJoin({
-      classrooms: this.classroomService
-        .getTeacherClassrooms(1, 100)
-        .pipe(catchError(() => of(null))),
-      exams: this.examService.getExams(undefined, 1, 100).pipe(catchError(() => of(null))),
-    }).subscribe(({ classrooms, exams }) => {
-      let activeStudents = 0;
-      let totalExams = 0;
+    return this.http.get<TeacherDashboardDto>(this.baseUrl).pipe(
+      map((data) => {
+        // Update KPI Stats
+        this._kpiStats.update((stats) => {
+          const newStats = [...stats];
+          const studentIdx = newStats.findIndex((s) => s.id === 'active_students');
+          if (studentIdx > -1) {
+            newStats[studentIdx] = { ...newStats[studentIdx], value: data.activeStudents.toString() };
+          }
+          const avgIdx = newStats.findIndex((s) => s.id === 'class_avg');
+          if (avgIdx > -1) {
+            // Formatting the class average to 1 decimal place max
+            const avg = Number.isInteger(data.classAverage) ? data.classAverage : data.classAverage.toFixed(1);
+            newStats[avgIdx] = { ...newStats[avgIdx], value: `${avg}` };
+          }
+          const examIdx = newStats.findIndex((s) => s.id === 'pending_exams');
+          if (examIdx > -1) {
+            newStats[examIdx] = { ...newStats[examIdx], value: data.examsAwaitingReview.toString() };
+          }
+          const msgIdx = newStats.findIndex((s) => s.id === 'new_messages');
+          if (msgIdx > -1) {
+            newStats[msgIdx] = { ...newStats[msgIdx], value: data.newMessagesCount.toString() };
+          }
+          return newStats;
+        });
 
-      if (classrooms && classrooms.items) {
-        activeStudents = classrooms.items.reduce((acc, c) => acc + (c.studentCount || 0), 0);
-      }
-
-      if (exams) {
-        if (Array.isArray(exams)) {
-          totalExams = exams.length;
-        } else if (
-          typeof exams === 'object' &&
-          exams !== null &&
-          'totalCount' in exams &&
-          typeof (exams as { totalCount: number }).totalCount === 'number'
-        ) {
-          totalExams = (exams as { totalCount: number }).totalCount;
-        } else if (
-          typeof exams === 'object' &&
-          exams !== null &&
-          'items' in exams &&
-          Array.isArray((exams as { items: unknown[] }).items)
-        ) {
-          totalExams = (exams as { items: unknown[] }).items.length;
+        // Update AI Alert Banner if reports ready for review > 0
+        if (data.reportsReadyForReview > 0) {
+          this._aiAlert.set({
+            titleKey: 'TEACHER.DASHBOARD.AI_REPORTS_READY',
+            subtitleKey: 'TEACHER.DASHBOARD.AI_REPORTS_READY_DESC',
+            reportsCount: data.reportsReadyForReview,
+            ctaKey: 'TEACHER.DASHBOARD.VIEW_REPORTS',
+          });
+        } else {
+          this._aiAlert.set(null);
         }
-      }
 
-      this._kpiStats.update((stats) => {
-        const newStats = [...stats];
-        const studentIdx = newStats.findIndex((s) => s.id === 'active_students');
-        if (studentIdx > -1) {
-          newStats[studentIdx] = { ...newStats[studentIdx], value: activeStudents.toString() };
-        }
-        const examIdx = newStats.findIndex((s) => s.id === 'pending_exams');
-        if (examIdx > -1) {
-          newStats[examIdx] = { ...newStats[examIdx], value: totalExams.toString() };
-        }
-        return newStats;
-      });
-    });
+        // Update Students Needing Followup
+        const studentsNeedingFollowup: StudentNeedFollowup[] = data.needsAttentionList.map(s => {
+          const names = s.studentName.split(' ');
+          const initials = names.length > 1 ? names[0].charAt(0) + names[1].charAt(0) : names[0].charAt(0);
+          return {
+            id: s.studentId,
+            studentName: s.studentName,
+            initials: initials.toUpperCase(),
+            courseName: 'عام', // Or map from backend if provided in future
+            averageScore: Number(s.overallAverage.toFixed(1)),
+            riskLevel: s.overallAverage < 2.5 ? 'high' : 'medium',
+          };
+        });
+        this._studentsNeedingFollowup.set(studentsNeedingFollowup);
 
-    return of(true);
+        // Update Recent Submissions
+        const recentSubmissions: RecentSubmission[] = data.recentSubmissions.map(s => {
+          const names = s.studentName.split(' ');
+          const initials = names.length > 1 ? names[0].charAt(0) + names[1].charAt(0) : names[0].charAt(0);
+          return {
+            id: s.examAttemptId,
+            studentName: s.studentName,
+            initials: initials.toUpperCase(),
+            timeAgoKey: 'SHARED.TIME.RECENTLY', // You can add logic to format date to timeAgo
+            examTitle: s.examTitle,
+            score: s.score,
+            gradeType: s.score >= 4 ? 'excellent' : s.score >= 2.5 ? 'good' : 'average',
+          };
+        });
+        this._recentSubmissions.set(recentSubmissions);
+
+        // Update Weekly Chart Points
+        const chartPoints: SubmissionChartPoint[] = data.weeklySubmissionsActivity.map(w => ({
+          dayNameKey: w.dayOfWeek,
+          submissionsCount: w.submissionsCount,
+          averageScore: Number(w.averageScore.toFixed(1)),
+        }));
+        this._weeklyChartPoints.set(chartPoints);
+
+        return true;
+      }),
+      catchError((error) => {
+        console.error('Error fetching teacher dashboard data', error);
+        return of(false);
+      })
+    );
   }
 }

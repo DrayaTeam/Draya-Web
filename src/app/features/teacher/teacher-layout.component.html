@@ -11,13 +11,14 @@
 
   <!-- Main Content Container -->
   <div class="teacher-main-viewport relative">
-    
     <!-- Floating Theme/Locale Controls (Desktop Only) -->
-    <div class="hidden lg:flex absolute top-4 left-4 z-40 items-center gap-2" [dir]="localeService.locale() === 'ar' ? 'rtl' : 'ltr'">
+    <div
+      class="absolute top-4 left-4 z-40 hidden items-center gap-2 lg:flex"
+      [dir]="localeService.locale() === 'ar' ? 'rtl' : 'ltr'">
       <button
         type="button"
         (click)="themeService.toggleTheme()"
-        class="w-10 h-10 rounded-full bg-white border border-gray-100 shadow-sm hover:bg-gray-50 flex items-center justify-center text-gray-600 transition-all">
+        class="flex h-10 w-10 items-center justify-center rounded-full border border-gray-100 bg-white text-gray-600 shadow-sm transition-all hover:bg-gray-50">
         @if (themeService.isDarkMode()) {
           <span class="text-amber-500">☀️</span>
         } @else {
@@ -27,7 +28,7 @@
       <button
         type="button"
         (click)="localeService.toggle()"
-        class="h-10 px-3 rounded-full bg-white border border-gray-100 shadow-sm hover:bg-gray-50 text-sm font-bold text-gray-600 transition-all">
+        class="h-10 rounded-full border border-gray-100 bg-white px-3 text-sm font-bold text-gray-600 shadow-sm transition-all hover:bg-gray-50">
         {{ localeService.locale() === 'ar' ? 'EN' : 'عربي' }}
       </button>
     </div>
@@ -57,15 +58,17 @@
       </button>
 
       <span class="mobile-brand-title">{{ 'TEACHER.SIDEBAR.BRAND_NAME' | translate }}</span>
-      
+
       <!-- Mobile Theme/Locale Controls -->
-      <div class="flex items-center gap-2 ms-auto" [dir]="localeService.locale() === 'ar' ? 'rtl' : 'ltr'">
+      <div
+        class="ms-auto flex items-center gap-2"
+        [dir]="localeService.locale() === 'ar' ? 'rtl' : 'ltr'">
         <button
           type="button"
           (click)="themeService.toggleTheme()"
-          class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600">
+          class="flex h-8 w-8 items-center justify-center rounded-full text-gray-600 hover:bg-gray-100">
           @if (themeService.isDarkMode()) {
-            <span class="text-amber-500 text-sm">☀️</span>
+            <span class="text-sm text-amber-500">☀️</span>
           } @else {
             <span class="text-sm">🌙</span>
           }
@@ -73,7 +76,7 @@
         <button
           type="button"
           (click)="localeService.toggle()"
-          class="h-8 px-2 rounded hover:bg-gray-100 text-xs font-bold text-gray-600">
+          class="h-8 rounded px-2 text-xs font-bold text-gray-600 hover:bg-gray-100">
           {{ localeService.locale() === 'ar' ? 'EN' : 'عربي' }}
         </button>
       </div>

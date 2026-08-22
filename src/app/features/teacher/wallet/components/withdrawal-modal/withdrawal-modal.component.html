@@ -30,7 +30,7 @@
         @if (isLoadingAccounts()) {
           <div class="target-account-card mb-6 flex justify-center py-4">
             <span class="spinner-sm"></span>
-            <span class="text-sm text-gray-500 mr-2">جاري تحميل حساباتك...</span>
+            <span class="mr-2 text-sm text-gray-500">جاري تحميل حساباتك...</span>
           </div>
         } @else if (activeAccount()) {
           <div class="target-account-card mb-6">
@@ -48,28 +48,28 @@
                 <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
               </svg>
             </div>
-            
+
             <div class="flex-1">
-              <p class="account-name">
-                سيتم التحويل إلى:
-              </p>
-              
+              <p class="account-name">سيتم التحويل إلى:</p>
+
               <!-- If an account was pre-selected by parent -->
               @if (targetAccount()) {
                 <p class="font-bold text-gray-900">{{ targetAccount()?.accountName }}</p>
                 <p class="account-id" dir="ltr">{{ targetAccount()?.accountIdentifier }}</p>
-              } 
+              }
               <!-- If we fetched accounts, let the user pick -->
               @else if (accounts().length > 1) {
-                <select 
-                  class="mt-1 w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-primary-500 focus:outline-none"
+                <select
+                  class="focus:border-primary-500 mt-1 w-full rounded-lg border border-gray-300 p-2 text-sm focus:outline-none"
                   [ngModel]="selectedAccountId() || activeAccount()?.id"
                   (ngModelChange)="selectedAccountId.set($event)">
                   @for (acc of accounts(); track acc.id) {
-                    <option [value]="acc.id">{{ acc.accountName }} ({{ acc.accountIdentifier }})</option>
+                    <option [value]="acc.id">
+                      {{ acc.accountName }} ({{ acc.accountIdentifier }})
+                    </option>
                   }
                 </select>
-              } 
+              }
               <!-- Only one account exists -->
               @else {
                 <p class="font-bold text-gray-900">{{ activeAccount()?.accountName }}</p>
@@ -80,7 +80,9 @@
         } @else if (!isLoadingAccounts()) {
           <div class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-center">
             <p class="text-sm font-semibold text-red-600">لا يوجد لديك أي حسابات سحب مضافة.</p>
-            <p class="text-xs text-red-500 mt-1">يرجى إغلاق هذه النافذة وإضافة حساب إنستاباي أو حساب بنكي من قسم حسابات السحب.</p>
+            <p class="mt-1 text-xs text-red-500">
+              يرجى إغلاق هذه النافذة وإضافة حساب إنستاباي أو حساب بنكي من قسم حسابات السحب.
+            </p>
           </div>
         }
 

@@ -18,7 +18,7 @@ export class TeacherFeedbackComponent implements OnInit {
 
   readonly classrooms = signal<ClassroomDto[]>([]);
   readonly selectedClassroom = signal<ClassroomDto | null>(null);
-  
+
   readonly feedback = signal<ClassroomFeedbackSummaryDto | null>(null);
   readonly isLoadingClassrooms = signal<boolean>(true);
   readonly isLoadingFeedback = signal<boolean>(false);
@@ -42,7 +42,7 @@ export class TeacherFeedbackComponent implements OnInit {
   }
 
   toggleDropdown(): void {
-    this.isDropdownOpen.update(v => !v);
+    this.isDropdownOpen.update((v) => !v);
   }
 
   selectClassroom(classroom: ClassroomDto): void {
@@ -57,7 +57,7 @@ export class TeacherFeedbackComponent implements OnInit {
   onDropdownChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     const classId = select.value;
-    const cls = this.classrooms().find(c => c.classroomId === classId);
+    const cls = this.classrooms().find((c) => c.classroomId === classId);
     if (cls) {
       this.selectClassroom(cls);
     }
