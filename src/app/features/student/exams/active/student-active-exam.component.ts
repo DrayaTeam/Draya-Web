@@ -6,7 +6,6 @@ import {
   OnDestroy,
   HostListener,
   signal,
-  effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -75,19 +74,6 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
   readonly showSubmitConfirm = signal<boolean>(false);
   private examId = 'exam-1';
   private visibilityListener: (() => void) | null = null;
-
-  constructor() {
-    effect(() => {
-      const isSub = this.examService.isSubmitted();
-      const isLoading = this.examService.isLoading();
-      if (isSub && !isLoading) {
-        const attemptId = this.examService.currentAttemptId() || undefined;
-        this.router.navigate(['/student/exams', this.examId, 'result'], {
-          queryParams: attemptId ? { attemptId } : {},
-        });
-      }
-    });
-  }
 
   ngOnInit(): void {
     this.examId = this.route.snapshot.paramMap.get('id') || 'exam-1';
@@ -194,5 +180,8 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
       'جارٍ استخراج تقرير التحليل الذكي للدرجات والمهارات...',
     );
     this.examService.submitExam(attemptId);
+    this.router.navigate(['/student/exams', this.examId, 'result'], {
+      queryParams: attemptId ? { attemptId } : {},
+    });
   }
 }

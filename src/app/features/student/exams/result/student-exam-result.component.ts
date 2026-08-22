@@ -88,6 +88,7 @@ export class StudentExamResultComponent implements OnInit {
   }
 
   onBackToExams(): void {
+    this.examService.resetExamSession();
     this.router.navigate(['/student/exams']);
   }
 }

@@ -75,31 +75,62 @@ export class StudentExamTakingService extends ApiBaseService {
   readonly violations = signal<number>(0);
 
   /**
+   * Resets all exam state, attempts, questions, and timers to allow starting fresh exams.
+   */
+  resetExamSession(): void {
+    this.stopTimer();
+    this.isSubmitted.set(false);
+    this.currentAttemptId.set(null);
+    this.currentQuestionIndex.set(0);
+    this.isGradingInProgress.set(false);
+    this.gradingStage.set('completed');
+    this.gradingProgressPercent.set(0);
+    this.violations.set(0);
+    this.questions.set([]);
+    this.examResult.set({
+      examId: '',
+      examTitle: '',
+      scorePercentage: 0,
+      gradeLabel: 'قيد التقييم والمراجعة ⏳',
+      isPassed: false,
+      isGradingPending: true,
+      submittedAt: '',
+      weaknessTopics: [],
+      reviewQuestions: [],
+    });
+  }
+
+  /**
    * Loads real exam questions and details from the database.
    */
   loadExamSession(examId: string): Observable<boolean> {
+    this.resetExamSession();
     this.isLoading.set(true);
     this.currentExamId.set(examId);
 
     const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(examId);
-    if (isGuid) {
-      this.post<StartAttemptResponseDto>(`/attempts/start`, { examId })
-        .pipe(
+    
+    const startAttempt$ = isGuid
+      ? this.post<StartAttemptResponseDto>(`/attempts/start`, { examId }).pipe(
+          tap((att) => {
+            const id = att?.attemptId || att?.id;
+            if (id) {
+              this.currentAttemptId.set(id);
+            }
+          }),
           catchError((err) => {
             console.warn('Attempt start server notification:', err?.error?.message || err?.message || err);
             return of(null);
           }),
         )
-        .subscribe((att) => {
-          const id = att?.attemptId || att?.id;
-          if (id) {
-            this.currentAttemptId.set(id);
-          }
-        });
-    }
+      : of(null);
 
-    return this.get<StudentExamDto>(`/students/exams/${examId}`).pipe(
-      catchError(() => this.get<StudentExamDto>(`/exams/${examId}`)),
+    return startAttempt$.pipe(
+      switchMap(() =>
+        this.get<StudentExamDto>(`/students/exams/${examId}`).pipe(
+          catchError(() => this.get<StudentExamDto>(`/exams/${examId}`)),
+        ),
+      ),
       tap((exam) => {
         this.isLoading.set(false);
         if (exam?.title) {
