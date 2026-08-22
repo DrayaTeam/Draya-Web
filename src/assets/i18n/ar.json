@@ -624,6 +624,20 @@
         "AVAILABLE_FOR_WITHDRAWAL": "متاح للسحب",
         "WITHDRAW_INSTAPAY": "سحب إلى Instapay"
       }
+    },
+    "REPORTS": {
+      "TITLE": "تقارير أداء الطلاب",
+      "ANALYTICS_OVERVIEW": "مراجعة وتحليل أداء الطلاب في الامتحانات",
+      "SELECT_CLASSROOM": "اختر الفصل",
+      "SELECT_STUDENT": "اختر الطالب",
+      "STUDENT_PERFORMANCE": "تقرير أداء الطالب:",
+      "OVERALL_AVERAGE": "المتوسط العام",
+      "HIGHEST_SCORE": "أعلى درجة",
+      "COMPLETED_EXAMS": "الامتحانات المكتملة",
+      "SUBJECT_PROFICIENCY": "إتقان المواد",
+      "LATEST_REPORT": "أحدث تقرير ذكي",
+      "APPROVE_SEND": "اعتماد وإرسال التقرير",
+      "SEND_ALL": "إرسال التقارير لجميع الطلاب"
     }
   },
   "ADMIN": {
