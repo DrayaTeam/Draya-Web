@@ -77,7 +77,19 @@ export class GenerateExamComponent implements OnInit {
   readonly hasInsufficientBalance = computed(() => {
     const q = this.quota();
     if (!q) return false;
-    return q.remainingFreeExams === 0 && !q.hasSufficientBalance;
+
+    // If they have free exams, balance is irrelevant (always sufficient)
+    if (q.remainingFreeExams > 0) return false;
+
+    // Backend calculation fallback
+    if (q.hasSufficientBalance) return false;
+
+    // If backend says insufficient, check our locally aggregated wallet balance just in case
+    // it's a backend calculation issue (e.g., ignoring EarnedBalance).
+    const price = q.aiExamPrice || 20;
+    const totalBal = this.totalAvailableBalance() || 0;
+
+    return totalBal < price;
   });
 
   /** Full wallet balance from shared WalletService signal */
