@@ -38,3 +38,11 @@ export interface GenerateExamRequest {
 export interface GenerateExamResponse {
   generationId: string;
 }
+
+export interface AIExamQuotaDto {
+  freeMonthlyQuota: number;
+  freeExamsUsed: number;
+  remainingFreeQuota: number;
+  aiExamPrice: number;
+  hasSufficientBalanceForPaid: boolean;
+}

@@ -5,6 +5,7 @@ import { environment } from '../../../../environments/environment';
 import {
   GenerateExamRequest,
   GenerateExamResponse,
+  AIExamQuotaDto,
 } from '../../../core/models/exam-generation.model';
 import { GenerationProgressDto } from './exam-hub.service';
 
@@ -28,6 +29,13 @@ export class ExamGenerationService {
     };
 
     return this.http.post<GenerateExamResponse>(`${this.baseUrl}/generate`, payload);
+  }
+
+  /**
+   * Retrieves the AI Exam quota for the current teacher.
+   */
+  getAIExamQuota(): Observable<AIExamQuotaDto> {
+    return this.http.get<AIExamQuotaDto>(`${this.baseUrl}/quota`);
   }
 
   /**

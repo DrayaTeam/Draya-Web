@@ -31,6 +31,7 @@ import {
   DifficultyLevel,
   GenerateExamRequest,
   QuestionRequirement,
+  AIExamQuotaDto,
 } from '../../../../core/models/exam-generation.model';
 import { AuthService } from '../../../../features/auth/services/auth.service';
 
@@ -67,6 +68,16 @@ export class GenerateExamComponent implements OnInit {
   readonly isLoadingBalance = signal(false);
   readonly classrooms = signal<ClassroomDto[]>([]);
   readonly sections = signal<ClassroomSectionDto[]>([]);
+
+  readonly quota = signal<AIExamQuotaDto | null>(null);
+  readonly isLoadingQuota = signal(false);
+
+  /** True when user has no free quota and insufficient balance to pay */
+  readonly hasInsufficientBalance = computed(() => {
+    const q = this.quota();
+    if (!q) return false;
+    return q.remainingFreeQuota === 0 && !q.hasSufficientBalanceForPaid;
+  });
 
   /** Purchased (AI) balance from the shared WalletService signal */
   readonly purchasedBalance = this.walletService.purchasedBalance;
@@ -126,6 +137,20 @@ export class GenerateExamComponent implements OnInit {
       .subscribe({
         next: () => this.isLoadingBalance.set(false),
         error: () => this.isLoadingBalance.set(false),
+      });
+
+    this.isLoadingQuota.set(true);
+    this.examGenService
+      .getAIExamQuota()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.quota.set(res);
+          this.isLoadingQuota.set(false);
+        },
+        error: () => {
+          this.isLoadingQuota.set(false);
+        },
       });
 
     // Listen to classroom changes to load sections
