@@ -101,10 +101,8 @@ export const teacherRoutes: Routes = [
       {
         path: 'reports',
         loadComponent: () =>
-          import('./placeholder/teacher-placeholder.component').then(
-            (m) => m.TeacherPlaceholderComponent,
-          ),
-        title: 'التقارير — درايَة',
+          import('./reports/teacher-reports.component').then((m) => m.TeacherReportsComponent),
+        title: 'التقارير | دراية',
       },
       {
         path: 'subscription',
