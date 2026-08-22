@@ -561,7 +561,19 @@
       "SUBJECT_PROFICIENCY": "Subject Proficiency",
       "LATEST_REPORT": "Latest AI Report",
       "APPROVE_SEND": "Approve & Send Report",
-      "SEND_ALL": "Send Reports to All Students"
+      "SEND_ALL": "Send Reports to All Students",
+      "ACTIVE": "Active",
+      "EMPTY_TITLE": "No Data Available",
+      "EMPTY_DESC": "Please select a student to view their performance report.",
+      "NO_SUBJECTS": "No subject proficiency data available yet.",
+      "APPROVING": "Approving...",
+      "NO_LATEST_REPORT": "No AI report found for this student.",
+      "WEAK_TOPICS": "Weak Topics",
+      "NO_WEAK_TOPICS_DESC": "No weak topics data available.",
+      "COL_SUBJECT": "Subject",
+      "COL_TOPIC": "Topic",
+      "COL_PROFICIENCY": "Proficiency Level",
+      "COL_EXAMPLES": "Common Mistakes"
     }
   },
   "STUDENT": {

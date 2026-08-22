@@ -127,12 +127,12 @@ export class TeacherReportsComponent implements OnInit {
 
     this.isApproving.set(true);
     this.reportsService.approveReport(report.id).subscribe({
-      next: (res: { message?: string } | null) => {
+      next: () => {
         this.isApproving.set(false);
         this.messageService.add({
           severity: 'success',
           summary: 'نجاح',
-          detail: res?.message || 'تم اعتماد التقرير وإرساله بنجاح.',
+          detail: 'تم اعتماد وإرسال التقرير بنجاح.',
         });
       },
       error: (err) => {
