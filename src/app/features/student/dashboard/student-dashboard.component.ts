@@ -5,6 +5,8 @@ import { StudentDashboardService } from '../../../core/services/student-dashboar
 import { CourseProgressCardComponent } from './components/course-progress-card/course-progress-card.component';
 import { UpcomingExamCardComponent } from './components/upcoming-exam-card/upcoming-exam-card.component';
 import { WeaknessTopicCardComponent } from './components/weakness-topic-card/weakness-topic-card.component';
+import { DrayaEmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { DrayaCardSkeletonComponent } from '../../../shared/components/card-skeleton/card-skeleton.component';
 import { EnrolledCourseItem } from '../../../core/models/student-dashboard.model';
 import { ToastService } from '../../../core/services/toast.service';
 
@@ -16,6 +18,8 @@ import { ToastService } from '../../../core/services/toast.service';
     CourseProgressCardComponent,
     UpcomingExamCardComponent,
     WeaknessTopicCardComponent,
+    DrayaEmptyStateComponent,
+    DrayaCardSkeletonComponent,
   ],
   templateUrl: './student-dashboard.component.html',
   styleUrl: './student-dashboard.component.scss',

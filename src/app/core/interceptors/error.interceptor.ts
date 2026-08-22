@@ -131,7 +131,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (err.status === HttpStatusCode.Forbidden) {
         toastService.error('غير مسموح', 'ليس لديك الصلاحية للوصول إلى هذا المورد.');
-      } else if (err.status >= 500 && !req.url.includes('/checkout')) {
+      } else if (
+        err.status >= 500 &&
+        !req.url.includes('/checkout') &&
+        !req.url.includes('/grade')
+      ) {
         toastService.error('خطأ في الخادم', 'حدث خطأ في الخادم الداخلي، يرجى المحاولة لاحقًا.');
       }
 

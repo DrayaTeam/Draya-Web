@@ -21,16 +21,30 @@
 
   <!-- ── Loading Skeleton ──────────────────────────────────────────────────── -->
   @if (loading()) {
-    <div class="dashboard-skeleton">
+    <div class="dashboard-skeleton animate-fade-in" dir="rtl">
+      <!-- Hero Banner Skeleton -->
       <div class="skeleton-hero shimmer"></div>
-      <div class="skeleton-cards-row">
-        <div class="skeleton-card shimmer"></div>
-        <div class="skeleton-card shimmer"></div>
-        <div class="skeleton-card shimmer"></div>
+
+      <!-- Quick KPI Stats Skeletons -->
+      <draya-card-skeleton
+        type="stat"
+        [count]="3"
+        [gridClass]="'grid grid-cols-1 md:grid-cols-3 gap-4'" />
+
+      <!-- Courses Section Skeleton -->
+      <div class="mt-2 space-y-4">
+        <div class="skeleton-shimmer h-6 w-48 rounded-md"></div>
+        <draya-card-skeleton
+          type="package"
+          [count]="2"
+          [gridClass]="'grid grid-cols-1 md:grid-cols-2 gap-6'" />
       </div>
-      <div class="skeleton-course shimmer"></div>
-      <div class="skeleton-course shimmer"></div>
-      <div class="skeleton-course shimmer"></div>
+
+      <!-- Upcoming Exams & Weakness Topics Skeletons -->
+      <div class="mt-2 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <draya-card-skeleton type="exam" [count]="2" [gridClass]="'grid grid-cols-1 gap-4'" />
+        <draya-card-skeleton type="generic" [count]="2" [gridClass]="'grid grid-cols-1 gap-4'" />
+      </div>
     </div>
   }
 
@@ -281,10 +295,22 @@
 
         <!-- Loop of Course Progress Cards (Max 3) -->
         <div class="courses-cards-list">
-          @for (course of displayedCourses(); track course.id) {
-            <draya-course-progress-card
-              [course]="course"
-              (resumeWatching)="onResumeCourse($event)" />
+          @if (displayedCourses().length > 0) {
+            @for (course of displayedCourses(); track course.id) {
+              <draya-course-progress-card
+                [course]="course"
+                (resumeWatching)="onResumeCourse($event)" />
+            }
+          } @else {
+            <div class="empty-state-card rounded-2xl border border-[#EBEFEF] bg-white p-6">
+              <draya-empty-state
+                icon="course"
+                titleKey="STUDENT.DASHBOARD.EMPTY_COURSES_TITLE"
+                descriptionKey="STUDENT.DASHBOARD.EMPTY_COURSES_DESC"
+                primaryActionLabelKey="STUDENT.COURSES.BROWSE_TEACHERS"
+                primaryActionRoute="/student/teachers"
+                size="md" />
+            </div>
           }
         </div>
 
@@ -356,8 +382,14 @@
           </div>
 
           <div class="exams-list-group">
-            @for (exam of upcomingExams(); track exam.id) {
-              <draya-upcoming-exam-card [exam]="exam" />
+            @if (upcomingExams().length > 0) {
+              @for (exam of upcomingExams(); track exam.id) {
+                <draya-upcoming-exam-card [exam]="exam" />
+              }
+            } @else {
+              <div class="py-4 text-center text-sm text-[#525E5A]">
+                لا توجد اختبارات قادمة مجدولة حالياً 👍
+              </div>
             }
           </div>
 
@@ -388,8 +420,14 @@
           </div>
 
           <div class="topics-list-group">
-            @for (topic of weaknessTopics(); track topic.id) {
-              <draya-weakness-topic-card [topic]="topic" />
+            @if (weaknessTopics().length > 0) {
+              @for (topic of weaknessTopics(); track topic.id) {
+                <draya-weakness-topic-card [topic]="topic" />
+              }
+            } @else {
+              <div class="py-4 text-center text-sm text-[#059669]">
+                ✨ رائع! لم يتم رصد أي نقاط ضعف مسجلة حالياً
+              </div>
             }
           </div>
 

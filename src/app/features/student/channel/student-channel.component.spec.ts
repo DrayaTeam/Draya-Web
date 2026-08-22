@@ -3,6 +3,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
+import { provideTranslateService } from '@ngx-translate/core';
 import { signal, WritableSignal } from '@angular/core';
 import { of } from 'rxjs';
 import { StudentChannelComponent } from './student-channel.component';
@@ -134,6 +136,8 @@ describe('StudentChannelComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideTranslateService(),
+        provideRouter([]),
         { provide: StudentQaChannelService, useValue: qaServiceMock },
         { provide: StudentCoursesService, useValue: mockCoursesService },
         { provide: ToastService, useValue: toastServiceMock },

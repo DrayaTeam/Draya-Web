@@ -98,10 +98,20 @@ export class TeacherDashboardService {
       if (exams) {
         if (Array.isArray(exams)) {
           totalExams = exams.length;
-        } else if ((exams as any).totalCount !== undefined) {
-          totalExams = (exams as any).totalCount;
-        } else if ((exams as any).items) {
-          totalExams = (exams as any).items.length;
+        } else if (
+          typeof exams === 'object' &&
+          exams !== null &&
+          'totalCount' in exams &&
+          typeof (exams as { totalCount: number }).totalCount === 'number'
+        ) {
+          totalExams = (exams as { totalCount: number }).totalCount;
+        } else if (
+          typeof exams === 'object' &&
+          exams !== null &&
+          'items' in exams &&
+          Array.isArray((exams as { items: unknown[] }).items)
+        ) {
+          totalExams = (exams as { items: unknown[] }).items.length;
         }
       }
 

@@ -5,6 +5,7 @@ import { provideRouter } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { StudentExamResultComponent } from './student-exam-result.component';
 import { ToastService } from '../../../../core/services/toast.service';
+import { StudentExamTakingService } from '../../../../core/services/student-exam-taking.service';
 
 describe('StudentExamResultComponent', () => {
   let component: StudentExamResultComponent;
@@ -41,7 +42,28 @@ describe('StudentExamResultComponent', () => {
     );
   });
 
-  it('should render review cards', () => {
+  it('should render review cards when questions exist', () => {
+    const examService = TestBed.inject(StudentExamTakingService);
+    examService.examResult.set({
+      examId: 'test-1',
+      examTitle: 'Test Exam',
+      scorePercentage: 100,
+      gradeLabel: 'ممتاز',
+      isPassed: true,
+      isGradingPending: false,
+      submittedAt: 'اليوم',
+      weaknessTopics: [],
+      reviewQuestions: [
+        {
+          questionIndex: 1,
+          questionText: 'Test Question',
+          isCorrect: true,
+          studentAnswerText: 'Ans A',
+          correctAnswerText: 'Ans A',
+        },
+      ],
+    });
+    fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelectorAll('app-exam-question-review-card').length).toBeGreaterThan(0);
   });

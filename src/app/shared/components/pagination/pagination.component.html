@@ -1,0 +1,79 @@
+@if (totalItems() > 0) {
+  <div class="pagination-container" dir="rtl">
+    <!-- Summary Section -->
+    @if (showSummary()) {
+      <div class="pagination-summary">
+        <span>عرض</span>
+        <strong class="font-bold text-slate-800">
+          {{ startItemIndex() }}-{{ endItemIndex() }}
+        </strong>
+        <span>من أصل</span>
+        <strong class="font-bold text-teal-800">{{ totalItems() }}</strong>
+        <span>عنصر</span>
+      </div>
+    }
+
+    <!-- Controls Section -->
+    <div class="pagination-controls">
+      <!-- Previous Button -->
+      <button
+        type="button"
+        class="pagination-btn"
+        [disabled]="currentPage() <= 1"
+        [attr.aria-label]="'الصفحة السابقة'"
+        (click)="onPrevPage()">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+        <span class="hidden sm:inline">السابق</span>
+      </button>
+
+      <!-- Page Numbers -->
+      <div class="pagination-pages">
+        @for (p of pageNumbers(); track $index) {
+          @if (p === 'ellipsis') {
+            <span class="pagination-ellipsis">...</span>
+          } @else {
+            <button
+              type="button"
+              class="page-number-btn"
+              [class.active]="p === currentPage()"
+              [attr.aria-current]="p === currentPage() ? 'page' : null"
+              (click)="onSelectPage(p)">
+              {{ p }}
+            </button>
+          }
+        }
+      </div>
+
+      <!-- Next Button -->
+      <button
+        type="button"
+        class="pagination-btn"
+        [disabled]="currentPage() >= totalPages()"
+        [attr.aria-label]="'الصفحة التالية'"
+        (click)="onNextPage()">
+        <span class="hidden sm:inline">التالي</span>
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Page Size Selector -->
+    @if (pageSizeOptions().length > 1) {
+      <div class="page-size-selector">
+        <label for="pageSizeSelect" class="text-xs text-slate-500">لكل صفحة:</label>
+        <select
+          id="pageSizeSelect"
+          class="page-size-select"
+          [value]="pageSize()"
+          (change)="onPageSizeSelect($event)">
+          @for (size of pageSizeOptions(); track size) {
+            <option [value]="size">{{ size }}</option>
+          }
+        </select>
+      </div>
+    }
+  </div>
+}

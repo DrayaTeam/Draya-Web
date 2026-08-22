@@ -74,22 +74,27 @@ describe('StudentExamTakingService', () => {
     expect(gradeReq.request.method).toBe('POST');
     gradeReq.flush({ id: 'job-1', status: 'Pending' });
 
+    const jobReq = httpMock.expectOne((r) => r.url.includes('/attempts/jobs/job-1'));
+    expect(jobReq.request.method).toBe('GET');
+    jobReq.flush({ id: 'job-1', status: 'Completed' });
+
     const resReq = httpMock.expectOne((r) => r.url.includes('/attempts/real-attempt-1/results'));
     expect(resReq.request.method).toBe('GET');
     resReq.flush({ attemptId: 'real-attempt-1', finalScore: 80, answers: [] });
   });
 
   it('should load exam questions from database endpoint', () => {
-    service.loadExamSession('real-exam-123').subscribe();
+    const validExamId = '550e8400-e29b-41d4-a716-446655440000';
+    service.loadExamSession(validExamId).subscribe();
 
     const startReq = httpMock.expectOne((r) => r.url.includes('/attempts/start'));
     expect(startReq.request.method).toBe('POST');
     startReq.flush({ attemptId: 'real-attempt-1' });
 
-    const req = httpMock.expectOne((r) => r.url.includes('/students/exams/real-exam-123'));
+    const req = httpMock.expectOne((r) => r.url.includes(`/students/exams/${validExamId}`));
     expect(req.request.method).toBe('GET');
     req.flush({
-      id: 'real-exam-123',
+      id: validExamId,
       title: 'Auto-Generated Exam: rxjs',
       topic: 'rxjs',
       questions: [

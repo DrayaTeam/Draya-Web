@@ -23,21 +23,33 @@ export class StudentExamResultComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
 
   readonly resultReport = this.examService.examResult;
+  private attemptId: string | null = null;
 
   ngOnInit(): void {
-    const attemptIdParam = this.route.snapshot.queryParams['attemptId'];
-    if (attemptIdParam) {
-      this.examService.fetchAttemptResults(attemptIdParam).subscribe();
+    const examId = this.route.snapshot.params['id'];
+    this.attemptId =
+      this.route.snapshot.queryParams['attemptId'] ||
+      this.examService.currentAttemptId() ||
+      this.examService.examResult().attemptId ||
+      null;
 
-      // Poll once after 2.5s to ensure AI background grading has updated
-      setTimeout(() => {
-        this.examService.fetchAttemptResults(attemptIdParam).subscribe();
-      }, 2500);
+    if (examId && this.examService.questions().length === 0) {
+      this.examService.getExamDetails(examId).subscribe(() => {
+        this.loadResultsData();
+      });
+    } else {
+      this.loadResultsData();
+    }
+  }
+
+  private loadResultsData(): void {
+    if (this.attemptId && !this.attemptId.startsWith('att_')) {
+      this.examService.fetchAttemptResults(this.attemptId).subscribe();
     } else {
       const scoreParam = this.route.snapshot.queryParams['score'];
-      if (scoreParam !== undefined && scoreParam !== null) {
+      if (scoreParam !== undefined && scoreParam !== null && scoreParam !== '') {
         const numericScore = Number(scoreParam);
-        if (!isNaN(numericScore)) {
+        if (!isNaN(numericScore) && numericScore > 0) {
           let gradeLabel = 'راسب — ضعيف جداً';
           if (numericScore >= 85) gradeLabel = 'ممتاز جداً 🌟';
           else if (numericScore >= 65) gradeLabel = 'جيد جداً 👍';
@@ -48,9 +60,41 @@ export class StudentExamResultComponent implements OnInit {
             scorePercentage: numericScore,
             gradeLabel,
             isPassed: numericScore >= 50,
+            isGradingPending: false,
           }));
         }
       }
+    }
+  }
+
+  onRecheckResult(): void {
+    const examId = this.route.snapshot.params['id'];
+    const activeAttemptId =
+      this.attemptId ||
+      this.examService.currentAttemptId() ||
+      this.examService.examResult().attemptId ||
+      null;
+
+    if (activeAttemptId && !activeAttemptId.startsWith('att_')) {
+      this.toastService.info('جارٍ التحقق...', 'يتم الآن فحص أحدث تقرير تصحيح من الخادم.');
+      this.examService.isGradingInProgress.set(true);
+      this.examService.gradingStage.set('ai_evaluating');
+      this.examService.gradingProgressPercent.set(50);
+      this.examService.pollAttemptResultsDirectly(activeAttemptId, 3);
+    } else if (examId) {
+      this.toastService.info('جارٍ التحقق...', 'يتم الآن فحص وتحديث بيانات الامتحان من الخادم.');
+      this.examService.getExamDetails(examId).subscribe(() => {
+        this.loadResultsData();
+      });
+    } else {
+      this.toastService.info(
+        'تم اعتماد النتيجة',
+        'تم احتساب واعتماد نتيجة إجاباتك للاختبار الحالي بنجاح.',
+      );
+      this.examService.examResult.update((current) => ({
+        ...current,
+        isGradingPending: false,
+      }));
     }
   }
 
@@ -61,6 +105,7 @@ export class StudentExamResultComponent implements OnInit {
   }
 
   onBackToExams(): void {
+    this.examService.resetExamSession();
     this.router.navigate(['/student/exams']);
   }
 }

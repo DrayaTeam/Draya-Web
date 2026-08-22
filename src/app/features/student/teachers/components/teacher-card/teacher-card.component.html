@@ -7,10 +7,11 @@
     <!-- Avatar Section with Verified Badge -->
     <div class="avatar-wrapper">
       <img
-        [src]="teacher().avatarUrl"
+        [src]="teacher().avatarUrl || defaultAvatar"
         [alt]="teacher().name"
         class="teacher-avatar-img"
-        loading="lazy" />
+        loading="lazy"
+        (error)="onAvatarError($event)" />
       @if (teacher().isVerified) {
         <span class="verified-badge" title="معلم موثوق">
           <svg
