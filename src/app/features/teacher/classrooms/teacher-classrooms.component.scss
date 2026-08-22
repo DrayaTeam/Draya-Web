@@ -1,4 +1,4 @@
-/* src/app/features/teacher/classrooms/teacher-classrooms.component.scss */
+﻿/* src/app/features/teacher/classrooms/teacher-classrooms.component.scss */
 .classrooms-container {
   display: flex;
   flex-direction: column;
@@ -308,78 +308,7 @@
   }
 }
 
-.course-tags {
-  display: flex;
-  gap: 6px;
-  margin-top: 4px;
-}
 
-.stats-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: auto;
-  margin-bottom: 8px;
-
-  .stat-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.8125rem;
-    color: #64748b;
-    font-weight: 600;
-
-    .stat-icon-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-
-      &.code {
-        background: #f1f5f9;
-        color: #475569;
-      }
-      &.students {
-        background: #eff6ff;
-        color: #2563eb;
-      }
-      &.price {
-        background: #f0fdf4;
-        color: #16a34a;
-      }
-    }
-  }
-}
-
-.info-bottom-row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100%;
-}
-
-.btn-resume {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: #1b6d63;
-  color: #ffffff;
-  border: none;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 700;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background 150ms ease;
-  text-decoration: none;
-
-  &:hover {
-    background: #134e48;
-  }
-}
 
 .pagination-wrapper {
   display: flex;
@@ -860,3 +789,4 @@
   background: #f1f5f9;
   margin: 4px 0;
 }
+
