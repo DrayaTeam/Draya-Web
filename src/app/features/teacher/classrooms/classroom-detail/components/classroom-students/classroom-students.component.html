@@ -1,4 +1,4 @@
-<!-- src/app/features/teacher/classrooms/classroom-detail/components/classroom-students/classroom-students.component.html -->
+﻿<!-- src/app/features/teacher/classrooms/classroom-detail/components/classroom-students/classroom-students.component.html -->
 <div class="roster-container">
   <!-- Table Header Toolbar -->
   <div class="table-toolbar">
@@ -19,7 +19,7 @@
           class="search-input"
           placeholder="ابحث عن طالب..."
           [ngModel]="searchTerm()"
-          (ngModelChange)="searchTerm.set($event); onSearchChange()"
+          (ngModelChange)="searchTerm.set($event)"
         />
         <div class="search-shortcut hidden sm:flex">
           <kbd>Ctrl</kbd>

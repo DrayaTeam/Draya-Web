@@ -1,5 +1,5 @@
 // src/app/features/teacher/classrooms/classroom-detail/components/classroom-students/classroom-students.component.ts
-import { Component, ChangeDetectionStrategy, input, inject, signal, effect } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, inject, signal, effect, computed } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { TableModule, TableLazyLoadEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -29,13 +29,28 @@ export class ClassroomStudentsComponent {
   private readonly classroomService = inject(ClassroomService);
   private readonly messageService = inject(MessageService, { optional: true });
 
-  readonly rosterResult = signal<StudentRosterItemDtoPagedResult | null>(null);
+  readonly rawRosterResult = signal<StudentRosterItemDtoPagedResult | null>(null);
   readonly isLoading = signal<boolean>(false);
 
   // Search & Pagination state
   readonly searchTerm = signal<string>('');
   pageNumber = 1;
   pageSize = 10;
+
+  readonly rosterResult = computed(() => {
+    const res = this.rawRosterResult();
+    if (!res) return null;
+
+    const term = this.searchTerm().trim().toLowerCase();
+    if (!term) return res;
+
+    const filteredItems = res.items.filter(s => s.fullName.toLowerCase().includes(term));
+    return {
+      ...res,
+      items: filteredItems,
+      totalCount: filteredItems.length
+    };
+  });
 
   // Modal State
   readonly isRemoveStudentModalOpen = signal<boolean>(false);
@@ -52,39 +67,22 @@ export class ClassroomStudentsComponent {
     });
   }
 
-  onSearchChange(): void {
-    this.pageNumber = 1;
-    this.loadStudents();
-  }
-
   loadStudents(): void {
     const id = this.classroomId();
     if (!id) return;
 
     this.isLoading.set(true);
-    // In a real app we would pass this.searchTerm() to the API if supported.
     this.classroomService
       .getClassroomStudents(id, this.pageNumber, this.pageSize)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
-          // Client side filtering for demo if API doesn't support it yet
-          const term = this.searchTerm().trim().toLowerCase();
-          if (term) {
-             const filteredItems = res.items.filter(s => s.fullName.toLowerCase().includes(term));
-             this.rosterResult.set({
-               ...res,
-               items: filteredItems,
-               totalCount: filteredItems.length
-             });
-          } else {
-             this.rosterResult.set(res);
-          }
+          this.rawRosterResult.set(res);
           this.classroomService.setCurrentRosterTotalCount(res.totalCount);
         },
         error: (err) => {
           console.error('Failed to load students roster', err);
-          this.rosterResult.set(null);
+          this.rawRosterResult.set(null);
         },
       });
   }
