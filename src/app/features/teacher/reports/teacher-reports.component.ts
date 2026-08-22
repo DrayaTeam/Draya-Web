@@ -127,7 +127,7 @@ export class TeacherReportsComponent implements OnInit {
 
     this.isApproving.set(true);
     this.reportsService.approveReport(report.id).subscribe({
-      next: (res: any) => {
+      next: (res: { message?: string } | null) => {
         this.isApproving.set(false);
         this.messageService.add({
           severity: 'success',
