@@ -1,73 +1,48 @@
-﻿<!-- src/app/features/teacher/classrooms/teacher-classrooms.component.html -->
+<!-- src/app/features/teacher/classrooms/teacher-classrooms.component.html -->
 <div class="classrooms-container" dir="rtl">
-    <!-- PROTOTYPE: Dribbble Bento Hub -->
-  <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-10">
-    
-    <!-- Main Hero Card -->
-    <div class="col-span-1 md:col-span-7 bg-[#111827] rounded-[28px] p-8 md:p-10 flex flex-col justify-between min-h-[240px] relative overflow-hidden group shadow-lg">
-      <!-- Decorative Dribbble-style abstract shape -->
-      <div class="absolute -top-32 -right-32 w-96 h-96 bg-gradient-to-br from-teal-500/20 to-purple-500/20 rounded-full blur-[80px] pointer-events-none group-hover:scale-110 transition-transform duration-1000 ease-out"></div>
-      
-      <div class="relative z-10 flex flex-col gap-3">
-        <div class="flex items-center gap-2">
-          <div class="w-2 h-2 rounded-full bg-teal-400 shadow-[0_0_10px_rgba(45,212,191,0.8)]"></div>
-          <span class="text-teal-400 font-semibold text-xs uppercase tracking-[0.15em]">ط¥ط¯ط§ط±ط© ط§ظ„ط£ظƒط§ط¯ظٹظ…ظٹط©</span>
-        </div>
-        <h1 class="text-4xl md:text-5xl font-black text-white m-0 tracking-tight leading-tight">ط§ظ„ظپطµظˆظ„<br/>ط§ظ„ط¯ط±ط§ط³ظٹط©</h1>
-      </div>
-
-      <div class="relative z-10 mt-10">
-        <button class="bg-white hover:bg-slate-50 text-slate-900 font-bold py-3.5 px-8 rounded-2xl transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 flex items-center gap-3" (click)="openCreateModal()">
-          <span class="w-6 h-6 flex items-center justify-center bg-teal-100 text-teal-700 rounded-full text-lg leading-none">+</span> 
-          ط¥ظ†ط´ط§ط، ظپطµظ„ ط¬ط¯ظٹط¯
-        </button>
+  <!-- Header Section (Option 2 + Option 3 Button + Bold Title) -->
+  <div class="header-row">
+    <div class="flex items-stretch gap-3">
+      <div class="w-[3px] bg-teal-600 rounded-full"></div>
+      <div class="flex flex-col gap-1 py-1">
+        <h1 class="text-3xl font-bold text-teal-700 m-0">الفصول الدراسية</h1>
+        <p class="text-sm text-slate-500 m-0">إدارة المراحل الدراسية ومتابعة المجموعات وإجمالي أعداد الطلبة المنضمين لكل مرحلة.</p>
       </div>
     </div>
-
-    <!-- Right Side (Stats & Search) -->
-    <div class="col-span-1 md:col-span-5 flex flex-col gap-4">
-      
-      <!-- Search Widget (Modern Floating Pill style) -->
-      <div class="bg-white rounded-[24px] p-3 border border-slate-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex items-center focus-within:ring-4 focus-within:ring-teal-500/10 focus-within:border-teal-500 transition-all">
-        <div class="w-12 h-12 bg-slate-50 rounded-[16px] flex items-center justify-center text-slate-400">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        </div>
-        <input type="text" class="flex-1 bg-transparent border-0 py-3 pr-4 pl-4 text-slate-800 font-semibold placeholder-slate-400 focus:outline-none" placeholder="ط§ط¨ط­ط« ط¨ط§ط³ظ… ط§ظ„ظ…ط±ط­ظ„ط©..." (input)="onSearch($event)">
-      </div>
-
-      <!-- Stats Widget -->
-      <div class="bg-white rounded-[28px] p-8 border border-slate-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col justify-between flex-1 relative overflow-hidden group">
-        <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-slate-50 rounded-full pointer-events-none group-hover:scale-150 transition-transform duration-700 ease-out"></div>
-        
-        <div class="relative z-10 flex justify-between items-start">
-          <div class="flex flex-col gap-2">
-            <span class="text-slate-500 text-sm font-semibold">ط¥ط¬ظ…ط§ظ„ظٹ ط§ظ„ظ…ط±ط§ط­ظ„</span>
-            <div class="flex items-baseline gap-2">
-              <span class="text-5xl font-black text-slate-900 tracking-tighter">{{ classroomsResult()?.totalCount || 0 }}</span>
-              <span class="text-teal-600 font-bold bg-teal-50 px-2 py-1 rounded-md text-xs">ظ†ط´ط·</span>
-            </div>
-          </div>
-          <div class="w-14 h-14 rounded-[18px] bg-teal-50/80 border border-teal-100 flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform duration-300">
-            <svg class="w-7 h-7 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-          </div>
-        </div>
-        
-        <!-- Dribbble style progress bar -->
-        <div class="relative z-10 mt-8 flex flex-col gap-2">
-          <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            <span>ط³ط¹ط© ط§ظ„ظ†ط¸ط§ظ…</span>
-            <span>%75</span>
-          </div>
-          <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-            <div class="h-full bg-slate-900 w-3/4 rounded-full"></div>
-          </div>
-        </div>
-      </div>
-      
+    
+    <div class="header-actions">
+      <button class="create-btn" (click)="openCreateModal()">+ إنشاء مرحلة دراسية جديدة</button>
     </div>
   </div>
-  <!-- END PROTOTYPE -->
 
+  <!-- Search and Stats Row -->
+  <!-- Search and Stats Row -->
+  <div class="search-stats-container">
+    <div class="search-input-wrapper">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#9ca3af"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="search-icon">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="بحث باسم المرحلة الدراسية..."
+        (input)="onSearch($event)" />
+    </div>
+    <div class="stats-text">
+      إجمالي المراحل:
+      <span class="stats-number">{{ classroomsResult()?.totalCount || 0 }}</span>
+    </div>
+  </div>
 
   <!-- Loading State -->
   @if (isLoading()) {
@@ -98,7 +73,7 @@
               <span class="subject-tag-pill">{{ classroom.subjectName }}</span>
 
               @if (!classroom.isActive) {
-                <span class="inactive-badge-overlay">ظ…ط؛ظ„ظ‚</span>
+                <span class="inactive-badge-overlay">مغلق</span>
               }
             </div>
 
@@ -150,7 +125,7 @@
                             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                           </svg>
                         </span>
-                        <span class="dropdown-item-label">طھط¹ط¯ظٹظ„</span>
+                        <span class="dropdown-item-label">تعديل</span>
                       </button>
                       <div class="dropdown-divider"></div>
                       <button
@@ -189,7 +164,7 @@
                           }
                         </span>
                         <span class="dropdown-item-label">
-                          {{ classroom.isActive ? 'ط¥ط؛ظ„ط§ظ‚' : 'طھظپط¹ظٹظ„' }}
+                          {{ classroom.isActive ? 'إغلاق' : 'تفعيل' }}
                         </span>
                       </button>
                     </div>
@@ -249,7 +224,7 @@
                     <draya-classroom-student-count
                       [classroomId]="classroom.classroomId"
                       [fallbackCount]="classroom.studentCount"></draya-classroom-student-count>
-                    ط·ط§ظ„ط¨
+                    طالب
                   </span>
                 </div>
 
@@ -268,7 +243,7 @@
                       <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                     </svg>
                   </div>
-                  <span>{{ classroom.price === 0 ? 'ظ…ط¬ط§ظ†ط§ظ‹' : classroom.price + ' ط¬.ظ…' }}</span>
+                  <span>{{ classroom.price === 0 ? 'مجاناً' : classroom.price + ' ج.م' }}</span>
                 </div>
               </div>
 
@@ -277,7 +252,7 @@
                 <button
                   class="btn-resume"
                   [routerLink]="['/teacher/classrooms', classroom.classroomId]">
-                  <span>ط¹ط±ط¶ ط§ظ„طھظپط§طµظٹظ„</span>
+                  <span>عرض التفاصيل</span>
                   <svg
                     class="play-icon"
                     width="14"
@@ -301,7 +276,7 @@
       @if (classroomsResult()!.totalPages > 1) {
         <div class="pagination-wrapper">
           <span class="pagination-info-text">
-            طµظپط­ط© {{ classroomsResult()!.pageNumber }} ظ…ظ† {{ classroomsResult()!.totalPages }}
+            صفحة {{ classroomsResult()!.pageNumber }} من {{ classroomsResult()!.totalPages }}
           </span>
           <div class="pagination-pill">
             <!-- Prev Arrow -->
@@ -309,7 +284,7 @@
               class="pg-btn pg-arrow"
               [disabled]="!classroomsResult()!.hasPreviousPage"
               (click)="onPageChange(classroomsResult()!.pageNumber - 1)"
-              title="ط§ظ„طµظپط­ط© ط§ظ„ط³ط§ط¨ظ‚ط©">
+              title="الصفحة السابقة">
               <svg
                 width="14"
                 height="14"
@@ -338,7 +313,7 @@
               class="pg-btn pg-arrow"
               [disabled]="!classroomsResult()!.hasNextPage"
               (click)="onPageChange(classroomsResult()!.pageNumber + 1)"
-              title="ط§ظ„طµظپط­ط© ط§ظ„طھط§ظ„ظٹط©">
+              title="الصفحة التالية">
               <svg
                 width="14"
                 height="14"
@@ -393,6 +368,3 @@
   <!-- Confirmation Dialog for Deactivation -->
   <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
 </div>
-
-
-
