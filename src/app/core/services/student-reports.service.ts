@@ -125,16 +125,31 @@ export class StudentReportsService extends ApiBaseService {
         this.subjectScores.set(mappedSubjects);
 
         // Weakness topics
+        const isGuid = (val?: string) =>
+          !!val && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
+
         const mappedWeak: ReportWeaknessTopic[] = weakTopicsList.map((w, idx) => {
           const rawScore = (w as { proficiencyPercent?: number }).proficiencyPercent || (w as { accuracyPercentage?: number }).accuracyPercentage || 40;
           const score = Math.round(rawScore);
           const isSevere = score < 50;
           const topicName = (w as { topicTitle?: string }).topicTitle || w.topicName || `موضوع ${idx + 1}`;
           const status = (w as { statusLabel?: string }).statusLabel || (w as { status?: string }).status;
+          const subjectName = (w as { subjectName?: string }).subjectName || 'عام';
+
+          const directSubjectId = (w as { subjectId?: string }).subjectId;
+          const matchedSubject = mappedSubjects.find(
+            (s) => s.subjectName.trim().toLowerCase() === subjectName.trim().toLowerCase() && isGuid(s.id),
+          );
+          const fallbackSubject = mappedSubjects.find((s) => isGuid(s.id));
+          const resolvedSubjectId = isGuid(directSubjectId)
+            ? directSubjectId
+            : (matchedSubject?.id || fallbackSubject?.id);
+
           return {
             id: (w as { topicId?: string }).topicId || `weak_${idx}`,
             topicTitle: topicName,
-            subjectName: (w as { subjectName?: string }).subjectName || 'عام',
+            subjectName,
+            subjectId: resolvedSubjectId,
             badgeText: status || (isSevere ? 'تحتاج تحسين عاجل' : 'في طور التحسن'),
             scorePercent: score,
             barMarkerColor: isSevere ? '#FF2056' : '#FE9A00',

@@ -40,6 +40,7 @@ export class StudentReportsComponent implements OnInit {
   readonly generatingPractice = signal<boolean>(false);
   readonly activeRevision = signal<TopicRevisionDto | null>(null);
   readonly currentTopicTitle = signal<string>('');
+  readonly currentSubjectId = signal<string | undefined>(undefined);
 
   ngOnInit(): void {
     this.reportsService.loadReports().subscribe({
@@ -51,6 +52,7 @@ export class StudentReportsComponent implements OnInit {
   onStartReview(topic: ReportWeaknessTopic): void {
     const studentId = this.authService.currentUser()?.userId || 'me';
     this.currentTopicTitle.set(topic.topicTitle);
+    this.currentSubjectId.set(topic.subjectId);
     this.showRevisionModal.set(true);
     this.loadingRevision.set(true);
 
@@ -101,13 +103,30 @@ export class StudentReportsComponent implements OnInit {
   onLaunchPracticeExam(): void {
     const studentId = this.authService.currentUser()?.userId || 'me';
     const topic = this.currentTopicTitle();
+    const isGuid = (val?: string) =>
+      !!val && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
+
+    let targetSubjectId = this.currentSubjectId();
+    if (!isGuid(targetSubjectId)) {
+      const validSub = this.subjectScores().find((s) => isGuid(s.id));
+      if (validSub) {
+        targetSubjectId = validSub.id;
+      }
+    }
+
+    const payload = isGuid(targetSubjectId) ? { subjectId: targetSubjectId } : undefined;
+
     this.generatingPractice.set(true);
     this.toastService.info('تجهيز الاختبار بالذكاء الاصطناعي 🚀', 'جارٍ إعداد اختبار مخصص لنقاط تحسينك...');
 
-    this.reportsService.createPracticeExam(studentId, topic).subscribe({
+    this.reportsService.createPracticeExam(studentId, topic, payload).subscribe({
       next: (res) => {
         this.generatingPractice.set(false);
         this.closeRevisionModal();
+        this.toastService.success(
+          'تم بدء إعداد الاختبار! 🎯',
+          'تم إرسال طلب توليد الامتحان التجريبي للذكاء الاصطناعي بنجاح.',
+        );
         if (res?.examId) {
           this.router.navigate(['/student/exams', res.examId, 'active']);
         } else {

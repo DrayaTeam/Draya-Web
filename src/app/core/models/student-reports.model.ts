@@ -25,6 +25,7 @@ export interface ReportWeaknessTopic {
   readonly id: string;
   readonly topicTitle: string;
   readonly subjectName: string;
+  readonly subjectId?: string;
   readonly badgeText: string;
   readonly scorePercent: number;
   readonly barMarkerColor: string;
