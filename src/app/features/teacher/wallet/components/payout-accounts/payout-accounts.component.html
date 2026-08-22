@@ -7,7 +7,7 @@
 
     @if (!isAdding()) {
       <button 
-        class="inline-flex items-center gap-2 rounded-[12px] bg-gray-900 px-5 py-[10px] text-sm font-medium text-white transition-colors hover:bg-gray-800 active:scale-[0.98]"
+        class="inline-flex items-center gap-2 rounded-[12px] bg-[#1B6D63] px-5 py-[10px] text-sm font-medium text-white transition-colors hover:bg-[#0f4f49] active:scale-[0.98]"
         (click)="toggleAddForm()">
         <i class="pi pi-plus"></i>
         إضافة حساب جديد
@@ -27,7 +27,7 @@
             id="accountTypeSelect"
             [ngModel]="newAccountType()"
             (ngModelChange)="newAccountType.set($event)"
-            class="rounded-[12px] border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900">
+            class="rounded-[12px] border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-[#1B6D63] focus:outline-none focus:ring-1 focus:ring-[#1B6D63]">
             <option [value]="AccountType.InstaPay">إنستاباي (Instapay)</option>
             <option [value]="AccountType.BankAccount">حساب بنكي</option>
             <option [value]="AccountType.MobileWallet">محفظة إلكترونية</option>
@@ -41,7 +41,7 @@
             type="text"
             [ngModel]="newAccountName()"
             (ngModelChange)="newAccountName.set($event)"
-            class="rounded-[12px] border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+            class="rounded-[12px] border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-[#1B6D63] focus:outline-none focus:ring-1 focus:ring-[#1B6D63]"
             placeholder="مثال: أحمد محمد" />
         </div>
 
@@ -52,7 +52,7 @@
             type="text"
             [ngModel]="newAccountIdentifier()"
             (ngModelChange)="newAccountIdentifier.set($event)"
-            class="rounded-[12px] border border-gray-200 bg-white px-4 py-2.5 text-sm text-left focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+            class="rounded-[12px] border border-gray-200 bg-white px-4 py-2.5 text-sm text-left focus:border-[#1B6D63] focus:outline-none focus:ring-1 focus:ring-[#1B6D63]"
             placeholder="010XXXXXXXX"
             dir="ltr" />
         </div>
@@ -66,7 +66,7 @@
           إلغاء
         </button>
         <button
-          class="inline-flex items-center justify-center min-w-[120px] rounded-[12px] bg-gray-900 px-5 py-[10px] text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50 active:scale-[0.98]"
+          class="inline-flex items-center justify-center min-w-[120px] rounded-[12px] bg-[#1B6D63] px-5 py-[10px] text-sm font-medium text-white transition-colors hover:bg-[#0f4f49] disabled:opacity-50 active:scale-[0.98]"
           (click)="submitNewAccount()"
           [disabled]="isSubmitting() || !newAccountName() || !newAccountIdentifier()">
           @if (isSubmitting()) {
@@ -129,3 +129,4 @@
     </div>
   }
 </div>
+
