@@ -10,6 +10,11 @@ export interface StudentReportSummary {
   readonly summaryText?: string;
   readonly generatedAt?: string;
   readonly reportId?: string;
+  readonly totalQuestionsAsked?: number;
+  readonly totalQuestionsReplied?: number;
+  readonly averageExamDurationMinutes?: number;
+  readonly completedLessons?: number;
+  readonly classroomPercentile?: number;
 }
 
 export interface SubjectScoreItem {
@@ -113,5 +118,9 @@ export interface PerformanceReportDto {
   readonly summaryText?: string;
   readonly weakTopics?: WeakTopicDto[] | WeakTopicResult[];
   readonly subjectProficiencies?: SubjectProficiencyDto[] | SubjectProficiencyResult[];
+  readonly totalQuestionsAsked?: number;
+  readonly totalQuestionsReplied?: number;
+  readonly averageExamDurationMinutes?: number;
+  readonly completedLessons?: number;
+  readonly classroomPercentile?: number;
 }
-
