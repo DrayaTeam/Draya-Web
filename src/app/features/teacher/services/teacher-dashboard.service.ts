@@ -48,10 +48,10 @@ export class TeacherDashboardService {
       iconType: 'exams',
     },
     {
-      id: 'new_messages',
-      labelKey: 'TEACHER.DASHBOARD.KPI.NEW_MESSAGES',
+      id: 'reports_ready',
+      labelKey: 'TEACHER.DASHBOARD.KPI.REPORTS_READY',
       value: '0',
-      changeNoteKey: '',
+      changeNoteKey: 'TEACHER.DASHBOARD.KPI.REPORTS_READY_CHANGE',
       iconType: 'messages',
     },
   ]);
@@ -129,9 +129,9 @@ export class TeacherDashboardService {
           if (examIdx > -1) {
             newStats[examIdx] = { ...newStats[examIdx], value: data.examsAwaitingReview.toString() };
           }
-          const msgIdx = newStats.findIndex((s) => s.id === 'new_messages');
+          const msgIdx = newStats.findIndex((s) => s.id === 'reports_ready');
           if (msgIdx > -1) {
-            newStats[msgIdx] = { ...newStats[msgIdx], value: data.newMessagesCount.toString() };
+            newStats[msgIdx] = { ...newStats[msgIdx], value: data.reportsReadyForReview.toString() };
           }
           return newStats;
         });

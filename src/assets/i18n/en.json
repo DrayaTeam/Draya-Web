@@ -499,7 +499,9 @@
         "PENDING_EXAMS": "Pending Exams",
         "EXAMS_CHANGE": "18 submissions this week",
         "NEW_MESSAGES": "New Messages",
-        "MESSAGES_CHANGE": "from students & parents"
+        "MESSAGES_CHANGE": "from students & parents",
+        "REPORTS_READY": "Student Reports",
+        "REPORTS_READY_CHANGE": "Ready for review"
       },
       "CHART": {
         "TITLE": "Submissions Activity",

@@ -499,7 +499,9 @@
         "PENDING_EXAMS": "امتحانات بانتظار مراجعة",
         "EXAMS_CHANGE": "18 تسليم هذا الأسبوع",
         "NEW_MESSAGES": "رسائل جديدة",
-        "MESSAGES_CHANGE": "من طلاب وأولياء"
+        "MESSAGES_CHANGE": "من طلاب وأولياء",
+        "REPORTS_READY": "تقارير للطلاب",
+        "REPORTS_READY_CHANGE": "جاهزة للمراجعة"
       },
       "CHART": {
         "TITLE": "نشاط التسليمات",
