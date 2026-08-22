@@ -1,23 +1,22 @@
-<!-- src/app/features/teacher/classrooms/teacher-classrooms.component.html -->
+﻿<!-- src/app/features/teacher/classrooms/teacher-classrooms.component.html -->
 <div class="classrooms-container" dir="rtl">
   <!-- Header Section (Option 2 + Option 3 Button + Bold Title) -->
   <div class="header-row">
     <div class="flex items-stretch gap-3">
       <div class="w-[3px] bg-teal-600 rounded-full"></div>
       <div class="flex flex-col gap-1 py-1">
-        <h1 class="text-3xl font-bold text-teal-700 m-0">الفصول الدراسية</h1>
-        <p class="text-sm text-slate-500 m-0">إدارة المراحل الدراسية ومتابعة المجموعات وإجمالي أعداد الطلبة المنضمين لكل مرحلة.</p>
+        <h1 class="text-3xl font-bold text-teal-700 m-0">ط§ظ„ظپطµظˆظ„ ط§ظ„ط¯ط±ط§ط³ظٹط©</h1>
+        <p class="text-sm text-slate-500 m-0">ط¥ط¯ط§ط±ط© ط§ظ„ظ…ط±ط§ط­ظ„ ط§ظ„ط¯ط±ط§ط³ظٹط© ظˆظ…طھط§ط¨ط¹ط© ط§ظ„ظ…ط¬ظ…ظˆط¹ط§طھ ظˆط¥ط¬ظ…ط§ظ„ظٹ ط£ط¹ط¯ط§ط¯ ط§ظ„ط·ظ„ط¨ط© ط§ظ„ظ…ظ†ط¶ظ…ظٹظ† ظ„ظƒظ„ ظ…ط±ط­ظ„ط©.</p>
       </div>
     </div>
     
     <div class="header-actions">
-      <button class="create-btn" (click)="openCreateModal()">+ إنشاء مرحلة دراسية جديدة</button>
+      <button class="create-btn" (click)="openCreateModal()">+ ط¥ظ†ط´ط§ط، ظ…ط±ط­ظ„ط© ط¯ط±ط§ط³ظٹط© ط¬ط¯ظٹط¯ط©</button>
     </div>
   </div>
 
-  <!-- Search and Stats Row -->
-  <!-- Search and Stats Row -->
-  <div class="search-stats-container">
+  <!-- Search Row -->
+  <div class="search-row">
     <div class="search-input-wrapper">
       <svg
         width="20"
@@ -35,12 +34,8 @@
       <input
         type="text"
         class="search-input"
-        placeholder="بحث باسم المرحلة الدراسية..."
+        placeholder="ابحث باسم المرحلة الدراسية..."
         (input)="onSearch($event)" />
-    </div>
-    <div class="stats-text">
-      إجمالي المراحل:
-      <span class="stats-number">{{ classroomsResult()?.totalCount || 0 }}</span>
     </div>
   </div>
 
@@ -73,7 +68,7 @@
               <span class="subject-tag-pill">{{ classroom.subjectName }}</span>
 
               @if (!classroom.isActive) {
-                <span class="inactive-badge-overlay">مغلق</span>
+                <span class="inactive-badge-overlay">ظ…ط؛ظ„ظ‚</span>
               }
             </div>
 
@@ -125,7 +120,7 @@
                             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                           </svg>
                         </span>
-                        <span class="dropdown-item-label">تعديل</span>
+                        <span class="dropdown-item-label">طھط¹ط¯ظٹظ„</span>
                       </button>
                       <div class="dropdown-divider"></div>
                       <button
@@ -164,7 +159,7 @@
                           }
                         </span>
                         <span class="dropdown-item-label">
-                          {{ classroom.isActive ? 'إغلاق' : 'تفعيل' }}
+                          {{ classroom.isActive ? 'ط¥ط؛ظ„ط§ظ‚' : 'طھظپط¹ظٹظ„' }}
                         </span>
                       </button>
                     </div>
@@ -224,7 +219,7 @@
                     <draya-classroom-student-count
                       [classroomId]="classroom.classroomId"
                       [fallbackCount]="classroom.studentCount"></draya-classroom-student-count>
-                    طالب
+                    ط·ط§ظ„ط¨
                   </span>
                 </div>
 
@@ -243,7 +238,7 @@
                       <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                     </svg>
                   </div>
-                  <span>{{ classroom.price === 0 ? 'مجاناً' : classroom.price + ' ج.م' }}</span>
+                  <span>{{ classroom.price === 0 ? 'ظ…ط¬ط§ظ†ط§ظ‹' : classroom.price + ' ط¬.ظ…' }}</span>
                 </div>
               </div>
 
@@ -252,7 +247,7 @@
                 <button
                   class="btn-resume"
                   [routerLink]="['/teacher/classrooms', classroom.classroomId]">
-                  <span>عرض التفاصيل</span>
+                  <span>ط¹ط±ط¶ ط§ظ„طھظپط§طµظٹظ„</span>
                   <svg
                     class="play-icon"
                     width="14"
@@ -276,7 +271,7 @@
       @if (classroomsResult()!.totalPages > 1) {
         <div class="pagination-wrapper">
           <span class="pagination-info-text">
-            صفحة {{ classroomsResult()!.pageNumber }} من {{ classroomsResult()!.totalPages }}
+            طµظپط­ط© {{ classroomsResult()!.pageNumber }} ظ…ظ† {{ classroomsResult()!.totalPages }}
           </span>
           <div class="pagination-pill">
             <!-- Prev Arrow -->
@@ -284,7 +279,7 @@
               class="pg-btn pg-arrow"
               [disabled]="!classroomsResult()!.hasPreviousPage"
               (click)="onPageChange(classroomsResult()!.pageNumber - 1)"
-              title="الصفحة السابقة">
+              title="ط§ظ„طµظپط­ط© ط§ظ„ط³ط§ط¨ظ‚ط©">
               <svg
                 width="14"
                 height="14"
@@ -313,7 +308,7 @@
               class="pg-btn pg-arrow"
               [disabled]="!classroomsResult()!.hasNextPage"
               (click)="onPageChange(classroomsResult()!.pageNumber + 1)"
-              title="الصفحة التالية">
+              title="ط§ظ„طµظپط­ط© ط§ظ„طھط§ظ„ظٹط©">
               <svg
                 width="14"
                 height="14"
@@ -368,3 +363,4 @@
   <!-- Confirmation Dialog for Deactivation -->
   <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
 </div>
+
