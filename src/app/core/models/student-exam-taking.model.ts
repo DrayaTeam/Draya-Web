@@ -45,6 +45,8 @@ export interface AttemptAnswerResultDto {
   answerText?: string;
   selectedOptionId?: string | null;
   gradingResult?: AnswerGradingResultDto;
+  correctOptionId?: string | null;
+  correctAnswerText?: string | null;
 }
 
 export interface AttemptResultResponseDto {

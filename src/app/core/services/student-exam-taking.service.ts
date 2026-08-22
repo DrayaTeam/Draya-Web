@@ -542,15 +542,18 @@ export class StudentExamTakingService extends ApiBaseService {
                   : 'تخضع لتقييم الذكاء الاصطناعي'
               : 'الإجابة النموذجية';
 
-            if (!isEssay && questionDef?.correctOptionId) {
-              const correctOpt = questionDef.options.find(
-                (o) => o.id === questionDef.correctOptionId,
-              );
-              if (correctOpt) {
-                correctAnswerText = correctOpt.text;
+            if (!isEssay) {
+              if (ans.correctAnswerText) {
+                correctAnswerText = ans.correctAnswerText;
+              } else if (ans.correctOptionId || questionDef?.correctOptionId) {
+                const correctOptId = ans.correctOptionId || questionDef?.correctOptionId;
+                const correctOpt = questionDef?.options?.find((o) => o.id === correctOptId);
+                if (correctOpt) {
+                  correctAnswerText = correctOpt.text || 'الإجابة النموذجية';
+                }
+              } else if (!isGraded) {
+                correctAnswerText = 'سيتم إعلان الإجابة فور اكتمال التقييم';
               }
-            } else if (!isGraded) {
-              correctAnswerText = 'سيتم إعلان الإجابة فور اكتمال التقييم';
             }
 
             return {
