@@ -16,9 +16,10 @@
 
   <!-- Desktop CTA Buttons -->
   <div class="navbar-actions desktop-only">
-    <!-- Theme Switcher -->
+    <!-- Theme Switcher (Hidden) -->
     <button
       type="button"
+      style="display: none !important"
       (click)="themeService.toggleTheme()"
       [title]="themeService.isDarkMode() ? 'الوضع النهاري' : 'الوضع الليلي'"
       [attr.aria-label]="themeService.isDarkMode() ? 'الوضع النهاري' : 'الوضع الليلي'"
@@ -59,9 +60,10 @@
       }
     </button>
 
-    <!-- Language Switcher -->
+    <!-- Language Switcher (Hidden) -->
     <button
       type="button"
+      style="display: none !important"
       (click)="localeService.toggle()"
       [title]="localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'"
       [attr.aria-label]="
@@ -208,8 +210,8 @@
     }
   </nav>
 
-  <!-- Drawer Controls (Theme & Language) -->
-  <div class="drawer-controls-row">
+  <!-- Drawer Controls (Theme & Language) (Hidden) -->
+  <div class="drawer-controls-row" style="display: none !important">
     <button type="button" (click)="themeService.toggleTheme()" class="btn-drawer-action">
       <span>{{ themeService.isDarkMode() ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي' }}</span>
     </button>

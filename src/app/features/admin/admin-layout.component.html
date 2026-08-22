@@ -109,9 +109,10 @@
 
       <!-- Left area (end of reading in RTL): Admin profile dropdown -->
       <div class="topbar-end">
-        <!-- Theme Switcher -->
+        <!-- Theme Switcher (Hidden) -->
         <button
           type="button"
+          style="display: none !important"
           (click)="themeService.toggleTheme()"
           [title]="themeService.isDarkMode() ? 'الوضع النهاري' : 'الوضع الليلي'"
           [attr.aria-label]="themeService.isDarkMode() ? 'الوضع النهاري' : 'الوضع الليلي'"
@@ -123,9 +124,10 @@
           }
         </button>
 
-        <!-- Language Switcher -->
+        <!-- Language Switcher (Hidden) -->
         <button
           type="button"
+          style="display: none !important"
           (click)="localeService.toggle()"
           [title]="localeService.locale() === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'"
           [attr.aria-label]="
