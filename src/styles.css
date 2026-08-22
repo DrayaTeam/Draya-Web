@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+﻿@import 'tailwindcss';
 @import '../theme.css';
 @import 'primeicons/primeicons.css';
 
@@ -24,7 +24,7 @@ input[type="reset"] {
   cursor: pointer;
 }
 
-/* ── Hide Theme & Translation Buttons for All Pages ── */
+/* â”€â”€ Hide Theme & Translation Buttons for All Pages â”€â”€ */
 .theme-toggle-btn,
 .lang-toggle-btn,
 .nav-icon-btn,
@@ -33,14 +33,14 @@ input[type="reset"] {
 .topbar-icon-btn,
 [class*="theme-toggle"],
 [class*="lang-toggle"],
-button[aria-label*="الوضع"],
+button[aria-label*="ط§ظ„ظˆط¶ط¹"],
 button[aria-label*="Theme"],
 button[aria-label*="Switch to English"],
-button[aria-label*="التحويل إلى العربية"] {
+button[aria-label*="ط§ظ„طھط­ظˆظٹظ„ ط¥ظ„ظ‰ ط§ظ„ط¹ط±ط¨ظٹط©"] {
   display: none !important;
 }
 
-/* ── Global Keyframes & Animations ── */
+/* â”€â”€ Global Keyframes & Animations â”€â”€ */
 @keyframes drayaFadeInUp {
   from {
     opacity: 0;
@@ -103,7 +103,7 @@ button[aria-label*="التحويل إلى العربية"] {
   }
 }
 
-/* ── Animation Utility Classes ── */
+/* â”€â”€ Animation Utility Classes â”€â”€ */
 .animate-fade-in-up {
   animation: drayaFadeInUp 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -141,7 +141,7 @@ button[aria-label*="التحويل إلى العربية"] {
   animation-delay: 500ms;
 }
 
-/* ── Skeleton Shimmer Effect ── */
+/* â”€â”€ Skeleton Shimmer Effect â”€â”€ */
 .skeleton-shimmer {
   background: linear-gradient(90deg, #eef2f1 0%, #f8fbfa 50%, #eef2f1 100%);
   background-size: 200% 100%;
@@ -149,7 +149,7 @@ button[aria-label*="التحويل إلى العربية"] {
   border-radius: 8px;
 }
 
-/* ── Smooth Micro-Interactions ── */
+/* â”€â”€ Smooth Micro-Interactions â”€â”€ */
 .interactive-hover-card {
   transition:
     transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
@@ -162,7 +162,7 @@ button[aria-label*="التحويل إلى العربية"] {
   }
 }
 
-/* ── Scroll Reveal Section Animations ── */
+/* â”€â”€ Scroll Reveal Section Animations â”€â”€ */
 .scroll-reveal-init {
   opacity: 0;
   transform: translateY(32px);
@@ -185,7 +185,7 @@ button[aria-label*="التحويل إلى العربية"] {
   }
 }
 
-/* ── PrimeNG RTL Overrides for Menus ── */
+/* â”€â”€ PrimeNG RTL Overrides for Menus â”€â”€ */
 .p-menu.draya-action-menu {
   min-width: 14rem !important;
   padding: 0.5rem !important;
@@ -301,7 +301,7 @@ button[aria-label*="التحويل إلى العربية"] {
 }
 
 
-/* ── Shared Modal Forms & Buttons ── */
+/* â”€â”€ Shared Modal Forms & Buttons â”€â”€ */
 .draya-form {
   width: 100%;
 }
@@ -346,13 +346,13 @@ button[aria-label*="التحويل إلى العربية"] {
   margin-top: 2px;
 }
 
-/* ── Form Buttons ── */
+/* â”€â”€ Form Buttons â”€â”€ */
 .btn-primary {
   background-color: var(--draya-primary-700, #1b6d63);
   color: #ffffff;
   border: none;
-  padding: 10px 24px;
-  border-radius: 9999px !important;
+  padding: 10px 16px;
+  border-radius: 12px;
   font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
@@ -380,7 +380,7 @@ button[aria-label*="التحويل إلى العربية"] {
   border: 1px solid var(--draya-surface-300, #d1d5db);
   color: var(--draya-text-700, #374151);
   padding: 10px 20px;
-  border-radius: 9999px !important;
+  border-radius: 12px;
   font-weight: 500;
   font-size: 0.875rem;
   cursor: pointer;
@@ -395,7 +395,7 @@ button[aria-label*="التحويل إلى العربية"] {
 }
 
 
-/* ── Global RTL & LTR Cascading Controls ── */
+/* â”€â”€ Global RTL & LTR Cascading Controls â”€â”€ */
 html[dir='ltr'] {
   direction: ltr;
   text-align: left;
@@ -406,7 +406,7 @@ html[dir='rtl'] {
   text-align: right;
 }
 
-/* ── Global Dark Mode Styling Engine ── */
+/* â”€â”€ Global Dark Mode Styling Engine â”€â”€ */
 html.dark {
   color-scheme: dark;
 }
@@ -586,3 +586,5 @@ html.dark .admin-profile-pill {
   border-color: var(--draya-border, #1c3633) !important;
   color: var(--draya-text-primary, #f7f9f8) !important;
 }
+
+
