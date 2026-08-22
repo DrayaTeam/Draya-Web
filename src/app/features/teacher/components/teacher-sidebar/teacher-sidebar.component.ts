@@ -1,4 +1,4 @@
-// src/app/features/teacher/components/teacher-sidebar/teacher-sidebar.component.ts
+﻿// src/app/features/teacher/components/teacher-sidebar/teacher-sidebar.component.ts
 import { Component, ChangeDetectionStrategy, inject, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -97,11 +97,7 @@ export class TeacherSidebarComponent {
     {
       headerKey: 'TEACHER.SIDEBAR.GROUP_ANALYTICS',
       items: [
-        {
-          labelKey: 'TEACHER.SIDEBAR.ANALYTICS',
-          link: '/teacher/analytics',
-          icon: 'analytics',
-        },
+        
         {
           labelKey: 'TEACHER.SIDEBAR.REPORTS',
           link: '/teacher/reports',
@@ -113,7 +109,7 @@ export class TeacherSidebarComponent {
 
   readonly footerNavItems: NavItem[] = [
     {
-      labelKey: 'المحفظة المالية', // TODO: Add to i18n
+      labelKey: 'ط§ظ„ظ…ط­ظپط¸ط© ط§ظ„ظ…ط§ظ„ظٹط©', // TODO: Add to i18n
       link: '/teacher/wallet',
       icon: 'wallet',
     },
@@ -133,3 +129,4 @@ export class TeacherSidebarComponent {
     this.auth.logout();
   }
 }
+
