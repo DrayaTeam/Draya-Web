@@ -186,10 +186,15 @@ export class SignalRService {
       .configureLogging(LogLevel.Warning)
       .build();
 
-    this.examGenConnection.on('GenerationProgressUpdated', (data: GenerationProgressEvent) => {
+    const handleProgress = (data: GenerationProgressEvent) => {
       console.log('[SignalR] GenerationProgressUpdated received:', data);
       this._generationProgressUpdated.set(data);
-    });
+    };
+
+    this.examGenConnection.on('GenerationProgressUpdated', handleProgress);
+    this.examGenConnection.on('generationProgressUpdated', handleProgress);
+    this.examGenConnection.on('ReceiveProgress', handleProgress);
+    this.examGenConnection.on('ExamGenerationProgress', handleProgress);
 
     try {
       await this.examGenConnection.start();

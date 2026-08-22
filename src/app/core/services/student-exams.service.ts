@@ -1,6 +1,6 @@
 // src/app/core/services/student-exams.service.ts
 import { Injectable, signal, computed } from '@angular/core';
-import { catchError, map, of, tap } from 'rxjs';
+import { catchError, map, of, tap, Observable } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
 import {
   StudentExamItem,
@@ -62,6 +62,16 @@ export class StudentExamsService extends ApiBaseService {
 
     return list;
   });
+
+  /**
+   * Fetches raw student exams as an observable for background discovery polling.
+   */
+  fetchExams(page = 1, pageSize = 10): Observable<ExamDto[]> {
+    return this.get<ExamDto[] | { items: ExamDto[] }>('/students/exams', { page, pageSize }).pipe(
+      map((res) => (Array.isArray(res) ? res : res?.items || [])),
+      catchError(() => of([])),
+    );
+  }
 
   /**
    * Loads all exams available to the student from:

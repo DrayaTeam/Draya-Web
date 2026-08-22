@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  OnDestroy,
   inject,
   signal,
   effect,
@@ -10,6 +11,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { StudentReportsService } from '../../../core/services/student-reports.service';
+import { StudentExamsService, ExamDto } from '../../../core/services/student-exams.service';
 import { AuthService } from '../../auth/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { ReportKpiCardComponent } from './components/report-kpi-card/report-kpi-card.component';
@@ -36,12 +38,15 @@ import { SignalRService } from '../../../core/signalr/signalr.service';
   styleUrl: './student-reports.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StudentReportsComponent implements OnInit {
+export class StudentReportsComponent implements OnInit, OnDestroy {
   protected readonly reportsService = inject(StudentReportsService);
   protected readonly signalR = inject(SignalRService);
+  private readonly examsService = inject(StudentExamsService);
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
+
+  private pollingTimer: ReturnType<typeof setInterval> | null = null;
 
   @HostListener('document:keydown.escape')
   onEscapePress(): void {
@@ -79,6 +84,7 @@ export class StudentReportsComponent implements OnInit {
           progress.message || 'جارٍ مراجعة واعتماد الأسئلة التدريبية...',
         );
       } else if (progress.status === 'Completed' && progress.examId) {
+        this.stopPracticeExamPolling();
         this.generatingPractice.set(false);
         this.closeRevisionModal();
         this.toastService.success(
@@ -87,6 +93,7 @@ export class StudentReportsComponent implements OnInit {
         );
         this.router.navigate(['/student/exams', progress.examId, 'take']);
       } else if (progress.status === 'DataUnavailable') {
+        this.stopPracticeExamPolling();
         this.generatingPractice.set(false);
         this.toastService.warning(
           'محتوى غير كافٍ ⚠️',
@@ -95,6 +102,7 @@ export class StudentReportsComponent implements OnInit {
             'لا توجد مواد ومحاضرات كافية لهذا الموضوع في صفك الدراسي حالياً.',
         );
       } else if (progress.status === 'Failed') {
+        this.stopPracticeExamPolling();
         this.generatingPractice.set(false);
         this.toastService.error(
           'تعذر توليد الاختبار',
@@ -109,6 +117,64 @@ export class StudentReportsComponent implements OnInit {
       next: () => void 0,
       error: () => void 0,
     });
+  }
+
+  ngOnDestroy(): void {
+    this.stopPracticeExamPolling();
+  }
+
+  private startPracticeExamPolling(topicName: string): void {
+    this.stopPracticeExamPolling();
+    const startTime = Date.now();
+    const cleanTopic = topicName.toLowerCase().replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, '');
+
+    this.pollingTimer = setInterval(() => {
+      // Poll for up to 45 seconds
+      if (Date.now() - startTime > 45000) {
+        this.stopPracticeExamPolling();
+        return;
+      }
+
+      this.examsService.fetchExams(1, 5).subscribe({
+        next: (items: ExamDto[]) => {
+          if (!this.generatingPractice()) return;
+          const found = items.find((e: ExamDto) => {
+            const titleNorm = (e.title || '')
+              .toLowerCase()
+              .replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, '');
+            const topicNorm = (e.topic || '')
+              .toLowerCase()
+              .replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, '');
+            return (
+              (titleNorm.includes(cleanTopic) || topicNorm.includes(cleanTopic)) &&
+              (titleNorm.includes('auto') ||
+                titleNorm.includes('practice') ||
+                titleNorm.includes('توليد') ||
+                titleNorm.includes('تدريب'))
+            );
+          });
+
+          const examId = found?.id;
+          if (found && examId) {
+            this.stopPracticeExamPolling();
+            this.generatingPractice.set(false);
+            this.closeRevisionModal();
+            this.toastService.success(
+              'اكتمل تجهيز الاختبار التدريبي 🎉',
+              'تم تجهيز الامتحان بنجاح. بالتوفيق في التدريب!',
+            );
+            this.router.navigate(['/student/exams', examId, 'take']);
+          }
+        },
+      });
+    }, 3000);
+  }
+
+  private stopPracticeExamPolling(): void {
+    if (this.pollingTimer) {
+      clearInterval(this.pollingTimer);
+      this.pollingTimer = null;
+    }
   }
 
   onStartReview(topic: ReportWeaknessTopic): void {
@@ -188,6 +254,7 @@ export class StudentReportsComponent implements OnInit {
           } else {
             // Background generation started (202 Accepted)
             this.generatingStatusText.set('جارٍ توليد الأسئلة بالذكاء الاصطناعي...');
+            this.startPracticeExamPolling(topic);
           }
         },
         error: (err) => {
