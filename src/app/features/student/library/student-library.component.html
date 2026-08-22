@@ -84,36 +84,48 @@
   </section>
 
   <!-- Books Grid -->
-  <section class="books-grid">
-    @if (libraryService.loading()) {
-      <div class="loading-state-box">
-        <div class="spinner"></div>
-        <p>جارٍ جلب وتحديث المحتوى والمذكرات المشترك بها من الخادم...</p>
-      </div>
-    } @else {
-      @for (book of books(); track book.id) {
-        <app-book-card
-          [book]="book"
-          (download)="onDownload($event)"
-          (preview)="onPreview($event)"></app-book-card>
+  @if (libraryService.loading()) {
+    <div class="mt-2">
+      <draya-card-skeleton
+        type="book"
+        [count]="8"
+        [gridClass]="'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'" />
+    </div>
+  } @else {
+    <section class="books-grid">
+      @for (book of paginatedBooks(); track book.id) {
+        <div class="card-entrance animate-fade-in-up" [style.animation-delay]="$index * 35 + 'ms'">
+          <app-book-card
+            [book]="book"
+            (download)="onDownload($event)"
+            (preview)="onPreview($event)"></app-book-card>
+        </div>
       } @empty {
-        <div class="empty-state">
-          <svg
-            class="empty-icon"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="1.5">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-          <p class="empty-text">لم يتم العثور على مواد أو كتب دراسية حالياً.</p>
+        <div class="empty-state-wrapper animate-fade-in col-span-full w-full">
+          <draya-empty-state
+            icon="book"
+            titleKey="STUDENT.LIBRARY.EMPTY_TITLE"
+            descriptionKey="STUDENT.LIBRARY.EMPTY_DESC"
+            primaryActionLabelKey="STUDENT.LIBRARY.EXPLORE_COURSES"
+            primaryActionRoute="/student/courses"
+            size="lg" />
         </div>
       }
+    </section>
+
+    <!-- Pagination Controls -->
+    @if (books().length > pageSize()) {
+      <div class="animate-fade-in mt-6">
+        <draya-pagination
+          [totalItems]="books().length"
+          [pageSize]="pageSize()"
+          [currentPage]="currentPage()"
+          [pageSizeOptions]="[4, 8, 16, 20]"
+          (pageChange)="onPageChange($event)"
+          (pageSizeChange)="onPageSizeChange($event)" />
+      </div>
     }
-  </section>
+  }
 
   <!-- Video Streaming Modal -->
   @if (activeVideoBook(); as v) {

@@ -6,8 +6,8 @@ export interface StartAttemptRequestDto {
 
 export interface AnswerSubmissionDto {
   examQuestionId: string;
-  selectedOptionId?: string;
-  answerText?: string;
+  selectedOptionId?: string | null;
+  answerText?: string | null;
 }
 
 export interface SubmitAttemptRequestDto {
@@ -45,6 +45,8 @@ export interface AttemptAnswerResultDto {
   answerText?: string;
   selectedOptionId?: string | null;
   gradingResult?: AnswerGradingResultDto;
+  correctOptionId?: string | null;
+  correctAnswerText?: string | null;
 }
 
 export interface AttemptResultResponseDto {
@@ -133,6 +135,11 @@ export interface ExamReviewItem {
   readonly studentAnswerText: string;
   readonly correctAnswerText: string;
   readonly explanation?: string;
+  readonly earnedScore?: number;
+  readonly maxScore?: number;
+  readonly isAiGraded?: boolean;
+  readonly needsTeacherReview?: boolean;
+  readonly isPendingGrading?: boolean;
 }
 
 export interface ExamResultReport {
@@ -147,4 +154,7 @@ export interface ExamResultReport {
   readonly submittedAt: string;
   readonly weaknessTopics: readonly ExamWeaknessTopic[];
   readonly reviewQuestions: readonly ExamReviewItem[];
+  readonly isGradingPending?: boolean;
+  readonly isGradingFailed?: boolean;
+  readonly gradingStatusMessage?: string;
 }

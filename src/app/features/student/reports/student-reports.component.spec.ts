@@ -7,16 +7,33 @@ import { MessageService } from 'primeng/api';
 
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
+import { provideTranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
+import { StudentReportsService } from '../../../core/services/student-reports.service';
 
 describe('StudentReportsComponent', () => {
   let component: StudentReportsComponent;
   let fixture: ComponentFixture<StudentReportsComponent>;
+  let reportsService: StudentReportsService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StudentReportsComponent],
-      providers: [provideHttpClient(), provideHttpClientTesting(), MessageService, ToastService],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        provideTranslateService(),
+        MessageService,
+        ToastService,
+        StudentReportsService,
+      ],
     }).compileComponents();
+
+    reportsService = TestBed.inject(StudentReportsService);
+    spyOn(reportsService, 'loadReports').and.returnValue(of(true));
+    reportsService.isLoading.set(false);
 
     fixture = TestBed.createComponent(StudentReportsComponent);
     component = fixture.componentInstance;
@@ -40,10 +57,7 @@ describe('StudentReportsComponent', () => {
     expect(cards.length).toBe(3);
   });
 
-  it('should trigger toast on topic review click', () => {
-    const toastService = TestBed.inject(ToastService);
-    spyOn(toastService, 'info');
-
+  it('should open AI revision modal on topic review click', () => {
     component.onStartReview({
       id: 'test',
       topicTitle: 'المشتقات والتكامل',
@@ -56,9 +70,10 @@ describe('StudentReportsComponent', () => {
       scoreTextColor: '#FF0000',
     });
 
-    expect(toastService.info).toHaveBeenCalledWith(
-      'بدء المراجعة التفاعلية',
-      'جاري فتح المراجعة التفاعلية لموضوع: المشتقات والتكامل',
-    );
+    expect(component.showRevisionModal()).toBeTrue();
+    expect(component.currentTopicTitle()).toBe('المشتقات والتكامل');
+
+    component.closeRevisionModal();
+    expect(component.showRevisionModal()).toBeFalse();
   });
 });

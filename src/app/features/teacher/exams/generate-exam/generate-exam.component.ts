@@ -7,6 +7,7 @@ import {
   OnInit,
   DestroyRef,
 } from '@angular/core';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   NonNullableFormBuilder,
@@ -31,6 +32,7 @@ import {
   DifficultyLevel,
   GenerateExamRequest,
   QuestionRequirement,
+  AIExamQuotaDto,
 } from '../../../../core/models/exam-generation.model';
 import { AuthService } from '../../../../features/auth/services/auth.service';
 
@@ -47,7 +49,7 @@ export function futureDateValidator(control: AbstractControl): ValidationErrors 
 @Component({
   selector: 'draya-generate-exam',
   standalone: true,
-  imports: [ReactiveFormsModule, Select, RouterLink, TranslatePipe],
+  imports: [ReactiveFormsModule, RouterLink, Select, TranslatePipe, CommonModule, DecimalPipe],
   templateUrl: './generate-exam.component.html',
   styleUrl: './generate-exam.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -68,11 +70,41 @@ export class GenerateExamComponent implements OnInit {
   readonly classrooms = signal<ClassroomDto[]>([]);
   readonly sections = signal<ClassroomSectionDto[]>([]);
 
-  /** Purchased (AI) balance from the shared WalletService signal */
-  readonly purchasedBalance = this.walletService.purchasedBalance;
-  /** True when balance is zero or not loaded — shows the warning banner */
+  readonly quota = signal<AIExamQuotaDto | null>(null);
+  readonly isLoadingQuota = signal(false);
+
+  /** True when user has no free quota and insufficient balance to pay */
+  readonly hasInsufficientBalance = computed(() => {
+    const q = this.quota();
+    if (!q) return false;
+
+    // If they have free exams, balance is irrelevant (always sufficient)
+    if (q.remainingFreeExams > 0) return false;
+
+    // Backend calculation fallback
+    if (q.hasSufficientBalance) return false;
+
+    // If backend says insufficient, check our locally aggregated wallet balance just in case
+    // it's a backend calculation issue (e.g., ignoring EarnedBalance).
+    const price = q.aiExamPrice || 20;
+    const totalBal = this.totalAvailableBalance() || 0;
+
+    return totalBal < price;
+  });
+
+  /** Full wallet balance from shared WalletService signal */
+  readonly walletBalance = this.walletService.walletBalance;
+
+  /** Combined balance that can be used for AI exams */
+  readonly totalAvailableBalance = computed(() => {
+    const bal = this.walletBalance();
+    if (!bal) return null;
+    return bal.availableEarnedBalance + bal.purchasedBalance;
+  });
+
+  /** True when balance is zero or not loaded */
   readonly isLowAiBalance = computed(() => {
-    const bal = this.purchasedBalance();
+    const bal = this.totalAvailableBalance();
     return bal !== null && bal <= 0;
   });
 
@@ -126,6 +158,20 @@ export class GenerateExamComponent implements OnInit {
       .subscribe({
         next: () => this.isLoadingBalance.set(false),
         error: () => this.isLoadingBalance.set(false),
+      });
+
+    this.isLoadingQuota.set(true);
+    this.examGenService
+      .getAIExamQuota()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.quota.set(res);
+          this.isLoadingQuota.set(false);
+        },
+        error: () => {
+          this.isLoadingQuota.set(false);
+        },
       });
 
     // Listen to classroom changes to load sections
@@ -199,11 +245,10 @@ export class GenerateExamComponent implements OnInit {
     // Ensure numeric fields are actually parsed as numbers
     const durationMinutes = Number(formValue.durationMinutes);
     const allowedAttempts = Number(formValue.allowedAttempts);
-
     const questionReqs = (
-      formValue.questionRequirements as { type: string; count: string | number }[]
+      formValue.questionRequirements as { type: QuestionType; count: string | number }[]
     ).map((req) => ({
-      type: req.type,
+      type: req.type as QuestionType,
       count: Number(req.count),
     })) as QuestionRequirement[];
 

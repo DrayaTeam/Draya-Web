@@ -10,6 +10,10 @@
   &.wrong {
     border-right: 4px solid #ef4444;
   }
+
+  &.pending-review {
+    border-right: 4px solid #d97706;
+  }
 }
 
 .card-header {
@@ -41,6 +45,11 @@
   &.wrong {
     background: rgba(239, 68, 68, 0.12);
     color: #ef4444;
+  }
+
+  &.pending {
+    background: rgba(217, 119, 6, 0.12);
+    color: #d97706;
   }
 }
 
@@ -86,6 +95,16 @@
 
   .box-val {
     color: #22c55e;
+    font-weight: 700;
+  }
+}
+
+.pending-box {
+  background: rgba(217, 119, 6, 0.05);
+  border: 1px solid #d97706;
+
+  .box-val {
+    color: #d97706;
     font-weight: 700;
   }
 }

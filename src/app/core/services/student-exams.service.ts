@@ -1,6 +1,6 @@
 // src/app/core/services/student-exams.service.ts
 import { Injectable, signal, computed } from '@angular/core';
-import { catchError, of, tap } from 'rxjs';
+import { catchError, map, of, tap, Observable } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
 import {
   StudentExamItem,
@@ -18,47 +18,15 @@ export interface ExamDto {
   startDate?: string;
   endDate?: string | null;
   allowedAttempts?: number;
+  usedAttempts?: number;
+  hasSubmitted?: boolean;
+  attemptStatus?: 'NotStarted' | 'InProgress' | 'PendingGrading' | 'Completed';
+  latestScore?: number;
   questionsCount?: number;
   createdAt?: string;
   teacherName?: string;
+  subjectName?: string;
 }
-
-const DEFAULT_EXAMS: StudentExamItem[] = [
-  {
-    id: 'ex-1',
-    title: 'امتحان الجبر والتباديل والتوافيق',
-    teacherName: 'أ. أحمد السيد',
-    subjectName: 'الرياضيات',
-    status: 'available',
-    statusLabel: 'متاح للحل الآن 🔥',
-    durationMinutes: 45,
-    secondaryDetailText: 'جاهز للبدء',
-    cornerTintBg: '#0EA5E9',
-  },
-  {
-    id: 'ex-2',
-    title: 'مراجعة قوانين نيوتن والكهربية',
-    teacherName: 'أ. سارة حسن',
-    subjectName: 'الفيزياء',
-    status: 'scheduled',
-    statusLabel: 'مجدول لاحقاً ⏳',
-    durationMinutes: 60,
-    secondaryDetailText: 'الخميس القادم 11:00 ص',
-    cornerTintBg: '#8B5CF6',
-  },
-  {
-    id: 'ex-3',
-    title: 'امتحان الفصل الدراسي الأول التراكمي',
-    teacherName: 'أ. أحمد السيد',
-    subjectName: 'الرياضيات',
-    status: 'completed',
-    statusLabel: 'مكتمل وحاصل على درجة',
-    durationMinutes: 90,
-    secondaryDetailText: 'الدرجة: 85%',
-    scorePercent: 85,
-    cornerTintBg: '#10B981',
-  },
-];
 
 @Injectable({ providedIn: 'root' })
 export class StudentExamsService extends ApiBaseService {
@@ -70,72 +38,153 @@ export class StudentExamsService extends ApiBaseService {
   });
 
   readonly selectedFilter = signal<'all' | ExamStatusType>('all');
+  readonly searchQuery = signal<string>('');
   readonly loading = signal<boolean>(false);
-  readonly exams = signal<StudentExamItem[]>(DEFAULT_EXAMS);
+  readonly exams = signal<StudentExamItem[]>([]);
 
   readonly filteredExams = computed(() => {
     const filter = this.selectedFilter();
-    if (filter === 'all') return this.exams();
-    return this.exams().filter((ex) => ex.status === filter);
+    const query = this.searchQuery().trim().toLowerCase();
+    let list = this.exams();
+
+    if (filter !== 'all') {
+      list = list.filter((ex) => ex.status === filter);
+    }
+
+    if (query) {
+      list = list.filter(
+        (ex) =>
+          ex.title.toLowerCase().includes(query) ||
+          ex.subjectName.toLowerCase().includes(query) ||
+          ex.teacherName.toLowerCase().includes(query),
+      );
+    }
+
+    return list;
   });
 
   /**
-   * Loads the student's scheduled and active exams from GET /api/v1/students/exams.
+   * Fetches raw student exams as an observable for background discovery polling.
    */
-  loadExams(classroomId?: string, page = 1, pageSize = 20): void {
+  fetchExams(page = 1, pageSize = 10): Observable<ExamDto[]> {
+    return this.get<ExamDto[] | { items: ExamDto[] }>('/students/exams', { page, pageSize }).pipe(
+      map((res) => (Array.isArray(res) ? res : res?.items || [])),
+      catchError(() => of([])),
+    );
+  }
+
+  /**
+   * Loads all exams available to the student from:
+   * GET /api/v1/students/exams
+   */
+  loadExams(classroomId?: string, page = 1, pageSize = 50): void {
     this.loading.set(true);
-    const params: Record<string, string | number> = { page, pageSize };
+
+    const directParams: Record<string, string | number> = { page, pageSize };
     if (classroomId) {
-      params['classroomId'] = classroomId;
+      directParams['classroomId'] = classroomId;
     }
 
-    this.get<ExamDto[] | { items: ExamDto[] }>('/students/exams', params)
+    this.get<ExamDto[] | { items: ExamDto[] }>('/students/exams', directParams)
       .pipe(
-        tap((res) => {
+        map((res) => (Array.isArray(res) ? res : res?.items || [])),
+        tap((combined) => {
           this.loading.set(false);
-          const rawItems = Array.isArray(res) ? res : res?.items || [];
-          if (rawItems.length > 0) {
-            const colors = ['#0EA5E9', '#8B5CF6', '#10B981', '#F59E0B'];
-            const now = new Date();
-            const mapped: StudentExamItem[] = rawItems.map((ex, idx) => {
-              let status: ExamStatusType = 'available';
-              let statusLabel = 'متاح للحل الآن 🔥';
-              let secondaryDetailText = 'جاهز للبدء';
 
-              if (ex.startDate && new Date(ex.startDate) > now) {
-                status = 'scheduled';
-                const startD = new Date(ex.startDate);
-                statusLabel = 'مجدول لاحقاً ⏳';
-                secondaryDetailText = `يبدأ ${startD.toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
-              } else if (ex.endDate && new Date(ex.endDate) < now) {
-                status = 'completed';
-                statusLabel = 'انتهى موعد الامتحان ⛔';
-                secondaryDetailText = 'انتهت الفترة';
-              } else if (ex.endDate) {
-                const endD = new Date(ex.endDate);
-                secondaryDetailText = `ينتهي ${endD.toLocaleDateString('ar-EG', { month: 'short', day: 'numeric' })}`;
-              }
+          const colors = ['#0EA5E9', '#8B5CF6', '#10B981', '#F59E0B', '#EC4899'];
+          const now = new Date();
 
-              return {
-                id: ex.id,
-                title: ex.title || 'امتحان تفاعلي',
-                teacherName: ex.teacherName || 'أستاذ المادة',
-                subjectName: ex.topic || 'المنهج الدراسي',
-                status,
-                statusLabel,
-                durationMinutes: ex.durationMinutes || 45,
-                secondaryDetailText,
-                cornerTintBg: colors[idx % colors.length],
-              };
-            });
-            this.exams.set(mapped);
-          }
+          const mapped: StudentExamItem[] = combined.map((ex, idx) => {
+            let status: ExamStatusType = 'available';
+            let statusLabel = 'متاح للحل الآن 🔥';
+            let secondaryDetailText = 'جاهز للبدء';
+
+            const normAttemptStatus = (ex.attemptStatus || '').toLowerCase();
+            const isCompleted =
+              Boolean(ex.hasSubmitted) ||
+              normAttemptStatus === 'completed' ||
+              normAttemptStatus === 'submitted' ||
+              normAttemptStatus === 'pendinggrading' ||
+              normAttemptStatus === 'graded' ||
+              (ex.usedAttempts !== undefined &&
+                ex.allowedAttempts !== undefined &&
+                ex.usedAttempts >= ex.allowedAttempts &&
+                ex.usedAttempts > 0) ||
+              (ex.latestScore !== undefined && ex.latestScore !== null);
+
+            if (isCompleted) {
+              status = 'completed';
+              statusLabel = 'مكتمل ومصحح ✅';
+              secondaryDetailText =
+                ex.latestScore !== undefined && ex.latestScore !== null
+                  ? `الدرجة: ${ex.latestScore}%`
+                  : 'تم التسليم';
+            } else if (normAttemptStatus === 'inprogress') {
+              status = 'available';
+              statusLabel = 'جلسة جارية ⏳';
+              secondaryDetailText = 'متابعة الحل';
+            } else if (ex.startDate && new Date(ex.startDate) > now) {
+              status = 'scheduled';
+              const startD = new Date(ex.startDate);
+              statusLabel = 'مجدول لاحقاً ⏳';
+              secondaryDetailText = `يبدأ ${startD.toLocaleDateString('ar-EG', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })}`;
+            } else if (ex.endDate && new Date(ex.endDate) < now) {
+              status = 'expired';
+              statusLabel = 'انتهى موعد الامتحان ⛔';
+              secondaryDetailText = 'انتهت الفترة';
+            } else if (ex.endDate) {
+              const endD = new Date(ex.endDate);
+              secondaryDetailText = `ينتهي ${endD.toLocaleDateString('ar-EG', {
+                month: 'short',
+                day: 'numeric',
+              })}`;
+            }
+
+            return {
+              id: ex.id,
+              title: ex.title || ex.topic || 'امتحان تفاعلي',
+              teacherName: ex.teacherName || 'أستاذ المادة',
+              subjectName: ex.subjectName || ex.topic || 'المنهج الدراسي',
+              status,
+              statusLabel,
+              durationMinutes: ex.durationMinutes || 45,
+              secondaryDetailText,
+              cornerTintBg: colors[idx % colors.length],
+              allowedAttempts: ex.allowedAttempts ?? 1,
+              attemptsTaken: ex.usedAttempts ?? 0,
+              scorePercent: ex.latestScore,
+            };
+          });
+
+          this.exams.set(mapped);
         }),
         catchError(() => {
           this.loading.set(false);
+          this.exams.set([]);
           return of(null);
         }),
       )
       .subscribe();
+  }
+
+  markExamAsCompleted(examId: string, score?: number): void {
+    this.exams.update((list) =>
+      list.map((ex) =>
+        ex.id === examId
+          ? {
+              ...ex,
+              status: 'completed' as ExamStatusType,
+              statusLabel: 'مكتمل ومصحح ✅',
+              secondaryDetailText: score !== undefined ? `الدرجة: ${score}%` : 'تم التسليم',
+              scorePercent: score ?? ex.scorePercent,
+            }
+          : ex,
+      ),
+    );
   }
 }

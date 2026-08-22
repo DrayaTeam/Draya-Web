@@ -54,4 +54,10 @@ describe('TeacherCardComponent', () => {
     button.click();
     expect(component.viewPackages.emit).toHaveBeenCalledWith(mockTeacher);
   });
+
+  it('should fallback to default avatar on image load error', () => {
+    const img = fixture.nativeElement.querySelector('.teacher-avatar-img') as HTMLImageElement;
+    img.dispatchEvent(new Event('error'));
+    expect(img.src).toContain('default-teacher-avatar.svg');
+  });
 });

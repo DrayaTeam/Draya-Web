@@ -123,16 +123,16 @@ export class TeacherReportsComponent implements OnInit {
 
   approveReport(): void {
     const report = this.latestReport();
-    if (!report) return;
+    if (!report?.id) return;
 
     this.isApproving.set(true);
     this.reportsService.approveReport(report.id).subscribe({
-      next: () => {
+      next: (res: { message?: string } | null) => {
         this.isApproving.set(false);
         this.messageService.add({
           severity: 'success',
           summary: 'نجاح',
-          detail: 'تم اعتماد وإرسال التقرير بنجاح.',
+          detail: res?.message || 'تم اعتماد وإرسال التقرير بنجاح.',
         });
       },
       error: (err) => {

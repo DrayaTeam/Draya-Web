@@ -21,6 +21,7 @@ import type {
   ExamGenerationCompletedEvent,
   GradingCompletedEvent,
   NewChatMessageEvent,
+  GenerationProgressEvent,
 } from '../models/signalr-events.model';
 
 export type ConnectionStatus =
@@ -36,6 +37,7 @@ export class SignalRService {
   private readonly destroyRef = inject(DestroyRef);
 
   private connection: HubConnection | null = null;
+  private examGenConnection: HubConnection | null = null;
 
   // ─── Connection status ────────────────────────────────────────────────────
   private readonly _status = signal<ConnectionStatus>('Disconnected');
@@ -59,6 +61,9 @@ export class SignalRService {
 
   private readonly _newChatMessage = signal<NewChatMessageEvent | null>(null);
   readonly newChatMessage = this._newChatMessage.asReadonly();
+
+  private readonly _generationProgressUpdated = signal<GenerationProgressEvent | null>(null);
+  readonly generationProgressUpdated = this._generationProgressUpdated.asReadonly();
 
   constructor() {
     // ── Reactive lifecycle wiring ─────────────────────────────────────────
@@ -127,6 +132,15 @@ export class SignalRService {
     this.connection.on('GradingCompleted', (payload: GradingCompletedEvent) =>
       this._gradingCompleted.set(payload),
     );
+    this.connection.on('GradingJobCompleted', (payload: GradingCompletedEvent) =>
+      this._gradingCompleted.set(payload),
+    );
+    this.connection.on('AttemptGraded', (payload: GradingCompletedEvent) =>
+      this._gradingCompleted.set(payload),
+    );
+    this.connection.on('ExamGraded', (payload: GradingCompletedEvent) =>
+      this._gradingCompleted.set(payload),
+    );
     this.connection.on('NewChatMessage', (payload: NewChatMessageEvent) =>
       this._newChatMessage.set(payload),
     );
@@ -152,6 +166,52 @@ export class SignalRService {
     }
   }
 
+  /**
+   * Builds and starts the SignalR Exam Generation Hub connection (/hubs/exam-generation).
+   * Listens for GenerationProgressUpdated events from the background AI generator.
+   */
+  async startExamGenerationHub(): Promise<void> {
+    if (this.examGenConnection?.state === HubConnectionState.Connected) {
+      return;
+    }
+
+    const token = this.auth.accessToken() ?? '';
+    const hubUrl = environment.examHubUrl || '/hubs/exam-generation';
+
+    this.examGenConnection = new HubConnectionBuilder()
+      .withUrl(hubUrl, {
+        accessTokenFactory: () => token,
+      })
+      .withAutomaticReconnect(RECONNECT_DELAYS_MS)
+      .configureLogging(LogLevel.Warning)
+      .build();
+
+    const handleProgress = (data: GenerationProgressEvent) => {
+      console.log('[SignalR] GenerationProgressUpdated received:', data);
+      this._generationProgressUpdated.set(data);
+    };
+
+    this.examGenConnection.on('GenerationProgressUpdated', handleProgress);
+    this.examGenConnection.on('generationProgressUpdated', handleProgress);
+    this.examGenConnection.on('ReceiveProgress', handleProgress);
+    this.examGenConnection.on('ExamGenerationProgress', handleProgress);
+
+    try {
+      await this.examGenConnection.start();
+      console.log('[SignalR] Connected to /hubs/exam-generation successfully.');
+    } catch (err) {
+      console.warn('[SignalR] /hubs/exam-generation connection failed:', err);
+    }
+  }
+
+  /** Gracefully stops the exam generation hub connection. */
+  async stopExamGenerationHub(): Promise<void> {
+    if (this.examGenConnection) {
+      await this.examGenConnection.stop();
+      this.examGenConnection = null;
+    }
+  }
+
   /** Gracefully stops the hub connection and resets status. */
   async stopConnection(): Promise<void> {
     if (this.connection) {
@@ -159,6 +219,7 @@ export class SignalRService {
       this._status.set('Disconnected');
       this.connection = null;
     }
+    await this.stopExamGenerationHub();
   }
 
   /**

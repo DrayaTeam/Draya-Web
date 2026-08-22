@@ -11,6 +11,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ExamHubService, GenerationProgressDto } from '../../services/exam-hub.service';
 import { GenerationStatus } from '../../../../core/models/exam-generation.model';
 import { ExamGenerationService } from '../../services/exam-generation.service';
+import { WalletService } from '../../services/wallet.service';
 
 @Component({
   selector: 'draya-generation-tracker',
@@ -25,6 +26,7 @@ export class GenerationTrackerComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly examHub = inject(ExamHubService);
   private readonly examGenService = inject(ExamGenerationService);
+  private readonly walletService = inject(WalletService);
 
   readonly generationId = signal<string | null>(null);
 
@@ -98,6 +100,9 @@ export class GenerationTrackerComponent implements OnInit, OnDestroy {
       progress.status === GenerationStatus.CompletedWithWarning
     ) {
       this.cleanup();
+      // Fetch latest wallet balance because backend should have deducted it now
+      this.walletService.getBalance().subscribe();
+
       // Wait a moment for UX before navigating
       setTimeout(() => {
         const resolvedExamId = progress.examId || (progress as { ExamId?: string }).ExamId;
