@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@ang
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 import { ClassroomService } from '../services/classroom.service';
 import { TeacherReportsService } from '../services/teacher-reports.service';
 import { ClassroomDto } from '../../../core/models/classroom.model';
@@ -24,6 +25,7 @@ import { DialogModule } from 'primeng/dialog';
 export class TeacherReportsComponent implements OnInit {
   private readonly classroomService = inject(ClassroomService);
   private readonly reportsService = inject(TeacherReportsService);
+  private readonly messageService = inject(MessageService);
 
   readonly classrooms = signal<ClassroomDto[]>([]);
   readonly selectedClassroom = signal<ClassroomDto | null>(null);
@@ -125,10 +127,13 @@ export class TeacherReportsComponent implements OnInit {
 
     this.isApproving.set(true);
     this.reportsService.approveReport(report.id).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.isApproving.set(false);
-        // Ideally show a toast success message here
-        // Update local state if needed (e.g., mark as approved)
+        this.messageService.add({
+          severity: 'success',
+          summary: 'نجاح',
+          detail: res?.message || 'تم اعتماد التقرير وإرساله بنجاح.',
+        });
       },
       error: (err) => {
         console.error('Failed to approve report', err);
