@@ -21,6 +21,8 @@ describe('TeacherDashboardComponent', () => {
         provideHttpClientTesting(),
         provideRouter([]),
         provideTranslateService(),
+        provideHttpClient(),
+        provideHttpClientTesting(),
       ],
     }).compileComponents();
 

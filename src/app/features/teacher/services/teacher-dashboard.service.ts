@@ -85,7 +85,9 @@ export class TeacherDashboardService {
 
   getDashboardData(): Observable<boolean> {
     forkJoin({
-      classrooms: this.classroomService.getTeacherClassrooms(1, 100).pipe(catchError(() => of(null))),
+      classrooms: this.classroomService
+        .getTeacherClassrooms(1, 100)
+        .pipe(catchError(() => of(null))),
       exams: this.examService.getExams(undefined, 1, 100).pipe(catchError(() => of(null))),
     }).subscribe(({ classrooms, exams }) => {
       let activeStudents = 0;

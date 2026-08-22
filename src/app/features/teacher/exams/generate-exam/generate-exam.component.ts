@@ -1,6 +1,21 @@
-import { Component, ChangeDetectionStrategy, inject, signal, OnInit, DestroyRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  signal,
+  OnInit,
+  DestroyRef,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators, FormArray, FormGroup, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  Validators,
+  FormArray,
+  FormGroup,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { ClassroomService } from '../../services/classroom.service';
@@ -9,7 +24,12 @@ import { ExamGenerationService } from '../../services/exam-generation.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { ClassroomDto } from '../../../../core/models/classroom.model';
 import { ClassroomSectionDto } from '../../../../core/models/section.model';
-import { QuestionType, DifficultyLevel, GenerateExamRequest, QuestionRequirement } from '../../../../core/models/exam-generation.model';
+import {
+  QuestionType,
+  DifficultyLevel,
+  GenerateExamRequest,
+  QuestionRequirement,
+} from '../../../../core/models/exam-generation.model';
 import { AuthService } from '../../../../features/auth/services/auth.service';
 
 import { Select } from 'primeng/select';
@@ -43,13 +63,19 @@ export class GenerateExamComponent implements OnInit {
   readonly classrooms = signal<ClassroomDto[]>([]);
   readonly sections = signal<ClassroomSectionDto[]>([]);
 
-  readonly questionTypes: QuestionType[] = ['MCQ', 'Essay', 'TrueFalse', 'FillInTheBlank', 'ShortAnswer'];
+  readonly questionTypes: QuestionType[] = [
+    'MCQ',
+    'Essay',
+    'TrueFalse',
+    'FillInTheBlank',
+    'ShortAnswer',
+  ];
   readonly difficultyLevels: DifficultyLevel[] = ['Easy', 'Medium', 'Hard'];
 
   readonly difficultyOptions = [
     { label: 'سهل', value: 'Easy' },
     { label: 'متوسط', value: 'Medium' },
-    { label: 'صعب', value: 'Hard' }
+    { label: 'صعب', value: 'Hard' },
   ];
 
   readonly questionTypeOptions = [
@@ -57,7 +83,7 @@ export class GenerateExamComponent implements OnInit {
     { label: 'صح و خطأ', value: 'TrueFalse' },
     { label: 'إجابة قصيرة', value: 'ShortAnswer' },
     { label: 'مقال', value: 'Essay' },
-    { label: 'أكمل الفراغات', value: 'FillInTheBlank' }
+    { label: 'أكمل الفراغات', value: 'FillInTheBlank' },
   ];
 
   readonly form = this.fb.group({
@@ -81,16 +107,19 @@ export class GenerateExamComponent implements OnInit {
     this.loadClassrooms();
 
     // Listen to classroom changes to load sections
-    this.form.get('classroomId')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(classroomId => {
-      this.form.get('sectionId')?.reset('');
-      if (classroomId) {
-        this.form.get('sectionId')?.enable();
-        this.loadSections(classroomId);
-      } else {
-        this.form.get('sectionId')?.disable();
-        this.sections.set([]);
-      }
-    });
+    this.form
+      .get('classroomId')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((classroomId) => {
+        this.form.get('sectionId')?.reset('');
+        if (classroomId) {
+          this.form.get('sectionId')?.enable();
+          this.loadSections(classroomId);
+        } else {
+          this.form.get('sectionId')?.disable();
+          this.sections.set([]);
+        }
+      });
   }
 
   private loadClassrooms(): void {
@@ -104,12 +133,13 @@ export class GenerateExamComponent implements OnInit {
   private loadSections(classroomId: string): void {
     this.sectionService.getSections(classroomId).subscribe({
       next: (res) => {
-        const mappedSections = res.map(s => {
-          const hasMaterial = (s.documents && s.documents.length > 0) || (s.videos && s.videos.length > 0);
+        const mappedSections = res.map((s) => {
+          const hasMaterial =
+            (s.documents && s.documents.length > 0) || (s.videos && s.videos.length > 0);
           return {
             ...s,
             title: hasMaterial ? s.title : `${s.title} (غير متاح - لا يوجد محتوى)`,
-            disabled: !hasMaterial
+            disabled: !hasMaterial,
           };
         });
         this.sections.set(mappedSections);
@@ -143,15 +173,14 @@ export class GenerateExamComponent implements OnInit {
 
     this.isSubmitting.set(true);
     const formValue = this.form.getRawValue();
-    
+
     // Ensure numeric fields are actually parsed as numbers
     const durationMinutes = Number(formValue.durationMinutes);
     const allowedAttempts = Number(formValue.allowedAttempts);
-    
     const questionReqs = (
-      formValue.questionRequirements as { type: 'MCQ' | 'Essay'; count: number }[]
+      formValue.questionRequirements as { type: QuestionType; count: string | number }[]
     ).map((req) => ({
-      type: req.type,
+      type: req.type as QuestionType,
       count: Number(req.count),
     })) as QuestionRequirement[];
 
@@ -167,7 +196,7 @@ export class GenerateExamComponent implements OnInit {
       questionRequirements: questionReqs,
       teacherInstructions,
       teacherId: this.authService.currentUser()?.userId || '',
-      isPracticeReview: true // Ensure this matches backend requirements
+      isPracticeReview: true, // Ensure this matches backend requirements
     };
 
     console.log('[Generate Exam] PAYLOAD:', payload);
@@ -182,17 +211,17 @@ export class GenerateExamComponent implements OnInit {
         console.error('[Generate Exam] API Error:', err);
         let errorMessage = 'حدث خطأ أثناء إرسال الطلب';
         if (err?.error?.errors) {
-           // ASP.NET Core validation errors
-           const firstErrorKey = Object.keys(err.error.errors)[0];
-           if (firstErrorKey) {
-             errorMessage = `${firstErrorKey}: ${err.error.errors[firstErrorKey][0]}`;
-           }
+          // ASP.NET Core validation errors
+          const firstErrorKey = Object.keys(err.error.errors)[0];
+          if (firstErrorKey) {
+            errorMessage = `${firstErrorKey}: ${err.error.errors[firstErrorKey][0]}`;
+          }
         } else if (err?.error?.detail) {
-           errorMessage = err.error.detail;
+          errorMessage = err.error.detail;
         } else if (err?.error?.message) {
-           errorMessage = err.error.message;
+          errorMessage = err.error.message;
         } else if (typeof err?.error === 'string') {
-           errorMessage = err.error;
+          errorMessage = err.error;
         }
 
         this.toast.error(errorMessage);
