@@ -6,11 +6,25 @@
       <h3 class="toolbar-title">قائمة الطلبة</h3>
       <span class="toolbar-badge">{{ rosterResult()?.totalCount ?? 0 }} طالب</span>
     </div>
-    <div class="toolbar-right">
-      <!-- Search could go here in future -->
-      <div class="search-placeholder">
-        <i class="pi pi-search"></i>
-        <span>بحث عن طالب...</span>
+    <div class="toolbar-right w-full sm:w-auto">
+      <div class="modern-search-bar">
+        <div class="search-icon-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </div>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="ابحث عن طالب..."
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event); onSearchChange()"
+        />
+        <div class="search-shortcut hidden sm:flex">
+          <kbd>Ctrl</kbd>
+          <kbd>K</kbd>
+        </div>
       </div>
     </div>
   </div>
@@ -18,14 +32,7 @@
   <div class="table-card">
     <p-table
       [value]="rosterResult()?.items ?? []"
-      [lazy]="true"
-      (onLazyLoad)="onPageChange($event)"
-      [paginator]="true"
-      [rows]="pageSize"
-      [totalRecords]="rosterResult()?.totalCount ?? 0"
       [loading]="isLoading()"
-      [showCurrentPageReport]="true"
-      currentPageReportTemplate="عرض {first} إلى {last} من أصل {totalRecords} طالب"
       styleClass="draya-custom-table"
       [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="header">
@@ -73,7 +80,7 @@
           <td style="text-align: center">
             <button
               class="action-btn-danger"
-              (click)="confirmRemoveStudent(student)"
+              (click)="openRemoveModal(student)"
               title="إزالة الطالب">
               <svg
                 width="16"
@@ -114,11 +121,43 @@
                 </svg>
               </div>
               <h4 class="empty-title">لا يوجد طلبة</h4>
-              <p class="empty-text">لم يقم أي طالب بالتسجيل في هذه المرحلة بعد.</p>
+              <p class="empty-text">لم يتم تسجيل أي طالب في هذا الفصل بعد.</p>
             </div>
           </td>
         </tr>
       </ng-template>
     </p-table>
+
+    <!-- Pagination Controls -->
+    @if ((rosterResult()?.totalCount ?? 0) > 0) {
+      <div class="mt-8 flex justify-center w-full">
+        <draya-pagination
+          [totalItems]="rosterResult()?.totalCount ?? 0"
+          [pageSize]="pageSize"
+          [currentPage]="pageNumber"
+          [pageSizeOptions]="[10, 20, 50]"
+          (pageChange)="onPageChange($event)"
+          (pageSizeChange)="onPageSizeChange($event)" />
+      </div>
+    }
   </div>
 </div>
+
+<draya-teacher-modal
+  [isOpen]="isRemoveStudentModalOpen()"
+  title="تأكيد إزالة الطالب"
+  (modalClosed)="isRemoveStudentModalOpen.set(false)">
+  <div class="draya-form p-4">
+    <p class="mb-4 text-gray-700">
+      هل أنت متأكد من إزالة الطالب <span class="font-bold">{{ selectedStudentForRemoval()?.fullName }}</span> من هذا الفصل؟
+    </p>
+  </div>
+  <div modal-footer class="flex gap-3">
+    <button class="btn-outline" (click)="isRemoveStudentModalOpen.set(false)">إلغاء</button>
+    <button
+      class="btn-primary border-none bg-red-600 hover:bg-red-700"
+      (click)="confirmRemoveStudent()">
+      إزالة الطالب
+    </button>
+  </div>
+</draya-teacher-modal>

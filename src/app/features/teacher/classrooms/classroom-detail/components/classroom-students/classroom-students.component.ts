@@ -4,18 +4,21 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { TableModule, TableLazyLoadEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { ClassroomService } from '../../../../services/classroom.service';
 import {
   StudentRosterItemDto,
   StudentRosterItemDtoPagedResult,
 } from '../../../../../../core/models/student-roster.model';
 import { finalize } from 'rxjs/operators';
+import { TeacherModalComponent } from '../../../../components/teacher-modal/teacher-modal.component';
+import { DrayaPaginationComponent } from '../../../../../../shared/components/pagination/pagination.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'draya-classroom-students',
   standalone: true,
-  imports: [CommonModule, DatePipe, TableModule, ButtonModule, TooltipModule],
+  imports: [CommonModule, DatePipe, TableModule, ButtonModule, TooltipModule, TeacherModalComponent, DrayaPaginationComponent, FormsModule],
   templateUrl: './classroom-students.component.html',
   styleUrl: './classroom-students.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,15 +27,19 @@ export class ClassroomStudentsComponent {
   readonly classroomId = input.required<string>();
 
   private readonly classroomService = inject(ClassroomService);
-  private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService, { optional: true });
 
   readonly rosterResult = signal<StudentRosterItemDtoPagedResult | null>(null);
   readonly isLoading = signal<boolean>(false);
 
-  // Pagination state
+  // Search & Pagination state
+  readonly searchTerm = signal<string>('');
   pageNumber = 1;
   pageSize = 10;
+
+  // Modal State
+  readonly isRemoveStudentModalOpen = signal<boolean>(false);
+  readonly selectedStudentForRemoval = signal<StudentRosterItemDto | null>(null);
 
   constructor() {
     effect(() => {
@@ -45,17 +52,34 @@ export class ClassroomStudentsComponent {
     });
   }
 
+  onSearchChange(): void {
+    this.pageNumber = 1;
+    this.loadStudents();
+  }
+
   loadStudents(): void {
     const id = this.classroomId();
     if (!id) return;
 
     this.isLoading.set(true);
+    // In a real app we would pass this.searchTerm() to the API if supported.
     this.classroomService
       .getClassroomStudents(id, this.pageNumber, this.pageSize)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
-          this.rosterResult.set(res);
+          // Client side filtering for demo if API doesn't support it yet
+          const term = this.searchTerm().trim().toLowerCase();
+          if (term) {
+             const filteredItems = res.items.filter(s => s.fullName.toLowerCase().includes(term));
+             this.rosterResult.set({
+               ...res,
+               items: filteredItems,
+               totalCount: filteredItems.length
+             });
+          } else {
+             this.rosterResult.set(res);
+          }
           this.classroomService.setCurrentRosterTotalCount(res.totalCount);
         },
         error: (err) => {
@@ -65,28 +89,27 @@ export class ClassroomStudentsComponent {
       });
   }
 
-  onPageChange(event: TableLazyLoadEvent): void {
-    // PrimeNG Table passes first and rows
-    const first = event.first ?? 0;
-    const rows = event.rows ?? 10;
-    this.pageSize = rows;
-    this.pageNumber = first / rows + 1;
+  onPageChange(newPage: number): void {
+    this.pageNumber = newPage;
     this.loadStudents();
   }
 
-  confirmRemoveStudent(student: StudentRosterItemDto): void {
-    this.confirmationService.confirm({
-      message: `هل أنت متأكد من إزالة الطالب ${student.fullName} من هذه المجموعة؟`,
-      header: 'تأكيد الإزالة',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'نعم، إزالة',
-      rejectLabel: 'إلغاء',
-      acceptButtonStyleClass: 'p-button-danger',
-      rejectButtonStyleClass: 'p-button-text',
-      accept: () => {
-        this.removeStudent(student.studentId);
-      },
-    });
+  onPageSizeChange(newSize: number): void {
+    this.pageSize = newSize;
+    this.pageNumber = 1;
+    this.loadStudents();
+  }
+
+  openRemoveModal(student: StudentRosterItemDto): void {
+    this.selectedStudentForRemoval.set(student);
+    this.isRemoveStudentModalOpen.set(true);
+  }
+
+  confirmRemoveStudent(): void {
+    const student = this.selectedStudentForRemoval();
+    if (student) {
+      this.removeStudent(student.studentId);
+    }
   }
 
   private removeStudent(studentId: string): void {
@@ -95,10 +118,11 @@ export class ClassroomStudentsComponent {
       next: () => {
         this.messageService?.add({
           severity: 'success',
-          summary: 'تم بنجاح',
-          detail: 'تمت إزالة الطالب من المجموعة.',
+          summary: 'نجاح',
+          detail: 'تم إزالة الطالب بنجاح.',
         });
-        // Reload current page to reflect deletion
+        this.isRemoveStudentModalOpen.set(false);
+        this.selectedStudentForRemoval.set(null);
         this.loadStudents();
         // Also reload the parent classroom to update the student count in the hero stats
         this.classroomService.getClassroomById(cid).subscribe();

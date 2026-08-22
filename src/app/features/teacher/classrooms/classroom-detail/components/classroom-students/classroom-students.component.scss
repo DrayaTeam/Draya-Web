@@ -1,10 +1,10 @@
-/* src/app/features/teacher/classrooms/classroom-detail/components/classroom-students/classroom-students.component.scss */
+﻿/* src/app/features/teacher/classrooms/classroom-detail/components/classroom-students/classroom-students.component.scss */
 
 .roster-container {
   width: 100%;
 }
 
-/* ─── Toolbar ───────────────────────────────────────── */
+/* â”€â”€â”€ Toolbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .table-toolbar {
   display: flex;
   align-items: center;
@@ -51,16 +51,16 @@
   }
 }
 
-/* ─── Table Card ────────────────────────────────────── */
+/* â”€â”€â”€ Table Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .table-card {
   background-color: #ffffff;
   border: 1px solid #f1f5f9;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+
 }
 
-/* ─── Custom PrimeNG Table Overrides ────────────────── */
+/* â”€â”€â”€ Custom PrimeNG Table Overrides â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 ::ng-deep .draya-custom-table {
   .p-datatable-wrapper {
     border-radius: 16px 16px 0 0;
@@ -120,7 +120,7 @@
   }
 }
 
-/* ─── Cell Contents ─────────────────────────────────── */
+/* â”€â”€â”€ Cell Contents â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .student-name-cell {
   display: flex;
   align-items: center;
@@ -139,7 +139,7 @@
   font-weight: 700;
   font-size: 0.9rem;
   flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(27, 109, 99, 0.2);
+
   overflow: hidden;
 }
 
@@ -234,7 +234,7 @@
   }
 }
 
-/* ─── Empty State ───────────────────────────────────── */
+/* â”€â”€â”€ Empty State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -267,3 +267,75 @@
     color: #64748b;
   }
 }
+
+.modern-search-bar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  height: 48px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0 6px 0 16px;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:focus-within {
+    border-color: var(--draya-primary-300, #5eead4);
+    transform: translateY(-1px);
+  }
+}
+
+.search-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: #94a3b8;
+  margin-right: 4px;
+  .modern-search-bar:focus-within & {
+    color: var(--draya-primary-600, #0d9488);
+  }
+}
+
+.search-input {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  flex: 1;
+  height: 100%;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--draya-text-900, #111827);
+  background: transparent;
+  padding: 0 12px !important;
+
+  &::placeholder {
+    color: var(--draya-text-400, #9ca3af);
+    font-weight: 400;
+  }
+}
+
+.search-shortcut {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 8px;
+
+  kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    padding: 0 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    color: #64748b;
+    background-color: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+  }
+}
+
