@@ -7,129 +7,133 @@
     </p>
   </div>
 
-  <!-- AI Instructions Banner -->
-  <div class="mb-8 rounded-2xl border border-[#1B6D63]/20 bg-[#f0f9f8] p-5 text-start md:p-6">
-    <div class="flex items-start gap-4">
-      <div
-        class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#1B6D63]/10 text-[#1B6D63]">
-        <i class="pi pi-lightbulb text-xl"></i>
+  <!-- Top Section: Grid Layout -->
+  <div class="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-12">
+    <!-- Right Panel (RTL Left): AI Assistant Guide -->
+    <div
+      class="rounded-2xl border border-[#1B6D63]/20 bg-[#f0f9f8] p-5 shadow-sm lg:col-span-7 xl:col-span-8">
+      <div class="flex items-start gap-4">
+        <div
+          class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-[#1B6D63]/10 text-[#1B6D63]">
+          <i class="pi pi-sparkles text-xl"></i>
+        </div>
+        <div class="flex-1">
+          <h3 class="mb-4 text-lg font-bold text-gray-900">نصائح لإنشاء امتحان دقيق</h3>
+          <ul class="grid grid-cols-1 gap-x-6 gap-y-4 text-sm text-gray-700 sm:grid-cols-2">
+            <li class="flex items-start gap-2">
+              <i class="pi pi-check-circle mt-0.5 text-[#1B6D63]"></i>
+              <span>
+                <strong>تنظيم المحتوى:</strong>
+                يُفضل وضع المحتوى التعليمي المترابط في نفس القسم للحصول على نتائج دقيقة.
+              </span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="pi pi-check-circle mt-0.5 text-[#1B6D63]"></i>
+              <span>
+                <strong>التوجيهات المخصصة:</strong>
+                استخدم حقل "توجيهات إضافية" لتحديد ما تريده بالضبط.
+              </span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="pi pi-check-circle mt-0.5 text-[#1B6D63]"></i>
+              <span>
+                <strong>حجم الامتحان:</strong>
+                تجنب طلب عدد كبير جداً من الأسئلة في الامتحان الواحد للحفاظ على الجودة.
+              </span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="pi pi-check-circle mt-0.5 text-[#1B6D63]"></i>
+              <span>
+                <strong>عنوان واضح:</strong>
+                يُرجى كتابة عنوان يعكس الغرض الفعلي من الامتحان.
+              </span>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="flex-1">
-        <h3 class="mb-3 text-lg font-bold text-gray-900">نصائح هامة لإنشاء امتحان دقيق</h3>
-        <ul class="space-y-3 text-sm text-gray-700 md:text-base">
-          <li class="flex items-start gap-2">
-            <i class="pi pi-check-circle mt-1 text-[#1B6D63]"></i>
-            <span>
-              <strong>تنظيم المحتوى:</strong>
-              للحصول على أفضل نتيجة، يُفضل وضع المحتوى التعليمي المترابط في نفس القسم للحصول على
-              نتائج دقيقة.
+    </div>
+
+    <!-- Left Panel (RTL Right): Subscription & Quota Card -->
+    <div
+      class="flex flex-col justify-center rounded-2xl border border-gray-200 bg-white p-5 shadow-sm lg:col-span-5 xl:col-span-4">
+      <h3 class="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900">
+        <i class="pi pi-wallet text-[#7C3AED]"></i>
+        الرصيد والباقة
+      </h3>
+
+      @if (isLoadingBalance() || isLoadingQuota()) {
+        <div class="flex items-center gap-3 rounded-xl bg-gray-50 p-4">
+          <span
+            class="h-4 w-4 animate-spin rounded-full border-2 border-[#7C3AED] border-t-transparent"></span>
+          <span class="text-sm text-gray-500">
+            {{ 'TEACHER.WALLET.AI_BALANCE.LOADING' | translate }}
+          </span>
+        </div>
+      } @else if (quota(); as q) {
+        <!-- Total Available Balance -->
+        <div class="mb-4 flex items-center justify-between rounded-xl bg-gray-50 p-4">
+          <span class="text-sm font-medium text-gray-600">إجمالي الرصيد المتاح</span>
+          <span class="text-lg font-bold text-gray-900">
+            {{ totalAvailableBalance() ?? 0 | number: '1.0-2' }}
+            {{ 'ADMIN.DASHBOARD.CURRENCY' | translate }}
+          </span>
+        </div>
+
+        @if (q.remainingFreeExams > 0) {
+          <!-- Sufficient Free Quota -->
+          <div class="flex flex-col gap-2 rounded-xl border border-green-200 bg-green-50 p-4">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-green-800">محاولات مجانية متاحة</span>
+              <span class="rounded-full bg-green-200 px-2 py-0.5 text-xs font-bold text-green-900">
+                مجاني
+              </span>
+            </div>
+            <div class="mt-1 h-2 w-full overflow-hidden rounded-full bg-green-200">
+              <div
+                class="h-full bg-green-500 transition-all duration-500"
+                [style.width.%]="(q.remainingFreeExams / q.freeMonthlyQuota) * 100"></div>
+            </div>
+            <span class="text-xs text-green-700">
+              متبقي {{ q.remainingFreeExams }} من {{ q.freeMonthlyQuota }} محاولات هذا الشهر
             </span>
-          </li>
-          <li class="flex items-start gap-2">
-            <i class="pi pi-check-circle mt-1 text-[#1B6D63]"></i>
-            <span>
-              <strong>التوجيهات المخصصة:</strong>
-              إذا كان القسم يحتوي على ملفات غير مترابطة، يجب كتابة توجيهات واضحة في حقل "توجيهات
-              إضافية" لتحديد ما تريده بالضبط.
-            </span>
-          </li>
-          <li class="flex items-start gap-2">
-            <i class="pi pi-check-circle mt-1 text-[#1B6D63]"></i>
-            <span>
-              <strong>حجم الامتحان:</strong>
-              تجنب طلب عدد كبير جداً من الأسئلة في الامتحان الواحد للحفاظ على الجودة.
-            </span>
-          </li>
-          <li class="flex items-start gap-2">
-            <i class="pi pi-check-circle mt-1 text-[#1B6D63]"></i>
-            <span>
-              <strong>عنوان واضح:</strong>
-              يُرجى كتابة عنوان يعكس الغرض الفعلي من الامتحان ويكون مرتبطاً بمحتوى القسم.
-            </span>
-          </li>
-        </ul>
-      </div>
+          </div>
+        } @else {
+          <!-- No Free Quota -->
+          <div class="flex flex-col gap-3">
+            <div
+              class="flex items-center justify-between rounded-xl border border-amber-200 bg-amber-50 p-4">
+              <div>
+                <span class="block font-bold text-amber-800">الباقة المجانية نفدت</span>
+                <span class="text-xs text-amber-700">
+                  تكلفة التوليد: {{ q.aiExamPrice }} {{ 'ADMIN.DASHBOARD.CURRENCY' | translate }}
+                </span>
+              </div>
+              <i class="pi pi-exclamation-circle text-2xl text-amber-500"></i>
+            </div>
+
+            @if (!q.hasSufficientBalance) {
+              <div class="flex flex-col gap-2">
+                <span class="text-center text-xs font-bold text-red-600">
+                  عذراً، رصيدك الحالي لا يكفي. يرجى شحن المحفظة.
+                </span>
+                <a
+                  routerLink="/teacher/wallet"
+                  class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#7C3AED] py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#6D28D9] active:scale-[0.98]">
+                  <i class="pi pi-plus"></i>
+                  {{ 'TEACHER.WALLET.AI_BALANCE.TOPUP_BTN' | translate }}
+                </a>
+              </div>
+            } @else {
+              <span class="text-center text-xs font-medium text-[#1B6D63]">
+                سيتم خصم {{ q.aiExamPrice }} {{ 'ADMIN.DASHBOARD.CURRENCY' | translate }} من رصيدك
+                المتاح.
+              </span>
+            }
+          </div>
+        }
+      }
     </div>
   </div>
-
-  <!-- AI Balance Status Bar -->
-  <!-- AI Quota Status Bar -->
-  @if (isLoadingBalance() || isLoadingQuota()) {
-    <div
-      class="mb-6 flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 px-5 py-3">
-      <span
-        class="h-4 w-4 animate-spin rounded-full border-2 border-[#7C3AED] border-t-transparent"></span>
-      <span class="text-sm text-gray-500">
-        {{ 'TEACHER.WALLET.AI_BALANCE.LOADING' | translate }}
-      </span>
-    </div>
-  } @else if (quota(); as q) {
-    @if (q.remainingFreeExams > 0) {
-      <!-- Sufficient Free Quota -->
-      <div
-        class="mb-6 flex flex-col gap-3 rounded-xl border border-green-200 bg-green-50 p-5 md:flex-row md:items-center md:justify-between">
-        <div class="flex items-start gap-3">
-          <i class="pi pi-check-circle mt-1 text-green-600"></i>
-          <div>
-            <p class="font-semibold text-green-800">محاولات مجانية متاحة!</p>
-            <p class="mt-0.5 text-sm text-green-700">
-              لديك
-              <strong>{{ q.remainingFreeExams }}</strong>
-              محاولات مجانية لتوليد الاختبارات هذا الشهر.
-            </p>
-          </div>
-        </div>
-      </div>
-    } @else {
-      <!-- No Free Quota, check balance -->
-      <div
-        class="mb-6 flex flex-col gap-3 rounded-xl border border-amber-200 bg-amber-50 p-5 md:flex-row md:items-center md:justify-between">
-        <div class="flex items-start gap-3">
-          <i class="pi pi-exclamation-triangle mt-1 text-amber-600"></i>
-          <div>
-            <p class="font-semibold text-amber-800">لقد استنفدت المحاولات المجانية هذا الشهر.</p>
-            <p class="mt-0.5 text-sm text-amber-700">
-              تكلفة توليد الاختبار بالذكاء الاصطناعي الآن هي
-              <strong>{{ q.aiExamPrice }} {{ 'ADMIN.DASHBOARD.CURRENCY' | translate }}</strong>
-              .
-              @if (!q.hasSufficientBalance) {
-                <br />
-                <span class="font-bold text-red-600">
-                  رصيدك الحالي ({{ totalAvailableBalance() ?? 0 }}
-                  {{ 'ADMIN.DASHBOARD.CURRENCY' | translate }}) لا يكفي. يرجى شحن المحفظة.
-                </span>
-              } @else {
-                <br />
-                <span class="font-medium text-[#1B6D63]">
-                  سيتم خصم المبلغ من رصيدك الحالي ({{ totalAvailableBalance() ?? 0 }}
-                  {{ 'ADMIN.DASHBOARD.CURRENCY' | translate }}).
-                </span>
-              }
-            </p>
-          </div>
-        </div>
-        @if (!q.hasSufficientBalance) {
-          <a
-            routerLink="/teacher/wallet"
-            class="flex flex-shrink-0 items-center gap-2 rounded-xl bg-[#7C3AED] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#6D28D9] active:scale-[0.98]">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            {{ 'TEACHER.WALLET.AI_BALANCE.TOPUP_BTN' | translate }}
-          </a>
-        }
-      </div>
-    }
-  }
 
   <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-8">

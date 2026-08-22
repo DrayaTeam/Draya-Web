@@ -7,6 +7,7 @@ import {
   OnInit,
   DestroyRef,
 } from '@angular/core';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   NonNullableFormBuilder,
@@ -48,7 +49,7 @@ export function futureDateValidator(control: AbstractControl): ValidationErrors 
 @Component({
   selector: 'draya-generate-exam',
   standalone: true,
-  imports: [ReactiveFormsModule, Select, RouterLink, TranslatePipe],
+  imports: [ReactiveFormsModule, RouterLink, Select, TranslatePipe, CommonModule, DecimalPipe],
   templateUrl: './generate-exam.component.html',
   styleUrl: './generate-exam.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
