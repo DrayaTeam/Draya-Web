@@ -8,12 +8,13 @@ import { TableModule } from 'primeng/table';
 import { TeacherExamService } from '../../services/teacher-exam.service';
 import { ExamAttemptDto, TeacherExamDto } from '../../../../core/models/teacher-exam.model';
 import { StudentDetailsModalComponent } from '../../classrooms/classroom-detail/components/student-details-modal/student-details-modal.component';
+import { DrayaPaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { StudentRosterItemDto } from '../../../../core/models/student-roster.model';
 
 @Component({
   selector: 'draya-exam-attempts',
   standalone: true,
-  imports: [CommonModule, RouterLink, TableModule, StudentDetailsModalComponent],
+  imports: [CommonModule, RouterLink, TableModule, StudentDetailsModalComponent, DrayaPaginationComponent],
   templateUrl: './exam-attempts.component.html',
   styleUrl: './exam-attempts.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,6 +28,8 @@ export class ExamAttemptsComponent implements OnInit {
   
   readonly attempts = signal<ExamAttemptDto[]>([]);
   readonly totalCount = signal<number>(0);
+  readonly pageNumber = signal<number>(1);
+  readonly pageSize = signal<number>(10);
   readonly isLoading = signal<boolean>(true);
   readonly error = signal<string | null>(null);
 
@@ -52,19 +55,35 @@ export class ExamAttemptsComponent implements OnInit {
     });
   }
 
-  private loadAttempts(id: string): void {
+  private loadAttempts(id: string, page: number = 1, pageSize: number = 10): void {
     this.isLoading.set(true);
-    this.examService.getExamAttempts(id)
+    this.examService.getExamAttempts(id, page, pageSize)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
           this.attempts.set(res.items || []);
           this.totalCount.set(res.totalCount || 0);
+          this.pageNumber.set(page);
+          this.pageSize.set(pageSize);
         },
         error: () => {
           this.error.set('حدث خطأ أثناء جلب نتائج الطلاب.');
         }
       });
+  }
+
+  onPageChange(page: number): void {
+    const id = this.examId();
+    if (id) {
+      this.loadAttempts(id, page, this.pageSize());
+    }
+  }
+
+  onPageSizeChange(newSize: number): void {
+    const id = this.examId();
+    if (id) {
+      this.loadAttempts(id, 1, newSize);
+    }
   }
 
   openStudentDetails(attempt: ExamAttemptDto): void {
