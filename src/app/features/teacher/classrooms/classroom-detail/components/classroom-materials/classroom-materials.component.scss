@@ -1,4 +1,4 @@
-﻿.materials-container {
+.materials-container {
   width: 100%;
 }
 
@@ -68,13 +68,18 @@
 
 .section-card {
   background: #ffffff;
-  border: 2px solid #1b6d63; /* Make it bold green */
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
-  transition: border-color 150ms ease;
+  transition: all 150ms ease;
+  position: relative;
+
+  &:has(.modern-dropdown) {
+    z-index: 50;
+  }
 
   &.is-expanded {
-    border-color: #134e48;
-    box-shadow: 0 4px 12px -1px rgba(27, 109, 99, 0.15);
+    border-color: rgba(27, 109, 99, 0.3);
+    box-shadow: 0 4px 12px -1px rgba(27, 109, 99, 0.05);
   }
 }
 
@@ -760,6 +765,12 @@ html.dark .tab-badge {
   border-radius: 16px;
   transition: all 200ms ease;
   position: relative;
+
+  &:has(.modern-dropdown) {
+    z-index: 50;
+    border-color: rgba(27, 109, 99, 0.3);
+    box-shadow: 0 4px 12px -1px rgba(27, 109, 99, 0.05);
+  }
 
   &:hover {
     background: #f8fafc;

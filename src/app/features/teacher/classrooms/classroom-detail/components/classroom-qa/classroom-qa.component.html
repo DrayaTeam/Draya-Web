@@ -122,7 +122,7 @@
       @for (question of sortedQuestions(); track question.id) {
         
         <!-- UNIFIED UNIT CARD -->
-        <div class="animate-fade-in-up flex flex-col rounded-[12px] border bg-white transition-colors" [ngClass]="localPinnedQuestions().has(question.id) ? 'border-[#1B6D63]/30 ring-1 ring-[#1B6D63]/20' : 'border-gray-200'">
+        <div class="animate-fade-in-up flex flex-col rounded-[12px] border bg-white transition-colors" [ngClass]="localPinnedQuestions().has(question.id) || activeDropdownId() === question.id ? 'border-[#1B6D63]/30 ring-1 ring-[#1B6D63]/20' : 'border-gray-200'">
           
           <!-- Optional Pinned / Teacher Header -->
           @if (question.authorRole === 'Teacher' || localPinnedQuestions().has(question.id)) {
@@ -269,7 +269,7 @@
                   @for (reply of threadReplies().get(question.id); track reply.id) {
                     
                     <!-- Individual Reply Item -->
-                    <div class="flex flex-col rounded-[12px] border bg-white transition-colors" [ngClass]="reply.isTeacherAnswer || reply.authorRole === 'Teacher' ? 'border-[#1B6D63]/30 ring-1 ring-[#1B6D63]/10' : 'border-gray-200'">
+                    <div class="flex flex-col rounded-[12px] border bg-white transition-colors" [ngClass]="reply.isTeacherAnswer || reply.authorRole === 'Teacher' || activeDropdownId() === reply.id ? 'border-[#1B6D63]/30 ring-1 ring-[#1B6D63]/10' : 'border-gray-200'">
                       
                       <!-- Teacher Banner inside reply -->
                       @if (reply.isTeacherAnswer || reply.authorRole === 'Teacher') {
