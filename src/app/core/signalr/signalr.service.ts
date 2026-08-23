@@ -13,6 +13,7 @@ import {
   HubConnectionBuilder,
   HubConnectionState,
   LogLevel,
+  HttpTransportType,
 } from '@microsoft/signalr';
 import { AuthService } from '../../features/auth';
 import { environment } from '../../../environments/environment';
@@ -22,6 +23,8 @@ import type {
   GradingCompletedEvent,
   NewChatMessageEvent,
   GenerationProgressEvent,
+  ReportGeneratedEvent,
+  StudentAtRiskEvent,
 } from '../models/signalr-events.model';
 
 export type ConnectionStatus =
@@ -38,6 +41,7 @@ export class SignalRService {
 
   private connection: HubConnection | null = null;
   private examGenConnection: HubConnection | null = null;
+  private reportsConnection: HubConnection | null = null;
 
   // ─── Connection status ────────────────────────────────────────────────────
   private readonly _status = signal<ConnectionStatus>('Disconnected');
@@ -65,6 +69,15 @@ export class SignalRService {
   private readonly _generationProgressUpdated = signal<GenerationProgressEvent | null>(null);
   readonly generationProgressUpdated = this._generationProgressUpdated.asReadonly();
 
+  // ─── Hub D: Reports hub signals ───────────────────────────────────────────
+  private readonly _reportGenerated = signal<ReportGeneratedEvent | null>(null);
+  /** Fires when an AI performance report finishes generating. (Hub D: /hubs/reports) */
+  readonly reportGenerated = this._reportGenerated.asReadonly();
+
+  private readonly _studentAtRisk = signal<StudentAtRiskEvent | null>(null);
+  /** Fires when the system detects a student is severely falling behind. (Hub D: /hubs/reports) */
+  readonly studentAtRisk = this._studentAtRisk.asReadonly();
+
   constructor() {
     // ── Reactive lifecycle wiring ─────────────────────────────────────────
     // Watch auth.isLoggedIn() and start/stop the hub automatically.
@@ -73,6 +86,9 @@ export class SignalRService {
       if (this.auth.isAuthenticated()) {
         void this.startConnection().catch((err: unknown) => {
           console.warn('[SignalR] Auto-connect on login state failed:', err);
+        });
+        void this.startReportsHub().catch((err: unknown) => {
+          console.warn('[SignalR] Reports hub auto-connect failed:', err);
         });
       } else {
         void this.stopConnection();
@@ -212,7 +228,59 @@ export class SignalRService {
     }
   }
 
-  /** Gracefully stops the hub connection and resets status. */
+  /**
+   * Builds and starts the SignalR Reports Hub connection (/hubs/reports).
+   * Listens for ReportGenerated and StudentAtRisk events from the backend.
+   * Gated by environment.enableReportsHub.
+   */
+  async startReportsHub(): Promise<void> {
+    if (!environment.enableReportsHub) {
+      console.warn('[SignalR] Reports hub disabled via config — skipping.');
+      return;
+    }
+
+    if (this.reportsConnection?.state === HubConnectionState.Connected) {
+      return;
+    }
+
+    const hubUrl = environment.reportsHubUrl ?? '/hubs/reports';
+
+    this.reportsConnection = new HubConnectionBuilder()
+      .withUrl(hubUrl, {
+        accessTokenFactory: () => this.auth.accessToken() ?? '',
+        transport: HttpTransportType.LongPolling,
+      })
+      .withAutomaticReconnect([0, 2000, 5000, 10000])
+      .configureLogging(LogLevel.Warning)
+      .build();
+
+    this.reportsConnection.on('ReportGenerated', (data: ReportGeneratedEvent) => {
+      console.log('[SignalR] ReportGenerated:', data);
+      this._reportGenerated.set(data);
+    });
+
+    this.reportsConnection.on('StudentAtRisk', (data: StudentAtRiskEvent) => {
+      console.log('[SignalR] StudentAtRisk:', data);
+      this._studentAtRisk.set(data);
+    });
+
+    try {
+      await this.reportsConnection.start();
+      console.log('[SignalR] Connected to /hubs/reports successfully.');
+    } catch (err) {
+      console.warn('[SignalR] /hubs/reports connection failed:', err);
+    }
+  }
+
+  /** Gracefully stops the reports hub connection. */
+  async stopReportsHub(): Promise<void> {
+    if (this.reportsConnection) {
+      await this.reportsConnection.stop();
+      this.reportsConnection = null;
+    }
+  }
+
+  /** Gracefully stops all hub connections and resets status. */
   async stopConnection(): Promise<void> {
     if (this.connection) {
       await this.connection.stop();
@@ -220,6 +288,7 @@ export class SignalRService {
       this.connection = null;
     }
     await this.stopExamGenerationHub();
+    await this.stopReportsHub();
   }
 
   /**

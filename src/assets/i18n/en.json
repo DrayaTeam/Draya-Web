@@ -184,7 +184,11 @@
     "EXAMS": {
       "EMPTY_TITLE": "No Exams In This Category",
       "EMPTY_DESC": "The teacher has not scheduled any exams currently or all available exams are completed.",
-      "TAKE_PRACTICE": "Take Practice Exam"
+      "TAKE_PRACTICE": "Take Practice Exam",
+      "GRADING_IN_PROGRESS": "AI is grading your answers...",
+      "GRADING_COMPLETED": "Grading complete! Redirecting to your result...",
+      "GRADING_NEEDS_REVIEW": "Grading done — some questions are pending teacher review.",
+      "GRADING_FAILED": "An error occurred during grading. Please try again."
     },
     "LIBRARY": {
       "EMPTY_TITLE": "No Books or Resources Yet",
