@@ -14,11 +14,12 @@ import { finalize } from 'rxjs/operators';
 import { TeacherModalComponent } from '../../../../components/teacher-modal/teacher-modal.component';
 import { DrayaPaginationComponent } from '../../../../../../shared/components/pagination/pagination.component';
 import { FormsModule } from '@angular/forms';
+import { StudentDetailsModalComponent } from '../student-details-modal/student-details-modal.component';
 
 @Component({
   selector: 'draya-classroom-students',
   standalone: true,
-  imports: [CommonModule, DatePipe, TableModule, ButtonModule, TooltipModule, TeacherModalComponent, DrayaPaginationComponent, FormsModule],
+  imports: [CommonModule, DatePipe, TableModule, ButtonModule, TooltipModule, TeacherModalComponent, DrayaPaginationComponent, FormsModule, StudentDetailsModalComponent],
   templateUrl: './classroom-students.component.html',
   styleUrl: './classroom-students.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,6 +56,9 @@ export class ClassroomStudentsComponent {
   // Modal State
   readonly isRemoveStudentModalOpen = signal<boolean>(false);
   readonly selectedStudentForRemoval = signal<StudentRosterItemDto | null>(null);
+
+  readonly isDetailsModalOpen = signal<boolean>(false);
+  readonly selectedStudentForDetails = signal<StudentRosterItemDto | null>(null);
 
   constructor() {
     effect(() => {
@@ -98,7 +102,20 @@ export class ClassroomStudentsComponent {
     this.loadStudents();
   }
 
-  openRemoveModal(student: StudentRosterItemDto): void {
+  openStudentDetails(student: StudentRosterItemDto): void {
+    this.selectedStudentForDetails.set(student);
+    this.isDetailsModalOpen.set(true);
+  }
+
+  closeStudentDetails(): void {
+    this.isDetailsModalOpen.set(false);
+    setTimeout(() => this.selectedStudentForDetails.set(null), 300);
+  }
+
+  openRemoveModal(student: StudentRosterItemDto, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
     this.selectedStudentForRemoval.set(student);
     this.isRemoveStudentModalOpen.set(true);
   }
@@ -116,8 +133,8 @@ export class ClassroomStudentsComponent {
       next: () => {
         this.messageService?.add({
           severity: 'success',
-          summary: 'نجاح',
-          detail: 'تم إزالة الطالب بنجاح.',
+          summary: 'ظ†ط¬ط§ط­',
+          detail: 'طھظ… ط¥ط²ط§ظ„ط© ط§ظ„ط·ط§ظ„ط¨ ط¨ظ†ط¬ط§ط­.',
         });
         this.isRemoveStudentModalOpen.set(false);
         this.selectedStudentForRemoval.set(null);
@@ -129,8 +146,8 @@ export class ClassroomStudentsComponent {
         console.error('Failed to remove student', err);
         this.messageService?.add({
           severity: 'error',
-          summary: 'خطأ',
-          detail: 'حدث خطأ أثناء إزالة الطالب. يرجى المحاولة مرة أخرى.',
+          summary: 'ط®ط·ط£',
+          detail: 'ط­ط¯ط« ط®ط·ط£ ط£ط«ظ†ط§ط، ط¥ط²ط§ظ„ط© ط§ظ„ط·ط§ظ„ط¨. ظٹط±ط¬ظ‰ ط§ظ„ظ…ط­ط§ظˆظ„ط© ظ…ط±ط© ط£ط®ط±ظ‰.',
         });
       },
     });
