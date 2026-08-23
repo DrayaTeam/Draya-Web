@@ -109,7 +109,7 @@ export class TeacherSidebarComponent {
 
   readonly footerNavItems: NavItem[] = [
     {
-      labelKey: 'ط§ظ„ظ…ط­ظپط¸ط© ط§ظ„ظ…ط§ظ„ظٹط©', // TODO: Add to i18n
+      labelKey: 'المحفظة المالية', // TODO: Add to i18n
       link: '/teacher/wallet',
       icon: 'wallet',
     },
