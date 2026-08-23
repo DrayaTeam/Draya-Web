@@ -10,11 +10,11 @@ export interface TeacherProfile {
   pictureUrl?: string;
 }
 
-export type TeacherSubjectCategory = 'all' | 'math' | 'physics' | 'chemistry' | 'biology';
+export type TeacherSubjectCategory = string;
 
 export interface SubjectFilterOption {
   readonly id: TeacherSubjectCategory;
-  readonly labelKey: string;
+  readonly labelKey?: string;
   readonly defaultLabel: string;
   readonly emoji?: string;
 }

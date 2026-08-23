@@ -192,8 +192,8 @@
       "EXPLORE_COURSES": "Browse Classrooms"
     },
     "REPORTS": {
-      "EMPTY_WEAKNESS_TITLE": "AI is waiting for your first exam",
-      "EMPTY_WEAKNESS_DESC": "AI is waiting for your first exam to diagnose strengths, weaknesses, and prepare personalized exercises!",
+      "EMPTY_WEAKNESS_TITLE": "Awaiting your first exam",
+      "EMPTY_WEAKNESS_DESC": "Awaiting your first exam to diagnose strengths and weaknesses and prepare personalized exercises!",
       "START_EXAM": "Browse Exams"
     }
   },

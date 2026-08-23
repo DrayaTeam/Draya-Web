@@ -43,35 +43,44 @@ function inferCategory(subject: string): TeacherSubjectCategory {
   return 'all';
 }
 
+function getSubjectEmoji(subject: string): string {
+  if (!subject) return '📚';
+  const s = subject.toLowerCase();
+  if (
+    s.includes('رياض') ||
+    s.includes('math') ||
+    s.includes('جبر') ||
+    s.includes('هندس') ||
+    s.includes('تفاضل') ||
+    s.includes('حساب')
+  ) {
+    return '📐';
+  }
+  if (s.includes('فيز') || s.includes('phys')) return '⚡';
+  if (s.includes('كيم') || s.includes('chem')) return '🧪';
+  if (s.includes('أحياء') || s.includes('احياء') || s.includes('bio') || s.includes('جيولوج')) return '🧬';
+  if (s.includes('عرب') || s.includes('نحو') || s.includes('بلاغ') || s.includes('لغة عربية')) return '📖';
+  if (s.includes('إنجليز') || s.includes('انجليز') || s.includes('english') || s.includes('لغة إنجليزية')) return '🔤';
+  if (s.includes('فرنس') || s.includes('french') || s.includes('français')) return '🇫🇷';
+  if (s.includes('ألمان') || s.includes('المان') || s.includes('german') || s.includes('deutsch')) return '🇩🇪';
+  if (s.includes('إيطال') || s.includes('ايطال') || s.includes('italian')) return '🇮🇹';
+  if (s.includes('تاريخ') || s.includes('history')) return '🏛️';
+  if (s.includes('جغراف') || s.includes('geography')) return '🌍';
+  if (s.includes('فلسف') || s.includes('منطق') || s.includes('philosophy')) return '🧠';
+  if (s.includes('علم نفس') || s.includes('اجتماع') || s.includes('psychology')) return '👥';
+  if (s.includes('حاسب') || s.includes('تكنولوج') || s.includes('برمج') || s.includes('computer')) return '💻';
+  if (s.includes('دين') || s.includes('إسلام') || s.includes('تربية دينية')) return '🕌';
+  if (s.includes('احصاء') || s.includes('إحصاء') || s.includes('statistics')) return '📊';
+  return '📚';
+}
+
 @Injectable({ providedIn: 'root' })
 export class TeacherDirectoryService extends ApiBaseService {
-  readonly subjectOptions: readonly SubjectFilterOption[] = [
+  private readonly _subjectOptions = signal<SubjectFilterOption[]>([
     { id: 'all', labelKey: 'STUDENT.TEACHERS.FILTER_ALL', defaultLabel: 'كل المواد' },
-    {
-      id: 'math',
-      labelKey: 'STUDENT.TEACHERS.FILTER_MATH',
-      defaultLabel: 'الرياضيات',
-      emoji: '📐',
-    },
-    {
-      id: 'physics',
-      labelKey: 'STUDENT.TEACHERS.FILTER_PHYSICS',
-      defaultLabel: 'الفيزياء',
-      emoji: '⚡',
-    },
-    {
-      id: 'chemistry',
-      labelKey: 'STUDENT.TEACHERS.FILTER_CHEMISTRY',
-      defaultLabel: 'الكيمياء',
-      emoji: '🧪',
-    },
-    {
-      id: 'biology',
-      labelKey: 'STUDENT.TEACHERS.FILTER_BIOLOGY',
-      defaultLabel: 'الأحياء',
-      emoji: '🧬',
-    },
-  ];
+  ]);
+
+  readonly subjectOptions = this._subjectOptions.asReadonly();
 
   private readonly _loading = signal<boolean>(false);
   private readonly _teachers = signal<TeacherDirectoryItem[]>([]);
@@ -82,10 +91,13 @@ export class TeacherDirectoryService extends ApiBaseService {
 
   readonly filteredTeachers = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
-    const category = this.selectedCategory();
+    const category = this.selectedCategory().trim().toLowerCase();
 
     return this._teachers().filter((teacher) => {
-      const matchesCategory = category === 'all' || teacher.subjectCategory === category;
+      const matchesCategory =
+        category === 'all' ||
+        teacher.subjectName.trim().toLowerCase() === category ||
+        teacher.subjectCategory.trim().toLowerCase() === category;
       const matchesQuery =
         !query ||
         teacher.name.toLowerCase().includes(query) ||
@@ -106,9 +118,31 @@ export class TeacherDirectoryService extends ApiBaseService {
             return [];
           }
 
+          // Build dynamic subject filters from real database teachers
+          const uniqueSubjects = Array.from(
+            new Set(
+              teachersList
+                .map((t) => t.specialization && t.specialization.trim())
+                .filter((s): s is string => Boolean(s && s.length > 0)),
+            ),
+          );
+
+          const dynamicOptions: SubjectFilterOption[] = [
+            { id: 'all', labelKey: 'STUDENT.TEACHERS.FILTER_ALL', defaultLabel: 'كل المواد' },
+          ];
+
+          uniqueSubjects.forEach((subj) => {
+            dynamicOptions.push({
+              id: subj,
+              defaultLabel: subj,
+              emoji: getSubjectEmoji(subj),
+            });
+          });
+
+          this._subjectOptions.set(dynamicOptions);
+
           return teachersList.map((t, idx) => {
             const realSubject = (t.specialization && t.specialization.trim()) || 'التعليم العام';
-
             const cat = inferCategory(realSubject);
             const styleIdx = idx % CARD_GRADIENTS.length;
 

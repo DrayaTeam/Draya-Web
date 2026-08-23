@@ -77,7 +77,8 @@
 
         <!-- Hero Greeting & Description -->
         <h1 class="hero-title">
-          أهلاً بعودتك، {{ auth.currentUser()?.fullName || summary().studentName }}! 👋
+          أهلاً بعودتك، {{ auth.currentUser()?.fullName || summary().studentName }}!
+          <span class="waving-hand-emoji">👋</span>
         </h1>
         <p class="hero-subtext">
           لديك {{ summary().scheduledExamsCount }} اختباران مجدولان قريباً هذا الأسبوع. واصل الدراسة
@@ -129,13 +130,17 @@
       <div class="streak-card">
         <div class="card-header-row">
           <span class="card-section-label">حافز التعلم اليومي</span>
-          <span class="active-pill">نشط الآن 🔥</span>
+          <span class="active-pill">
+            نشط الآن
+            <span class="flame-emoji-animated">🔥</span>
+          </span>
         </div>
 
         <!-- Orange Flame Banner -->
         <div class="streak-banner-box">
           <div class="flame-icon-box">
             <svg
+              class="flame-svg-animated"
               width="28"
               height="28"
               viewBox="0 0 24 24"
