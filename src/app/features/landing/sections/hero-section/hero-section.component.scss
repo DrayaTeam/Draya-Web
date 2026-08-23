@@ -221,6 +221,9 @@
 .photo-frame {
   position: relative;
   height: 100%;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease, z-index 0.3s ease;
+  cursor: pointer;
+  will-change: transform;
 
   &.frame-1 {
     transform: rotate(3.5deg);
@@ -240,6 +243,56 @@
     transform: rotate(3deg);
     margin-top: -3px;
     margin-left: 3px;
+  }
+
+  .photo-inner {
+    transition: transform 0.45s ease, box-shadow 0.45s ease;
+  }
+
+  .frame-backdrop {
+    transition: transform 0.45s ease, opacity 0.45s ease;
+  }
+}
+
+// When hovering over the photo collage, all frames lean and converge inward toward each other
+.photo-grid:hover {
+  .frame-1 {
+    transform: translate(8px, 8px) rotate(1deg) scale(1.01);
+  }
+  .frame-2 {
+    transform: translate(-8px, 8px) rotate(-1.5deg) scale(1.01);
+  }
+  .frame-3 {
+    transform: translate(8px, -8px) rotate(1.5deg) scale(1.01);
+  }
+  .frame-4 {
+    transform: translate(-8px, -8px) rotate(-1deg) scale(1.01);
+  }
+
+  // The specifically hovered frame lifts and attracts inward slightly more
+  .photo-frame:hover {
+    z-index: 5;
+
+    &.frame-1 {
+      transform: translate(11px, 11px) rotate(0.5deg) scale(1.035);
+    }
+    &.frame-2 {
+      transform: translate(-11px, 11px) rotate(-0.5deg) scale(1.035);
+    }
+    &.frame-3 {
+      transform: translate(11px, -11px) rotate(0.5deg) scale(1.035);
+    }
+    &.frame-4 {
+      transform: translate(-11px, -11px) rotate(-0.5deg) scale(1.035);
+    }
+
+    .photo-inner {
+      box-shadow: 0 20px 30px -8px rgba(21, 27, 25, 0.16), 0 8px 12px -4px rgba(21, 27, 25, 0.08);
+    }
+
+    .frame-backdrop {
+      transform: scale(1.03);
+    }
   }
 }
 
