@@ -1,10 +1,10 @@
-<!-- src/app/features/teacher/classrooms/classroom-detail/components/classroom-students/classroom-students.component.html -->
+﻿<!-- src/app/features/teacher/classrooms/classroom-detail/components/classroom-students/classroom-students.component.html -->
 <div class="roster-container">
   <!-- Table Header Toolbar -->
   <div class="table-toolbar">
     <div class="toolbar-left">
-      <h3 class="toolbar-title">ط¸â€ڑط·آ§ط·آ¦ط¸â€¦ط·آ© ط·آ§ط¸â€‍ط·آ·ط¸â€‍ط·آ¨ط·آ©</h3>
-      <span class="toolbar-badge">{{ rosterResult()?.totalCount ?? 0 }} ط·آ·ط·آ§ط¸â€‍ط·آ¨</span>
+      <h3 class="toolbar-title">قائمة الطلبة</h3>
+      <span class="toolbar-badge">{{ rosterResult()?.totalCount ?? 0 }} طالب</span>
     </div>
     <div class="toolbar-right w-full sm:w-auto">
       <div class="modern-search-bar">
@@ -17,7 +17,7 @@
         <input
           type="text"
           class="search-input"
-          placeholder="ط·آ§ط·آ¨ط·آ­ط·آ« ط·آ¹ط¸â€  ط·آ·ط·آ§ط¸â€‍ط·آ¨..."
+          placeholder="ابحث عن طالب..."
           [ngModel]="searchTerm()"
           (ngModelChange)="searchTerm.set($event)"
         />
@@ -37,10 +37,10 @@
       [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template pTemplate="header">
         <tr>
-          <th>ط·آ§ط¸â€‍ط·آ·ط·آ§ط¸â€‍ط·آ¨</th>
-          <th>ط·ع¾ط·آ§ط·آ±ط¸ظ¹ط·آ® ط·آ§ط¸â€‍ط·آ§ط¸â€ ط·آ¶ط¸â€¦ط·آ§ط¸â€¦</th>
-          <th>ط·آ§ط¸â€‍ط·آ­ط·آ§ط¸â€‍ط·آ©</th>
-          <th style="width: 120px; text-align: center">ط·آ¥ط·آ¬ط·آ±ط·آ§ط·طŒط·آ§ط·ع¾</th>
+          <th>الطالب</th>
+          <th>تاريخ الانضمام</th>
+          <th>الحالة</th>
+          <th style="width: 120px; text-align: center">إجراءات</th>
         </tr>
       </ng-template>
 
@@ -74,14 +74,14 @@
               class="status-badge"
               [ngClass]="student.status === 'Active' ? 'badge-active' : 'badge-inactive'">
               <span class="status-dot"></span>
-              {{ student.status === 'Active' ? 'ط¸â€ ط·آ´ط·آ·' : student.status }}
+              {{ student.status === 'Active' ? 'نشط' : student.status }}
             </div>
           </td>
           <td style="text-align: center">
             <button
               class="action-btn-danger"
               (click)="openRemoveModal(student, $event)"
-              title="ط·آ¥ط·آ²ط·آ§ط¸â€‍ط·آ© ط·آ§ط¸â€‍ط·آ·ط·آ§ط¸â€‍ط·آ¨">
+              title="إزالة الطالب">
               <svg
                 width="16"
                 height="16"
@@ -120,8 +120,8 @@
                   <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                 </svg>
               </div>
-              <h4 class="empty-title">ط¸â€‍ط·آ§ ط¸ظ¹ط¸ث†ط·آ¬ط·آ¯ ط·آ·ط¸â€‍ط·آ¨ط·آ©</h4>
-              <p class="empty-text">ط¸â€‍ط¸â€¦ ط¸ظ¹ط·ع¾ط¸â€¦ ط·ع¾ط·آ³ط·آ¬ط¸ظ¹ط¸â€‍ ط·آ£ط¸ظ¹ ط·آ·ط·آ§ط¸â€‍ط·آ¨ ط¸ظ¾ط¸ظ¹ ط¸â€،ط·آ°ط·آ§ ط·آ§ط¸â€‍ط¸ظ¾ط·آµط¸â€‍ ط·آ¨ط·آ¹ط·آ¯.</p>
+              <h4 class="empty-title">لا يوجد طلبة</h4>
+              <p class="empty-text">لم يتم تسجيل أي طالب في هذا الفصل بعد.</p>
             </div>
           </td>
         </tr>
@@ -145,19 +145,19 @@
 
 <draya-teacher-modal
   [isOpen]="isRemoveStudentModalOpen()"
-  title="ط·ع¾ط·آ£ط¸ئ’ط¸ظ¹ط·آ¯ ط·آ¥ط·آ²ط·آ§ط¸â€‍ط·آ© ط·آ§ط¸â€‍ط·آ·ط·آ§ط¸â€‍ط·آ¨"
+  title="تأكيد إزالة الطالب"
   (modalClosed)="isRemoveStudentModalOpen.set(false)">
   <div class="draya-form p-4">
     <p class="mb-4 text-gray-700">
-      ط¸â€،ط¸â€‍ ط·آ£ط¸â€ ط·ع¾ ط¸â€¦ط·ع¾ط·آ£ط¸ئ’ط·آ¯ ط¸â€¦ط¸â€  ط·آ¥ط·آ²ط·آ§ط¸â€‍ط·آ© ط·آ§ط¸â€‍ط·آ·ط·آ§ط¸â€‍ط·آ¨ <span class="font-bold">{{ selectedStudentForRemoval()?.fullName }}</span> ط¸â€¦ط¸â€  ط¸â€،ط·آ°ط·آ§ ط·آ§ط¸â€‍ط¸ظ¾ط·آµط¸â€‍ط·ع؛
+      هل أنت متأكد من إزالة الطالب <span class="font-bold">{{ selectedStudentForRemoval()?.fullName }}</span> من هذا الفصل؟
     </p>
   </div>
   <div modal-footer class="flex gap-3">
-    <button class="btn-outline" (click)="isRemoveStudentModalOpen.set(false)">ط·آ¥ط¸â€‍ط·ط›ط·آ§ط·طŒ</button>
+    <button class="btn-outline" (click)="isRemoveStudentModalOpen.set(false)">إلغاء</button>
     <button
       class="btn-primary border-none bg-red-600 hover:bg-red-700"
       (click)="confirmRemoveStudent()">
-      ط·آ¥ط·آ²ط·آ§ط¸â€‍ط·آ© ط·آ§ط¸â€‍ط·آ·ط·آ§ط¸â€‍ط·آ¨
+      إزالة الطالب
     </button>
   </div>
 </draya-teacher-modal>
