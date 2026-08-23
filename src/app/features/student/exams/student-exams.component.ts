@@ -95,6 +95,8 @@ export class StudentExamsComponent implements OnInit {
       'تقرير النتيجة والتصحيح',
       `فتح تقرير الإجابات التفصيلي لاختبار ${exam.title}...`,
     );
-    this.router.navigate(['/student/exams', exam.id, 'result']);
+    this.router.navigate(['/student/exams', exam.id, 'result'], {
+      queryParams: exam.latestAttemptId ? { attemptId: exam.latestAttemptId } : {},
+    });
   }
 }

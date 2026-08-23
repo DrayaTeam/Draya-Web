@@ -6,26 +6,51 @@ import {
   StudentExamItem,
   StudentExamsHeaderInfo,
   ExamStatusType,
+  StudentExamSummaryDto,
 } from '../models/student-exam.model';
 
-export interface ExamDto {
-  id: string;
-  classroomId?: string;
-  sectionId?: string;
-  title?: string;
-  topic?: string;
-  durationMinutes?: number;
-  startDate?: string;
-  endDate?: string | null;
-  allowedAttempts?: number;
-  usedAttempts?: number;
-  hasSubmitted?: boolean;
-  attemptStatus?: 'NotStarted' | 'InProgress' | 'PendingGrading' | 'Completed';
-  latestScore?: number;
-  questionsCount?: number;
-  createdAt?: string;
-  teacherName?: string;
-  subjectName?: string;
+/**
+ * Derives the lifecycle status of an exam from the server's own `attemptStatus`
+ * first, falling back to date/attempt-count inference only when the server
+ * hasn't told us (e.g. an older cached response, or a not-yet-started exam
+ * where `attemptStatus` may legitimately be absent).
+ */
+export function deriveExamStatus(
+  ex: StudentExamSummaryDto,
+  now: Date = new Date(),
+): ExamStatusType {
+  const normAttemptStatus = (ex.attemptStatus || '').toLowerCase();
+
+  if (normAttemptStatus === 'inprogress') {
+    return 'in-progress';
+  }
+
+  if (normAttemptStatus === 'pendinggrading') {
+    return 'pending-grading';
+  }
+
+  const isCompleted =
+    Boolean(ex.hasSubmitted) ||
+    normAttemptStatus === 'completed' ||
+    (ex.usedAttempts !== undefined &&
+      ex.allowedAttempts !== undefined &&
+      ex.usedAttempts >= ex.allowedAttempts &&
+      ex.usedAttempts > 0) ||
+    (ex.latestScore !== undefined && ex.latestScore !== null);
+
+  if (isCompleted) {
+    return 'completed';
+  }
+
+  if (ex.startDate && new Date(ex.startDate) > now) {
+    return 'scheduled';
+  }
+
+  if (ex.endDate && new Date(ex.endDate) < now) {
+    return 'expired';
+  }
+
+  return 'available';
 }
 
 @Injectable({ providedIn: 'root' })
@@ -66,8 +91,11 @@ export class StudentExamsService extends ApiBaseService {
   /**
    * Fetches raw student exams as an observable for background discovery polling.
    */
-  fetchExams(page = 1, pageSize = 10): Observable<ExamDto[]> {
-    return this.get<ExamDto[] | { items: ExamDto[] }>('/students/exams', { page, pageSize }).pipe(
+  fetchExams(page = 1, pageSize = 10): Observable<StudentExamSummaryDto[]> {
+    return this.get<StudentExamSummaryDto[] | { items: StudentExamSummaryDto[] }>(
+      '/students/exams',
+      { page, pageSize },
+    ).pipe(
       map((res) => (Array.isArray(res) ? res : res?.items || [])),
       catchError(() => of([])),
     );
@@ -85,7 +113,10 @@ export class StudentExamsService extends ApiBaseService {
       directParams['classroomId'] = classroomId;
     }
 
-    this.get<ExamDto[] | { items: ExamDto[] }>('/students/exams', directParams)
+    this.get<StudentExamSummaryDto[] | { items: StudentExamSummaryDto[] }>(
+      '/students/exams',
+      directParams,
+    )
       .pipe(
         map((res) => (Array.isArray(res) ? res : res?.items || [])),
         tap((combined) => {
@@ -95,54 +126,56 @@ export class StudentExamsService extends ApiBaseService {
           const now = new Date();
 
           const mapped: StudentExamItem[] = combined.map((ex, idx) => {
-            let status: ExamStatusType = 'available';
+            const status = deriveExamStatus(ex, now);
+            const attempts = ex.attempts || [];
+            const latestAttempt = attempts.length > 0 ? attempts[attempts.length - 1] : undefined;
+            const needsTeacherReview = attempts.some((a) => a.needsTeacherReview);
+
             let statusLabel = 'متاح للحل الآن 🔥';
             let secondaryDetailText = 'جاهز للبدء';
 
-            const normAttemptStatus = (ex.attemptStatus || '').toLowerCase();
-            const isCompleted =
-              Boolean(ex.hasSubmitted) ||
-              normAttemptStatus === 'completed' ||
-              normAttemptStatus === 'submitted' ||
-              normAttemptStatus === 'pendinggrading' ||
-              normAttemptStatus === 'graded' ||
-              (ex.usedAttempts !== undefined &&
-                ex.allowedAttempts !== undefined &&
-                ex.usedAttempts >= ex.allowedAttempts &&
-                ex.usedAttempts > 0) ||
-              (ex.latestScore !== undefined && ex.latestScore !== null);
-
-            if (isCompleted) {
-              status = 'completed';
-              statusLabel = 'مكتمل ومصحح ✅';
-              secondaryDetailText =
-                ex.latestScore !== undefined && ex.latestScore !== null
-                  ? `الدرجة: ${ex.latestScore}%`
-                  : 'تم التسليم';
-            } else if (normAttemptStatus === 'inprogress') {
-              status = 'available';
-              statusLabel = 'جلسة جارية ⏳';
-              secondaryDetailText = 'متابعة الحل';
-            } else if (ex.startDate && new Date(ex.startDate) > now) {
-              status = 'scheduled';
-              const startD = new Date(ex.startDate);
-              statusLabel = 'مجدول لاحقاً ⏳';
-              secondaryDetailText = `يبدأ ${startD.toLocaleDateString('ar-EG', {
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-              })}`;
-            } else if (ex.endDate && new Date(ex.endDate) < now) {
-              status = 'expired';
-              statusLabel = 'انتهى موعد الامتحان ⛔';
-              secondaryDetailText = 'انتهت الفترة';
-            } else if (ex.endDate) {
-              const endD = new Date(ex.endDate);
-              secondaryDetailText = `ينتهي ${endD.toLocaleDateString('ar-EG', {
-                month: 'short',
-                day: 'numeric',
-              })}`;
+            switch (status) {
+              case 'completed':
+                statusLabel = 'مكتمل ومصحح ✅';
+                secondaryDetailText =
+                  ex.latestScore !== undefined && ex.latestScore !== null
+                    ? `الدرجة: ${ex.latestScore}%`
+                    : 'تم التسليم';
+                break;
+              case 'in-progress':
+                statusLabel = 'جلسة جارية ⏳';
+                secondaryDetailText = 'متابعة الحل';
+                break;
+              case 'pending-grading':
+                statusLabel = 'قيد التصحيح 🧠';
+                secondaryDetailText = 'جارٍ تقييم إجاباتك';
+                break;
+              case 'scheduled': {
+                const startD = ex.startDate ? new Date(ex.startDate) : null;
+                statusLabel = 'مجدول لاحقاً ⏳';
+                secondaryDetailText = startD
+                  ? `يبدأ ${startD.toLocaleDateString('ar-EG', {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}`
+                  : 'مجدول لاحقاً';
+                break;
+              }
+              case 'expired':
+                statusLabel = 'انتهى موعد الامتحان ⛔';
+                secondaryDetailText = 'انتهت الفترة';
+                break;
+              default:
+                if (ex.endDate) {
+                  const endD = new Date(ex.endDate);
+                  secondaryDetailText = `ينتهي ${endD.toLocaleDateString('ar-EG', {
+                    month: 'short',
+                    day: 'numeric',
+                  })}`;
+                }
+                break;
             }
 
             return {
@@ -156,8 +189,10 @@ export class StudentExamsService extends ApiBaseService {
               secondaryDetailText,
               cornerTintBg: colors[idx % colors.length],
               allowedAttempts: ex.allowedAttempts ?? 1,
-              attemptsTaken: ex.usedAttempts ?? 0,
+              attemptsTaken: ex.usedAttempts ?? attempts.length,
               scorePercent: ex.latestScore,
+              latestAttemptId: latestAttempt?.id,
+              needsTeacherReview,
             };
           });
 
@@ -178,8 +213,8 @@ export class StudentExamsService extends ApiBaseService {
         ex.id === examId
           ? {
               ...ex,
-              status: 'completed' as ExamStatusType,
-              statusLabel: 'مكتمل ومصحح ✅',
+              status: 'pending-grading' as ExamStatusType,
+              statusLabel: 'قيد التصحيح 🧠',
               secondaryDetailText: score !== undefined ? `الدرجة: ${score}%` : 'تم التسليم',
               scorePercent: score ?? ex.scorePercent,
             }

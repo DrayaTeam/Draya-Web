@@ -11,7 +11,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { StudentReportsService } from '../../../core/services/student-reports.service';
-import { StudentExamsService, ExamDto } from '../../../core/services/student-exams.service';
+import { StudentExamsService } from '../../../core/services/student-exams.service';
+import { StudentExamSummaryDto as ExamDto } from '../../../core/models/student-exam.model';
 import { AuthService } from '../../auth/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { ReportKpiCardComponent } from './components/report-kpi-card/report-kpi-card.component';

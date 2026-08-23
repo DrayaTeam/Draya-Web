@@ -47,6 +47,13 @@ export interface AttemptAnswerResultDto {
   gradingResult?: AnswerGradingResultDto;
   correctOptionId?: string | null;
   correctAnswerText?: string | null;
+  // Enriched by the backend so the review screen doesn't need a second exam fetch.
+  questionText?: string;
+  questionType?: string;
+  rubric?: string | null;
+  /** true once the score is locked in (deterministic questions finalize automatically). */
+  isFinalized?: boolean;
+  reviewedByTeacherId?: string | null;
 }
 
 export interface AttemptResultResponseDto {
@@ -57,6 +64,8 @@ export interface AttemptResultResponseDto {
   finalScore: number;
   needsTeacherReview: boolean;
   answers: AttemptAnswerResultDto[];
+  examTitle?: string;
+  maxScore?: number;
 }
 
 export interface StudentExamQuestionOptionDto {
@@ -69,6 +78,8 @@ export interface StudentExamQuestionDto {
   text?: string;
   type?: string;
   difficulty?: string;
+  /** Present in swagger but should not drive grading client-side — the student payload never carries an answer key. */
+  rubric?: string;
   options?: StudentExamQuestionOptionDto[];
 }
 
@@ -116,9 +127,12 @@ export interface ExamQuestion {
   readonly options: readonly ExamQuestionOption[];
   readonly selectedOptionId?: string;
   readonly answerText?: string;
-  readonly correctOptionId?: string;
   readonly isFlagged?: boolean;
 }
+
+/** Distinguishable failure reasons for POST /attempts/start, since the backend reports them via status code + message text rather than a typed error code. */
+export type StartAttemptFailureReason =
+  'no-attempts-remaining' | 'exam-expired' | 'attempt-in-progress' | 'unknown';
 
 export interface ExamWeaknessTopic {
   readonly id: string;

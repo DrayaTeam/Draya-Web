@@ -3,6 +3,7 @@ import { Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
 import { SignalRService } from '../signalr/signalr.service';
 import { ToastService } from './toast.service';
+import { ApiError } from '../models/api-error.model';
 import {
   AnswerSubmissionDto,
   AttemptResultResponseDto,
@@ -10,11 +11,93 @@ import {
   ExamResultReport,
   ExamReviewItem,
   GradingJobStatusDto,
+  StartAttemptFailureReason,
   StartAttemptResponseDto,
   StudentExamDto,
+  StudentExamQuestionDto,
   SubmitAttemptRequestDto,
   SubmitAttemptResponseDto,
 } from '../models/student-exam-taking.model';
+
+/** Tolerant shape of GET /exams/{examId}/student-view — untyped in swagger. */
+export interface ExamStudentViewDto {
+  exam?: { id: string; title?: string; questionsCount?: number };
+  attempts?: {
+    id: string;
+    finalScore?: number | null;
+    needsTeacherReview?: boolean;
+    submittedAt?: string | null;
+  }[];
+}
+
+// Poll cadence for the async grading pipeline. Named (rather than inlined) so the
+// budget can be tuned without hunting through the polling loops.
+const GRADING_JOB_POLL_INTERVAL_MS = 1500;
+const GRADING_JOB_MAX_POLLS = 6;
+const RESULTS_POLL_INTERVAL_MS = 2000;
+const RESULTS_POLL_MAX_TRIES = 4;
+
+function mapExamQuestions(
+  questions: StudentExamQuestionDto[] | undefined,
+  topic: string | undefined,
+): ExamQuestion[] {
+  if (!questions || !Array.isArray(questions) || questions.length === 0) {
+    return [];
+  }
+
+  return questions.map((q, idx) => {
+    const rawOptions = q.options || [];
+    // NOTE: the student-facing payload intentionally does not include an answer key
+    // (StudentExamQuestionOptionDto has no `isCorrect`). Correctness is only ever
+    // known once grading completes and /attempts/{id}/results is fetched.
+    const questionType = q.type || (rawOptions.length > 0 ? 'MultipleChoice' : 'Essay');
+
+    return {
+      id: q.id || `q_${idx + 1}`,
+      index: idx + 1,
+      text: q.text || `سؤال رقم ${idx + 1}`,
+      type: questionType,
+      subjectTag:
+        q.type || q.difficulty || topic || (questionType === 'Essay' ? 'مقالي' : 'اختيار من متعدد'),
+      isFlagged: false,
+      selectedOptionId: undefined,
+      answerText: undefined,
+      options: rawOptions.map((o, optIdx) => ({
+        id: o.id || `opt_${optIdx + 1}`,
+        text: o.text || `الخيار ${optIdx + 1}`,
+      })),
+    };
+  });
+}
+
+function isEssayQuestion(type: string | undefined, optionsCount: number): boolean {
+  return (type || '').toLowerCase().includes('essay') || optionsCount === 0;
+}
+
+/** Best-effort classification of a failed POST /attempts/start, since the backend
+ *  reports failure via HTTP status + free-text message rather than a stable error code.
+ *  Exported for direct unit testing — going through the HTTP mock would require also
+ *  wiring the error interceptor that normally produces this ApiError shape. */
+export function interpretStartAttemptError(err: ApiError | undefined): StartAttemptFailureReason {
+  const message = (err?.message || '').toLowerCase();
+  if (message.includes('expired') || message.includes('انتهت')) {
+    return 'exam-expired';
+  }
+  // Checked before the "already"/"submitted" branch below: a message like
+  // "attempt already in progress" would otherwise match "already" first.
+  if (message.includes('in progress') || message.includes('in-progress')) {
+    return 'attempt-in-progress';
+  }
+  if (
+    message.includes('already') ||
+    message.includes('no attempts') ||
+    message.includes('allowed attempts') ||
+    message.includes('submitted')
+  ) {
+    return 'no-attempts-remaining';
+  }
+  return 'unknown';
+}
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +111,7 @@ export class StudentExamTakingService extends ApiBaseService {
   readonly remainingSeconds = signal<number>(2700); // 45:00
   readonly isLoading = signal<boolean>(false);
   readonly currentAttemptId = signal<string | null>(null);
-  readonly currentExamId = signal<string>('exam-1');
+  readonly currentExamId = signal<string>('');
 
   readonly currentQuestionIndex = signal<number>(0);
   readonly isSubmitted = signal<boolean>(false);
@@ -39,6 +122,10 @@ export class StudentExamTakingService extends ApiBaseService {
   readonly gradingProgressPercent = signal<number>(0);
 
   readonly questions = signal<readonly ExamQuestion[]>([]);
+
+  /** Set when POST /attempts/start fails — lets the UI show a specific reason
+   *  (expired / no attempts left / already in progress) instead of a generic error. */
+  readonly startAttemptFailureReason = signal<StartAttemptFailureReason | null>(null);
 
   readonly currentQuestion = computed(() => {
     const idx = this.currentQuestionIndex();
@@ -125,6 +212,7 @@ export class StudentExamTakingService extends ApiBaseService {
     this.stopTimer();
     this.isSubmitted.set(false);
     this.isAttemptAlreadyCompleted.set(false);
+    this.startAttemptFailureReason.set(null);
     this.currentAttemptId.set(null);
     this.currentQuestionIndex.set(0);
     this.isGradingInProgress.set(false);
@@ -146,36 +234,37 @@ export class StudentExamTakingService extends ApiBaseService {
   }
 
   /**
-   * Loads real exam questions and details from the database.
+   * Starts (or resumes) an attempt and loads the exam's questions.
+   * POST /api/v1/attempts/start then GET /api/v1/students/exams/{id}.
    */
   loadExamSession(examId: string): Observable<boolean> {
     this.resetExamSession();
     this.isLoading.set(true);
     this.currentExamId.set(examId);
 
-    const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(examId);
+    if (!examId) {
+      this.isLoading.set(false);
+      this.startAttemptFailureReason.set('unknown');
+      return of(false);
+    }
 
-    const startAttempt$ = isGuid
-      ? this.post<StartAttemptResponseDto>(`/attempts/start`, { examId }).pipe(
-          tap((att) => {
-            const id = att?.attemptId || att?.id;
-            if (id) {
-              this.currentAttemptId.set(id);
-            }
-          }),
-          catchError((err) => {
-            const status = err?.status;
-            if (status === 400 || status === 500 || status === 409) {
-              this.isAttemptAlreadyCompleted.set(true);
-            }
-            console.warn(
-              'Attempt start server notification:',
-              err?.error?.message || err?.message || err,
-            );
-            return of(null);
-          }),
-        )
-      : of(null);
+    const startAttempt$ = this.post<StartAttemptResponseDto>(`/attempts/start`, { examId }).pipe(
+      tap((att) => {
+        const id = att?.attemptId || att?.id;
+        if (id) {
+          this.currentAttemptId.set(id);
+        }
+      }),
+      catchError((err: ApiError) => {
+        const reason = interpretStartAttemptError(err);
+        this.startAttemptFailureReason.set(reason);
+        if (reason === 'no-attempts-remaining') {
+          this.isAttemptAlreadyCompleted.set(true);
+        }
+        console.warn('Attempt start failed:', reason, err?.message);
+        return of(null);
+      }),
+    );
 
     return startAttempt$.pipe(
       switchMap(() => this.get<StudentExamDto>(`/students/exams/${examId}`)),
@@ -188,43 +277,8 @@ export class StudentExamTakingService extends ApiBaseService {
           this.examLevelText.set(`الموضوع: ${exam.topic} · بيئة اختبار تفاعلية مؤمنة`);
         }
 
-        if (exam?.questions && Array.isArray(exam.questions) && exam.questions.length > 0) {
-          const mapped: ExamQuestion[] = exam.questions.map((q, idx) => {
-            const rawOptions = (q.options || []) as {
-              id?: string;
-              text?: string;
-              isCorrect?: boolean;
-            }[];
-            const correctOpt = rawOptions.find((o) => o.isCorrect);
-            const questionType = q.type || (rawOptions.length > 0 ? 'MultipleChoice' : 'Essay');
-
-            return {
-              id: q.id || `q_${idx + 1}`,
-              index: idx + 1,
-              text: q.text || `سؤال رقم ${idx + 1}`,
-              type: questionType,
-              subjectTag:
-                q.type ||
-                q.difficulty ||
-                exam.topic ||
-                (questionType === 'Essay' ? 'مقالي' : 'اختيار من متعدد'),
-              isFlagged: false,
-              selectedOptionId: undefined,
-              answerText: undefined,
-              correctOptionId: correctOpt?.id,
-              options: rawOptions.map((o, optIdx) => ({
-                id: o.id || `opt_${optIdx + 1}`,
-                text: o.text || `الخيار ${optIdx + 1}`,
-              })),
-            };
-          });
-
-          this.questions.set(mapped);
-          this.currentQuestionIndex.set(0);
-        } else {
-          this.questions.set([]);
-          this.currentQuestionIndex.set(0);
-        }
+        this.questions.set(mapExamQuestions(exam?.questions, exam?.topic));
+        this.currentQuestionIndex.set(0);
 
         const durSeconds =
           exam?.durationMinutes && exam.durationMinutes > 0 ? exam.durationMinutes * 60 : 2700;
@@ -249,39 +303,21 @@ export class StudentExamTakingService extends ApiBaseService {
         if (!exam) return;
         if (exam.title) this.examTitle.set(exam.title);
         if (exam.topic) this.examLevelText.set(`الموضوع: ${exam.topic}`);
-        if (exam.questions && Array.isArray(exam.questions) && exam.questions.length > 0) {
-          const mapped: ExamQuestion[] = exam.questions.map((q, idx) => {
-            const rawOptions = (q.options || []) as {
-              id?: string;
-              text?: string;
-              isCorrect?: boolean;
-            }[];
-            const correctOpt = rawOptions.find((o) => o.isCorrect);
-            const questionType = q.type || (rawOptions.length > 0 ? 'MultipleChoice' : 'Essay');
-
-            return {
-              id: q.id || `q_${idx + 1}`,
-              index: idx + 1,
-              text: q.text || `سؤال رقم ${idx + 1}`,
-              type: questionType,
-              subjectTag:
-                q.type ||
-                q.difficulty ||
-                exam.topic ||
-                (questionType === 'Essay' ? 'مقالي' : 'اختيار من متعدد'),
-              isFlagged: false,
-              selectedOptionId: undefined,
-              answerText: undefined,
-              correctOptionId: correctOpt?.id,
-              options: rawOptions.map((o, optIdx) => ({
-                id: o.id || `opt_${optIdx + 1}`,
-                text: o.text || `الخيار ${optIdx + 1}`,
-              })),
-            };
-          });
+        const mapped = mapExamQuestions(exam.questions, exam.topic);
+        if (mapped.length > 0) {
           this.questions.set(mapped);
         }
       }),
+      catchError(() => of(null)),
+    );
+  }
+
+  /**
+   * Fetches exam + attempt history in one call — GET /api/v1/exams/{examId}/student-view.
+   * Used to let a student pick which past attempt to revisit.
+   */
+  fetchExamStudentView(examId: string): Observable<ExamStudentViewDto | null> {
+    return this.get<ExamStudentViewDto>(`/exams/${examId}/student-view`).pipe(
       catchError(() => of(null)),
     );
   }
@@ -356,250 +392,162 @@ export class StudentExamTakingService extends ApiBaseService {
     }
   }
 
+  private buildAnswerPayload(): AnswerSubmissionDto[] {
+    return this.questions()
+      .filter((q) => !!q.id)
+      .map((q): AnswerSubmissionDto => {
+        const isEssay = isEssayQuestion(q.type, q.options.length);
+
+        if (isEssay) {
+          const text = q.answerText?.trim();
+          return {
+            examQuestionId: q.id,
+            answerText: text && text.length > 0 ? text : null,
+            selectedOptionId: null,
+          };
+        }
+        return {
+          examQuestionId: q.id,
+          selectedOptionId: q.selectedOptionId || null,
+          answerText: null,
+        };
+      });
+  }
+
   /**
    * Submits the student's answers to POST /api/v1/attempts/{attemptId}/submit
    * and initiates AI grading with polling and state tracking.
+   *
+   * There is no client-side scoring here — correctness for MCQs and essays alike
+   * is only known once the server grades the attempt (POST .../grade then
+   * GET .../results), because the student payload never carries an answer key.
    */
-  submitExam(customAttemptId?: string): number {
+  submitExam(customAttemptId?: string): void {
     this.stopTimer();
+    const targetAttemptId = customAttemptId || this.currentAttemptId();
+
+    if (!targetAttemptId) {
+      this.toastService.error(
+        'تعذر تسليم الامتحان ⚠️',
+        'لم يتم رصد محاولة نشطة لهذا الامتحان على الخادم. يرجى إعادة تحميل الصفحة والمحاولة مجدداً.',
+      );
+      return;
+    }
+
     this.isSubmitted.set(true);
     this.isGradingInProgress.set(true);
     this.gradingStage.set('submitting');
     this.gradingProgressPercent.set(30);
 
     const questionsList = this.questions();
-    const targetAttemptId = customAttemptId || this.currentAttemptId() || `att_${Date.now()}`;
 
-    let earnedTotal = 0;
-    let maxTotal = 0;
-    let hasAnyKey = false;
-
-    const mappedReviewQuestions: ExamReviewItem[] = questionsList.map((q) => {
-      const isEssay =
-        (q.type || '').toLowerCase().includes('essay') || (q.options || []).length === 0;
+    // Placeholder review rows so the UI has something to render immediately;
+    // every field here is provisional until fetchAttemptResults() overwrites it.
+    const pendingReviewQuestions: ExamReviewItem[] = questionsList.map((q) => {
+      const isEssay = isEssayQuestion(q.type, q.options.length);
       const chosen = isEssay
         ? q.answerText?.trim() || 'لم يتم إدخال إجابة'
         : q.options.find((o) => o.id === q.selectedOptionId)?.text || 'لم يتم الإجابة';
 
-      let isCorrect = false;
-      let isPendingGrading = true;
-      let correctAnswerText = isEssay
-        ? 'تخضع لمعايير التقييم الذكي بالذكاء الاصطناعي'
-        : 'سيتم إعلان الإجابة النموذجية فور اعتماد النتيجة';
-
-      if (!isEssay && q.correctOptionId) {
-        hasAnyKey = true;
-        isCorrect = q.selectedOptionId === q.correctOptionId;
-        isPendingGrading = false;
-        earnedTotal += isCorrect ? 1 : 0;
-        maxTotal += 1;
-
-        const correctOpt = q.options.find((o) => o.id === q.correctOptionId);
-        if (correctOpt) {
-          correctAnswerText = correctOpt.text;
-        }
-      }
-
       return {
         questionIndex: q.index,
         questionText: q.text,
-        isCorrect,
-        isPendingGrading,
+        isCorrect: false,
+        isPendingGrading: true,
         studentAnswerText: chosen,
-        correctAnswerText,
-        earnedScore: isCorrect ? 1 : 0,
+        correctAnswerText: 'سيتم إعلان الإجابة النموذجية فور اعتماد النتيجة',
+        earnedScore: 0,
         maxScore: isEssay ? 10 : 1,
       };
     });
-
-    const hasPendingQuestions = mappedReviewQuestions.some((q) => q.isPendingGrading);
-    const isGradingPending = !!targetAttemptId && (!hasAnyKey || hasPendingQuestions);
-
-    let computedScorePct = 0;
-    if (hasAnyKey && maxTotal > 0) {
-      computedScorePct = Math.min(100, Math.round((earnedTotal / maxTotal) * 100));
-    }
-
-    let gradeLabel = 'قيد التقييم والتصحيح الذكي ⏳';
-    if (!isGradingPending) {
-      if (computedScorePct >= 85) gradeLabel = 'ممتاز جداً 🌟';
-      else if (computedScorePct >= 65) gradeLabel = 'جيد جداً 👍';
-      else if (computedScorePct >= 50) gradeLabel = 'مقبول — يحتاج مراجعة';
-      else gradeLabel = 'راسب — ضعيف جداً';
-    }
-
-    const wrongQuestions = mappedReviewQuestions.filter((q) => !q.isCorrect && !q.isPendingGrading);
-    const dynamicWeaknessTopics =
-      wrongQuestions.length > 0
-        ? wrongQuestions.slice(0, 3).map((q, idx) => {
-            const isEssay = (q.maxScore || 1) > 1;
-            const earned = q.earnedScore ?? 0;
-            const max = q.maxScore ?? (isEssay ? 10 : 1);
-            const qAccuracy = max > 0 ? Math.round((earned / max) * 100) : q.isCorrect ? 100 : 0;
-
-            let customTip = q.explanation;
-            if (
-              !customTip ||
-              customTip.toLowerCase().includes('deterministic') ||
-              customTip.toLowerCase().includes('exact match')
-            ) {
-              customTip =
-                q.correctAnswerText && q.correctAnswerText !== 'الإجابة النموذجية'
-                  ? `الإجابة الصحيحة هي: "${q.correctAnswerText}" (إجابتك: "${q.studentAnswerText}")`
-                  : `تم اختيار "${q.studentAnswerText}" — يوصى بمراجعة المفاهيم المتعلقة بهذا السؤال.`;
-            }
-
-            return {
-              id: `w${idx + 1}`,
-              title: `مراجعة: ${q.questionText.length > 50 ? q.questionText.slice(0, 50) + '...' : q.questionText}`,
-              accuracyPercentage: qAccuracy,
-              aiTip: customTip,
-              reviewLectureUrl: '/student/courses',
-            };
-          })
-        : isGradingPending
-          ? []
-          : [
-              {
-                id: 'w1',
-                title: `إتقان مفاهيم ${this.examTitle()}`,
-                accuracyPercentage: 100,
-                aiTip: 'أداء استثنائي! تم الإجابة على جميع الأسئلة بصورة نموذجية ودقيقة.',
-                reviewLectureUrl: '/student/courses',
-              },
-            ];
 
     this.examResult.set({
       attemptId: targetAttemptId,
       examId: this.currentExamId(),
       examTitle: this.examTitle(),
-      scorePercentage: computedScorePct,
-      studentScore: earnedTotal,
-      totalScore: maxTotal,
-      gradeLabel,
-      isPassed: !isGradingPending && computedScorePct >= 50,
-      isGradingPending,
+      scorePercentage: 0,
+      gradeLabel: 'قيد التقييم والتصحيح الذكي ⏳',
+      isPassed: false,
+      isGradingPending: true,
       submittedAt: new Date().toLocaleDateString('ar-EG', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
       }),
-      weaknessTopics: dynamicWeaknessTopics,
-      reviewQuestions: mappedReviewQuestions,
+      weaknessTopics: [],
+      reviewQuestions: pendingReviewQuestions,
     });
 
-    // Fire backend submission if targetAttemptId exists and is not a mock ID
-    if (targetAttemptId && !targetAttemptId.startsWith('att_')) {
-      const answers: AnswerSubmissionDto[] = questionsList
-        .filter((q) => !!q.id)
-        .map((q): AnswerSubmissionDto => {
-          const isEssay =
-            (q.type || '').toLowerCase().includes('essay') || (q.options || []).length === 0;
+    const payload: SubmitAttemptRequestDto = {
+      idempotencyKey: `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      answers: this.buildAnswerPayload(),
+    };
 
-          if (isEssay) {
-            const text = q.answerText?.trim();
-            return {
-              examQuestionId: q.id,
-              answerText: text && text.length > 0 ? text : null,
-              selectedOptionId: null,
-            };
-          } else {
-            return {
-              examQuestionId: q.id,
-              selectedOptionId: q.selectedOptionId || null,
-              answerText: null,
-            };
-          }
-        });
-
-      const payload: SubmitAttemptRequestDto = {
-        idempotencyKey: `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-        answers,
-      };
-
-      this.post<SubmitAttemptResponseDto>(`/attempts/${targetAttemptId}/submit`, payload)
-        .pipe(
-          tap(() => {
-            this.gradingStage.set('ai_evaluating');
-            this.gradingProgressPercent.set(60);
-          }),
-          switchMap((subRes) =>
-            this.post<GradingJobStatusDto>(`/attempts/${targetAttemptId}/grade`, {
-              idempotencyKey: `grade_${Date.now()}`,
-            }).pipe(
-              map((gradeRes) => gradeRes?.id || subRes?.gradingJobId),
-              catchError((err) => {
-                console.warn(
-                  'AI Grade endpoint notification (falling back to attempt polling):',
-                  err?.message || err,
-                );
-                return of(subRes?.gradingJobId || null);
-              }),
-            ),
-          ),
-          catchError((err) => {
-            const errorMsg =
-              err?.error?.message ||
-              err?.error?.title ||
-              err?.error?.detail ||
-              err?.message ||
-              'تعذر تسليم الامتحان';
-            console.warn('Submit attempt notification:', errorMsg);
-
-            if (typeof errorMsg === 'string' && errorMsg.toLowerCase().includes('expired')) {
-              this.toastService.error(
-                'انتهت مدة الامتحان ⏱️',
-                'انتهت المدة الزمنية المسموح بها لهذا الاختبار على الخادم ولم يعد من الممكن التسليم المتأخر.',
+    this.post<SubmitAttemptResponseDto>(`/attempts/${targetAttemptId}/submit`, payload)
+      .pipe(
+        tap(() => {
+          this.gradingStage.set('ai_evaluating');
+          this.gradingProgressPercent.set(60);
+        }),
+        switchMap((subRes) =>
+          this.post<GradingJobStatusDto>(`/attempts/${targetAttemptId}/grade`, {
+            idempotencyKey: `grade_${Date.now()}`,
+          }).pipe(
+            map((gradeRes) => gradeRes?.id || subRes?.gradingJobId),
+            catchError((err: ApiError) => {
+              console.warn(
+                'AI Grade endpoint notification (falling back to attempt polling):',
+                err?.message,
               );
-            } else if (
-              typeof errorMsg === 'string' &&
-              errorMsg.includes('already been submitted')
-            ) {
-              this.toastService.info('تم التسليم مسبقاً', 'تم استلام إجابات هذا الاختبار مسبقاً.');
-            } else {
-              this.toastService.warning('تنبيه تسليم الامتحان', errorMsg);
-            }
+              return of(subRes?.gradingJobId || null);
+            }),
+          ),
+        ),
+        catchError((err: ApiError) => {
+          const errorMsg = err?.message || 'تعذر تسليم الامتحان';
+          console.warn('Submit attempt notification:', errorMsg);
 
-            // Immediately finish grading spinner so student can view the review interface
-            this.isGradingInProgress.set(false);
-            this.gradingStage.set(isGradingPending ? 'pending_review' : 'completed');
-            this.gradingProgressPercent.set(100);
+          if (errorMsg.toLowerCase().includes('expired')) {
+            this.toastService.error(
+              'انتهت مدة الامتحان ⏱️',
+              'انتهت المدة الزمنية المسموح بها لهذا الاختبار على الخادم ولم يعد من الممكن التسليم المتأخر.',
+            );
+          } else if (errorMsg.includes('already been submitted')) {
+            this.toastService.info('تم التسليم مسبقاً', 'تم استلام إجابات هذا الاختبار مسبقاً.');
+          } else {
+            this.toastService.warning('تنبيه تسليم الامتحان', errorMsg);
+          }
 
-            return of('SUBMIT_FAILED');
-          }),
-        )
-        .subscribe({
-          next: (jobId) => {
-            if (jobId === 'SUBMIT_FAILED') {
-              // Try fetching existing results once, if any exist
-              this.fetchAttemptResults(targetAttemptId).subscribe(() => {
-                this.isGradingInProgress.set(false);
-                this.gradingStage.set('completed');
-                this.gradingProgressPercent.set(100);
-              });
-            } else if (jobId) {
-              this.pollGradingJob(jobId, targetAttemptId);
-            } else {
-              this.pollAttemptResultsDirectly(targetAttemptId);
-            }
-          },
-        });
-    } else {
-      // Local simulation completion
-      setTimeout(() => {
-        this.isGradingInProgress.set(false);
-        this.gradingStage.set(isGradingPending ? 'pending_review' : 'completed');
-        this.gradingProgressPercent.set(100);
-      }, 1500);
-    }
-
-    return computedScorePct;
+          return of('SUBMIT_FAILED');
+        }),
+      )
+      .subscribe({
+        next: (jobId) => {
+          if (jobId === 'SUBMIT_FAILED') {
+            // Try fetching existing results once, in case the submission actually landed.
+            this.fetchAttemptResults(targetAttemptId).subscribe(() => {
+              this.isGradingInProgress.set(false);
+              this.gradingStage.set('pending_review');
+              this.gradingProgressPercent.set(100);
+            });
+          } else if (jobId) {
+            this.pollGradingJob(jobId, targetAttemptId);
+          } else {
+            this.pollAttemptResultsDirectly(targetAttemptId);
+          }
+        },
+      });
   }
 
   /**
    * Polls background AI grading job until status is Completed.
    */
-  pollGradingJob(jobId: string, attemptId: string, maxAttempts = 6): void {
+  pollGradingJob(
+    jobId: string,
+    attemptId: string,
+    maxAttempts = GRADING_JOB_MAX_POLLS,
+    intervalMs = GRADING_JOB_POLL_INTERVAL_MS,
+  ): void {
     let attempts = 0;
     let interval: ReturnType<typeof setInterval> | null = null;
 
@@ -628,13 +576,17 @@ export class StudentExamTakingService extends ApiBaseService {
     };
 
     checkJob();
-    interval = setInterval(checkJob, 1500);
+    interval = setInterval(checkJob, intervalMs);
   }
 
   /**
    * Direct attempt result polling when job ID is unavailable or direct fallback is needed.
    */
-  pollAttemptResultsDirectly(attemptId: string, maxTries = 4): void {
+  pollAttemptResultsDirectly(
+    attemptId: string,
+    maxTries = RESULTS_POLL_MAX_TRIES,
+    intervalMs = RESULTS_POLL_INTERVAL_MS,
+  ): void {
     let tries = 0;
     let interval: ReturnType<typeof setInterval> | null = null;
 
@@ -657,12 +609,14 @@ export class StudentExamTakingService extends ApiBaseService {
     };
 
     check();
-    interval = setInterval(check, 2000);
+    interval = setInterval(check, intervalMs);
   }
 
   /**
    * Fetches attempt grading results from GET /api/v1/attempts/{attemptId}/results.
-   * Maps server-graded answers and AI rationale back to the UI.
+   * Maps server-graded answers and AI rationale back to the UI. This is the ONLY
+   * source of truth for correctness — nothing here is computed from a client-held
+   * answer key.
    */
   fetchAttemptResults(attemptId: string): Observable<ExamResultReport | null> {
     return this.get<AttemptResultResponseDto>(`/attempts/${attemptId}/results`).pipe(
@@ -674,16 +628,17 @@ export class StudentExamTakingService extends ApiBaseService {
 
         let earnedTotal = 0;
         let maxTotal = 0;
-        let hasAnyGradedOrLocalKey = false;
+        let hasAnyGraded = false;
 
         let mappedReviewQuestions: ExamReviewItem[] = [];
         if (answersList.length > 0) {
           mappedReviewQuestions = answersList.map((ans, idx) => {
             const questionDef = questionsList.find((q) => q.id === ans.examQuestionId);
-            const questionText = questionDef?.text || `سؤال رقم ${idx + 1}`;
-            const isEssay =
-              (questionDef?.type || '').toLowerCase().includes('essay') ||
-              (questionDef?.options || []).length === 0;
+            const questionText = ans.questionText || questionDef?.text || `سؤال رقم ${idx + 1}`;
+            const isEssay = isEssayQuestion(
+              ans.questionType || questionDef?.type,
+              questionDef?.options?.length ?? 0,
+            );
 
             const grading = ans.gradingResult;
             const isGraded = !!grading;
@@ -694,21 +649,13 @@ export class StudentExamTakingService extends ApiBaseService {
             let maxScore = isEssay ? 10 : 1;
 
             if (isGraded) {
-              hasAnyGradedOrLocalKey = true;
+              hasAnyGraded = true;
               earnedScore = grading.score ?? 0;
               maxScore = grading.maxScore ?? maxScore;
               isCorrect = maxScore > 0 ? earnedScore / maxScore >= 0.5 : earnedScore > 0;
               isPendingGrading = false;
               earnedTotal += earnedScore;
               maxTotal += maxScore;
-            } else if (!isEssay && questionDef?.correctOptionId && ans.selectedOptionId) {
-              hasAnyGradedOrLocalKey = true;
-              isCorrect = ans.selectedOptionId === questionDef.correctOptionId;
-              earnedScore = isCorrect ? 1 : 0;
-              maxScore = 1;
-              isPendingGrading = false;
-              earnedTotal += earnedScore;
-              maxTotal += 1;
             }
 
             let studentAnswerText = ans.answerText || '';
@@ -731,9 +678,8 @@ export class StudentExamTakingService extends ApiBaseService {
             if (!isEssay) {
               if (ans.correctAnswerText) {
                 correctAnswerText = ans.correctAnswerText;
-              } else if (ans.correctOptionId || questionDef?.correctOptionId) {
-                const correctOptId = ans.correctOptionId || questionDef?.correctOptionId;
-                const correctOpt = questionDef?.options?.find((o) => o.id === correctOptId);
+              } else if (ans.correctOptionId) {
+                const correctOpt = questionDef?.options?.find((o) => o.id === ans.correctOptionId);
                 if (correctOpt) {
                   correctAnswerText = correctOpt.text || 'الإجابة النموذجية';
                 }
@@ -742,22 +688,13 @@ export class StudentExamTakingService extends ApiBaseService {
               }
             }
 
-            let explanation = grading?.rationale || undefined;
-            if (
-              explanation &&
-              (explanation.toLowerCase().includes('deterministic') ||
-                explanation.toLowerCase().includes('exact match'))
-            ) {
-              explanation = undefined;
-            }
-
             return {
               questionIndex: questionDef?.index ?? idx + 1,
               questionText,
               isCorrect,
               studentAnswerText,
               correctAnswerText,
-              explanation,
+              explanation: grading?.rationale || undefined,
               earnedScore,
               maxScore,
               isAiGraded: grading?.isAiGraded,
@@ -767,46 +704,17 @@ export class StudentExamTakingService extends ApiBaseService {
           });
         } else if (this.examResult().reviewQuestions.length > 0) {
           mappedReviewQuestions = this.examResult().reviewQuestions as ExamReviewItem[];
-        } else if (questionsList.length > 0) {
-          mappedReviewQuestions = questionsList.map((q, idx) => {
-            const isEssay =
-              (q.type || '').toLowerCase().includes('essay') || (q.options || []).length === 0;
-            const selectedOpt = q.options.find((o) => o.id === q.selectedOptionId);
-            const correctOpt = q.options.find((o) => o.id === q.correctOptionId);
-            const isCorrect = !isEssay && q.selectedOptionId === q.correctOptionId;
-
-            return {
-              questionIndex: q.index || idx + 1,
-              questionText: q.text,
-              isCorrect,
-              studentAnswerText: isEssay
-                ? q.answerText || 'لم يتم إدخال إجابة'
-                : selectedOpt?.text || 'لم يتم اختيار إجابة',
-              correctAnswerText: isEssay
-                ? 'إجابة نموذجية معتمدة'
-                : correctOpt?.text || 'الإجابة النموذجية',
-              explanation: isEssay
-                ? 'تخضع لمراجعة واعتماد المعلم والذكاء الاصطناعي.'
-                : isCorrect
-                  ? 'إجابة صحيحة.'
-                  : 'إجابة خاطئة.',
-              earnedScore: isEssay ? 0 : isCorrect ? 1 : 0,
-              maxScore: isEssay ? 10 : 1,
-              isAiGraded: isEssay,
-              isPendingGrading: isEssay,
-            };
-          });
         }
 
         const hasPendingQuestions = mappedReviewQuestions.some((q) => q.isPendingGrading);
         const isGradingPending =
-          !hasAnyGradedOrLocalKey ||
+          !hasAnyGraded ||
           (hasPendingQuestions &&
             (res.needsTeacherReview || res.finalScore === null || res.finalScore === undefined));
 
         // Percentage calculation
         let pct = 0;
-        if (hasAnyGradedOrLocalKey && maxTotal > 0) {
+        if (hasAnyGraded && maxTotal > 0) {
           pct = Math.min(100, Math.round((earnedTotal / maxTotal) * 100));
         } else if (res.finalScore !== undefined && res.finalScore !== null && res.finalScore > 0) {
           pct = Math.min(100, Math.round(res.finalScore));
@@ -818,72 +726,24 @@ export class StudentExamTakingService extends ApiBaseService {
           else if (pct >= 65) gradeLabel = 'جيد جداً 👍';
           else if (pct >= 50) gradeLabel = 'مقبول — يحتاج مراجعة';
           else gradeLabel = 'راسب — ضعيف جداً';
+        } else if (hasPendingQuestions) {
+          gradeLabel = 'قيد مراجعة المعلم للإجابات المقالية ⏳';
         }
-
-        const wrongQuestions = mappedReviewQuestions.filter(
-          (q) => !q.isCorrect && !q.isPendingGrading,
-        );
-        const dynamicWeaknessTopics =
-          wrongQuestions.length > 0
-            ? wrongQuestions.slice(0, 3).map((q, idx) => {
-                const isEssay = (q.maxScore || 1) > 1;
-                const earned = q.earnedScore ?? 0;
-                const max = q.maxScore ?? (isEssay ? 10 : 1);
-                const qAccuracy =
-                  max > 0 ? Math.round((earned / max) * 100) : q.isCorrect ? 100 : 0;
-
-                let customTip = q.explanation;
-                if (
-                  !customTip ||
-                  customTip.toLowerCase().includes('deterministic') ||
-                  customTip.toLowerCase().includes('exact match')
-                ) {
-                  customTip =
-                    q.correctAnswerText && q.correctAnswerText !== 'الإجابة النموذجية'
-                      ? `الإجابة الصحيحة هي: "${q.correctAnswerText}" (إجابتك: "${q.studentAnswerText}")`
-                      : `تم اختيار "${q.studentAnswerText}" — يوصى بمراجعة المفاهيم المتعلقة بهذا السؤال.`;
-                }
-
-                return {
-                  id: `w${idx + 1}`,
-                  title: `مراجعة: ${q.questionText.length > 50 ? q.questionText.slice(0, 50) + '...' : q.questionText}`,
-                  accuracyPercentage: qAccuracy,
-                  aiTip: customTip,
-                  reviewLectureUrl: '/student/courses',
-                };
-              })
-            : hasPendingQuestions
-              ? [
-                  {
-                    id: 'w_pending',
-                    title: `مراجعة وتقييم: ${this.examTitle()}`,
-                    accuracyPercentage: 50,
-                    aiTip:
-                      'تم استلام إجاباتك المقالية وجارٍ فحصها واعتمادها من قِبل المعلم والذكاء الاصطناعي.',
-                    reviewLectureUrl: '/student/courses',
-                  },
-                ]
-              : [
-                  {
-                    id: 'w1',
-                    title: `إتقان مفاهيم ${this.examTitle()}`,
-                    accuracyPercentage: 100,
-                    aiTip: 'أداء استثنائي! تم الإجابة على جميع الأسئلة بصورة نموذجية ودقيقة.',
-                    reviewLectureUrl: '/student/courses',
-                  },
-                ];
 
         const updated: ExamResultReport = {
           attemptId,
           examId: res.examId || this.currentExamId(),
-          examTitle: this.examTitle(),
+          examTitle: res.examTitle || this.examTitle(),
           scorePercentage: pct,
           studentScore: earnedTotal || res.finalScore,
-          totalScore: maxTotal || answersList.length,
+          totalScore: maxTotal || res.maxScore || answersList.length,
           gradeLabel,
           isPassed: !isGradingPending && pct >= 50,
           isGradingPending,
-          weaknessTopics: dynamicWeaknessTopics,
+          // Weaknesses are no longer derived from wrong answers here — the result
+          // page refreshes them from the authoritative GET /Weaknesses/active
+          // endpoint once grading completes (see student-weakness.service.ts).
+          weaknessTopics: [],
           reviewQuestions: mappedReviewQuestions,
           submittedAt: res.submittedAt
             ? new Date(res.submittedAt).toLocaleDateString('ar-EG', {
@@ -894,7 +754,7 @@ export class StudentExamTakingService extends ApiBaseService {
             : this.examResult().submittedAt,
         };
 
-        if (!isGradingPending || hasAnyGradedOrLocalKey) {
+        if (!isGradingPending || hasAnyGraded) {
           this.isGradingInProgress.set(false);
           this.gradingStage.set(isGradingPending ? 'pending_review' : 'completed');
           this.gradingProgressPercent.set(100);

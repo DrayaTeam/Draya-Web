@@ -81,6 +81,22 @@
       <button
         type="button"
         class="filter-pill-btn"
+        [class.active]="selectedFilter() === 'in-progress'"
+        (click)="setFilter('in-progress')">
+        جلسة جارية ⏳
+      </button>
+
+      <button
+        type="button"
+        class="filter-pill-btn"
+        [class.active]="selectedFilter() === 'pending-grading'"
+        (click)="setFilter('pending-grading')">
+        قيد التصحيح 🧠
+      </button>
+
+      <button
+        type="button"
+        class="filter-pill-btn"
         [class.active]="selectedFilter() === 'completed'"
         (click)="setFilter('completed')">
         مكتمل وحاصل على درجة ✨
@@ -111,7 +127,8 @@
             <draya-exam-card
               [exam]="exam"
               (startExam)="onStartExam($event)"
-              (viewResults)="onViewResults($event)" />
+              (viewResults)="onViewResults($event)"
+              (retakeExam)="onStartExam($event)" />
           </div>
         }
       } @else {

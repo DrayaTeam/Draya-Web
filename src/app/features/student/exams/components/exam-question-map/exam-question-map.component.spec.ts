@@ -15,7 +15,6 @@ describe('ExamQuestionMapComponent', () => {
       text: 'سؤال 1',
       subjectTag: 'الجبر',
       selectedOptionId: undefined,
-      correctOptionId: 'opt2',
       options: [],
     },
     {
@@ -24,7 +23,6 @@ describe('ExamQuestionMapComponent', () => {
       text: 'سؤال 2',
       subjectTag: 'الجبر',
       selectedOptionId: 'opt1',
-      correctOptionId: 'opt1',
       options: [],
     },
   ];
