@@ -1,7 +1,7 @@
-// src/app/features/teacher/dashboard/components/teacher-attention-alerts/teacher-attention-alerts.component.ts
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { TeacherUrgentAlert } from '../../../models/teacher-dashboard.model';
 
 @Component({
   selector: 'draya-teacher-attention-alerts',
@@ -11,4 +11,6 @@ import { TranslatePipe } from '@ngx-translate/core';
   styleUrl: './teacher-attention-alerts.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TeacherAttentionAlertsComponent {}
+export class TeacherAttentionAlertsComponent {
+  readonly alerts = input<TeacherUrgentAlert[]>([]);
+}

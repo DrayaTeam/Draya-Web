@@ -1,13 +1,26 @@
-<div class="bento-dashboard" dir="rtl">
-  <!-- ── Top Header & Filters ── -->
-  <header class="bento-header animate-fade-in">
-    <div class="header-titles">
-      <h1>{{ 'TEACHER.REPORTS.TITLE' | translate }}</h1>
-      <p>{{ 'TEACHER.REPORTS.ANALYTICS_OVERVIEW' | translate }}</p>
+﻿<div class="bento-dashboard" dir="rtl">
+  <!-- Page Header -->
+  <header
+    class="animate-fade-in mb-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+    <div class="flex items-center gap-4">
+      <div
+        class="flex h-14 w-14 shrink-0 items-center justify-center rounded-[12px] bg-[#1B6D63]/10 text-[#1B6D63]">
+        <i class="pi pi-chart-bar text-2xl"></i>
+      </div>
+      <div>
+        <div class="mb-1 flex items-center gap-2">
+          <h1 class="m-0 text-3xl font-bold text-[#1B6D63]">
+            {{ 'TEACHER.REPORTS.TITLE' | translate }}
+          </h1>
+        </div>
+        <p class="m-0 mt-1 text-gray-500">
+          {{ 'TEACHER.REPORTS.ANALYTICS_OVERVIEW' | translate }}
+        </p>
+      </div>
     </div>
 
-    <div class="header-filters">
-      <div class="bento-select-wrapper">
+    <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+      <div class="relative z-50 w-full sm:w-64">
         <p-select
           appendTo="body"
           [options]="classrooms()"
@@ -15,10 +28,19 @@
           (onChange)="onClassroomSelect()"
           optionLabel="name"
           placeholder="{{ 'TEACHER.REPORTS.SELECT_CLASSROOM' | translate }}"
-          styleClass="bento-select"></p-select>
+          [style]="{ width: '100%', borderRadius: '12px' }"
+          [pt]="{
+            root: {
+              class:
+                '!rounded-[12px] !border !border-gray-200 !shadow-none hover:!border-[#1B6D63] focus-within:!border-[#1B6D63] focus-within:!ring-1 focus-within:!ring-[#1B6D63]',
+            },
+            label: { class: '!py-3 !pr-5 !pl-4' },
+            list: { class: '!py-2 !shadow-none !border !border-gray-200' },
+            option: { class: '!py-2.5 !pr-5 !pl-4 hover:!bg-[#1B6D63]/10 hover:!text-[#1B6D63]' },
+          }"></p-select>
       </div>
 
-      <div class="bento-select-wrapper relative">
+      <div class="relative z-50 w-full sm:w-72">
         <p-select
           appendTo="body"
           [options]="students()"
@@ -27,53 +49,66 @@
           optionLabel="fullName"
           [disabled]="students().length === 0 && !isLoadingStudents()"
           placeholder="{{ 'TEACHER.REPORTS.SELECT_STUDENT' | translate }}"
-          styleClass="bento-select">
+          [style]="{ width: '100%', borderRadius: '12px' }"
+          [pt]="{
+            root: {
+              class:
+                '!rounded-[12px] !border !border-gray-200 !shadow-none hover:!border-[#1B6D63] focus-within:!border-[#1B6D63] focus-within:!ring-1 focus-within:!ring-[#1B6D63]',
+            },
+            label: { class: '!py-3 !pr-5 !pl-4' },
+            list: { class: '!py-2 !shadow-none !border !border-gray-200' },
+            option: { class: '!py-2.5 !pr-5 !pl-4 hover:!bg-[#1B6D63]/10 hover:!text-[#1B6D63]' },
+          }">
           <ng-template pTemplate="selectedItem">
             @if (selectedStudent()) {
-              <div class="select-item-content">
-                <div class="mini-avatar">
+              <div class="flex items-center gap-3">
+                <div
+                  class="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-gray-100 text-xs font-bold text-gray-600">
                   @if (selectedStudent()?.profilePictureUrl || selectedStudent()?.pictureUrl) {
                     <img
                       [src]="selectedStudent()?.profilePictureUrl || selectedStudent()?.pictureUrl"
+                      class="h-full w-full object-cover"
                       alt="avatar" />
                   } @else {
                     {{ selectedStudent()?.fullName?.charAt(0) }}
                   }
                 </div>
-                <span>{{ selectedStudent()?.fullName }}</span>
+                <span class="font-medium">{{ selectedStudent()?.fullName }}</span>
               </div>
             }
           </ng-template>
 
           <ng-template let-student pTemplate="item">
-            <div class="select-item-content">
-              <div class="mini-avatar">
-                @if (student.profilePictureUrl || student.pictureUrl) {
-                  <img [src]="student.profilePictureUrl || student.pictureUrl" alt="avatar" />
-                } @else {
-                  {{ student.fullName.charAt(0) }}
-                }
+            <div class="flex w-full items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div
+                  class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-teal-50 text-sm font-bold text-teal-700">
+                  @if (student.profilePictureUrl || student.pictureUrl) {
+                    <img
+                      [src]="student.profilePictureUrl || student.pictureUrl"
+                      class="h-full w-full object-cover"
+                      alt="avatar" />
+                  } @else {
+                    {{ student.fullName.charAt(0) }}
+                  }
+                </div>
+                <span class="font-medium text-gray-700">{{ student.fullName }}</span>
               </div>
-              <div class="select-text">
-                <span class="name">{{ student.fullName }}</span>
-                <span class="status">
-                  {{ student.status === 'Active' ? 'نشط' : student.status }}
-                </span>
-              </div>
+              <span class="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-500">
+                {{
+                  student.status === 'Active'
+                    ? ('TEACHER.REPORTS.ACTIVE' | translate)
+                    : student.status
+                }}
+              </span>
             </div>
           </ng-template>
         </p-select>
-
-        @if (isLoadingStudents()) {
-          <div class="spinner-overlay">
-            <i class="pi pi-spinner pi-spin"></i>
-          </div>
-        }
       </div>
     </div>
   </header>
 
-  <!-- ── Main Grid ── -->
+  <!-- â”€â”€ Main Grid â”€â”€ -->
   @if (!selectedStudent()) {
     <div class="bento-empty-state animate-fade-in">
       <i class="pi pi-box empty-icon"></i>
@@ -105,9 +140,12 @@
               }
             </div>
             <div class="doc-name-col">
-              <h1>تقرير أداء الطالب: {{ selectedStudent()?.fullName }}</h1>
+              <h1>
+                {{ 'TEACHER.REPORTS.STUDENT_PERFORMANCE' | translate }}
+                {{ selectedStudent()?.fullName }}
+              </h1>
               <div class="doc-tags">
-                <span class="doc-tag success">نشط</span>
+                <span class="doc-tag success">{{ 'TEACHER.REPORTS.ACTIVE' | translate }}</span>
                 <span class="doc-tag neutral">{{ selectedClassroom()?.name }}</span>
               </div>
             </div>
@@ -115,17 +153,17 @@
 
           <div class="doc-stats-inline">
             <span class="stat-item">
-              المتوسط العام:
+              {{ 'TEACHER.REPORTS.OVERALL_AVERAGE' | translate }}:
               <strong>{{ studentAnalytics()?.overallAverage | number: '1.0-1' }}%</strong>
             </span>
-            <span class="stat-divider">•</span>
+            <span class="stat-divider">â€¢</span>
             <span class="stat-item">
-              أعلى درجة:
+              {{ 'TEACHER.REPORTS.HIGHEST_SCORE' | translate }}:
               <strong>{{ studentAnalytics()?.highestScore | number: '1.0-1' }}%</strong>
             </span>
-            <span class="stat-divider">•</span>
+            <span class="stat-divider">â€¢</span>
             <span class="stat-item">
-              الامتحانات المكتملة:
+              {{ 'TEACHER.REPORTS.COMPLETED_EXAMS' | translate }}:
               <strong>{{ studentAnalytics()?.completedExams }}</strong>
             </span>
           </div>
@@ -195,10 +233,10 @@
               <table class="bento-table">
                 <thead>
                   <tr>
-                    <th>المادة</th>
-                    <th>الموضوع</th>
-                    <th>مستوى الإتقان</th>
-                    <th>أخطاء متكررة شائعة</th>
+                    <th>{{ 'TEACHER.REPORTS.COL_SUBJECT' | translate }}</th>
+                    <th>{{ 'TEACHER.REPORTS.COL_TOPIC' | translate }}</th>
+                    <th>{{ 'TEACHER.REPORTS.COL_PROFICIENCY' | translate }}</th>
+                    <th>{{ 'TEACHER.REPORTS.COL_EXAMPLES' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -209,10 +247,14 @@
                       </td>
                       <td class="font-bold text-slate-800">{{ topic.topicName }}</td>
                       <td>
-                        <span class="score-badge">{{ topic.proficiencyPercent | number: '1.0-1' }}%</span>
+                        <span class="score-badge">
+                          {{ topic.proficiencyPercent | number: '1.0-1' }}%
+                        </span>
                       </td>
                       <td class="text-xs text-slate-500" dir="ltr">
-                        @if (topic.exampleIncorrectAnswers && topic.exampleIncorrectAnswers.length > 0) {
+                        @if (
+                          topic.exampleIncorrectAnswers && topic.exampleIncorrectAnswers.length > 0
+                        ) {
                           {{ topic.exampleIncorrectAnswers[0] }}
                           @if (topic.exampleIncorrectAnswers.length > 1) {
                             <span class="text-slate-400">

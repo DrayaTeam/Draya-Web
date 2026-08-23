@@ -132,12 +132,18 @@ export class TeacherReportsComponent implements OnInit {
         this.messageService.add({
           severity: 'success',
           summary: 'نجاح',
-          detail: res?.message || 'تم اعتماد التقرير وإرساله بنجاح.',
+          detail:
+            res?.message || 'تم اعتماد وإرسال التقرير بنجاح إلى البريد الإلكتروني لولي الأمر.',
         });
       },
       error: (err) => {
         console.error('Failed to approve report', err);
         this.isApproving.set(false);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'خطأ',
+          detail: err?.error?.message || 'حدث خطأ أثناء إرسال التقرير لولي الأمر.',
+        });
       },
     });
   }

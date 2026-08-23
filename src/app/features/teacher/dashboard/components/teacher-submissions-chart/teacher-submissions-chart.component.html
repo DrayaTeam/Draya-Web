@@ -6,7 +6,6 @@
         {{ 'TEACHER.DASHBOARD.CHART.SUBTITLE' | translate }}
       </span>
     </div>
-
   </div>
 
   <!-- Chart Metrics Highlights Bar -->
@@ -47,9 +46,7 @@
         </linearGradient>
       </defs>
 
-      <polygon
-        [attr.points]="submissionsPolygon()"
-        fill="url(#subGrad)" />
+      <polygon [attr.points]="submissionsPolygon()" fill="url(#subGrad)" />
 
       <path
         [attr.d]="submissionsPath()"
@@ -65,7 +62,7 @@
         stroke-width="2.5"
         stroke-dasharray="6,4"
         stroke-linecap="round" />
-        
+
       <!-- Data Point Circles -->
       @for (pt of submissionCircles(); track $index) {
         <circle
@@ -76,7 +73,7 @@
           stroke="#1B6D63"
           stroke-width="2" />
       }
-      
+
       @for (pt of averageCircles(); track $index) {
         <circle
           [attr.cx]="pt.x"

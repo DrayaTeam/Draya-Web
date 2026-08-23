@@ -30,7 +30,7 @@
         (followupStudentsClick)="handleFollowupStudents()"
         (openReportsClick)="handleOpenReports()" />
 
-      <draya-teacher-attention-alerts />
+      <draya-teacher-attention-alerts [alerts]="urgentAlerts()" />
     </div>
   </section>
 

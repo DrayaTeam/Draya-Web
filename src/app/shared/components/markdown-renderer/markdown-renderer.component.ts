@@ -39,18 +39,13 @@ export class MarkdownRendererComponent {
     if (!text || typeof text !== 'string') return '';
 
     // 1. Escape HTML special characters to prevent XSS
-    let escaped = text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+    let escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     // 2. Extract and preserve code blocks
     const codeBlocks: string[] = [];
     escaped = escaped.replace(/```([\s\S]*?)```/g, (_match, code: string) => {
       const idx = codeBlocks.length;
-      codeBlocks.push(
-        `<pre class="md-code-block"><code>${code.trim()}</code></pre>`,
-      );
+      codeBlocks.push(`<pre class="md-code-block"><code>${code.trim()}</code></pre>`);
       return `%%CODEBLOCK_${idx}%%`;
     });
 
@@ -260,34 +255,21 @@ export class MarkdownRendererComponent {
    * Parses inline markdown tokens: bold, italic, inline code, links.
    */
   private parseInline(text: string): string {
-    return text
-      // Inline Code: `code`
-      .replace(
-        /`([^`]+)`/g,
-        '<code class="md-inline-code">$1</code>',
-      )
-      // Bold: **text** or __text__
-      .replace(
-        /\*\*(.*?)\*\*/g,
-        '<strong class="md-strong">$1</strong>',
-      )
-      .replace(
-        /__([^_]+)__/g,
-        '<strong class="md-strong">$1</strong>',
-      )
-      // Italic: *text* or _text_
-      .replace(
-        /(?<!\*)\*([^*]+)\*(?!\*)/g,
-        '<em class="md-em">$1</em>',
-      )
-      .replace(
-        /(?<!_)_([^_]+)_(?!_)/g,
-        '<em class="md-em">$1</em>',
-      )
-      // Links: [label](url)
-      .replace(
-        /\[([^\]]+)\]\(([^)]+)\)/g,
-        '<a href="$2" target="_blank" rel="noopener noreferrer" class="md-link">$1</a>',
-      );
+    return (
+      text
+        // Inline Code: `code`
+        .replace(/`([^`]+)`/g, '<code class="md-inline-code">$1</code>')
+        // Bold: **text** or __text__
+        .replace(/\*\*(.*?)\*\*/g, '<strong class="md-strong">$1</strong>')
+        .replace(/__([^_]+)__/g, '<strong class="md-strong">$1</strong>')
+        // Italic: *text* or _text_
+        .replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em class="md-em">$1</em>')
+        .replace(/(?<!_)_([^_]+)_(?!_)/g, '<em class="md-em">$1</em>')
+        // Links: [label](url)
+        .replace(
+          /\[([^\]]+)\]\(([^)]+)\)/g,
+          '<a href="$2" target="_blank" rel="noopener noreferrer" class="md-link">$1</a>',
+        )
+    );
   }
 }

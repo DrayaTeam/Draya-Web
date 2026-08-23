@@ -18,14 +18,14 @@ export class LogoComponent {
   /** Text color: 'dark' (#151B19), 'white' (#FFFFFF), 'primary' (#1B6D63) */
   readonly textColor = input<'dark' | 'white' | 'primary'>('dark');
 
-  /** Whether to show text "درايَة" next to icon */
+  /** Whether to show text "دراية" next to icon */
   readonly showText = input<boolean>(true);
 
   /** Whether clicking logo navigates to home '/' */
   readonly linkable = input<boolean>(true);
 
   /** Optional custom title override */
-  readonly titleText = input<string>('درايَة');
+  readonly titleText = input<string>('دراية');
 
   /** Emits when logo is clicked */
   readonly logoClick = output<void>();

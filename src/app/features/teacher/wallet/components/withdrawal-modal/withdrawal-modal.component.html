@@ -1,119 +1,153 @@
-<!-- src/app/features/teacher/wallet/components/withdrawal-modal/withdrawal-modal.component.html -->
-@if (isOpen()) {
-  <div class="modal-backdrop animate-fade-in" dir="rtl">
-    <div class="modal-content bounce-in">
-      <div class="modal-header">
-        <h2 class="modal-title">طلب سحب الأرباح</h2>
-        <button class="close-btn" (click)="close()" aria-label="إغلاق">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
+﻿@if (isOpen()) {
+  <div
+    class="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-gray-900/40 p-4 backdrop-blur-sm"
+    dir="rtl">
+    <div class="w-full max-w-md rounded-[12px] bg-white shadow-xl">
+      <div class="flex items-center justify-between border-b border-gray-100 p-6">
+        <h2 class="text-xl font-bold text-gray-900">طلب سحب الأرباح</h2>
+        <button
+          class="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
+          (click)="close()"
+          aria-label="إغلاق">
+          <i class="pi pi-times"></i>
         </button>
       </div>
 
-      <div class="modal-body">
-        <div class="balance-info mb-6">
-          <span class="info-label">الرصيد المتاح للسحب:</span>
-          <span class="info-amount">{{ maxAmount() }} ج.م</span>
+      <div class="p-6">
+        <div
+          class="mb-6 flex items-center justify-between rounded-[12px] border border-gray-200 bg-gray-50 p-4">
+          <span class="text-sm font-semibold text-gray-600">الرصيد المتاح للسحب:</span>
+          <span class="text-xl font-black text-gray-900">{{ maxAmount() }} ج.م</span>
         </div>
 
         <!-- Account Selection Area -->
         @if (isLoadingAccounts()) {
-          <div class="target-account-card mb-6 flex justify-center py-4">
-            <span class="spinner-sm"></span>
-            <span class="mr-2 text-sm text-gray-500">جاري تحميل حساباتك...</span>
+          <div class="mb-6 flex justify-center py-4">
+            <i class="pi pi-spinner pi-spin text-2xl text-gray-400"></i>
+            <span class="mr-3 text-sm font-medium text-gray-500">جاري تحميل حساباتك...</span>
           </div>
         } @else if (activeAccount()) {
-          <div class="target-account-card mb-6">
-            <div class="account-icon">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round">
-                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
-              </svg>
-            </div>
+          <div class="mb-6 rounded-[12px] border border-gray-200 bg-white p-4">
+            <div class="flex items-start gap-4">
+              <div
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-teal-100 bg-teal-50 text-teal-600">
+                <i class="pi pi-send"></i>
+              </div>
 
-            <div class="flex-1">
-              <p class="account-name">سيتم التحويل إلى:</p>
+              <div class="flex-1">
+                <p class="mb-2 text-xs font-semibold text-gray-500">سيتم التحويل إلى:</p>
 
-              <!-- If an account was pre-selected by parent -->
-              @if (targetAccount()) {
-                <p class="font-bold text-gray-900">{{ targetAccount()?.accountName }}</p>
-                <p class="account-id" dir="ltr">{{ targetAccount()?.accountIdentifier }}</p>
-              }
-              <!-- If we fetched accounts, let the user pick -->
-              @else if (accounts().length > 1) {
-                <select
-                  class="focus:border-primary-500 mt-1 w-full rounded-lg border border-gray-300 p-2 text-sm focus:outline-none"
-                  [ngModel]="selectedAccountId() || activeAccount()?.id"
-                  (ngModelChange)="selectedAccountId.set($event)">
-                  @for (acc of accounts(); track acc.id) {
-                    <option [value]="acc.id">
-                      {{ acc.accountName }} ({{ acc.accountIdentifier }})
-                    </option>
-                  }
-                </select>
-              }
-              <!-- Only one account exists -->
-              @else {
-                <p class="font-bold text-gray-900">{{ activeAccount()?.accountName }}</p>
-                <p class="account-id" dir="ltr">{{ activeAccount()?.accountIdentifier }}</p>
-              }
+                <!-- If an account was pre-selected by parent -->
+                @if (targetAccount()) {
+                  <p class="font-bold text-gray-900">{{ targetAccount()?.accountName }}</p>
+                  <p class="mt-0.5 text-xs text-gray-500" dir="ltr">
+                    {{ targetAccount()?.accountIdentifier }}
+                  </p>
+                }
+                <!-- If we fetched accounts, let the user pick -->
+                @else if (accounts().length > 1) {
+                  <p-select
+                    appendTo="body"
+                    [options]="accounts()"
+                    optionLabel="accountName"
+                    optionValue="id"
+                    [ngModel]="selectedAccountId() || activeAccount()?.id"
+                    (ngModelChange)="selectedAccountId.set($event)"
+                    placeholder="اختر حساب التحويل"
+                    [style]="{ width: '100%', borderRadius: '12px' }"
+                    [pt]="{
+                      root: {
+                        class:
+                          '!rounded-[12px] !border !border-gray-200 !shadow-none hover:!border-[#1B6D63] focus-within:!border-[#1B6D63] focus-within:!ring-1 focus-within:!ring-[#1B6D63]',
+                      },
+                      label: { class: '!py-2.5 !pr-4 !pl-4 !text-sm' },
+                      list: { class: '!py-2 !shadow-none !border !border-gray-200' },
+                      option: {
+                        class:
+                          '!py-2.5 !pr-4 !pl-4 !text-sm hover:!bg-[#1B6D63]/10 hover:!text-[#1B6D63]',
+                      },
+                    }">
+                    <ng-template pTemplate="selectedItem" let-selectedOption>
+                      @if (selectedOption) {
+                        <div class="flex items-center gap-2">
+                          <span class="font-semibold">{{ selectedOption.accountName }}</span>
+                          <span class="text-gray-500" dir="ltr">
+                            ({{ selectedOption.accountIdentifier }})
+                          </span>
+                        </div>
+                      }
+                    </ng-template>
+                    <ng-template pTemplate="item" let-account>
+                      <div class="flex flex-col">
+                        <span class="font-semibold">{{ account.accountName }}</span>
+                        <span class="text-xs text-gray-500" dir="ltr">
+                          {{ account.accountIdentifier }}
+                        </span>
+                      </div>
+                    </ng-template>
+                  </p-select>
+                }
+                <!-- Only one account exists -->
+                @else {
+                  <p class="font-bold text-gray-900">{{ activeAccount()?.accountName }}</p>
+                  <p class="mt-0.5 text-xs text-gray-500" dir="ltr">
+                    {{ activeAccount()?.accountIdentifier }}
+                  </p>
+                }
+              </div>
             </div>
           </div>
         } @else if (!isLoadingAccounts()) {
-          <div class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-center">
+          <div class="mb-6 rounded-[12px] border border-red-200 bg-red-50 p-4 text-center">
             <p class="text-sm font-semibold text-red-600">لا يوجد لديك أي حسابات سحب مضافة.</p>
             <p class="mt-1 text-xs text-red-500">
-              يرجى إغلاق هذه النافذة وإضافة حساب إنستاباي أو حساب بنكي من قسم حسابات السحب.
+              يرجى إغلاق هذه النافذة وإضافة حساب إنستاباي أو حساب بنكي.
             </p>
           </div>
         }
 
-        <div class="form-group">
-          <label for="withdrawalAmountInput">المبلغ المراد سحبه (ج.م)</label>
+        <div class="flex flex-col gap-2">
+          <label for="withdrawalAmountInput" class="text-xs font-semibold text-gray-700">
+            المبلغ المراد سحبه (ج.م)
+          </label>
           <input
             id="withdrawalAmountInput"
             type="number"
             [ngModel]="amount()"
             (ngModelChange)="amount.set($event)"
-            class="form-control amount-input"
+            class="rounded-[12px] border border-gray-200 bg-white px-4 py-3 text-lg font-bold text-gray-900 focus:border-[#1B6D63] focus:ring-1 focus:ring-[#1B6D63] focus:outline-none"
             placeholder="0.00"
             [max]="maxAmount()"
             min="10" />
-          <button class="btn-text mt-2 text-sm" (click)="amount.set(maxAmount())">
+          <button
+            class="self-end text-xs font-semibold text-teal-600 hover:underline"
+            (click)="amount.set(maxAmount())">
             سحب كل الرصيد
           </button>
         </div>
 
         @if (errorMessage()) {
-          <div class="error-alert mt-4">
+          <div
+            class="mt-4 rounded-[10px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
             {{ errorMessage() }}
           </div>
         }
       </div>
 
-      <div class="modal-footer">
-        <button class="btn-secondary" (click)="close()" [disabled]="isSubmitting()">إلغاء</button>
-        <button class="btn-primary" (click)="submit()" [disabled]="isSubmitting() || !amount()">
+      <div
+        class="flex items-center justify-end gap-3 rounded-b-[12px] border-t border-gray-100 bg-gray-50 p-6">
+        <button
+          class="rounded-[12px] border border-gray-200 bg-white px-5 py-[10px] text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 active:scale-[0.98]"
+          (click)="close()"
+          [disabled]="isSubmitting()">
+          إلغاء
+        </button>
+        <button
+          class="inline-flex min-w-[140px] items-center justify-center gap-2 rounded-[12px] bg-[#1B6D63] px-5 py-[10px] text-sm font-medium text-white transition-colors hover:bg-[#0f4f49] active:scale-[0.98] disabled:opacity-50"
+          (click)="submit()"
+          [disabled]="isSubmitting() || !amount()">
           @if (isSubmitting()) {
-            <span class="spinner-sm"></span>
+            <i class="pi pi-spinner pi-spin"></i>
             جاري التنفيذ...
           } @else {
             تأكيد طلب السحب

@@ -499,7 +499,9 @@
         "PENDING_EXAMS": "Pending Exams",
         "EXAMS_CHANGE": "18 submissions this week",
         "NEW_MESSAGES": "New Messages",
-        "MESSAGES_CHANGE": "from students & parents"
+        "MESSAGES_CHANGE": "from students & parents",
+        "REPORTS_READY": "Student Reports",
+        "REPORTS_READY_CHANGE": "Ready for review"
       },
       "CHART": {
         "TITLE": "Submissions Activity",
@@ -551,6 +553,20 @@
         "32_MIN": "32 min ago",
         "55_MIN": "55 min ago",
         "1_HOUR": "1 hr ago"
+      },
+      "AI_REPORTS_READY": "AI Reports Ready for Review",
+      "AI_REPORTS_READY_DESC": "There are AI-generated student reports that require your review and approval.",
+      "VIEW_REPORTS": "Review Reports",
+      "ALERTS": {
+        "TITLE": "Urgent Alerts & Deadlines",
+        "NEW_TODAY": "New Alerts",
+        "EXAMS_WAITING": "{{count}} exams awaiting grading",
+        "TAG_DEADLINE": "Deadline",
+        "REPORTS_READY": "AI reports for {{count}} students ready for review",
+        "TAG_WARNING": "Warning",
+        "STUDENTS_AT_RISK": "{{count}} students need performance followup",
+        "TAG_FOLLOWUP": "Follow-up",
+        "NO_ALERTS": "No alerts at this time."
       }
     },
     "DAYS": {
@@ -637,7 +653,19 @@
       "SUBJECT_PROFICIENCY": "Subject Proficiency",
       "LATEST_REPORT": "Latest AI Report",
       "APPROVE_SEND": "Approve & Send Report",
-      "SEND_ALL": "Send Reports to All Students"
+      "SEND_ALL": "Send Reports to All Students",
+      "ACTIVE": "Active",
+      "EMPTY_TITLE": "No Data Available",
+      "EMPTY_DESC": "Please select a student to view their performance report.",
+      "NO_SUBJECTS": "No subject proficiency data available yet.",
+      "APPROVING": "Approving...",
+      "NO_LATEST_REPORT": "No AI report found for this student.",
+      "WEAK_TOPICS": "Weak Topics",
+      "NO_WEAK_TOPICS_DESC": "No weak topics data available.",
+      "COL_SUBJECT": "Subject",
+      "COL_TOPIC": "Topic",
+      "COL_PROFICIENCY": "Proficiency Level",
+      "COL_EXAMPLES": "Common Mistakes"
     }
   },
   "ADMIN": {

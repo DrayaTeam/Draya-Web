@@ -11,6 +11,7 @@ import type {
   SubmissionsChartMeta,
   SubmissionChartPoint,
   TeacherDashboardDto,
+  TeacherUrgentAlert,
 } from '../models/teacher-dashboard.model';
 
 @Injectable({ providedIn: 'root' })
@@ -47,10 +48,10 @@ export class TeacherDashboardService {
       iconType: 'exams',
     },
     {
-      id: 'new_messages',
-      labelKey: 'TEACHER.DASHBOARD.KPI.NEW_MESSAGES',
+      id: 'reports_ready',
+      labelKey: 'TEACHER.DASHBOARD.KPI.REPORTS_READY',
       value: '0',
-      changeNoteKey: '',
+      changeNoteKey: 'TEACHER.DASHBOARD.KPI.REPORTS_READY_CHANGE',
       iconType: 'messages',
     },
   ]);
@@ -64,7 +65,7 @@ export class TeacherDashboardService {
   readonly chartMeta = computed<SubmissionsChartMeta>(() => {
     const range = this._timeRange();
     const points = this._weeklyChartPoints();
-    
+
     if (!points || points.length === 0) {
       return {
         totalSubmissions: 0,
@@ -80,9 +81,9 @@ export class TeacherDashboardService {
     const rawAverage = avgScoreSum / points.length;
     // Assuming scores are out of 5, convert to percentage for the UI
     const averagePerformance = Math.round((rawAverage / 5) * 100);
-    
-    const peakPoint = points.reduce((prev, current) => 
-      (prev.submissionsCount > current.submissionsCount) ? prev : current
+
+    const peakPoint = points.reduce((prev, current) =>
+      prev.submissionsCount > current.submissionsCount ? prev : current,
     );
 
     return {
@@ -96,6 +97,9 @@ export class TeacherDashboardService {
 
   private readonly _studentsNeedingFollowup = signal<StudentNeedFollowup[]>([]);
   readonly studentsNeedingFollowup = this._studentsNeedingFollowup.asReadonly();
+
+  private readonly _urgentAlerts = signal<TeacherUrgentAlert[]>([]);
+  readonly urgentAlerts = this._urgentAlerts.asReadonly();
 
   private readonly _recentSubmissions = signal<RecentSubmission[]>([]);
   readonly recentSubmissions = this._recentSubmissions.asReadonly();
@@ -113,21 +117,32 @@ export class TeacherDashboardService {
           const newStats = [...stats];
           const studentIdx = newStats.findIndex((s) => s.id === 'active_students');
           if (studentIdx > -1) {
-            newStats[studentIdx] = { ...newStats[studentIdx], value: data.activeStudents.toString() };
+            newStats[studentIdx] = {
+              ...newStats[studentIdx],
+              value: data.activeStudents.toString(),
+            };
           }
           const avgIdx = newStats.findIndex((s) => s.id === 'class_avg');
           if (avgIdx > -1) {
             // Formatting the class average to 1 decimal place max
-            const avg = Number.isInteger(data.classAverage) ? data.classAverage : data.classAverage.toFixed(1);
+            const avg = Number.isInteger(data.classAverage)
+              ? data.classAverage
+              : data.classAverage.toFixed(1);
             newStats[avgIdx] = { ...newStats[avgIdx], value: `${avg}` };
           }
           const examIdx = newStats.findIndex((s) => s.id === 'pending_exams');
           if (examIdx > -1) {
-            newStats[examIdx] = { ...newStats[examIdx], value: data.examsAwaitingReview.toString() };
+            newStats[examIdx] = {
+              ...newStats[examIdx],
+              value: data.examsAwaitingReview.toString(),
+            };
           }
-          const msgIdx = newStats.findIndex((s) => s.id === 'new_messages');
+          const msgIdx = newStats.findIndex((s) => s.id === 'reports_ready');
           if (msgIdx > -1) {
-            newStats[msgIdx] = { ...newStats[msgIdx], value: data.newMessagesCount.toString() };
+            newStats[msgIdx] = {
+              ...newStats[msgIdx],
+              value: data.reportsReadyForReview.toString(),
+            };
           }
           return newStats;
         });
@@ -145,14 +160,15 @@ export class TeacherDashboardService {
         }
 
         // Update Students Needing Followup
-        const studentsNeedingFollowup: StudentNeedFollowup[] = data.needsAttentionList.map(s => {
+        const studentsNeedingFollowup: StudentNeedFollowup[] = data.needsAttentionList.map((s) => {
           const names = s.studentName.split(' ');
-          const initials = names.length > 1 ? names[0].charAt(0) + names[1].charAt(0) : names[0].charAt(0);
+          const initials =
+            names.length > 1 ? names[0].charAt(0) + names[1].charAt(0) : names[0].charAt(0);
           return {
             id: s.studentId,
             studentName: s.studentName,
             initials: initials.toUpperCase(),
-            courseName: 'عام', // Or map from backend if provided in future
+            courseName: s.classroomName || 'عام',
             averageScore: Number(s.overallAverage.toFixed(1)),
             riskLevel: s.overallAverage < 2.5 ? 'high' : 'medium',
           };
@@ -160,9 +176,10 @@ export class TeacherDashboardService {
         this._studentsNeedingFollowup.set(studentsNeedingFollowup);
 
         // Update Recent Submissions
-        const recentSubmissions: RecentSubmission[] = data.recentSubmissions.map(s => {
+        const recentSubmissions: RecentSubmission[] = data.recentSubmissions.map((s) => {
           const names = s.studentName.split(' ');
-          const initials = names.length > 1 ? names[0].charAt(0) + names[1].charAt(0) : names[0].charAt(0);
+          const initials =
+            names.length > 1 ? names[0].charAt(0) + names[1].charAt(0) : names[0].charAt(0);
           return {
             id: s.examAttemptId,
             studentName: s.studentName,
@@ -176,19 +193,50 @@ export class TeacherDashboardService {
         this._recentSubmissions.set(recentSubmissions);
 
         // Update Weekly Chart Points
-        const chartPoints: SubmissionChartPoint[] = data.weeklySubmissionsActivity.map(w => ({
+        const chartPoints: SubmissionChartPoint[] = data.weeklySubmissionsActivity.map((w) => ({
           dayNameKey: w.dayOfWeek,
           submissionsCount: w.submissionsCount,
           averageScore: Number(w.averageScore.toFixed(1)),
         }));
         this._weeklyChartPoints.set(chartPoints);
 
+        // Derive Urgent Alerts
+        const urgentAlerts: TeacherUrgentAlert[] = [];
+        if (data.examsAwaitingReview > 0) {
+          urgentAlerts.push({
+            id: 'exams-awaiting',
+            titleKey: 'TEACHER.DASHBOARD.ALERTS.EXAMS_WAITING',
+            titleParams: { count: data.examsAwaitingReview },
+            tagKey: 'TEACHER.DASHBOARD.ALERTS.TAG_DEADLINE',
+            isDanger: true,
+          });
+        }
+        if (data.reportsReadyForReview > 0) {
+          urgentAlerts.push({
+            id: 'reports-ready',
+            titleKey: 'TEACHER.DASHBOARD.ALERTS.REPORTS_READY',
+            titleParams: { count: data.reportsReadyForReview },
+            tagKey: 'TEACHER.DASHBOARD.ALERTS.TAG_WARNING',
+            isWarning: true,
+          });
+        }
+        if (studentsNeedingFollowup.length >= 3) {
+          urgentAlerts.push({
+            id: 'students-at-risk',
+            titleKey: 'TEACHER.DASHBOARD.ALERTS.STUDENTS_AT_RISK',
+            titleParams: { count: studentsNeedingFollowup.length },
+            tagKey: 'TEACHER.DASHBOARD.ALERTS.TAG_FOLLOWUP',
+            isDanger: true,
+          });
+        }
+        this._urgentAlerts.set(urgentAlerts);
+
         return true;
       }),
       catchError((error) => {
         console.error('Error fetching teacher dashboard data', error);
         return of(false);
-      })
+      }),
     );
   }
 }

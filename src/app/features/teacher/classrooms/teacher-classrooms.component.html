@@ -1,45 +1,85 @@
 <!-- src/app/features/teacher/classrooms/teacher-classrooms.component.html -->
 <div class="classrooms-container" dir="rtl">
-  <!-- Header Section -->
-  <div class="header-row">
-    <div class="header-titles">
-      <h1 class="page-title">الفصول الدراسية (Classrooms List)</h1>
-      <p class="page-subtitle">
-        إدارة المراحل الدراسية ومتابعة المجموعات وإجمالي أعداد الطلبة المنضمين لكل مرحلة.
-      </p>
+  <!-- Top Section Group (Header & Search) -->
+  <div class="mb-2 flex flex-col gap-8 border-b border-slate-200/80 pb-8">
+    <!-- Header Section (Option 2 + Option 3 Button + Bold Title) -->
+    <div class="header-row">
+      <div class="flex items-stretch gap-3">
+        <div class="w-[3px] rounded-full bg-teal-600"></div>
+        <div class="flex flex-col gap-1 py-1">
+          <h1 class="m-0 text-3xl font-bold text-teal-700">الفصول الدراسية</h1>
+          <p class="m-0 text-sm text-slate-500">
+            إدارة المراحل الدراسية ومتابعة المجموعات وإجمالي أعداد الطلبة المنضمين لكل مرحلة.
+          </p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="create-btn" (click)="openCreateModal()">+ إنشاء مرحلة دراسية جديدة</button>
+      </div>
     </div>
 
-    <div class="header-actions">
-      <button class="create-btn" (click)="openCreateModal()">+ إنشاء مرحلة دراسية جديدة</button>
+    <!-- Search Row -->
+    <div class="search-row !mb-0">
+      <div class="modern-search-bar group">
+        <!-- Search Icon -->
+        <div class="search-icon-box">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </div>
+
+        <!-- Input -->
+        <input
+          type="text"
+          class="search-input"
+          placeholder="ابحث باسم المرحلة الدراسية..."
+          (input)="onSearch($event)" />
+
+        <!-- Decorative Keyboard Shortcut -->
+        <div class="search-shortcut hidden md:flex">
+          <kbd>Ctrl</kbd>
+          <span>+</span>
+          <kbd>K</kbd>
+        </div>
+
+        <!-- Divider -->
+        <div class="search-divider hidden md:block"></div>
+
+        <!-- Filter Action -->
+        <button class="search-filter-btn hidden md:flex">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+          </svg>
+          <span>تصفية</span>
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Search and Stats Row -->
-  <!-- Search and Stats Row -->
-  <div class="search-stats-container">
-    <div class="search-input-wrapper">
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="#9ca3af"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="search-icon">
-        <circle cx="11" cy="11" r="8"></circle>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-      </svg>
-      <input
-        type="text"
-        class="search-input"
-        placeholder="بحث باسم المرحلة الدراسية..."
-        (input)="onSearch($event)" />
-    </div>
-    <div class="stats-text">
-      إجمالي المراحل:
-      <span class="stats-number">{{ classroomsResult()?.totalCount || 0 }}</span>
+  <!-- Content Header -->
+  <div class="mb-2 flex items-center justify-between">
+    <h2 class="m-0 text-lg font-bold text-slate-800">قائمة الفصول المتاحة</h2>
+    <div
+      class="rounded-lg border border-teal-100 bg-teal-50 px-3 py-1 text-sm font-semibold text-teal-700">
+      {{ classroomsResult()?.totalCount || 0 }} فصل نشط
     </div>
   </div>
 
@@ -176,84 +216,65 @@
                 </div>
               </div>
 
-              <!-- Tags -->
-              <div class="course-tags">
-                <span class="grade-badge">{{ classroom.gradeLevelName }}</span>
-                <span class="type-badge">{{ classroom.classroomTypeName }}</span>
-              </div>
-
-              <!-- Code & Stats Row -->
-              <div class="stats-row">
-                <div class="stat-item">
-                  <div class="stat-icon-wrap code">
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                    </svg>
-                  </div>
-                  <span>{{ classroom.enrollmentCode }}</span>
-                </div>
-
-                <div class="stat-item">
-                  <div class="stat-icon-wrap students">
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round">
-                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                      <circle cx="9" cy="7" r="4" />
-                      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                  </div>
-                  <span>
-                    <draya-classroom-student-count
-                      [classroomId]="classroom.classroomId"
-                      [fallbackCount]="classroom.studentCount"></draya-classroom-student-count>
-                    طالب
+              <!-- Tags & Stats Group -->
+              <div class="mt-2 mb-auto flex flex-col gap-4">
+                <!-- Tags -->
+                <div class="flex items-center gap-2">
+                  <span
+                    class="rounded-md bg-slate-100 px-2.5 py-1 text-xs leading-none font-bold text-slate-600">
+                    {{ classroom.gradeLevelName }}
+                  </span>
+                  <span
+                    class="rounded-md bg-teal-50 px-2.5 py-1 text-xs leading-none font-bold text-teal-700">
+                    {{ classroom.classroomTypeName }}
                   </span>
                 </div>
 
-                <div class="stat-item">
-                  <div class="stat-icon-wrap price">
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round">
-                      <line x1="12" y1="1" x2="12" y2="23" />
-                      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                    </svg>
+                <!-- Clean Stats -->
+                <div class="flex items-center gap-5">
+                  <div class="flex flex-col gap-1">
+                    <span class="text-[0.65rem] font-bold tracking-wider text-slate-400 uppercase">
+                      كود الانضمام
+                    </span>
+                    <span class="text-sm font-bold text-slate-800">
+                      {{ classroom.enrollmentCode }}
+                    </span>
                   </div>
-                  <span>{{ classroom.price === 0 ? 'مجاناً' : classroom.price + ' ج.م' }}</span>
+
+                  <div class="h-6 w-px bg-slate-200"></div>
+
+                  <div class="flex flex-col gap-1">
+                    <span class="text-[0.65rem] font-bold tracking-wider text-slate-400 uppercase">
+                      الطلاب
+                    </span>
+                    <span class="flex items-center gap-1 text-sm font-bold text-slate-800">
+                      <draya-classroom-student-count
+                        [classroomId]="classroom.classroomId"
+                        [fallbackCount]="classroom.studentCount"></draya-classroom-student-count>
+                      <span>طالب</span>
+                    </span>
+                  </div>
+
+                  <div class="h-6 w-px bg-slate-200"></div>
+
+                  <div class="flex flex-col gap-1">
+                    <span class="text-[0.65rem] font-bold tracking-wider text-slate-400 uppercase">
+                      السعر
+                    </span>
+                    <span class="text-sm font-bold text-teal-700">
+                      {{ classroom.price === 0 ? 'مجاناً' : classroom.price + ' ج.م' }}
+                    </span>
+                  </div>
                 </div>
               </div>
 
               <!-- Bottom Row: Enter Button -->
-              <div class="info-bottom-row">
+              <div class="mt-4 flex items-center justify-end">
                 <button
-                  class="btn-resume"
+                  class="flex cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none bg-teal-700 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-800 active:scale-95"
                   [routerLink]="['/teacher/classrooms', classroom.classroomId]">
                   <span>عرض التفاصيل</span>
                   <svg
-                    class="play-icon"
                     width="14"
                     height="14"
                     viewBox="0 0 24 24"
@@ -271,61 +292,16 @@
         }
       </div>
 
-      <!-- Pagination (Pill Design) -->
-      @if (classroomsResult()!.totalPages > 1) {
-        <div class="pagination-wrapper">
-          <span class="pagination-info-text">
-            صفحة {{ classroomsResult()!.pageNumber }} من {{ classroomsResult()!.totalPages }}
-          </span>
-          <div class="pagination-pill">
-            <!-- Prev Arrow -->
-            <button
-              class="pg-btn pg-arrow"
-              [disabled]="!classroomsResult()!.hasPreviousPage"
-              (click)="onPageChange(classroomsResult()!.pageNumber - 1)"
-              title="الصفحة السابقة">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </button>
-            <div class="pg-divider"></div>
-            <!-- Page Numbers -->
-            @for (page of getPagesArray(); track page) {
-              <button
-                class="pg-btn pg-num"
-                [class.pg-active]="page === classroomsResult()!.pageNumber"
-                (click)="onPageChange(page)">
-                {{ page }}
-              </button>
-            }
-            <div class="pg-divider"></div>
-            <!-- Next Arrow -->
-            <button
-              class="pg-btn pg-arrow"
-              [disabled]="!classroomsResult()!.hasNextPage"
-              (click)="onPageChange(classroomsResult()!.pageNumber + 1)"
-              title="الصفحة التالية">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-            </button>
-          </div>
+      <!-- Pagination Controls -->
+      @if (classroomsResult()!.totalCount > 0) {
+        <div class="mt-8 flex w-full justify-center">
+          <draya-pagination
+            [totalItems]="classroomsResult()!.totalCount"
+            [pageSize]="pageSize"
+            [currentPage]="currentPage"
+            [pageSizeOptions]="[6, 12, 24]"
+            (pageChange)="onPageChange($event)"
+            (pageSizeChange)="onPageSizeChange($event)" />
         </div>
       }
     } @else {

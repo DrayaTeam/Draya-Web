@@ -19,23 +19,24 @@
   </div>
 
   <div class="alert-items-list">
-    <div class="alert-item-row">
-      <span class="alert-item-text">
-        {{ 'TEACHER.DASHBOARD.ATTENTION.STUDENTS_AT_RISK' | translate }}
-      </span>
-      <span class="alert-pill red-pill">
-        {{ 'TEACHER.DASHBOARD.ATTENTION.WARNING_TAG' | translate }}
-      </span>
-    </div>
-
-    <div class="alert-item-row">
-      <span class="alert-item-text">
-        {{ 'TEACHER.DASHBOARD.ATTENTION.EXAM_ALGEBRA' | translate }}
-      </span>
-      <span class="alert-pill amber-pill">
-        {{ 'TEACHER.DASHBOARD.ATTENTION.WAITING_TAG' | translate }}
-      </span>
-    </div>
+    @for (alert of alerts(); track alert.id) {
+      <div class="alert-item-row">
+        <span class="alert-item-text">
+          {{ alert.titleKey | translate: alert.titleParams }}
+        </span>
+        <span
+          class="alert-pill"
+          [class.red-pill]="alert.isDanger"
+          [class.amber-pill]="alert.isWarning">
+          {{ alert.tagKey | translate }}
+        </span>
+      </div>
+    }
+    @if (alerts().length === 0) {
+      <div class="alert-item-row text-sm text-gray-500">
+        {{ 'TEACHER.DASHBOARD.ALERTS.NO_ALERTS' | translate }}
+      </div>
+    }
   </div>
 
   <a routerLink="/teacher/reports" class="alert-view-all-link">

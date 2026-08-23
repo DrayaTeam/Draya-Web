@@ -12,11 +12,7 @@ describe('TeacherDashboardService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        TeacherDashboardService,
-        provideHttpClient(),
-        provideHttpClientTesting()
-      ],
+      providers: [TeacherDashboardService, provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(TeacherDashboardService);
     httpTestingController = TestBed.inject(HttpTestingController);
@@ -51,19 +47,19 @@ describe('TeacherDashboardService', () => {
       newMessagesCount: 1,
       weeklySubmissionsActivity: [],
       needsAttentionList: [],
-      recentSubmissions: []
+      recentSubmissions: [],
     };
 
     service.getDashboardData().subscribe((result) => {
       expect(result).toBeTrue();
-      
+
       const stats = service.kpiStats();
-      const activeStudentsStat = stats.find(s => s.id === 'active_students');
+      const activeStudentsStat = stats.find((s) => s.id === 'active_students');
       expect(activeStudentsStat?.value).toBe('20');
-      
-      const avgStat = stats.find(s => s.id === 'class_avg');
+
+      const avgStat = stats.find((s) => s.id === 'class_avg');
       expect(avgStat?.value).toBe('4.5');
-      
+
       expect(service.aiAlert()).toBeTruthy();
       expect(service.aiAlert()?.reportsCount).toBe(2);
     });

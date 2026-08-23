@@ -1,14 +1,16 @@
-import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
+﻿import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ClassroomService } from '../services/classroom.service';
 import { ClassroomDto } from '../../../core/models/classroom.model';
 import { ClassroomFeedbackSummaryDto } from '../../../core/models/student-courses.model';
 import { DatePipe, NgClass, DecimalPipe } from '@angular/common';
+import { Select } from 'primeng/select';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'draya-teacher-feedback',
   standalone: true,
-  imports: [TranslatePipe, DatePipe, NgClass, DecimalPipe],
+  imports: [TranslatePipe, DatePipe, NgClass, DecimalPipe, Select, FormsModule],
   templateUrl: './teacher-feedback.component.html',
   styleUrl: './teacher-feedback.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -63,6 +65,12 @@ export class TeacherFeedbackComponent implements OnInit {
     }
   }
 
+  onPrimeSelectChange(event: { value: ClassroomDto }): void {
+    if (event.value) {
+      this.selectClassroom(event.value);
+    }
+  }
+
   private loadFeedback(classroomId: string): void {
     this.isLoadingFeedback.set(true);
     this.classroomService.getClassroomFeedback(classroomId, 1, 100).subscribe({
@@ -77,6 +85,6 @@ export class TeacherFeedbackComponent implements OnInit {
   }
 
   getStars(): number[] {
-    return Array.from({ length: 5 }, (_, i) => i + 1);
+    return [1, 2, 3, 4, 5];
   }
 }

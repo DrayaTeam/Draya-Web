@@ -24,24 +24,80 @@
       <span>{{ 'TEACHER.DASHBOARD.REVIEW_AI_BTN' | translate }}</span>
     </button>
 
-    <button
-      type="button"
-      (click)="notificationsClick.emit()"
-      aria-label="الإشعارات"
-      class="icon-btn-bell">
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round">
-        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-      </svg>
-      <span class="unread-dot-badge"></span>
-    </button>
+    <!-- Notifications Dropdown Trigger -->
+    <div class="notifications-wrapper" style="position: relative">
+      <button
+        type="button"
+        (click)="toggleNotifications()"
+        aria-label="الإشعارات"
+        class="icon-btn-bell">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+        @if (notificationsService.unreadCount() > 0) {
+          <span class="unread-dot-badge">{{ notificationsService.unreadCount() }}</span>
+        }
+      </button>
+
+      @if (isDropdownOpen()) {
+        <!-- Backdrop for closing -->
+        <div
+          class="fixed inset-0 z-40"
+          (click)="closeNotifications()"
+          (keydown.enter)="closeNotifications()"
+          tabindex="0"
+          role="button"
+          aria-label="Close"></div>
+
+        <div
+          class="notifications-dropdown animate-scale-up absolute left-0 z-50 mt-2 w-80 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl dark:border-gray-800 dark:bg-[--draya-surface-dark]"
+          style="top: 100%">
+          <div
+            class="dropdown-header flex items-center justify-between border-b border-gray-50 p-4 dark:border-gray-800">
+            <span class="dropdown-title font-bold text-gray-900 dark:text-gray-100">الإشعارات</span>
+          </div>
+
+          <div class="dropdown-list max-h-96 overflow-y-auto">
+            @if (notificationsService.notifications().length === 0) {
+              <div class="p-6 text-center text-sm text-gray-500">لا توجد إشعارات حالياً.</div>
+            }
+            @for (notif of notificationsService.notifications(); track notif.id) {
+              <div
+                class="notif-item flex cursor-default gap-3 border-b border-gray-50 p-4 transition-colors hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-[--draya-surface-darker]">
+                <div
+                  class="notif-dot mt-1.5 h-2 w-2 flex-shrink-0 rounded-full"
+                  [ngClass]="{
+                    'bg-red-500': notif.type === 'risk',
+                    'bg-green-500': notif.type === 'report',
+                    'bg-blue-500': notif.type === 'material',
+                  }"></div>
+                <div class="notif-content flex-1">
+                  <p
+                    class="notif-title mb-1 text-sm font-semibold text-gray-800 dark:text-gray-200">
+                    {{ notif.title }}
+                  </p>
+                  <p
+                    class="notif-desc mb-2 text-xs leading-relaxed text-gray-600 dark:text-gray-400">
+                    {{ notif.message }}
+                  </p>
+                  <span class="notif-time text-[10px] text-gray-400">
+                    {{ notif.time | date: 'shortTime' }}
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
   </div>
 </header>

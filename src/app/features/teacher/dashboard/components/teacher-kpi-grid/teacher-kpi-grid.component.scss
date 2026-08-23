@@ -25,7 +25,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .card-top-row {
@@ -79,27 +78,29 @@
 }
 
 .kpi-number {
-  font-size: 2rem;
-  font-weight: 900;
-  color: #151b19;
-  letter-spacing: -0.64px;
-  line-height: 1;
+  font-size: 2.25rem; /* ~36px for bold visual focus */
+  font-weight: 800;
+  color: #0f172a; /* Slate 900 for stark contrast */
+  letter-spacing: -0.04em;
+  line-height: 1.1;
 }
 
 .kpi-bottom-row {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  margin-top: 4px;
 }
 
 .kpi-label {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: #151b19;
+  font-size: 0.875rem; /* ~14px */
+  font-weight: 500;
+  color: #64748b; /* Slate 500 for secondary read */
 }
 
 .kpi-change-note {
   font-size: 0.75rem;
-  font-weight: 400;
+  font-weight: 500;
   color: #525e5a;
+  margin-top: 6px;
 }

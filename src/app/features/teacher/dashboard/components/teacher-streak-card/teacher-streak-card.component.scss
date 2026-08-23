@@ -9,9 +9,7 @@
   height: 100%;
   background: rgba(255, 255, 255, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow:
-    0px 20px 40px -15px rgba(15, 79, 73, 0.07),
-    inset 0px 1px 0px 1px rgba(255, 255, 255, 0.8);
+
   border-radius: 24px;
   padding: 24px;
   display: flex;
@@ -53,7 +51,7 @@
   align-items: center;
   gap: 16px;
   color: #ffffff;
-  box-shadow: 0px 10px 15px -3px rgba(254, 154, 0, 0.25);
+
   margin-bottom: 20px;
 }
 
