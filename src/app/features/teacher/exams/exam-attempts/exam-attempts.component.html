@@ -55,6 +55,10 @@
                 class="border-b border-gray-100 bg-gray-50 px-6 py-4 text-end font-bold text-gray-600">
                 وقت التسليم
               </th>
+              <th
+                class="border-b border-gray-100 bg-gray-50 px-6 py-4 text-center font-bold text-gray-600">
+                حالة التصحيح
+              </th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-attempt>
@@ -81,6 +85,19 @@
               </td>
               <td class="px-6 py-4 text-end text-sm text-gray-500">
                 {{ attempt.submittedAt | date: 'medium' }}
+              </td>
+              <td class="px-6 py-4 text-center">
+                @if (attempt.needsTeacherReview) {
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700 transition-colors hover:bg-amber-100"
+                    (click)="openAttemptReview(attempt, $event)">
+                    <i class="pi pi-exclamation-triangle"></i>
+                    إجراء مطلوب — مراجعة الإجابات
+                  </button>
+                } @else {
+                  <span class="text-xs text-gray-400">تم الاعتماد</span>
+                }
               </td>
             </tr>
           </ng-template>

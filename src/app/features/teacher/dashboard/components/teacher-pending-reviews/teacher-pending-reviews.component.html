@@ -1,0 +1,78 @@
+<div class="dashboard-card pending-reviews-card">
+  <div class="card-header-row">
+    <div class="header-icon-wrap">
+      <svg
+        width="15"
+        height="15"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#7C3AED"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    </div>
+    <h3 class="card-title">{{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.TITLE' | translate }}</h3>
+    @if (totalPendingCount() > 0) {
+      <span class="pending-count-pill">{{ totalPendingCount() }}</span>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div class="state-message">
+      {{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.LOADING' | translate }}
+    </div>
+  } @else if (classrooms().length === 0) {
+    <div class="state-message empty-message">
+      {{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.EMPTY' | translate }}
+    </div>
+  } @else {
+    <div class="classroom-accordion">
+      @for (classroom of classrooms(); track classroom.classroomId) {
+        <div class="classroom-group">
+          <button
+            type="button"
+            class="classroom-group-header"
+            (click)="toggleClassroom(classroom.classroomId)">
+            <span>{{ classroom.classroomName }}</span>
+            <svg
+              class="chevron-icon"
+              [class.expanded]="expandedClassroomId() === classroom.classroomId"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+
+          @if (expandedClassroomId() === classroom.classroomId) {
+            <div class="exams-list">
+              @for (exam of classroom.exams; track exam.examId) {
+                <div class="exam-group">
+                  <span class="exam-title-label">{{ exam.examTitle }}</span>
+                  @for (attempt of exam.pendingReviews; track attempt.attemptId) {
+                    <button
+                      type="button"
+                      class="pending-attempt-row"
+                      (click)="openAttempt(attempt.attemptId)">
+                      <span class="attempt-student-name">{{ attempt.studentName }}</span>
+                      <span class="action-required-pill">
+                        {{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.ACTION_REQUIRED' | translate }}
+                      </span>
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

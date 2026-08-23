@@ -9,6 +9,7 @@ import { TeacherKpiGridComponent } from './components/teacher-kpi-grid/teacher-k
 import { TeacherSubmissionsChartComponent } from './components/teacher-submissions-chart/teacher-submissions-chart.component';
 import { TeacherQuickActionsComponent } from './components/teacher-quick-actions/teacher-quick-actions.component';
 import { TeacherAttentionAlertsComponent } from './components/teacher-attention-alerts/teacher-attention-alerts.component';
+import { TeacherPendingReviewsComponent } from './components/teacher-pending-reviews/teacher-pending-reviews.component';
 import { TeacherFollowupTableComponent } from './components/teacher-followup-table/teacher-followup-table.component';
 import { TeacherRecentSubmissionsTableComponent } from './components/teacher-recent-submissions-table/teacher-recent-submissions-table.component';
 
@@ -22,6 +23,7 @@ import { TeacherRecentSubmissionsTableComponent } from './components/teacher-rec
     TeacherSubmissionsChartComponent,
     TeacherQuickActionsComponent,
     TeacherAttentionAlertsComponent,
+    TeacherPendingReviewsComponent,
     TeacherFollowupTableComponent,
     TeacherRecentSubmissionsTableComponent,
   ],

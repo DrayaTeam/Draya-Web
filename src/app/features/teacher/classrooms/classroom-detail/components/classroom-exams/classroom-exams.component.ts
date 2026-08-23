@@ -74,7 +74,11 @@ export class ClassroomExamsComponent {
     this.error.set(null);
 
     forkJoin({
-      examsRes: this.examService.getExams(this.classroomId()).pipe(catchError(() => of(null))),
+      // Explicit page size — getExams() defaults to pageSize=10, which was
+      // silently truncating the classroom's exam list once it grew past 10.
+      examsRes: this.examService
+        .getExams(this.classroomId(), 1, 100)
+        .pipe(catchError(() => of(null))),
       sectionsRes: this.sectionService
         .getSections(this.classroomId())
         .pipe(catchError(() => of([]))),
