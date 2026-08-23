@@ -54,3 +54,12 @@ export interface GeneratedQuestionDto {
   acceptedAnswers?: string[];
   options?: { text?: string; isCorrect?: boolean }[];
 }
+
+
+export interface ExamAttemptDto {
+  id: string;
+  studentId: string;
+  studentName: string;
+  finalScore: number;
+  submittedAt: string;
+}
