@@ -11,6 +11,7 @@ import {
   TopicRevisionDto,
   PracticeExamRequest,
   CreatePracticeExamResponseDto,
+  PracticeExamGenerationStatusDto,
   StudentAnalyticsDto,
   PerformanceReportDto,
 } from '../models/student-reports.model';
@@ -99,9 +100,21 @@ export class StudentReportsService extends ApiBaseService {
         const examsCount = analytics?.completedExams ?? 0;
         const highest = analytics?.highestScore ?? topScore;
 
+        // Derived from the trend series itself (last two monthly averages) rather
+        // than a backend-provided field — no endpoint returns a growth percentage
+        // directly, and this is a real computation, not a fabricated placeholder.
+        let monthlyGrowthPercent = 0;
+        if (trends.length >= 2) {
+          const last = trends[trends.length - 1]?.averageScore;
+          const prev = trends[trends.length - 2]?.averageScore;
+          if (typeof last === 'number' && typeof prev === 'number') {
+            monthlyGrowthPercent = Math.round(last - prev);
+          }
+        }
+
         this.summary.set({
           overallAverage: Math.round(avg),
-          monthlyGrowthPercent: 0,
+          monthlyGrowthPercent,
           completedExamsCount: examsCount,
           topScorePercent: Math.round(highest),
           topSkillSubjectName: topSubjectName,
@@ -225,22 +238,19 @@ export class StudentReportsService extends ApiBaseService {
   /**
    * Fetches AI-generated revision recommendations for a specific weak topic.
    * GET /api/v1/students/{studentId}/weak-topics/{topicName}/revision
+   *
+   * The backend caches this response (see BACKEND_ISSUES_REPORT.md) and
+   * invalidates it automatically when the student's score on this topic
+   * changes — the client adds no cache of its own on top of that, and does
+   * NOT fabricate a fallback on error, since a fake "successful" AI response
+   * would mask real failures (missing weakness, backend down, etc).
    */
   getTopicRevision(studentId: string, topicName: string): Observable<TopicRevisionDto | null> {
     const cleanTopic = (topicName || '').trim();
     const encodedTopic = encodeURIComponent(cleanTopic);
     return this.get<TopicRevisionDto>(
       `/students/${studentId}/weak-topics/${encodedTopic}/revision`,
-    ).pipe(
-      catchError(() =>
-        of({
-          topicName: cleanTopic,
-          recommendation: `يركز هذا الموضوع على المفاهيم الجوهرية لـ "${cleanTopic}". ننصح بمراجعة القوانين الأساسية وحل مسائل تدريبية.`,
-          aiExplanation: `تم تحليل إجاباتك السابقة؛ تكرر الخطأ في تطبيق الخطوات التحليلية الأولى. التدريب على نموذج الحل الشامل يعالج الفجوة بسرعة.`,
-          keyFormulas: ['مراجعة النظريات ذات الصلة', 'التطبيق التدريجي بالخطوات'],
-        }),
-      ),
-    );
+    ).pipe(catchError(() => of(null)));
   }
 
   /**
@@ -258,5 +268,19 @@ export class StudentReportsService extends ApiBaseService {
       `/students/${studentId}/weak-topics/${encodedTopic}/practice-exam`,
       payload || {},
     ).pipe(catchError(() => of(null)));
+  }
+
+  /**
+   * Fallback HTTP polling for practice-exam generation progress, mirroring the
+   * teacher module's ExamGenerationService.getGenerationStatus — same endpoint,
+   * used here for a student-triggered generation instead of a teacher one.
+   * GET /api/v1/exams/generations/{generationId}
+   */
+  getPracticeExamGenerationStatus(
+    generationId: string,
+  ): Observable<PracticeExamGenerationStatusDto | null> {
+    return this.get<PracticeExamGenerationStatusDto>(`/exams/generations/${generationId}`).pipe(
+      catchError(() => of(null)),
+    );
   }
 }

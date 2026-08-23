@@ -11,6 +11,8 @@ import { provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { StudentReportsService } from '../../../core/services/student-reports.service';
+import { AuthService } from '../../auth/services/auth.service';
+import { User } from '../../../core/models/user.model';
 
 describe('StudentReportsComponent', () => {
   let component: StudentReportsComponent;
@@ -34,6 +36,9 @@ describe('StudentReportsComponent', () => {
     reportsService = TestBed.inject(StudentReportsService);
     spyOn(reportsService, 'loadReports').and.returnValue(of(true));
     reportsService.isLoading.set(false);
+
+    const authService = TestBed.inject(AuthService);
+    spyOn(authService, 'currentUser').and.returnValue({ userId: 'std-123' } as User);
 
     fixture = TestBed.createComponent(StudentReportsComponent);
     component = fixture.componentInstance;

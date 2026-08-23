@@ -63,6 +63,22 @@ export interface CreatePracticeExamResponseDto {
   readonly attemptId?: string;
   readonly title?: string;
   readonly questionsCount?: number;
+  /**
+   * POST .../practice-exam returns a bare 202 Accepted with no documented body
+   * in swagger, so the key name for the background-generation id is unconfirmed
+   * (see BACKEND_ISSUES_REPORT.md). Both likely spellings are accepted so the
+   * generation can be tracked precisely instead of falling back to title-matching.
+   */
+  readonly generationId?: string;
+  readonly id?: string;
+}
+
+/** Tolerant shape of GET /exams/generations/{generationId} as consumed from the student flow. */
+export interface PracticeExamGenerationStatusDto {
+  readonly status: number | string;
+  readonly examId?: string;
+  readonly message?: string;
+  readonly errorMessage?: string;
 }
 
 export interface SubjectProficiencyResult {

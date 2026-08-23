@@ -42,8 +42,7 @@
 > ✅ **تم النقل إلى القسم الأول (🟢) بالكامل** — دورة حياة الامتحان (بدء/استكمال/تسليم/تصحيح/نتيجة/إعادة محاولة) موصولة بالكامل بالـ Real API اعتباراً من فرع `feat/exam-lifecycle`. نقاط الضعف (`weaknessTopics`) في تقرير النتيجة لم تعد تُولَّد محلياً من الإجابات الخاطئة — تنتظر تكامل `GET /Weaknesses/active` (انظر قسم التتبع الديناميكي لنقاط الضعف أدناه).
 
 ### 2. سجل الدرجات والتقارير الأكاديمية (`/student/reports`):
-* **الحالة الحالية:** رسوم بيانية ومؤشرات أداء في `StudentReportsService`.
-* **المطلوب من الـ Backend:** `GET /api/v1/students/reports/summary` (المتوسط، منحنى التطور، خريطة المهارات).
+> ✅ **تم النقل إلى القسم الأول (🟢) بالكامل** اعتباراً من فرع `feat/student-weakness-reports`. المؤشرات والرسوم البيانية من `GET /students/{id}/analytics` و `GET /students/{id}/performance-reports/latest`. نقاط الضعف (Active/Resolved) موصولة الآن بـ `GET /Weaknesses/active` و `GET /Weaknesses/resolved` عبر `StudentWeaknessService` بدلاً من استخراجها من `weakTopics[]` في الـ analytics. **ملاحظة:** استجابة هاتين النقطتين غير موثقة في Swagger (200 OK بدون schema) — يتم التعامل معها بشكل متسامح، وسجل تطور نقاط الضعف (`StudentWeaknessHistory`) غير متاح عبر أي endpoint حالياً (انظر `BACKEND_ISSUES_REPORT.md`).
 
 ### 3. المكتبة الرقمية وعارض المذكرات (`/student/library`):
 * **الحالة الحالية:** عارض PDF ومذكرات في `StudentLibraryService`.
