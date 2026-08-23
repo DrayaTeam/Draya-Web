@@ -1,15 +1,17 @@
 import { Component, ChangeDetectionStrategy, signal, computed, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../auth';
 import { LogoComponent } from '../../../../shared/components/logo/logo.component';
-
 import { ThemeService } from '../../../../core/services/theme.service';
 import { LocaleService } from '../../../../core/locale/locale.service';
+import { NotificationStoreService } from '../../../../core/services/notification-store.service';
+import type { AppNotification } from '../../../../core/models/notification.model';
 
 @Component({
   selector: 'draya-student-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, LogoComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, LogoComponent],
   templateUrl: './student-header.component.html',
   styleUrl: './student-header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,8 +19,14 @@ import { LocaleService } from '../../../../core/locale/locale.service';
 })
 export class StudentHeaderComponent {
   protected readonly auth = inject(AuthService);
+  protected readonly router = inject(Router);
   readonly themeService = inject(ThemeService);
   readonly localeService = inject(LocaleService);
+  readonly notificationStore = inject(NotificationStoreService);
+
+  readonly notifications = this.notificationStore.notifications;
+  readonly unreadCount = this.notificationStore.unreadCount;
+  readonly hasUnread = this.notificationStore.hasUnread;
 
   readonly userDisplayName = computed(() => {
     return this.auth.currentUser()?.fullName || 'الطالب';
@@ -56,5 +64,32 @@ export class StudentHeaderComponent {
 
   closeNotifications(): void {
     this.isNotificationsOpen.set(false);
+  }
+
+  onNotificationClick(notif: AppNotification): void {
+    this.notificationStore.markAsRead(notif.id);
+    this.closeNotifications();
+    if (notif.link) {
+      this.router.navigateByUrl(notif.link);
+    }
+  }
+
+  markAllAsRead(event?: Event): void {
+    event?.stopPropagation();
+    this.notificationStore.markAllAsRead();
+  }
+
+  clearAll(event?: Event): void {
+    event?.stopPropagation();
+    this.notificationStore.clearAll();
+  }
+
+  removeNotification(id: string, event?: Event): void {
+    event?.stopPropagation();
+    this.notificationStore.removeNotification(id);
+  }
+
+  getRelativeTime(isoDate: string): string {
+    return this.notificationStore.getRelativeTime(isoDate);
   }
 }

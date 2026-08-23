@@ -91,33 +91,90 @@
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
             <path d="M13.73 21a2 2 0 0 1-3.46 0" />
           </svg>
-          <span class="unread-dot"></span>
+          @if (hasUnread()) {
+            <span class="unread-dot"></span>
+          }
         </button>
 
         @if (isNotificationsOpen()) {
           <div class="notifications-dropdown animate-scale-up">
             <div class="dropdown-header">
-              <span class="dropdown-title">التنبيهات والإشعارات</span>
-              <span class="badge-count">2 جديد</span>
+              <div class="flex items-center gap-2">
+                <span class="dropdown-title">التنبيهات والإشعارات</span>
+                @if (unreadCount() > 0) {
+                  <span class="badge-count">{{ unreadCount() }} جديد</span>
+                }
+              </div>
+              @if (unreadCount() > 0) {
+                <button
+                  type="button"
+                  (click)="markAllAsRead($event)"
+                  class="text-[11px] font-semibold text-[var(--draya-primary-700,#1B6D63)] hover:underline">
+                  تحديد الكل كمقروء
+                </button>
+              }
             </div>
 
             <div class="dropdown-list">
-              <div class="notif-item">
-                <div class="notif-dot bg-red-500"></div>
-                <div class="notif-content">
-                  <p class="notif-title">امتحان الجبر التراكمي</p>
-                  <span class="notif-time">غداً 10:00 صباحاً</span>
+              @for (notif of notifications(); track notif.id) {
+                <button
+                  type="button"
+                  (click)="onNotificationClick(notif)"
+                  class="notif-item w-full text-start"
+                  [class.unread]="!notif.read">
+                  <div
+                    class="notif-dot"
+                    [ngClass]="{
+                      'bg-emerald-500': notif.type === 'success',
+                      'bg-amber-500': notif.type === 'warning',
+                      'bg-blue-500': notif.type === 'info',
+                      'bg-red-500': notif.type === 'error',
+                    }"></div>
+                  <div class="notif-content flex-1">
+                    <div class="flex items-center justify-between gap-1">
+                      <p class="notif-title" [class.font-bold]="!notif.read">{{ notif.title }}</p>
+                      <button
+                        type="button"
+                        (click)="removeNotification(notif.id, $event)"
+                        title="حذف"
+                        class="px-1 text-xs text-gray-400 hover:text-red-500">
+                        ✕
+                      </button>
+                    </div>
+                    <p class="mt-0.5 line-clamp-2 text-[11px] leading-relaxed text-gray-500">
+                      {{ notif.message }}
+                    </p>
+                    <span class="notif-time">{{ getRelativeTime(notif.createdAt) }}</span>
+                  </div>
+                </button>
+              } @empty {
+                <div class="empty-notif py-6 text-center text-gray-400">
+                  <svg
+                    class="mx-auto mb-1.5 h-8 w-8 text-gray-400 opacity-40"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                      d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  </svg>
+                  <p class="text-xs">لا توجد إشعارات جديدة حالياً</p>
                 </div>
-              </div>
-
-              <div class="notif-item">
-                <div class="notif-dot bg-amber-500"></div>
-                <div class="notif-content">
-                  <p class="notif-title">استهلاك العدادات (85%)</p>
-                  <span class="notif-time">اقتربت من نفاد رصيد الامتحانات</span>
-                </div>
-              </div>
+              }
             </div>
+
+            @if (notifications().length > 0) {
+              <div class="dropdown-footer mt-2 flex justify-center border-t border-gray-100 pt-2.5">
+                <button
+                  type="button"
+                  (click)="clearAll($event)"
+                  class="text-[11px] text-gray-400 transition-colors hover:text-red-500">
+                  مسح جميع الإشعارات
+                </button>
+              </div>
+            }
           </div>
         }
       </div>

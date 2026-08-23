@@ -76,14 +76,32 @@
     },
     "FORGOT_PASSWORD": {
       "TITLE": "Forgot Password",
-      "SUBTITLE": "Enter your email address and we'll send you a password reset link",
-      "SEND_BTN": "Send Reset Link",
-      "SUCCESS_TITLE": "Reset Link Sent",
-      "SUCCESS_DESC": "Please check your email inbox to complete the password reset process.",
-      "RESET_SUCCESS": "Password Reset Successfully",
-      "CONFIRM_ERROR": "Invalid or expired verification code",
-      "OTP_SENT": "Verification code sent to your email",
-      "ERROR": "Email is not registered"
+      "SUBTITLE": "Enter your registered email address to receive an OTP code and reset your password",
+      "STEP_EMAIL": "Email Address",
+      "STEP_VERIFY": "Verification & Password",
+      "SEND_BTN": "Send Verification Code",
+      "SENDING": "Sending code...",
+      "SUCCESS_TITLE": "Password Reset Successfully!",
+      "SUCCESS_DESC": "Your password has been updated successfully. Redirecting to sign in...",
+      "BACK_TO_LOGIN_BTN": "Go to Sign In",
+      "CHANGE_EMAIL": "Change Email Address",
+      "CODE_SENT_TO": "A verification code was sent to",
+      "OTP_LABEL": "Verification Code (OTP)",
+      "OTP_PLACEHOLDER": "123456",
+      "OTP_REQUIRED": "Verification code is required",
+      "RESEND_QUESTION": "Didn't receive the code?",
+      "RESEND_COUNTDOWN": "Resend in ({{seconds}}s)",
+      "RESEND_NOW": "Resend code now",
+      "NEW_PASSWORD_LABEL": "New Password",
+      "CONFIRM_PASSWORD_LABEL": "Confirm New Password",
+      "PASSWORD_MATCH": "Passwords match",
+      "PASSWORD_MISMATCH": "Passwords do not match",
+      "SUBMIT_RESET_BTN": "Confirm & Set New Password",
+      "SAVING": "Saving changes...",
+      "RESET_SUCCESS": "Password reset successfully! You can now sign in.",
+      "CONFIRM_ERROR": "Invalid or expired verification code.",
+      "OTP_SENT": "Verification code sent to your email successfully",
+      "ERROR": "Could not send verification code. Please check your email and try again."
     },
     "RESET_PASSWORD": {
       "TITLE": "Set New Password",
@@ -184,7 +202,11 @@
     "EXAMS": {
       "EMPTY_TITLE": "No Exams In This Category",
       "EMPTY_DESC": "The teacher has not scheduled any exams currently or all available exams are completed.",
-      "TAKE_PRACTICE": "Take Practice Exam"
+      "TAKE_PRACTICE": "Take Practice Exam",
+      "GRADING_IN_PROGRESS": "AI is grading your answers...",
+      "GRADING_COMPLETED": "Grading complete! Redirecting to your result...",
+      "GRADING_NEEDS_REVIEW": "Grading done — some questions are pending teacher review.",
+      "GRADING_FAILED": "An error occurred during grading. Please try again."
     },
     "LIBRARY": {
       "EMPTY_TITLE": "No Books or Resources Yet",
