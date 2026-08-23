@@ -102,6 +102,22 @@ describe('ForgotPasswordComponent', () => {
     expect(component.resetForm.controls.otpCode.value).toBe('123456');
   });
 
+  it('should strip non-digit characters and cap the OTP input at 6 digits', () => {
+    const inputEl = document.createElement('input');
+    inputEl.value = 'ab12-34cd5678';
+    const event = { target: inputEl } as unknown as Event;
+    component.onOtpInput(event);
+    expect(component.resetForm.controls.otpCode.value).toBe('123456');
+  });
+
+  it('should reject an OTP that is not exactly 6 digits', () => {
+    component.resetForm.controls.otpCode.setValue('12345');
+    expect(component.resetForm.controls.otpCode.hasError('pattern')).toBeTrue();
+
+    component.resetForm.controls.otpCode.setValue('123456');
+    expect(component.resetForm.controls.otpCode.valid).toBeTrue();
+  });
+
   it('should resend OTP when countdown is 0', () => {
     component.emailForm.patchValue({ email: 'student@draya.edu.sa' });
     component.resendCountdown.set(0);

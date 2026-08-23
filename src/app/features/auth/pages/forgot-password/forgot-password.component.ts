@@ -45,8 +45,11 @@ export class ForgotPasswordComponent implements OnDestroy {
   });
 
   // Step 2 Form (OTP + New Password)
+  // The backend issues a 6-digit numeric OTP (see BACKEND_ISSUES_REPORT.md) —
+  // locking the pattern here catches a mistyped code before it round-trips to
+  // the server.
   readonly resetForm = this.fb.nonNullable.group({
-    otpCode: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(12)]],
+    otpCode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
     newPassword: ['', [Validators.required, passwordStrengthValidator()]],
     confirmPassword: ['', [Validators.required, matchFieldValidator('newPassword')]],
   });
@@ -148,8 +151,9 @@ export class ForgotPasswordComponent implements OnDestroy {
   onOtpInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input) {
-      const cleanValue = input.value.replace(/\s+/g, '');
+      const cleanValue = input.value.replace(/\D/g, '').slice(0, 6);
       this.resetForm.controls.otpCode.setValue(cleanValue, { emitEvent: false });
+      input.value = cleanValue;
     }
   }
 

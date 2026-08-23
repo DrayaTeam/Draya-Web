@@ -89,6 +89,7 @@
       "OTP_LABEL": "Verification Code (OTP)",
       "OTP_PLACEHOLDER": "123456",
       "OTP_REQUIRED": "Verification code is required",
+      "OTP_INVALID_FORMAT": "Verification code must be 6 digits",
       "RESEND_QUESTION": "Didn't receive the code?",
       "RESEND_COUNTDOWN": "Resend in ({{seconds}}s)",
       "RESEND_NOW": "Resend code now",
