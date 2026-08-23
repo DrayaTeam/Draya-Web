@@ -79,6 +79,14 @@ export const teacherRoutes: Routes = [
         title: 'مراجعة الامتحان — درايَة',
       },
       {
+        path: 'exams/:id/attempts',
+        loadComponent: () =>
+          import('./exams/exam-attempts/exam-attempts.component').then(
+            (m) => m.ExamAttemptsComponent,
+          ),
+        title: 'نتائج الامتحان — درايَة',
+      },
+      {
         path: 'channel',
         loadComponent: () =>
           import('./channel/teacher-channel.component').then((m) => m.TeacherChannelComponent),

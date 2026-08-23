@@ -124,22 +124,25 @@
                   {{ 'TEACHER.SECTIONS.MATERIAL_COUNT' | translate }}
                 </span>
                 <button
-                  class="sh-action-btn"
+                  class="sh-action-btn-text"
                   (click)="openUploadModal(section.id, $event)"
                   title="إضافة مادة">
                   <i class="pi pi-plus"></i>
+                  إضافة مادة
                 </button>
                 <button
-                  class="sh-action-btn edit-btn"
+                  class="sh-action-btn-text edit-btn"
                   (click)="openEditSectionModal(section, $event)"
                   title="تعديل القسم">
                   <i class="pi pi-pencil"></i>
+                  تعديل
                 </button>
                 <button
-                  class="sh-action-btn delete-btn"
+                  class="sh-action-btn-text delete-btn"
                   (click)="confirmDeleteSection(section, $event)"
                   title="حذف القسم">
                   <i class="pi pi-trash"></i>
+                  حذف
                 </button>
               </div>
             </div>

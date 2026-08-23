@@ -40,6 +40,7 @@ export class TeacherDashboardComponent implements OnInit {
   readonly timeRange = this.dashboardService.timeRange;
   readonly studentsNeedingFollowup = this.dashboardService.studentsNeedingFollowup;
   readonly recentSubmissions = this.dashboardService.recentSubmissions;
+  readonly urgentAlerts = this.dashboardService.urgentAlerts;
 
   ngOnInit(): void {
     this.dashboardService.getDashboardData().subscribe();
@@ -50,10 +51,7 @@ export class TeacherDashboardComponent implements OnInit {
   }
 
   handleReviewAiReports(): void {
-    this.toast.info(
-      'مراجعة تقارير الذكاء الاصطناعي',
-      'جارٍ فتح شاشة مراجعة واعتماد التقارير قبل إرسالها للأولياء.',
-    );
+    this.router.navigate(['/teacher/reports']);
   }
 
   handleCreateAiExam(): void {

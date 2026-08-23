@@ -1,166 +1,224 @@
-<div class="feed-page-wrapper" dir="rtl">
-  <div class="feed-page-container">
-    <!-- Beautiful Header -->
-    <header class="feed-header">
-      <div class="header-inner">
-        <h1 class="page-title">{{ 'TEACHER.FEEDBACK.REVIEWS_FOR' | translate }}</h1>
-
-        @if (isLoadingClassrooms()) {
-          <div class="skeleton-dropdown shimmer"></div>
-        } @else if (classrooms().length > 0) {
-          <!-- Custom Beautiful Dropdown -->
-          <div class="custom-dropdown-container">
-            <button
-              class="dropdown-trigger"
-              (click)="toggleDropdown()"
-              [class.is-open]="isDropdownOpen()">
-              <span class="trigger-text">
-                {{
-                  selectedClassroom()
-                    ? selectedClassroom()!.name
-                    : ('TEACHER.FEEDBACK.SELECT_CLASSROOM_PROMPT' | translate)
-                }}
-              </span>
-              <i class="pi pi-chevron-down drop-icon"></i>
-            </button>
-
-            @if (isDropdownOpen()) {
-              <div class="dropdown-menu fade-in-down">
-                @for (cls of classrooms(); track cls.classroomId) {
-                  <button
-                    class="dropdown-item"
-                    [class.active]="selectedClassroom()?.classroomId === cls.classroomId"
-                    (click)="selectClassroom(cls)">
-                    <div class="item-content">
-                      <span class="item-name">{{ cls.name }}</span>
-                      @if (cls.subjectName) {
-                        <span class="item-subject">{{ cls.subjectName }}</span>
-                      }
-                    </div>
-                    @if (selectedClassroom()?.classroomId === cls.classroomId) {
-                      <i class="pi pi-check check-icon text-[var(--draya-primary-700)]"></i>
-                    }
-                  </button>
-                }
-              </div>
-            }
-          </div>
-          <!-- Click outside overlay to close -->
-          @if (isDropdownOpen()) {
-            <div
-              class="dropdown-overlay"
-              (click)="isDropdownOpen.set(false)"
-              (keydown.escape)="isDropdownOpen.set(false)"
-              (keyup.enter)="isDropdownOpen.set(false)"
-              tabindex="0"
-              role="button"
-              aria-label="إغلاق القائمة"></div>
-          }
-        }
+﻿<div class="feedback-page-container mx-auto w-full max-w-[1280px] p-4 md:p-8" dir="rtl">
+  <!-- Page Header -->
+  <header class="mb-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+    <div class="flex items-center gap-4">
+      <div
+        class="flex h-14 w-14 shrink-0 items-center justify-center rounded-[12px] bg-[#1B6D63]/10 text-[#1B6D63]">
+        <i class="pi pi-verified text-2xl"></i>
       </div>
-    </header>
+      <div>
+        <div class="mb-1 flex items-center gap-2">
+          <h1 class="m-0 text-3xl font-bold text-[#1B6D63]">
+            {{ 'TEACHER.FEEDBACK.REVIEWS_FOR' | translate }}
+          </h1>
+        </div>
+        <p class="m-0 mt-1 text-gray-500">تابع آراء وتقييمات طلابك لتحسين جودة محتواك التعليمي.</p>
+      </div>
+    </div>
 
+    <!-- Classroom Dropdown Selector with Green Border -->
+    @if (!isLoadingClassrooms() && classrooms().length > 0) {
+      <div class="relative z-50 w-full md:w-80">
+        <p-select
+          [options]="classrooms()"
+          [ngModel]="selectedClassroom()"
+          (onChange)="onPrimeSelectChange($event)"
+          optionLabel="name"
+          placeholder="اختر الفصل الدراسي لعرض تقييماته..."
+          [style]="{ width: '100%', borderRadius: '12px' }"
+          [pt]="{
+            root: {
+              class:
+                '!rounded-[12px] !border-2 !border-[#1B6D63]/30 hover:!border-[#1B6D63] !shadow-none focus-within:!ring-2 focus-within:!ring-[#1B6D63]/20',
+            },
+            label: { class: '!py-3 !px-4 font-bold' },
+            list: { class: '!py-2 !shadow-none !border !border-gray-200' },
+            option: { class: '!py-2.5 !px-4 hover:!bg-[#1B6D63]/10 hover:!text-[#1B6D63]' },
+          }">
+          <ng-template #selectedItem let-selectedOption>
+            <div class="flex items-center gap-3">
+              <i class="pi pi-book text-[#1B6D63]"></i>
+              <span class="font-bold text-[#1B6D63]">{{ selectedOption.name }}</span>
+            </div>
+          </ng-template>
+          <ng-template #item let-option>
+            <div class="flex items-center gap-3">
+              <i class="pi pi-book text-gray-400"></i>
+              <span>{{ option.name }}</span>
+            </div>
+          </ng-template>
+        </p-select>
+      </div>
+    }
+  </header>
+
+  @if (isLoadingClassrooms()) {
+    <div class="flex flex-col items-center justify-center py-12">
+      <div
+        class="spinner-border inline-block h-8 w-8 animate-spin rounded-full border-4 border-t-[#1B6D63] border-r-transparent"
+        role="status"></div>
+      <p class="mt-4 text-gray-500">جاري تحميل الفصول...</p>
+    </div>
+  } @else if (classrooms().length === 0) {
+    <div class="rounded-[12px] border border-gray-200 bg-gray-50 p-8 text-center">
+      <p class="text-gray-600">لا يوجد لديك فصول حالياً.</p>
+    </div>
+  } @else {
     <main class="feed-main-area">
       @if (!selectedClassroom()) {
-        <!-- Welcome / Prompt State -->
-        <div class="feed-empty-state">
-          <div class="icon-bubble">
-            <i class="pi pi-sparkles"></i>
+        <div class="rounded-[12px] border border-gray-200 bg-white p-12 text-center">
+          <div
+            class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[12px] bg-[#1B6D63]/10 text-[#1B6D63]">
+            <i class="pi pi-verified text-2xl"></i>
           </div>
-          <h3>{{ 'TEACHER.FEEDBACK.SELECT_CLASSROOM_PROMPT' | translate }}</h3>
-          <p>قم باختيار أحد الفصول من القائمة العلوية لاستعراض تقييمات الطلاب وتحديثاتهم.</p>
+          <h3 class="text-lg font-bold text-gray-900">
+            {{ 'TEACHER.FEEDBACK.SELECT_CLASSROOM_PROMPT' | translate }}
+          </h3>
+          <p class="mt-2 text-sm text-gray-500">
+            اختر أحد الفصول من القائمة أعلاه لعرض التقييمات والآراء الخاصة به.
+          </p>
         </div>
       } @else {
-        <!-- Stats Overview for Selected Classroom -->
+        <!-- Dashboard Top Widgets -->
         @if (!isLoadingFeedback() && feedback() && feedback()!.totalCount > 0) {
-          <div class="feed-stats-banner fade-in">
-            <div class="stat-main">
-              <span class="rating-number">{{ feedback()!.averageRating | number: '1.1-1' }}</span>
-              <div class="stars">
-                @for (star of getStars(); track star) {
-                  <i
-                    class="pi"
-                    [ngClass]="
-                      star <= feedback()!.averageRating
-                        ? 'pi-star-fill text-yellow-400'
-                        : 'pi-star text-gray-200'
-                    "></i>
-                }
+          <div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+            <!-- Avg Rating Widget -->
+            <div
+              class="flex items-center justify-between rounded-[12px] border border-gray-200 bg-white p-6">
+              <div>
+                <h3 class="text-sm font-bold text-gray-500">متوسط التقييم العام</h3>
+                <div class="mt-2 flex items-baseline gap-2">
+                  <span class="text-4xl font-black text-[#1B6D63]">
+                    {{ feedback()!.averageRating | number: '1.1-1' }}
+                  </span>
+                  <span class="text-lg text-gray-400">/ 5.0</span>
+                </div>
+                <div class="mt-2 flex gap-1">
+                  @for (star of getStars(); track star) {
+                    <i
+                      class="pi text-sm"
+                      [ngClass]="
+                        star <= feedback()!.averageRating
+                          ? 'pi-star-fill text-yellow-400'
+                          : 'pi-star-fill text-gray-100'
+                      "></i>
+                  }
+                </div>
+              </div>
+              <div
+                class="flex h-16 w-16 items-center justify-center rounded-[12px] bg-yellow-50 text-yellow-500">
+                <i class="pi pi-thumbs-up text-2xl"></i>
               </div>
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-meta">
-              <span class="count">{{ feedback()!.totalCount }}</span>
-              <span class="label">{{ 'TEACHER.FEEDBACK.RATINGS' | translate }}</span>
+
+            <!-- Total Reviews Widget -->
+            <div
+              class="flex items-center justify-between rounded-[12px] border border-gray-200 bg-white p-6">
+              <div>
+                <h3 class="text-sm font-bold text-gray-500">
+                  {{ 'TEACHER.FEEDBACK.RATINGS' | translate }}
+                </h3>
+                <div class="mt-2 flex items-baseline gap-2">
+                  <span class="text-4xl font-black text-[#1B6D63]">
+                    {{ feedback()!.totalCount }}
+                  </span>
+                  <span class="text-lg text-gray-400">طالب</span>
+                </div>
+                <p class="mt-2 text-xs text-gray-400">إجمالي عدد التقييمات المسجلة</p>
+              </div>
+              <div
+                class="flex h-16 w-16 items-center justify-center rounded-[12px] bg-[#1B6D63]/10 text-[#1B6D63]">
+                <i class="pi pi-users text-2xl"></i>
+              </div>
             </div>
           </div>
         }
 
-        <!-- Feed / Timeline of Reviews -->
-        <div class="feed-timeline">
+        <!-- Single Column Vertical Feed -->
+        <div class="mx-auto max-w-4xl space-y-6">
           @if (isLoadingFeedback()) {
             @for (i of [1, 2, 3]; track i) {
-              <div class="feed-skeleton-post shimmer"></div>
+              <div
+                class="h-40 w-full animate-pulse rounded-[12px] border border-gray-200 bg-white"></div>
             }
           } @else if (!feedback() || feedback()!.totalCount === 0) {
-            <div class="feed-empty-state">
-              <div class="icon-bubble">
-                <i class="pi pi-comment"></i>
+            <div class="rounded-[12px] border border-gray-200 bg-gray-50 p-12 text-center">
+              <div
+                class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[12px] bg-gray-200 text-gray-500">
+                <i class="pi pi-comment text-2xl"></i>
               </div>
-              <h3>{{ 'TEACHER.FEEDBACK.NO_FEEDBACK_YET' | translate }}</h3>
-              <p>لم يقم أي طالب بكتابة تقييم لهذا الفصل حتى الآن.</p>
+              <h3 class="text-lg font-bold text-gray-900">
+                {{ 'TEACHER.FEEDBACK.NO_FEEDBACK_YET' | translate }}
+              </h3>
+              <p class="mt-2 text-sm text-gray-500">لم يتم تقييم هذا الفصل بعد.</p>
             </div>
           } @else {
-            <div class="feed-posts-list">
-              @for (item of feedback()!.items; track item.feedbackId; let i = $index) {
-                <article class="feed-post fade-in" [style.animation-delay.ms]="i * 50">
-                  <!-- Post Header (User) -->
-                  <div class="post-header">
-                    <div class="user-block">
-                      @if (item.studentAvatarUrl) {
-                        <img [src]="item.studentAvatarUrl" class="avatar" alt="Avatar" />
-                      } @else {
-                        <div class="avatar-placeholder">
-                          {{ item.studentName?.charAt(0) ?? 'ط' }}
-                        </div>
-                      }
-                      <div class="user-info">
-                        <span class="name">
-                          {{ item.studentName ?? ('TEACHER.FEEDBACK.ANONYMOUS' | translate) }}
-                        </span>
-                        <span class="time">{{ item.createdAt | date: 'mediumDate' }}</span>
-                      </div>
-                    </div>
+            <div class="mb-4 flex items-center justify-between border-b border-gray-200 pb-3">
+              <h3 class="font-bold text-gray-800">أحدث التقييمات</h3>
+            </div>
 
-                    <div class="post-rating">
-                      @for (star of getStars(); track star) {
-                        <i
-                          class="pi text-sm"
-                          [ngClass]="
-                            star <= item.rating
-                              ? 'pi-star-fill text-yellow-400'
-                              : 'pi-star text-gray-200'
-                          "></i>
-                      }
+            @for (item of feedback()!.items; track item.feedbackId) {
+              <article class="flex flex-col rounded-[12px] border border-gray-200 bg-white p-6">
+                <!-- Card Header (Inline User Info & Rating) -->
+                <div class="mb-5 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                  <div class="flex items-center gap-3">
+                    @if (item.studentAvatarUrl) {
+                      <img
+                        [src]="item.studentAvatarUrl"
+                        class="h-10 w-10 rounded-full border border-gray-100 object-cover"
+                        alt="Avatar" />
+                    } @else {
+                      <div
+                        class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 font-bold text-gray-600">
+                        {{ item.studentName?.charAt(0) ?? 'م' }}
+                      </div>
+                    }
+                    <div class="flex flex-col">
+                      <span class="text-sm font-bold text-gray-900">
+                        {{ item.studentName ?? ('TEACHER.FEEDBACK.ANONYMOUS' | translate) }}
+                      </span>
+                      <span class="mt-0.5 text-xs text-gray-400">
+                        {{ item.createdAt | date: 'longDate' }}
+                      </span>
                     </div>
                   </div>
 
-                  <!-- Post Body (Comment) -->
-                  <div class="post-body">
-                    @if (item.comment) {
-                      <p class="comment-text">{{ item.comment }}</p>
-                    } @else {
-                      <p class="comment-text empty-comment">
-                        اكتفى الطالب بالتقييم بالنجوم دون كتابة تعليق.
-                      </p>
+                  <!-- Stars -->
+                  <div
+                    class="flex gap-1 rounded-full border border-gray-100 bg-gray-50 px-3 py-1.5">
+                    @for (star of getStars(); track star) {
+                      <i
+                        class="pi text-xs"
+                        [ngClass]="
+                          star <= item.rating
+                            ? 'pi-star-fill text-yellow-400'
+                            : 'pi-star-fill text-gray-200'
+                        "></i>
                     }
                   </div>
-                </article>
-              }
-            </div>
+                </div>
+
+                <!-- Comment Content Box -->
+                <div class="flex-1">
+                  @if (item.comment) {
+                    <div class="rounded-[12px] border border-gray-100 bg-gray-50 p-5">
+                      <p class="m-0 text-[15px] leading-relaxed text-gray-700">
+                        {{ item.comment }}
+                      </p>
+                    </div>
+                  } @else {
+                    <div class="rounded-[12px] border border-gray-100 bg-gray-50 p-4">
+                      <p class="m-0 text-sm text-gray-400 italic">
+                        اكتفى الطالب بتقييم النجوم ولم يترك تعليقاً نصياً.
+                      </p>
+                    </div>
+                  }
+                </div>
+              </article>
+            }
           }
         </div>
       }
     </main>
-  </div>
+  }
 </div>

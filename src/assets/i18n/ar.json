@@ -485,7 +485,7 @@
       "CLASSROOMS": "الفصول",
       "STUDENTS": "الطلبة",
       "EXAMS": "الامتحانات",
-      "CHANNEL": "القناة",
+      "CHANNEL": "الاسئلة و النقاش",
       "FEEDBACK": "Feedback",
       "ANALYTICS": "التحليلات",
       "REPORTS": "التقارير",
@@ -521,7 +521,9 @@
         "PENDING_EXAMS": "امتحانات بانتظار مراجعة",
         "EXAMS_CHANGE": "18 تسليم هذا الأسبوع",
         "NEW_MESSAGES": "رسائل جديدة",
-        "MESSAGES_CHANGE": "من طلاب وأولياء"
+        "MESSAGES_CHANGE": "من طلاب وأولياء",
+        "REPORTS_READY": "تقارير للطلاب",
+        "REPORTS_READY_CHANGE": "جاهزة للمراجعة"
       },
       "CHART": {
         "TITLE": "نشاط التسليمات",
@@ -573,6 +575,20 @@
         "32_MIN": "منذ 32 دقيقة",
         "55_MIN": "منذ 55 دقيقة",
         "1_HOUR": "منذ ساعة"
+      },
+      "AI_REPORTS_READY": "تقارير ذكية جاهزة للمراجعة",
+      "AI_REPORTS_READY_DESC": "يوجد تقارير ذكية تم إنشاؤها للطلاب وتحتاج لمراجعتك لاعتمادها.",
+      "VIEW_REPORTS": "مراجعة التقارير",
+      "ALERTS": {
+        "TITLE": "تنبيهات ومواعيد عاجلة",
+        "NEW_TODAY": "تنبيهات جديدة",
+        "EXAMS_WAITING": "يوجد {{count}} امتحانات بانتظار التصحيح",
+        "TAG_DEADLINE": "موعد نهائي",
+        "REPORTS_READY": "تقارير ذكاء اصطناعي لـ {{count}} طلاب جاهزة للمراجعة",
+        "TAG_WARNING": "تنبيه",
+        "STUDENTS_AT_RISK": "هناك {{count}} طلاب يحتاجون لمتابعة مستواهم",
+        "TAG_FOLLOWUP": "متابعة",
+        "NO_ALERTS": "لا توجد تنبيهات حالياً."
       }
     },
     "DAYS": {
@@ -659,7 +675,19 @@
       "SUBJECT_PROFICIENCY": "إتقان المواد",
       "LATEST_REPORT": "أحدث تقرير ذكي",
       "APPROVE_SEND": "اعتماد وإرسال التقرير",
-      "SEND_ALL": "إرسال التقارير لجميع الطلاب"
+      "SEND_ALL": "إرسال التقارير لجميع الطلاب",
+      "ACTIVE": "نشط",
+      "EMPTY_TITLE": "لا يوجد بيانات",
+      "EMPTY_DESC": "يرجى اختيار طالب لعرض تقرير الأداء.",
+      "NO_SUBJECTS": "لا توجد بيانات لمستوى إتقان المواد بعد.",
+      "APPROVING": "جاري الاعتماد...",
+      "NO_LATEST_REPORT": "لم يتم العثور على أي تقرير ذكي لهذا الطالب.",
+      "WEAK_TOPICS": "نقاط الضعف",
+      "NO_WEAK_TOPICS_DESC": "لا توجد بيانات لنقاط الضعف.",
+      "COL_SUBJECT": "المادة",
+      "COL_TOPIC": "الموضوع",
+      "COL_PROFICIENCY": "مستوى الإتقان",
+      "COL_EXAMPLES": "أخطاء متكررة شائعة"
     }
   },
   "ADMIN": {

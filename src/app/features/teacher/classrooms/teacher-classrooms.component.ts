@@ -17,6 +17,7 @@ import { SubjectDto, GradeLevelDto, ClassroomDto } from '../../../core/models/cl
 import { CreateClassroomModalComponent } from './components/create-classroom-modal/create-classroom-modal.component';
 import { ClassroomStudentCountComponent } from './components/classroom-student-count/classroom-student-count.component';
 import { EditClassroomModalComponent } from './components/edit-classroom-modal/edit-classroom-modal.component';
+import { DrayaPaginationComponent } from '../../../shared/components/pagination/pagination.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
@@ -29,9 +30,10 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     RouterLink,
     TranslatePipe,
     CreateClassroomModalComponent,
-    ClassroomStudentCountComponent,
     EditClassroomModalComponent,
+    ClassroomStudentCountComponent,
     ConfirmDialogModule,
+    DrayaPaginationComponent,
   ],
   providers: [ConfirmationService],
   templateUrl: './teacher-classrooms.component.html',
@@ -129,6 +131,18 @@ export class TeacherClassroomsComponent implements OnInit {
   onPageChange(newPage: number): void {
     if (newPage < 1 || newPage > (this.classroomsResult()?.totalPages ?? 1)) return;
     this.classroomService.setFilters({ pageNumber: newPage });
+  }
+
+  onPageSizeChange(newSize: number): void {
+    this.classroomService.setFilters({ pageSize: newSize, pageNumber: 1 });
+  }
+
+  get currentPage(): number {
+    return this.classroomsResult()?.pageNumber ?? 1;
+  }
+
+  get pageSize(): number {
+    return this.classroomService.filters().pageSize;
   }
 
   getPagesArray(): number[] {

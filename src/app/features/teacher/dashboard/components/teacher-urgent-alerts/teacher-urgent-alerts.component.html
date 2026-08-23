@@ -15,26 +15,33 @@
           <line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
       </div>
-      <h3 class="urgent-title">تنبيهات ومواعيد عاجلة</h3>
+      <h3 class="urgent-title">{{ 'TEACHER.DASHBOARD.ALERTS.TITLE' | translate }}</h3>
     </div>
 
-    <span class="count-badge">تنبيهان جديدان</span>
+    <span class="count-badge">
+      {{ alerts().length }} {{ 'TEACHER.DASHBOARD.ALERTS.NEW_TODAY' | translate }}
+    </span>
   </div>
 
   <!-- Alerts Stack -->
   <div class="alerts-stack">
-    @for (alert of alerts; track alert.id) {
+    @for (alert of alerts(); track alert.id) {
       <div class="alert-item-box">
-        <div class="alert-dot" [class.dot-danger]="alert.isDanger"></div>
+        <div
+          class="alert-dot"
+          [class.dot-danger]="alert.isDanger"
+          [class.dot-warning]="alert.isWarning"></div>
         <div class="alert-info-col">
-          <span class="a-title">{{ alert.title }}</span>
-          <span class="a-time">{{ alert.time }}</span>
+          <span class="a-title">{{ alert.titleKey | translate: alert.titleParams }}</span>
+          @if (alert.timeKey) {
+            <span class="a-time">{{ alert.timeKey | translate }}</span>
+          }
         </div>
         <span
           class="urgency-pill"
           [class.pill-danger]="alert.isDanger"
           [class.pill-warning]="alert.isWarning">
-          {{ alert.tag }}
+          {{ alert.tagKey | translate }}
         </span>
       </div>
     }

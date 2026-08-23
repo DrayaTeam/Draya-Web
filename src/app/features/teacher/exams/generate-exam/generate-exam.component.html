@@ -1,10 +1,16 @@
 <div class="generate-exam-page mx-auto w-full max-w-[1280px] p-4 md:p-8">
-  <div class="mb-8">
-    <h1 class="mb-2 text-2xl font-bold text-gray-900">توليد امتحان بالذكاء الاصطناعي</h1>
-    <p class="text-gray-600">
-      قم بتعبئة النموذج التالي وسيقوم الذكاء الاصطناعي بتوليد امتحان مخصص بناءً على المحتوى الخاص
-      بك.
-    </p>
+  <div class="mb-8 flex items-center gap-4">
+    <div
+      class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-teal-50 text-teal-600">
+      <i class="pi pi-sparkles text-2xl"></i>
+    </div>
+    <div>
+      <h1 class="m-0 text-3xl font-bold text-teal-700">توليد امتحان بالذكاء الاصطناعي</h1>
+      <p class="m-0 mt-1 text-gray-500">
+        قم بتعبئة النموذج التالي وسيقوم الذكاء الاصطناعي بتوليد امتحان مخصص بناءً على المحتوى الخاص
+        بك.
+      </p>
+    </div>
   </div>
 
   <!-- Top Section: Grid Layout -->
@@ -118,7 +124,7 @@
                 </span>
                 <a
                   routerLink="/teacher/wallet"
-                  class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#7C3AED] py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#6D28D9] active:scale-[0.98]">
+                  class="flex w-full items-center justify-center gap-2 rounded-[12px] bg-[#7C3AED] py-[10px] text-sm font-semibold text-white transition-all hover:bg-[#6D28D9] active:scale-[0.98]">
                   <i class="pi pi-plus"></i>
                   {{ 'TEACHER.WALLET.AI_BALANCE.TOPUP_BTN' | translate }}
                 </a>
@@ -136,6 +142,15 @@
   </div>
 
   <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
+    <div class="mb-6 border-b border-gray-100 pb-4">
+      <h2 class="flex items-center gap-2 text-xl font-bold text-gray-900">
+        <i class="pi pi-sliders-h text-[#7C3AED]"></i>
+        إعدادات ومعايير الامتحان
+      </h2>
+      <p class="mt-1 text-sm text-gray-500">
+        حدد المحتوى والمستوى المطلوب وسنتولى إنشاء الأسئلة نيابة عنك.
+      </p>
+    </div>
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-8">
       <!-- Context Section -->
       <div class="space-y-4">
@@ -162,7 +177,7 @@
                 list: { class: '!p-2' },
                 option: {
                   class:
-                    '!rounded-lg !my-1 hover:!bg-[#f0f9f8] hover:!text-[#1B6D63] transition-colors',
+                    '!rounded-lg !my-1 !py-2.5 !px-4 hover:!bg-[#f0f9f8] hover:!text-[#1B6D63] transition-colors',
                 },
               }"></p-select>
             @if (form.controls.classroomId.touched && form.controls.classroomId.invalid) {
@@ -192,7 +207,7 @@
                 list: { class: '!p-2' },
                 option: {
                   class:
-                    '!rounded-lg !my-1 hover:!bg-[#f0f9f8] hover:!text-[#1B6D63] transition-colors',
+                    '!rounded-lg !my-1 !py-2.5 !px-4 hover:!bg-[#f0f9f8] hover:!text-[#1B6D63] transition-colors',
                 },
               }"></p-select>
             @if (form.controls.sectionId.touched && form.controls.sectionId.invalid) {
@@ -246,7 +261,7 @@
                 list: { class: '!p-2' },
                 option: {
                   class:
-                    '!rounded-lg !my-1 hover:!bg-[#f0f9f8] hover:!text-[#1B6D63] transition-colors',
+                    '!rounded-lg !my-1 !py-2.5 !px-4 hover:!bg-[#f0f9f8] hover:!text-[#1B6D63] transition-colors',
                 },
               }"></p-select>
           </div>
@@ -350,7 +365,7 @@
                     list: { class: '!p-2' },
                     option: {
                       class:
-                        '!rounded-lg !my-1 hover:!bg-[#f0f9f8] hover:!text-[#1B6D63] transition-colors',
+                        '!rounded-lg !my-1 !py-2.5 !px-4 hover:!bg-[#f0f9f8] hover:!text-[#1B6D63] transition-colors',
                     },
                   }"></p-select>
               </div>
@@ -397,7 +412,7 @@
         <button
           type="submit"
           [disabled]="form.invalid || isSubmitting() || hasInsufficientBalance()"
-          class="flex items-center gap-2 rounded-xl bg-[#1B6D63] px-8 py-3 font-medium text-white transition-all hover:bg-[#0f4f49] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">
+          class="flex items-center gap-2 rounded-[12px] bg-[#1B6D63] px-8 py-[10px] font-medium text-white transition-all hover:bg-[#0f4f49] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50">
           @if (isSubmitting()) {
             <i class="pi pi-spinner pi-spin"></i>
             جاري الإنشاء...

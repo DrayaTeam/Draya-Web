@@ -1,4 +1,4 @@
-// src/app/features/teacher/components/teacher-sidebar/teacher-sidebar.component.ts
+﻿// src/app/features/teacher/components/teacher-sidebar/teacher-sidebar.component.ts
 import { Component, ChangeDetectionStrategy, inject, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -97,11 +97,6 @@ export class TeacherSidebarComponent {
     {
       headerKey: 'TEACHER.SIDEBAR.GROUP_ANALYTICS',
       items: [
-        {
-          labelKey: 'TEACHER.SIDEBAR.ANALYTICS',
-          link: '/teacher/analytics',
-          icon: 'analytics',
-        },
         {
           labelKey: 'TEACHER.SIDEBAR.REPORTS',
           link: '/teacher/reports',

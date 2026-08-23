@@ -435,8 +435,7 @@ export class StudentExamTakingService extends ApiBaseService {
             const isEssay = (q.maxScore || 1) > 1;
             const earned = q.earnedScore ?? 0;
             const max = q.maxScore ?? (isEssay ? 10 : 1);
-            const qAccuracy =
-              max > 0 ? Math.round((earned / max) * 100) : q.isCorrect ? 100 : 0;
+            const qAccuracy = max > 0 ? Math.round((earned / max) * 100) : q.isCorrect ? 100 : 0;
 
             let customTip = q.explanation;
             if (
@@ -859,7 +858,8 @@ export class StudentExamTakingService extends ApiBaseService {
                     id: 'w_pending',
                     title: `مراجعة وتقييم: ${this.examTitle()}`,
                     accuracyPercentage: 50,
-                    aiTip: 'تم استلام إجاباتك المقالية وجارٍ فحصها واعتمادها من قِبل المعلم والذكاء الاصطناعي.',
+                    aiTip:
+                      'تم استلام إجاباتك المقالية وجارٍ فحصها واعتمادها من قِبل المعلم والذكاء الاصطناعي.',
                     reviewLectureUrl: '/student/courses',
                   },
                 ]
