@@ -6,6 +6,7 @@ import { TeacherSidebarComponent } from './components/teacher-sidebar/teacher-si
 import { ConnectionStatusBannerComponent } from '../../shared/components/connection-status-banner/connection-status-banner.component';
 import { ThemeService } from '../../core/services/theme.service';
 import { LocaleService } from '../../core/locale/locale.service';
+import { TeacherNotificationsService } from './services/teacher-notifications.service';
 
 @Component({
   selector: 'draya-teacher-layout',
@@ -18,6 +19,11 @@ import { LocaleService } from '../../core/locale/locale.service';
 export class TeacherLayoutComponent {
   readonly themeService = inject(ThemeService);
   readonly localeService = inject(LocaleService);
+  readonly notificationsService = inject(TeacherNotificationsService);
+
+  constructor() {
+    this.notificationsService.startConnections();
+  }
   readonly isMobileSidebarOpen = signal<boolean>(false);
 
   toggleMobileSidebar(): void {
