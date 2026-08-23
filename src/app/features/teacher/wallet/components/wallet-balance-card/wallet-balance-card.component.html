@@ -6,10 +6,18 @@
         <h3 class="text-sm font-bold text-gray-500">{{ 'TEACHER.WALLET.AI_BALANCE.EARNED_BALANCE_TITLE' | translate }}</h3>
         <span class="rounded-[8px] bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-600 border border-gray-200">{{ 'TEACHER.WALLET.AI_BALANCE.AVAILABLE_FOR_WITHDRAWAL' | translate }}</span>
       </div>
-      <div class="flex items-baseline gap-2">
+            <div class="flex items-baseline gap-2">
         <span class="text-5xl font-black text-gray-900 tracking-tight">{{ balance()?.availableEarnedBalance ?? 0 }}</span>
         <span class="text-lg font-medium text-gray-400">{{ 'ADMIN.DASHBOARD.CURRENCY' | translate }}</span>
       </div>
+      @if ((balance()?.earnedBalance ?? 0) > (balance()?.availableEarnedBalance ?? 0)) {
+        <div class="mt-3 flex items-center gap-3 text-sm">
+          <span class="text-gray-500 font-medium">الرصيد الكلي: <span class="text-gray-900">{{ balance()?.earnedBalance }} ج.م</span></span>
+          <span class="text-amber-500 font-medium bg-amber-50 px-2 py-1 rounded-[6px] border border-amber-100">
+            قيد المراجعة: {{ (balance()?.earnedBalance ?? 0) - (balance()?.availableEarnedBalance ?? 0) }} ج.م
+          </span>
+        </div>
+      }
     </div>
     
     <div class="mt-8">
