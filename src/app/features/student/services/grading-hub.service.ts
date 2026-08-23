@@ -13,6 +13,7 @@ import {
   LogLevel,
 } from '@microsoft/signalr';
 import { AuthService } from '../../auth/services/auth.service';
+import { NotificationStoreService } from '../../../core/services/notification-store.service';
 import { environment } from '../../../../environments/environment';
 import type { GradingProgressEvent } from '../../../core/models/signalr-events.model';
 
@@ -22,6 +23,7 @@ const RECONNECT_DELAYS_MS: number[] = [0, 2000, 5000, 10000];
 @Injectable({ providedIn: 'root' })
 export class GradingHubService implements OnDestroy {
   private readonly authService = inject(AuthService);
+  private readonly notificationStore = inject(NotificationStoreService);
 
   private connection: HubConnection | null = null;
 
@@ -65,6 +67,18 @@ export class GradingHubService implements OnDestroy {
       if (data.gradingJobId === gradingJobId) {
         console.log('[GradingHubService] GradingProgressUpdated:', data);
         this._progress.set(data);
+
+        if (data.status === 'Completed') {
+          this.notificationStore.addNotification({
+            title: 'تم تصحيح الامتحان بنجاح! 🎯',
+            message:
+              data.finalScore !== null
+                ? `تم رصد نتيجتك النهائية: ${data.finalScore}%`
+                : 'تم الانتهاء من تصحيح الأسئلة المقالية وإعداد النتيجة.',
+            type: 'success',
+            link: '/student/reports',
+          });
+        }
       }
     });
 

@@ -8,6 +8,7 @@ import { signal } from '@angular/core';
 const authServiceStub = {
   accessToken: signal<string | null>('test-token'),
   isAuthenticated: signal<boolean>(true),
+  currentUser: signal({ userId: 'student_123', role: 'Student' }),
 };
 
 describe('GradingHubService', () => {
@@ -15,10 +16,7 @@ describe('GradingHubService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        GradingHubService,
-        { provide: AuthService, useValue: authServiceStub },
-      ],
+      providers: [GradingHubService, { provide: AuthService, useValue: authServiceStub }],
     });
     service = TestBed.inject(GradingHubService);
   });

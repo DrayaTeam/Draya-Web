@@ -21,7 +21,7 @@ export class TeacherUrgentAlertsComponent {
     },
     {
       id: 2,
-      title: 'تسليم واجب الفيزياء (الموجات)',
+      title: 'امتحان الفيزياء (الموجات)',
       time: 'الخميس القادم',
       tag: 'قريباً',
       isWarning: true,

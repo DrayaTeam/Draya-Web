@@ -8,6 +8,7 @@ import { signal } from '@angular/core';
 const authServiceStub = {
   accessToken: signal<string | null>('test-token'),
   isAuthenticated: signal<boolean>(true),
+  currentUser: signal({ userId: 'test_123', role: 'Student' }),
 };
 
 describe('QaHubService', () => {

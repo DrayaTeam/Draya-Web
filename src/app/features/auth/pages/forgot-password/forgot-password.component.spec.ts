@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { ForgotPasswordComponent } from './forgot-password.component';
 import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../../../core/services/toast.service';
@@ -70,7 +70,48 @@ describe('ForgotPasswordComponent', () => {
     expect(component.currentStep()).toBe(1);
   });
 
-  it('should submit Step 2 OTP and new password, calling resetPassword API', () => {
+  it('should toggle password visibility signals', () => {
+    expect(component.showPassword()).toBeFalse();
+    component.toggleShowPassword();
+    expect(component.showPassword()).toBeTrue();
+
+    expect(component.showConfirmPassword()).toBeFalse();
+    component.toggleShowConfirmPassword();
+    expect(component.showConfirmPassword()).toBeTrue();
+  });
+
+  it('should calculate password criteria correctly', () => {
+    component.resetForm.controls.newPassword.setValue('Pass123!');
+    expect(component.hasMinLength()).toBeTrue();
+    expect(component.hasUpperLower()).toBeTrue();
+    expect(component.hasNumber()).toBeTrue();
+    expect(component.hasSpecial()).toBeTrue();
+
+    component.resetForm.controls.confirmPassword.setValue('Pass123!');
+    expect(component.isMatching()).toBeTrue();
+
+    component.resetForm.controls.confirmPassword.setValue('Different123!');
+    expect(component.isMatching()).toBeFalse();
+  });
+
+  it('should clean spaces in onOtpInput', () => {
+    const inputEl = document.createElement('input');
+    inputEl.value = '12 34 56';
+    const event = { target: inputEl } as unknown as Event;
+    component.onOtpInput(event);
+    expect(component.resetForm.controls.otpCode.value).toBe('123456');
+  });
+
+  it('should resend OTP when countdown is 0', () => {
+    component.emailForm.patchValue({ email: 'student@draya.edu.sa' });
+    component.resendCountdown.set(0);
+    component.onResendCode();
+
+    expect(authServiceSpy.forgotPassword).toHaveBeenCalledWith('student@draya.edu.sa');
+    expect(component.resendCountdown()).toBe(60);
+  });
+
+  it('should submit Step 2 OTP and new password, calling resetPassword API', fakeAsync(() => {
     component.emailForm.patchValue({ email: 'teacher@draya.edu.sa' });
     component.onRequestReset();
 
@@ -89,7 +130,12 @@ describe('ForgotPasswordComponent', () => {
     });
     expect(component.isSuccess()).toBeTrue();
     expect(toastSpy.success).toHaveBeenCalled();
-  });
+
+    tick(3000);
+    expect(router.navigate).toHaveBeenCalledWith(['/auth/login'], {
+      queryParams: { email: 'teacher@draya.edu.sa', reset: 'success' },
+    });
+  }));
 
   it('should handle API error on Step 2 with incorrect OTP', () => {
     authServiceSpy.resetPassword.and.returnValue(

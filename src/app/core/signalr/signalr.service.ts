@@ -15,7 +15,8 @@ import {
   LogLevel,
   HttpTransportType,
 } from '@microsoft/signalr';
-import { AuthService } from '../../features/auth';
+import { AuthService } from '../../features/auth/services/auth.service';
+import { NotificationStoreService } from '../services/notification-store.service';
 import { environment } from '../../../environments/environment';
 import type {
   MaterialParsedEvent,
@@ -38,6 +39,7 @@ export class SignalRService {
   // AuthService injects NO SignalRService → one-way dep, no cycle.
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly notificationStore = inject(NotificationStoreService);
 
   private connection: HubConnection | null = null;
   private examGenConnection: HubConnection | null = null;
@@ -139,27 +141,48 @@ export class SignalRService {
     this.connection.onclose(() => this._status.set('Disconnected'));
 
     // ── Typed server-to-client event handlers ─────────────────────────────
-    this.connection.on('MaterialParsed', (payload: MaterialParsedEvent) =>
-      this._materialParsed.set(payload),
-    );
-    this.connection.on('ExamGenerationCompleted', (payload: ExamGenerationCompletedEvent) =>
-      this._examGenerationCompleted.set(payload),
-    );
-    this.connection.on('GradingCompleted', (payload: GradingCompletedEvent) =>
-      this._gradingCompleted.set(payload),
-    );
-    this.connection.on('GradingJobCompleted', (payload: GradingCompletedEvent) =>
-      this._gradingCompleted.set(payload),
-    );
-    this.connection.on('AttemptGraded', (payload: GradingCompletedEvent) =>
-      this._gradingCompleted.set(payload),
-    );
-    this.connection.on('ExamGraded', (payload: GradingCompletedEvent) =>
-      this._gradingCompleted.set(payload),
-    );
-    this.connection.on('NewChatMessage', (payload: NewChatMessageEvent) =>
-      this._newChatMessage.set(payload),
-    );
+    this.connection.on('MaterialParsed', (payload: MaterialParsedEvent) => {
+      this._materialParsed.set(payload);
+      this.notificationStore.addNotification({
+        title: 'معالجة المذكرات الدراسية',
+        message: payload.message || 'تمت معالجة المذكرة بنجاح بالذكاء الاصطناعي',
+        type: payload.status === 'Success' ? 'success' : 'error',
+        link: '/teacher/library',
+      });
+    });
+    this.connection.on('ExamGenerationCompleted', (payload: ExamGenerationCompletedEvent) => {
+      this._examGenerationCompleted.set(payload);
+      this.notificationStore.addNotification({
+        title: 'اكتمال إنشاء الامتحان الذكي',
+        message: 'تم توليد أسئلة الامتحان بالذكاء الاصطناعي وأصبحت جاهزة للمراجعة والاعتماد.',
+        type: 'success',
+        link: `/teacher/exams/${payload.examId}/review`,
+      });
+    });
+    this.connection.on('GradingCompleted', (payload: GradingCompletedEvent) => {
+      this._gradingCompleted.set(payload);
+      this.notificationStore.addNotification({
+        title: 'اكتمال تصحيح الامتحان',
+        message:
+          payload.totalScore !== undefined
+            ? `تم الانتهاء من تصحيح امتحانك. درجتك: ${payload.totalScore}`
+            : 'تم الانتهاء من تصحيح امتحانك بنجاح.',
+        type: 'success',
+        link: '/student/reports',
+      });
+    });
+    this.connection.on('GradingJobCompleted', (payload: GradingCompletedEvent) => {
+      this._gradingCompleted.set(payload);
+    });
+    this.connection.on('AttemptGraded', (payload: GradingCompletedEvent) => {
+      this._gradingCompleted.set(payload);
+    });
+    this.connection.on('ExamGraded', (payload: GradingCompletedEvent) => {
+      this._gradingCompleted.set(payload);
+    });
+    this.connection.on('NewChatMessage', (payload: NewChatMessageEvent) => {
+      this._newChatMessage.set(payload);
+    });
 
     try {
       this._status.set('Connecting');
@@ -257,11 +280,23 @@ export class SignalRService {
     this.reportsConnection.on('ReportGenerated', (data: ReportGeneratedEvent) => {
       console.log('[SignalR] ReportGenerated:', data);
       this._reportGenerated.set(data);
+      this.notificationStore.addNotification({
+        title: 'تقرير أداء جديد جاهز',
+        message: 'تم توليد تقرير أداء ذكي وتحليل شامل لنقاط القوة والضعف للطالب.',
+        type: 'info',
+        link: '/teacher/reports',
+      });
     });
 
     this.reportsConnection.on('StudentAtRisk', (data: StudentAtRiskEvent) => {
       console.log('[SignalR] StudentAtRisk:', data);
       this._studentAtRisk.set(data);
+      this.notificationStore.addNotification({
+        title: 'تنبيه: متابعة طالب متعثر ⚠️',
+        message: `تم رصد تعثر طالب في موضوع: ${data.topicName}. يُرجى مراجعة التقرير والتوصيات المخصصة.`,
+        type: 'warning',
+        link: '/teacher/reports',
+      });
     });
 
     try {
