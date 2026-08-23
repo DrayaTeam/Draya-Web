@@ -106,7 +106,9 @@
         title="المتوسط الكلي"
         [value]="summary().overallAverage + '%'"
         variant="average"
-        [badgeText]="'+' + summary().monthlyGrowthPercent + '%'"></app-report-kpi-card>
+        [badgeText]="
+          (summary().monthlyGrowthPercent >= 0 ? '+' : '') + summary().monthlyGrowthPercent + '%'
+        "></app-report-kpi-card>
 
       <app-report-kpi-card
         title="امتحانات مكتملة"
@@ -324,20 +326,34 @@
     <section class="weakness-section">
       <h2 class="section-title">موضوعات ومهارات تحتاج إلى مراجعة وتطوير</h2>
       <div class="topics-list">
-        @for (topic of weaknessTopics(); track topic.id) {
+        @for (topic of activeWeaknessTopics(); track topic.id) {
           <app-report-weakness-topic
             [topic]="topic"
             (startReview)="onStartReview($event)"></app-report-weakness-topic>
         } @empty {
-          <div class="empty-state-wrapper w-full">
-            <draya-empty-state
-              icon="pi pi-bolt"
-              titleKey="STUDENT.REPORTS.EMPTY_WEAKNESS_TITLE"
-              descriptionKey="STUDENT.REPORTS.EMPTY_WEAKNESS_DESC" />
-          </div>
+          @if (!isLoadingWeaknesses()) {
+            <div class="empty-state-wrapper w-full">
+              <draya-empty-state
+                icon="pi pi-bolt"
+                titleKey="STUDENT.REPORTS.EMPTY_WEAKNESS_TITLE"
+                descriptionKey="STUDENT.REPORTS.EMPTY_WEAKNESS_DESC" />
+            </div>
+          }
         }
       </div>
     </section>
+
+    <!-- Row 5: Resolved / Mastered Weaknesses -->
+    @if (resolvedWeaknesses().length > 0) {
+      <section class="weakness-section resolved-weakness-section">
+        <h2 class="section-title">مواضيع تم إتقانها ✅</h2>
+        <div class="topics-list">
+          @for (item of resolvedWeaknesses(); track item.id) {
+            <app-resolved-weakness-item [weakness]="item" />
+          }
+        </div>
+      </section>
+    }
   }
 
   <!-- AI Interactive Revision Modal -->
@@ -391,6 +407,19 @@
               <p class="text-sm font-medium">
                 جارٍ استخراج التوصيات والمراجعة الذكية وتحليل المنهج...
               </p>
+            </div>
+          } @else if (revisionLoadFailed()) {
+            <div class="flex flex-col items-center justify-center gap-3 py-12 text-center">
+              <span class="text-3xl">⚠️</span>
+              <p class="text-sm font-medium text-slate-600">
+                تعذر تحميل المراجعة الذكية لهذا الموضوع. يرجى المحاولة مرة أخرى.
+              </p>
+              <button
+                type="button"
+                class="rounded-xl border border-teal-600 px-4 py-2 text-sm font-bold text-teal-700 transition hover:bg-teal-50"
+                (click)="onRetryRevision()">
+                إعادة المحاولة
+              </button>
             </div>
           } @else if (activeRevision()) {
             <!-- Academic Recommendation -->

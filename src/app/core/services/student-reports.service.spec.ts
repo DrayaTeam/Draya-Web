@@ -78,4 +78,25 @@ describe('StudentReportsService', () => {
     expect(req.request.body).toEqual({ subjectId: 'sub-1' });
     req.flush({ examId: 'ex-123' });
   });
+
+  it('should return null (not a fabricated fallback) when the revision endpoint fails', () => {
+    let result: unknown = 'not-set';
+    service.getTopicRevision('std-123', 'الجبر').subscribe((rev) => (result = rev));
+
+    const req = httpMock.expectOne((r) => r.url.includes('/weak-topics/'));
+    req.flush({ message: 'boom' }, { status: 500, statusText: 'Server Error' });
+
+    expect(result).toBeNull();
+  });
+
+  it('should poll generation status via GET /api/v1/exams/generations/{generationId}', () => {
+    let result: unknown = null;
+    service.getPracticeExamGenerationStatus('gen-1').subscribe((res) => (result = res));
+
+    const req = httpMock.expectOne((r) => r.url.includes('/exams/generations/gen-1'));
+    expect(req.request.method).toBe('GET');
+    req.flush({ status: 4, examId: 'ex-999' });
+
+    expect((result as { examId?: string })?.examId).toBe('ex-999');
+  });
 });

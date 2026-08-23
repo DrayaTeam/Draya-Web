@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { TableModule } from 'primeng/table';
@@ -27,6 +27,7 @@ import { StudentRosterItemDto } from '../../../../core/models/student-roster.mod
 })
 export class ExamAttemptsComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly examService = inject(TeacherExamService);
 
   readonly examId = signal<string | null>(null);
@@ -91,6 +92,11 @@ export class ExamAttemptsComponent implements OnInit {
     if (id) {
       this.loadAttempts(id, 1, newSize);
     }
+  }
+
+  openAttemptReview(attempt: ExamAttemptDto, event: Event): void {
+    event.stopPropagation();
+    this.router.navigate(['/teacher/attempts', attempt.id, 'review']);
   }
 
   openStudentDetails(attempt: ExamAttemptDto): void {

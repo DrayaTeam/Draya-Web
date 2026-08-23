@@ -1,0 +1,6 @@
+// src/app/features/teacher/exams/attempt-review/attempt-review.component.scss
+// Styling is Tailwind-utility-driven in the template, matching the sibling
+// exam-attempts page convention — nothing custom needed here.
+:host {
+  display: block;
+}

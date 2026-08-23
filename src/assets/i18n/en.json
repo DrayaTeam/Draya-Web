@@ -552,6 +552,12 @@
         "WAITING_TAG": "Pending",
         "VIEW_ALL_ALERTS": "View All Alerts"
       },
+      "PENDING_REVIEWS": {
+        "TITLE": "Pending Reviews",
+        "LOADING": "Loading pending reviews...",
+        "EMPTY": "No attempts are waiting for review right now",
+        "ACTION_REQUIRED": "Action Required"
+      },
       "FOLLOWUP_TABLE": {
         "TITLE": "Students Needing Follow-up",
         "SUBTITLE": "Performance below 55% in last exam"

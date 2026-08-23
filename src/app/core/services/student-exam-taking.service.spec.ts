@@ -184,4 +184,38 @@ describe('StudentExamTakingService', () => {
     const question = service.questions()[0] as unknown as Record<string, unknown>;
     expect('correctOptionId' in question).toBeFalse();
   });
+
+  it('should refresh weaknesses from /Weaknesses/active once grading actually completes', () => {
+    service.fetchAttemptResults('att-graded').subscribe();
+
+    const resultsReq = httpMock.expectOne((r) => r.url.includes('/attempts/att-graded/results'));
+    resultsReq.flush({
+      attemptId: 'att-graded',
+      examId: 'exam-1',
+      isSubmitted: true,
+      submittedAt: '2026-01-01T00:00:00Z',
+      finalScore: 90,
+      needsTeacherReview: false,
+      answers: [
+        {
+          answerId: 'a1',
+          examQuestionId: 'q1',
+          selectedOptionId: 'o1',
+          gradingResult: {
+            score: 1,
+            maxScore: 1,
+            isAiGraded: true,
+            needsTeacherReview: false,
+          },
+        },
+      ],
+    });
+
+    const weaknessReq = httpMock.expectOne((r) => r.url.includes('/Weaknesses/active'));
+    expect(weaknessReq.request.method).toBe('GET');
+    weaknessReq.flush([{ topicName: 'الجبر', proficiencyPercent: 55 }]);
+
+    expect(service.examResult().weaknessTopics.length).toBe(1);
+    expect(service.examResult().weaknessTopics[0].title).toBe('الجبر');
+  });
 });

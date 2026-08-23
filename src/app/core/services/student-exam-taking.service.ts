@@ -3,13 +3,16 @@ import { Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
 import { SignalRService } from '../signalr/signalr.service';
 import { ToastService } from './toast.service';
+import { StudentWeaknessService } from './student-weakness.service';
 import { ApiError } from '../models/api-error.model';
+import { StudentWeaknessItem } from '../models/student-weakness.model';
 import {
   AnswerSubmissionDto,
   AttemptResultResponseDto,
   ExamQuestion,
   ExamResultReport,
   ExamReviewItem,
+  ExamWeaknessTopic,
   GradingJobStatusDto,
   StartAttemptFailureReason,
   StartAttemptResponseDto,
@@ -18,6 +21,16 @@ import {
   SubmitAttemptRequestDto,
   SubmitAttemptResponseDto,
 } from '../models/student-exam-taking.model';
+
+function toExamWeaknessTopics(items: readonly StudentWeaknessItem[]): ExamWeaknessTopic[] {
+  return items.slice(0, 3).map((w) => ({
+    id: w.id,
+    title: w.topicName,
+    accuracyPercentage: w.proficiencyPercent,
+    aiTip: `نسبة إتقانك الحالية لهذا الموضوع ${w.proficiencyPercent}%. استخدم زر المراجعة التفاعلية في صفحة تقاريري لمزيد من التوصيات.`,
+    reviewLectureUrl: '/student/reports',
+  }));
+}
 
 /** Tolerant shape of GET /exams/{examId}/student-view — untyped in swagger. */
 export interface ExamStudentViewDto {
@@ -105,6 +118,7 @@ export function interpretStartAttemptError(err: ApiError | undefined): StartAtte
 export class StudentExamTakingService extends ApiBaseService {
   private readonly signalR = inject(SignalRService);
   private readonly toastService = inject(ToastService);
+  private readonly weaknessService = inject(StudentWeaknessService);
 
   readonly examTitle = signal<string>('جارٍ تحميل تفاصيل الامتحان...');
   readonly examLevelText = signal<string>('بيئة اختبار تفاعلية مؤمنة');
@@ -761,6 +775,17 @@ export class StudentExamTakingService extends ApiBaseService {
         }
 
         this.examResult.set(updated);
+
+        // Once grading is actually done, refresh from the authoritative weakness
+        // endpoint and patch the result in place — this call is fire-and-forget
+        // relative to the synchronous map() above; it does not block or delay
+        // showing the score/answers.
+        if (!isGradingPending) {
+          this.weaknessService.loadActiveWeaknesses().subscribe((list) => {
+            this.examResult.update((r) => ({ ...r, weaknessTopics: toExamWeaknessTopics(list) }));
+          });
+        }
+
         return updated;
       }),
       catchError(() => of(null)),
