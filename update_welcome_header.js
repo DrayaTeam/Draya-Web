@@ -1,30 +1,29 @@
-<header class="dashboard-welcome-bar">
-  <div class="greeting-col">
-    <span class="current-date-text">{{ 'TEACHER.DASHBOARD.CURRENT_DATE' | translate }}</span>
-    <div class="heading-row">
-      <h1 class="welcome-title">{{ 'TEACHER.DASHBOARD.GREETING' | translate }}</h1>
-    </div>
-    <p class="welcome-subtitle">{{ 'TEACHER.DASHBOARD.GREETING_SUBTITLE' | translate }}</p>
-  </div>
+const fs = require('fs');
+const filePathTS = 'src/app/features/teacher/dashboard/components/teacher-welcome-header/teacher-welcome-header.component.ts';
+let contentTS = fs.readFileSync(filePathTS, 'utf8');
 
-  <div class="header-actions-group">
-    <button type="button" (click)="reviewAiClick.emit()" class="btn-primary-ai">
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.2"
-        stroke-linecap="round"
-        stroke-linejoin="round">
-        <path
-          d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-      </svg>
-      <span>{{ 'TEACHER.DASHBOARD.REVIEW_AI_BTN' | translate }}</span>
-    </button>
+if (!contentTS.includes('TeacherNotificationsService')) {
+  contentTS = contentTS.replace(
+    "import { Component, ChangeDetectionStrategy, output } from '@angular/core';",
+    "import { Component, ChangeDetectionStrategy, output, signal, inject } from '@angular/core';\nimport { DatePipe, CommonModule } from '@angular/common';\nimport { TeacherNotificationsService } from '../../../../services/teacher-notifications.service';"
+  );
+  
+  contentTS = contentTS.replace(
+    "imports: [TranslatePipe],",
+    "imports: [TranslatePipe, CommonModule, DatePipe],"
+  );
+  
+  contentTS = contentTS.replace(
+    "readonly notificationsClick = output<void>();",
+    "readonly notificationsClick = output<void>();\n  readonly notificationsService = inject(TeacherNotificationsService);\n  readonly isDropdownOpen = signal(false);\n\n  toggleNotifications(): void {\n    this.isDropdownOpen.update(v => !v);\n    if (this.isDropdownOpen()) {\n      this.notificationsService.markAllAsRead();\n    }\n  }\n\n  closeNotifications(): void {\n    this.isDropdownOpen.set(false);\n  }"
+  );
+  fs.writeFileSync(filePathTS, contentTS, 'utf8');
+}
 
-    
+const filePathHTML = 'src/app/features/teacher/dashboard/components/teacher-welcome-header/teacher-welcome-header.component.html';
+let contentHTML = fs.readFileSync(filePathHTML, 'utf8');
+
+const newDropdownHTML = `
     <!-- Notifications Dropdown Trigger -->
     <div class="notifications-wrapper" style="position: relative;">
       <button
@@ -82,6 +81,27 @@
           </div>
         </div>
       }
-    </div>
-  </div>
-</header>
+    </div>`;
+
+const oldButton = `<button
+      type="button"
+      (click)="notificationsClick.emit()"
+      aria-label="الإشعارات"
+      class="icon-btn-bell">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+      </svg>
+      <span class="unread-dot-badge"></span>
+    </button>`;
+
+contentHTML = contentHTML.replace(oldButton, newDropdownHTML);
+fs.writeFileSync(filePathHTML, contentHTML, 'utf8');
