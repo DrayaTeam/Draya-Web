@@ -80,7 +80,7 @@ describe('StudentExamsComponent', () => {
     expect(compiled.querySelector('.page-heading')?.textContent).toContain(
       'الامتحانات والواجبات المجدولة',
     );
-    expect(compiled.querySelectorAll('.filter-pill-btn').length).toBe(5);
+    expect(compiled.querySelectorAll('.filter-pill-btn').length).toBe(7);
   });
 
   it('should render 3 exam cards when items exist', () => {

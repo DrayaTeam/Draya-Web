@@ -49,6 +49,11 @@
           الامتحان بالكامل.
         </p>
       </div>
+    } @else if (!report().weaknessTopics || report().weaknessTopics.length === 0) {
+      <div class="pending-ai-analysis-box">
+        <span class="pending-analysis-icon">✅</span>
+        <p class="pending-analysis-text">لا توجد نقاط ضعف مسجلة حالياً على هذا الموضوع.</p>
+      </div>
     } @else {
       <div class="weakness-list">
         @for (topic of report().weaknessTopics; track topic.id) {

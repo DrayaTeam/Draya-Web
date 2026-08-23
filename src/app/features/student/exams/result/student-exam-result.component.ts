@@ -24,17 +24,18 @@ export class StudentExamResultComponent implements OnInit {
 
   readonly resultReport = this.examService.examResult;
   private attemptId: string | null = null;
+  private examId: string | null = null;
 
   ngOnInit(): void {
-    const examId = this.route.snapshot.params['id'];
+    this.examId = this.route.snapshot.params['id'] || null;
     this.attemptId =
       this.route.snapshot.queryParams['attemptId'] ||
       this.examService.currentAttemptId() ||
       this.examService.examResult().attemptId ||
       null;
 
-    if (examId && this.examService.questions().length === 0) {
-      this.examService.getExamDetails(examId).subscribe(() => {
+    if (this.examId && this.examService.questions().length === 0) {
+      this.examService.getExamDetails(this.examId).subscribe(() => {
         this.loadResultsData();
       });
     } else {
@@ -43,58 +44,36 @@ export class StudentExamResultComponent implements OnInit {
   }
 
   private loadResultsData(): void {
-    if (this.attemptId && !this.attemptId.startsWith('att_')) {
+    if (this.attemptId) {
       this.examService.fetchAttemptResults(this.attemptId).subscribe();
-    } else {
-      const scoreParam = this.route.snapshot.queryParams['score'];
-      if (scoreParam !== undefined && scoreParam !== null && scoreParam !== '') {
-        const numericScore = Number(scoreParam);
-        if (!isNaN(numericScore) && numericScore > 0) {
-          let gradeLabel = 'راسب — ضعيف جداً';
-          if (numericScore >= 85) gradeLabel = 'ممتاز جداً 🌟';
-          else if (numericScore >= 65) gradeLabel = 'جيد جداً 👍';
-          else if (numericScore >= 50) gradeLabel = 'مقبول — يحتاج مراجعة';
-
-          this.examService.examResult.update((current) => ({
-            ...current,
-            scorePercentage: numericScore,
-            gradeLabel,
-            isPassed: numericScore >= 50,
-            isGradingPending: false,
-          }));
-        }
-      }
+      return;
     }
+
+    // No attemptId in the URL and none cached locally (e.g. a cold deep link
+    // straight to /result) — resolve the latest attempt from the exam's own
+    // attempt history instead of showing an empty report.
+    if (!this.examId) return;
+
+    this.examService.fetchExamStudentView(this.examId).subscribe((view) => {
+      const attempts = view?.attempts || [];
+      const latest = attempts.length > 0 ? attempts[attempts.length - 1] : null;
+      if (latest) {
+        this.attemptId = latest.id;
+        this.examService.fetchAttemptResults(latest.id).subscribe();
+      }
+    });
   }
 
   onRecheckResult(): void {
-    const examId = this.route.snapshot.params['id'];
-    const activeAttemptId =
-      this.attemptId ||
-      this.examService.currentAttemptId() ||
-      this.examService.examResult().attemptId ||
-      null;
-
-    if (activeAttemptId && !activeAttemptId.startsWith('att_')) {
+    if (this.attemptId) {
       this.toastService.info('جارٍ التحقق...', 'يتم الآن فحص أحدث تقرير تصحيح من الخادم.');
       this.examService.isGradingInProgress.set(true);
       this.examService.gradingStage.set('ai_evaluating');
       this.examService.gradingProgressPercent.set(50);
-      this.examService.pollAttemptResultsDirectly(activeAttemptId, 3);
-    } else if (examId) {
+      this.examService.pollAttemptResultsDirectly(this.attemptId, 3);
+    } else if (this.examId) {
       this.toastService.info('جارٍ التحقق...', 'يتم الآن فحص وتحديث بيانات الامتحان من الخادم.');
-      this.examService.getExamDetails(examId).subscribe(() => {
-        this.loadResultsData();
-      });
-    } else {
-      this.toastService.info(
-        'تم اعتماد النتيجة',
-        'تم احتساب واعتماد نتيجة إجاباتك للاختبار الحالي بنجاح.',
-      );
-      this.examService.examResult.update((current) => ({
-        ...current,
-        isGradingPending: false,
-      }));
+      this.loadResultsData();
     }
   }
 

@@ -30,7 +30,7 @@ export class ExamQuestionCardComponent {
     return (
       (q.type || '').toLowerCase().includes('essay') ||
       (q.subjectTag || '').toLowerCase().includes('essay') ||
-      (q.options.length === 0 && !q.correctOptionId)
+      q.options.length === 0
     );
   }
 

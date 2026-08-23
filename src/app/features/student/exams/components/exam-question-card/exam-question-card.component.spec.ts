@@ -14,7 +14,6 @@ describe('ExamQuestionCardComponent', () => {
     text: 'إذا كان ن ل ر = 120 ، فما هي قيم ن ، ر الممكنة؟',
     subjectTag: 'الجبر',
     selectedOptionId: undefined,
-    correctOptionId: 'opt2',
     isFlagged: false,
     options: [
       { id: 'opt1', text: 'ن = 5 ، ر = 3' },

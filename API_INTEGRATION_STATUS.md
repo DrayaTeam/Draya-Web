@@ -9,13 +9,16 @@
 | الميزة / الصفحة | الـ Endpoint في الـ Backend | الحالة | ملاحظات |
 |---|---|---|---|
 | **تسجيل الدخول** | `POST /api/v1/auth/login` | ✅ شغال | استخراج JWT وتخزين الـ tokens |
-| **تسجيل حساب طالب** | `POST /api/v1/auth/register-student` | ✅ شغال | إنشاء حساب طالب جديد |
-| **تسجيل حساب معلم** | `POST /api/v1/auth/register-teacher` | ✅ شغال | تسجيل معلم جديد مع التخصص |
+| **تسجيل حساب طالب** | `POST /api/v1/auth/register/student` | ✅ شغال | إنشاء حساب طالب جديد (تصحيح: المسار slash وليس hyphen) |
+| **تسجيل حساب معلم** | `POST /api/v1/auth/register/teacher` | ✅ شغال | تسجيل معلم جديد مع التخصص (تصحيح: المسار slash وليس hyphen) |
 | **جلب بيانات المستخدم الحالي** | `GET /api/v1/auth/me` | ✅ شغال | يُستخدم في الهيدر والبروفايل |
 | **تحديث الملف الشخصي للطالب** | `PUT /api/v1/students/profile` | ✅ شغال | يحدث (`fullName`, `parentGuardianEmail`, `dateOfBirth`) |
 | **دفع واشتراك الباقات عبر Paymob** | `POST /api/v1/classrooms/{id}/checkout` | ✅ شغال | يُرجع `checkoutUrl` ويُحول مباشرة لبوابة Paymob |
 | **تفعيل الباقة بكود السنتر** | `POST /api/v1/classrooms/enroll` | ✅ شغال | يستقبل `{ enrollmentCode }` لتفعيل الكلاس |
 | **قناة الأسئلة والنقاش (Q&A Channel)** | `GET/POST /api/v1/classrooms/{id}/questions`<br>`GET/POST /api/v1/classrooms/{id}/questions/{id}/replies`<br>`POST/DELETE /api/v1/classrooms/{id}/questions/{id}/vote` | ✅ شغال بالكامل + SignalR Live Hub | شاشة متكاملة مع الـ REST APIs و SignalR Hub على `/hubs/qa` لتلقي الأسئلة والردود والتصويتات الحية |
+| **قائمة امتحانات الطالب (`/student/exams`)** | `GET /api/v1/students/exams` | ✅ شغال | يُرجع `attempts[]` لكل امتحان؛ الحالة (`available`/`scheduled`/`in-progress`/`pending-grading`/`completed`/`expired`) تُشتق من `attemptStatus` أولاً |
+| **محرك أداء الامتحان (`/student/exams/:id/take`)** | `POST /api/v1/attempts/start`<br>`POST /api/v1/attempts/{attemptId}/submit`<br>`POST /api/v1/attempts/{attemptId}/grade`<br>`GET /api/v1/attempts/jobs/{jobId}` | ✅ شغال | لا يوجد أي تصحيح أو محاكاة على المتصفح — كل الدرجات تأتي من الـ backend فقط |
+| **تقرير تحليل النتيجة (`/student/exams/:id/result`)** | `GET /api/v1/attempts/{attemptId}/results`<br>`GET /api/v1/exams/{examId}/student-view` | ✅ شغال | لا يعتمد على أي مفتاح إجابة يُرسَل للطالب مسبقاً |
 
 ---
 
@@ -36,18 +39,7 @@
 > ⚠️ **تنبيه:** بمجرد أن يضيف فريق الـ Backend هذه الـ Endpoints في Swagger، سيتم استبدال الـ Mock بها فوراً:
 
 ### 1. الامتحانات والاختبارات التفاعلية:
-* **قائمة امتحانات الطالب (`/student/exams`):**
-  - **الحالة الحالية:** قائمة تجريبية في `StudentExamsService`.
-  - **المطلوب من الـ Backend:** `GET /api/v1/students/exams` أو `GET /api/v1/exams/my-assigned-exams`.
-* **محرك أداء الامتحان (`/student/exams/:id/take`):**
-  - **الحالة الحالية:** محرك تفاعلي كامل بالمتصفح (Timer + Anti-cheating Tab Switcher + Dynamic Grading).
-  - **المطلوب من الـ Backend:**
-    - `POST /api/v1/exams/{id}/attempts/start` (لبدء محاولة حقيقية وتوليد `attemptId`).
-    - `POST /api/v1/attempts/{attemptId}/answers` (للحفظ التلقائي لكل إجابة).
-    - `POST /api/v1/attempts/{attemptId}/submit` (لتسليم المحاولة وحفظ الدرجة في الـ DB).
-* **تقرير تحليل النتيجة بالذكاء الاصطناعي (`/student/exams/:id/result`):**
-  - **الحالة الحالية:** تقرير يحلل إجابات الطالب الحقيقية ويستخرج نقاط القوة والضعف محلياً.
-  - **المطلوب من الـ Backend:** `GET /api/v1/attempts/{attemptId}/results`.
+> ✅ **تم النقل إلى القسم الأول (🟢) بالكامل** — دورة حياة الامتحان (بدء/استكمال/تسليم/تصحيح/نتيجة/إعادة محاولة) موصولة بالكامل بالـ Real API اعتباراً من فرع `feat/exam-lifecycle`. نقاط الضعف (`weaknessTopics`) في تقرير النتيجة لم تعد تُولَّد محلياً من الإجابات الخاطئة — تنتظر تكامل `GET /Weaknesses/active` (انظر قسم التتبع الديناميكي لنقاط الضعف أدناه).
 
 ### 2. سجل الدرجات والتقارير الأكاديمية (`/student/reports`):
 * **الحالة الحالية:** رسوم بيانية ومؤشرات أداء في `StudentReportsService`.

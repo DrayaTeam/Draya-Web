@@ -72,19 +72,34 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
   }
 
   readonly showSubmitConfirm = signal<boolean>(false);
-  private examId = 'exam-1';
+  private examId = '';
   private visibilityListener: (() => void) | null = null;
 
   ngOnInit(): void {
-    this.examId = this.route.snapshot.paramMap.get('id') || 'exam-1';
+    this.examId = this.route.snapshot.paramMap.get('id') || '';
+    if (!this.examId) {
+      this.toastService.error('امتحان غير صالح', 'تعذر تحديد الامتحان المطلوب.');
+      this.router.navigate(['/student/exams']);
+      return;
+    }
+
     this.examService.loadExamSession(this.examId).subscribe({
       next: () => {
+        const reason = this.examService.startAttemptFailureReason();
         if (this.examService.isAttemptAlreadyCompleted()) {
           this.toastService.info(
             'تم تسليم الامتحان مسبقاً 📋',
             'لقد قمت بإجراء وتسليم هذا الامتحان بالفعل. جاري نقلك لتقرير النتيجة والتصحيح...',
           );
           this.router.navigate(['/student/exams', this.examId, 'result']);
+        } else if (reason === 'exam-expired') {
+          this.toastService.error(
+            'انتهى موعد الامتحان ⛔',
+            'لم يعد بإمكانك بدء محاولة جديدة لهذا الامتحان.',
+          );
+          this.router.navigate(['/student/exams']);
+        } else if (reason === 'attempt-in-progress') {
+          this.toastService.info('استكمال المحاولة', 'جارٍ استكمال محاولتك الحالية لهذا الامتحان.');
         }
       },
       error: () => void 0,
@@ -96,14 +111,13 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
         const vCount = this.examService.recordViolation();
         if (vCount >= 3) {
           this.toastService.error(
-            'تم إلغاء الامتحان تلقائياً!',
-            'لتكرار مغادرة شاشة الامتحان التفاعلي (3 مخالفات).',
+            'تم تسليم الامتحان تلقائياً!',
+            'لتكرار مغادرة شاشة الامتحان التفاعلي (3 مخالفات)، تم تسليم إجاباتك الحالية للتصحيح.',
           );
-          this.examService.stopTimer();
-          const attemptId = this.examService.currentAttemptId() || undefined;
-          this.router.navigate(['/student/exams', this.examId, 'result'], {
-            queryParams: { score: 0, attemptId },
-          });
+          // Submit whatever was answered so far and let the server score it —
+          // forcing a fabricated 0% here would discard real answers and never
+          // reach the backend at all.
+          this.onSubmitExam();
         } else {
           this.toastService.warning(
             'تحذير أمني مشدد ⚠️',
@@ -183,13 +197,20 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
 
   onSubmitExam(): void {
     const attemptId = this.examService.currentAttemptId() || undefined;
+    if (!attemptId) {
+      // submitExam() will itself toast a clear error and refuse to call the
+      // backend — nothing to submit without a known attempt, so stay put.
+      this.examService.submitExam(undefined);
+      return;
+    }
+
     this.toastService.success(
       'تم تسليم الامتحان بنجاح! 🎉',
       'جارٍ استخراج تقرير التحليل الذكي للدرجات والمهارات...',
     );
     this.examService.submitExam(attemptId);
     this.router.navigate(['/student/exams', this.examId, 'result'], {
-      queryParams: attemptId ? { attemptId } : {},
+      queryParams: { attemptId },
     });
   }
 }

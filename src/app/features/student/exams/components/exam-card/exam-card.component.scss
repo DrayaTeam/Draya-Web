@@ -94,7 +94,39 @@
       border: 1px solid #5ee9b5;
       color: #006045;
     }
+
+    &.in-progress {
+      background-color: #ffe4e6;
+      border: 1px solid #fda4af;
+      color: #9f1239;
+    }
+
+    &.pending-grading {
+      background-color: #ede9fe;
+      border: 1px solid #c4b5fd;
+      color: #5b21b6;
+    }
+
+    &.expired {
+      background-color: #fee2e2;
+      border: 1px solid #fca5a5;
+      color: #7f1d1d;
+    }
   }
+}
+
+// Needs-teacher-review inline banner
+.needs-review-badge {
+  margin-top: 2px;
+  padding: 4px 10px;
+  background-color: #fef3c6;
+  border: 1px solid #ffd230;
+  border-radius: 10px;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  color: #973c00;
+  width: fit-content;
 }
 
 // Header Title & Teacher Info
@@ -196,15 +228,34 @@
         &.green-text {
           color: #009966;
         }
+
+        &.rose-text {
+          color: #9f1239;
+        }
+
+        &.violet-text {
+          color: #5b21b6;
+        }
+
+        &.red-text {
+          color: #7f1d1d;
+        }
       }
     }
   }
 }
 
-// Action Button
-.btn-exam-action {
+// Action Row (main action button + optional retake button)
+.action-row {
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+// Action Button
+.btn-exam-action {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -217,6 +268,38 @@
   font-size: 13px;
   cursor: pointer;
   transition: all 150ms ease-out;
+
+  &.in-progress {
+    background-color: #9f1239;
+    color: #ffffff;
+    border: none;
+    box-shadow:
+      0px 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0px 2px 4px -2px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      background-color: #7f0f2f;
+      transform: translateY(-1px);
+    }
+  }
+
+  &.pending-grading {
+    background-color: transparent;
+    border: 1px solid #7c3aed;
+    color: #5b21b6;
+
+    &:hover {
+      background-color: #f5f3ff;
+    }
+  }
+
+  &.expired {
+    background-color: transparent;
+    border: 1px solid #7f1d1d;
+    color: #7f1d1d;
+    opacity: 0.48;
+    cursor: not-allowed;
+  }
 
   &.available {
     background-color: #1b6d63;
@@ -258,5 +341,28 @@
     &:active {
       transform: scale(0.98);
     }
+  }
+}
+
+.btn-exam-retake {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 30px;
+  background-color: transparent;
+  border: 1px dashed #90a1b9;
+  border-radius: 999px;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  color: #62748e;
+  cursor: pointer;
+  transition: all 150ms ease-out;
+
+  &:hover {
+    border-color: #1b6d63;
+    color: #1b6d63;
+    background-color: #f0fdfa;
   }
 }
