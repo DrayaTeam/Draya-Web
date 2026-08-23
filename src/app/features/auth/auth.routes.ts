@@ -43,12 +43,14 @@ export const authRoutes: Routes = [
         title: 'Forgot Password — Draya',
       },
       {
+        // Superseded by the two-step OTP flow at 'forgot-password': the
+        // backend now emails a 6-digit code, not a ?token= reset link, so
+        // this query-param-driven page has nothing left to consume. Kept as
+        // a redirect (not deleted outright) in case a stale bookmark or an
+        // old pre-redesign email link still points here.
         path: 'reset-password',
-        loadComponent: () =>
-          import('./pages/reset-password/reset-password.component').then(
-            (m) => m.ResetPasswordComponent,
-          ),
-        title: 'Reset Password — Draya',
+        redirectTo: 'forgot-password',
+        pathMatch: 'full',
       },
       {
         path: 'accept-invite',

@@ -23,7 +23,17 @@ Provides a modern two-step account recovery mechanism where users request a 6-di
 ## 📡 API Endpoints Consumed
 
 - `POST /api/v1/auth/password-reset/request` -> Body: `{ email }`.
-- `POST /api/v1/auth/password-reset/confirm` -> Body: `{ token, newPassword }`.
+- `POST /api/v1/auth/password-reset/confirm` -> Body: `{ token, newPassword }` — `token` is the 6-digit OTP the user typed, not a URL token.
+
+---
+
+## 🔒 Validation
+
+`otpCode` is locked to `Validators.pattern(/^\d{6}$/)` — exactly 6 digits, matching the code the backend actually emails. `onOtpInput()` strips any non-digit character and caps the field at 6 characters as the user types, so a pasted value can't slip past the pattern check silently.
+
+## 🗑️ Superseded flow
+
+The old query-param `/auth/reset-password?token=...` page assumed a URL-based reset token and has been removed — the backend no longer emails one. The route now redirects to `forgot-password` in case a stale bookmark or pre-redesign email link still points at it. A separate dead, unrouted stub at `features/auth/forgot-password/` (note: no `pages/` segment) that predated this component and collided on the same class name has also been deleted.
 
 ---
 

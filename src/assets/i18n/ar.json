@@ -89,6 +89,7 @@
       "OTP_LABEL": "رمز التحقق (OTP)",
       "OTP_PLACEHOLDER": "123456",
       "OTP_REQUIRED": "رمز التحقق مطلوب",
+      "OTP_INVALID_FORMAT": "رمز التحقق يجب أن يتكون من 6 أرقام",
       "RESEND_QUESTION": "لم يصلك الرمز؟",
       "RESEND_COUNTDOWN": "إعادة الإرسال بعد ({{seconds}} ثانية)",
       "RESEND_NOW": "إعادة إرسال الرمز الآن",
