@@ -1,4 +1,13 @@
-import { Component, ChangeDetectionStrategy, input, output, inject, signal, effect, OnDestroy } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  output,
+  inject,
+  signal,
+  effect,
+  OnDestroy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { finalize, Subject, takeUntil } from 'rxjs';
 
@@ -55,7 +64,7 @@ export class StudentDetailsModalComponent implements OnDestroy {
       .getStudentAnalytics(studentId)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.isLoading.set(false))
+        finalize(() => this.isLoading.set(false)),
       )
       .subscribe({
         next: (data) => {

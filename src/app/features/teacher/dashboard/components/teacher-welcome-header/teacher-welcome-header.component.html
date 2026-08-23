@@ -24,9 +24,8 @@
       <span>{{ 'TEACHER.DASHBOARD.REVIEW_AI_BTN' | translate }}</span>
     </button>
 
-    
     <!-- Notifications Dropdown Trigger -->
-    <div class="notifications-wrapper" style="position: relative;">
+    <div class="notifications-wrapper" style="position: relative">
       <button
         type="button"
         (click)="toggleNotifications()"
@@ -51,31 +50,48 @@
 
       @if (isDropdownOpen()) {
         <!-- Backdrop for closing -->
-        <div class="fixed inset-0 z-40" (click)="closeNotifications()"></div>
-        
-        <div class="notifications-dropdown animate-scale-up absolute left-0 mt-2 w-80 bg-white dark:bg-[--draya-surface-dark] rounded-xl shadow-xl border border-gray-100 dark:border-gray-800 z-50 overflow-hidden" style="top: 100%;">
-          <div class="dropdown-header flex justify-between items-center p-4 border-b border-gray-50 dark:border-gray-800">
+        <div
+          class="fixed inset-0 z-40"
+          (click)="closeNotifications()"
+          (keydown.enter)="closeNotifications()"
+          tabindex="0"
+          role="button"
+          aria-label="Close"></div>
+
+        <div
+          class="notifications-dropdown animate-scale-up absolute left-0 z-50 mt-2 w-80 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl dark:border-gray-800 dark:bg-[--draya-surface-dark]"
+          style="top: 100%">
+          <div
+            class="dropdown-header flex items-center justify-between border-b border-gray-50 p-4 dark:border-gray-800">
             <span class="dropdown-title font-bold text-gray-900 dark:text-gray-100">الإشعارات</span>
           </div>
 
           <div class="dropdown-list max-h-96 overflow-y-auto">
             @if (notificationsService.notifications().length === 0) {
-              <div class="p-6 text-center text-gray-500 text-sm">
-                لا توجد إشعارات حالياً.
-              </div>
+              <div class="p-6 text-center text-sm text-gray-500">لا توجد إشعارات حالياً.</div>
             }
             @for (notif of notificationsService.notifications(); track notif.id) {
-              <div class="notif-item flex gap-3 p-4 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-[--draya-surface-darker] transition-colors cursor-default">
-                <div class="notif-dot flex-shrink-0 w-2 h-2 rounded-full mt-1.5"
-                     [ngClass]="{
-                       'bg-red-500': notif.type === 'risk',
-                       'bg-green-500': notif.type === 'report',
-                       'bg-blue-500': notif.type === 'material'
-                     }"></div>
+              <div
+                class="notif-item flex cursor-default gap-3 border-b border-gray-50 p-4 transition-colors hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-[--draya-surface-darker]">
+                <div
+                  class="notif-dot mt-1.5 h-2 w-2 flex-shrink-0 rounded-full"
+                  [ngClass]="{
+                    'bg-red-500': notif.type === 'risk',
+                    'bg-green-500': notif.type === 'report',
+                    'bg-blue-500': notif.type === 'material',
+                  }"></div>
                 <div class="notif-content flex-1">
-                  <p class="notif-title text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">{{ notif.title }}</p>
-                  <p class="notif-desc text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-2">{{ notif.message }}</p>
-                  <span class="notif-time text-[10px] text-gray-400">{{ notif.time | date:'shortTime' }}</span>
+                  <p
+                    class="notif-title mb-1 text-sm font-semibold text-gray-800 dark:text-gray-200">
+                    {{ notif.title }}
+                  </p>
+                  <p
+                    class="notif-desc mb-2 text-xs leading-relaxed text-gray-600 dark:text-gray-400">
+                    {{ notif.message }}
+                  </p>
+                  <span class="notif-time text-[10px] text-gray-400">
+                    {{ notif.time | date: 'shortTime' }}
+                  </span>
                 </div>
               </div>
             }

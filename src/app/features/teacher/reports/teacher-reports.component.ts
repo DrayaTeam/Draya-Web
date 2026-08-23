@@ -132,7 +132,8 @@ export class TeacherReportsComponent implements OnInit {
         this.messageService.add({
           severity: 'success',
           summary: 'نجاح',
-          detail: res?.message || 'تم اعتماد وإرسال التقرير بنجاح إلى البريد الإلكتروني لولي الأمر.',
+          detail:
+            res?.message || 'تم اعتماد وإرسال التقرير بنجاح إلى البريد الإلكتروني لولي الأمر.',
         });
       },
       error: (err) => {
@@ -141,7 +142,7 @@ export class TeacherReportsComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'خطأ',
-          detail: err?.error?.message || 'حدث خطأ أثناء إرسال التقرير لولي الأمر.'
+          detail: err?.error?.message || 'حدث خطأ أثناء إرسال التقرير لولي الأمر.',
         });
       },
     });

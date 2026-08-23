@@ -2,22 +2,23 @@
   <!-- Page Header -->
   <header class="mb-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
     <div class="flex items-center gap-4">
-      <div class="bg-[#1B6D63]/10 text-[#1B6D63] flex h-14 w-14 shrink-0 items-center justify-center rounded-[12px]">
+      <div
+        class="flex h-14 w-14 shrink-0 items-center justify-center rounded-[12px] bg-[#1B6D63]/10 text-[#1B6D63]">
         <i class="pi pi-verified text-2xl"></i>
       </div>
       <div>
-        <div class="flex items-center gap-2 mb-1">
-          <h1 class="m-0 text-3xl font-bold text-[#1B6D63]">{{ 'TEACHER.FEEDBACK.REVIEWS_FOR' | translate }}</h1>
+        <div class="mb-1 flex items-center gap-2">
+          <h1 class="m-0 text-3xl font-bold text-[#1B6D63]">
+            {{ 'TEACHER.FEEDBACK.REVIEWS_FOR' | translate }}
+          </h1>
         </div>
-        <p class="m-0 mt-1 text-gray-500">
-          تابع آراء وتقييمات طلابك لتحسين جودة محتواك التعليمي.
-        </p>
+        <p class="m-0 mt-1 text-gray-500">تابع آراء وتقييمات طلابك لتحسين جودة محتواك التعليمي.</p>
       </div>
     </div>
 
     <!-- Classroom Dropdown Selector with Green Border -->
     @if (!isLoadingClassrooms() && classrooms().length > 0) {
-      <div class="w-full md:w-80 relative z-50">
+      <div class="relative z-50 w-full md:w-80">
         <p-select
           [options]="classrooms()"
           [ngModel]="selectedClassroom()"
@@ -26,10 +27,13 @@
           placeholder="اختر الفصل الدراسي لعرض تقييماته..."
           [style]="{ width: '100%', borderRadius: '12px' }"
           [pt]="{
-            root: { class: '!rounded-[12px] !border-2 !border-[#1B6D63]/30 hover:!border-[#1B6D63] !shadow-none focus-within:!ring-2 focus-within:!ring-[#1B6D63]/20' },
+            root: {
+              class:
+                '!rounded-[12px] !border-2 !border-[#1B6D63]/30 hover:!border-[#1B6D63] !shadow-none focus-within:!ring-2 focus-within:!ring-[#1B6D63]/20',
+            },
             label: { class: '!py-3 !px-4 font-bold' },
             list: { class: '!py-2 !shadow-none !border !border-gray-200' },
-            option: { class: '!py-2.5 !px-4 hover:!bg-[#1B6D63]/10 hover:!text-[#1B6D63]' }
+            option: { class: '!py-2.5 !px-4 hover:!bg-[#1B6D63]/10 hover:!text-[#1B6D63]' },
           }">
           <ng-template #selectedItem let-selectedOption>
             <div class="flex items-center gap-3">
@@ -63,23 +67,30 @@
     <main class="feed-main-area">
       @if (!selectedClassroom()) {
         <div class="rounded-[12px] border border-gray-200 bg-white p-12 text-center">
-          <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[12px] bg-[#1B6D63]/10 text-[#1B6D63]">
+          <div
+            class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[12px] bg-[#1B6D63]/10 text-[#1B6D63]">
             <i class="pi pi-verified text-2xl"></i>
           </div>
-          <h3 class="text-lg font-bold text-gray-900">{{ 'TEACHER.FEEDBACK.SELECT_CLASSROOM_PROMPT' | translate }}</h3>
-          <p class="mt-2 text-sm text-gray-500">اختر أحد الفصول من القائمة أعلاه لعرض التقييمات والآراء الخاصة به.</p>
+          <h3 class="text-lg font-bold text-gray-900">
+            {{ 'TEACHER.FEEDBACK.SELECT_CLASSROOM_PROMPT' | translate }}
+          </h3>
+          <p class="mt-2 text-sm text-gray-500">
+            اختر أحد الفصول من القائمة أعلاه لعرض التقييمات والآراء الخاصة به.
+          </p>
         </div>
       } @else {
-        
         <!-- Dashboard Top Widgets -->
         @if (!isLoadingFeedback() && feedback() && feedback()!.totalCount > 0) {
           <div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
             <!-- Avg Rating Widget -->
-            <div class="flex items-center justify-between rounded-[12px] border border-gray-200 bg-white p-6">
+            <div
+              class="flex items-center justify-between rounded-[12px] border border-gray-200 bg-white p-6">
               <div>
                 <h3 class="text-sm font-bold text-gray-500">متوسط التقييم العام</h3>
                 <div class="mt-2 flex items-baseline gap-2">
-                  <span class="text-4xl font-black text-[#1B6D63]">{{ feedback()!.averageRating | number: '1.1-1' }}</span>
+                  <span class="text-4xl font-black text-[#1B6D63]">
+                    {{ feedback()!.averageRating | number: '1.1-1' }}
+                  </span>
                   <span class="text-lg text-gray-400">/ 5.0</span>
                 </div>
                 <div class="mt-2 flex gap-1">
@@ -94,22 +105,29 @@
                   }
                 </div>
               </div>
-              <div class="flex h-16 w-16 items-center justify-center rounded-[12px] bg-yellow-50 text-yellow-500">
+              <div
+                class="flex h-16 w-16 items-center justify-center rounded-[12px] bg-yellow-50 text-yellow-500">
                 <i class="pi pi-thumbs-up text-2xl"></i>
               </div>
             </div>
 
             <!-- Total Reviews Widget -->
-            <div class="flex items-center justify-between rounded-[12px] border border-gray-200 bg-white p-6">
+            <div
+              class="flex items-center justify-between rounded-[12px] border border-gray-200 bg-white p-6">
               <div>
-                <h3 class="text-sm font-bold text-gray-500">{{ 'TEACHER.FEEDBACK.RATINGS' | translate }}</h3>
+                <h3 class="text-sm font-bold text-gray-500">
+                  {{ 'TEACHER.FEEDBACK.RATINGS' | translate }}
+                </h3>
                 <div class="mt-2 flex items-baseline gap-2">
-                  <span class="text-4xl font-black text-[#1B6D63]">{{ feedback()!.totalCount }}</span>
+                  <span class="text-4xl font-black text-[#1B6D63]">
+                    {{ feedback()!.totalCount }}
+                  </span>
                   <span class="text-lg text-gray-400">طالب</span>
                 </div>
                 <p class="mt-2 text-xs text-gray-400">إجمالي عدد التقييمات المسجلة</p>
               </div>
-              <div class="flex h-16 w-16 items-center justify-center rounded-[12px] bg-[#1B6D63]/10 text-[#1B6D63]">
+              <div
+                class="flex h-16 w-16 items-center justify-center rounded-[12px] bg-[#1B6D63]/10 text-[#1B6D63]">
                 <i class="pi pi-users text-2xl"></i>
               </div>
             </div>
@@ -120,14 +138,18 @@
         <div class="mx-auto max-w-4xl space-y-6">
           @if (isLoadingFeedback()) {
             @for (i of [1, 2, 3]; track i) {
-              <div class="h-40 w-full animate-pulse rounded-[12px] bg-white border border-gray-200"></div>
+              <div
+                class="h-40 w-full animate-pulse rounded-[12px] border border-gray-200 bg-white"></div>
             }
           } @else if (!feedback() || feedback()!.totalCount === 0) {
             <div class="rounded-[12px] border border-gray-200 bg-gray-50 p-12 text-center">
-              <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[12px] bg-gray-200 text-gray-500">
+              <div
+                class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[12px] bg-gray-200 text-gray-500">
                 <i class="pi pi-comment text-2xl"></i>
               </div>
-              <h3 class="text-lg font-bold text-gray-900">{{ 'TEACHER.FEEDBACK.NO_FEEDBACK_YET' | translate }}</h3>
+              <h3 class="text-lg font-bold text-gray-900">
+                {{ 'TEACHER.FEEDBACK.NO_FEEDBACK_YET' | translate }}
+              </h3>
               <p class="mt-2 text-sm text-gray-500">لم يتم تقييم هذا الفصل بعد.</p>
             </div>
           } @else {
@@ -138,25 +160,32 @@
             @for (item of feedback()!.items; track item.feedbackId) {
               <article class="flex flex-col rounded-[12px] border border-gray-200 bg-white p-6">
                 <!-- Card Header (Inline User Info & Rating) -->
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+                <div class="mb-5 flex flex-col justify-between gap-4 md:flex-row md:items-center">
                   <div class="flex items-center gap-3">
                     @if (item.studentAvatarUrl) {
-                      <img [src]="item.studentAvatarUrl" class="h-10 w-10 rounded-full object-cover border border-gray-100" alt="Avatar" />
+                      <img
+                        [src]="item.studentAvatarUrl"
+                        class="h-10 w-10 rounded-full border border-gray-100 object-cover"
+                        alt="Avatar" />
                     } @else {
-                      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 font-bold text-gray-600">
+                      <div
+                        class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 font-bold text-gray-600">
                         {{ item.studentName?.charAt(0) ?? 'م' }}
                       </div>
                     }
                     <div class="flex flex-col">
-                      <span class="font-bold text-gray-900 text-sm">
+                      <span class="text-sm font-bold text-gray-900">
                         {{ item.studentName ?? ('TEACHER.FEEDBACK.ANONYMOUS' | translate) }}
                       </span>
-                      <span class="mt-0.5 text-xs text-gray-400">{{ item.createdAt | date: 'longDate' }}</span>
+                      <span class="mt-0.5 text-xs text-gray-400">
+                        {{ item.createdAt | date: 'longDate' }}
+                      </span>
                     </div>
                   </div>
 
                   <!-- Stars -->
-                  <div class="flex gap-1 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+                  <div
+                    class="flex gap-1 rounded-full border border-gray-100 bg-gray-50 px-3 py-1.5">
                     @for (star of getStars(); track star) {
                       <i
                         class="pi text-xs"
@@ -172,14 +201,16 @@
                 <!-- Comment Content Box -->
                 <div class="flex-1">
                   @if (item.comment) {
-                    <div class="bg-gray-50 rounded-[12px] p-5 border border-gray-100">
-                      <p class="text-[15px] leading-relaxed text-gray-700 m-0">
+                    <div class="rounded-[12px] border border-gray-100 bg-gray-50 p-5">
+                      <p class="m-0 text-[15px] leading-relaxed text-gray-700">
                         {{ item.comment }}
                       </p>
                     </div>
                   } @else {
-                    <div class="bg-gray-50 rounded-[12px] p-4 border border-gray-100">
-                      <p class="text-sm italic text-gray-400 m-0">اكتفى الطالب بتقييم النجوم ولم يترك تعليقاً نصياً.</p>
+                    <div class="rounded-[12px] border border-gray-100 bg-gray-50 p-4">
+                      <p class="m-0 text-sm text-gray-400 italic">
+                        اكتفى الطالب بتقييم النجوم ولم يترك تعليقاً نصياً.
+                      </p>
                     </div>
                   }
                 </div>
@@ -191,4 +222,3 @@
     </main>
   }
 </div>
-

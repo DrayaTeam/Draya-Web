@@ -1,17 +1,19 @@
 <!-- src/app/features/teacher/classrooms/teacher-classrooms.component.html -->
 <div class="classrooms-container" dir="rtl">
   <!-- Top Section Group (Header & Search) -->
-  <div class="flex flex-col gap-8 pb-8 border-b border-slate-200/80 mb-2">
+  <div class="mb-2 flex flex-col gap-8 border-b border-slate-200/80 pb-8">
     <!-- Header Section (Option 2 + Option 3 Button + Bold Title) -->
     <div class="header-row">
       <div class="flex items-stretch gap-3">
-        <div class="w-[3px] bg-teal-600 rounded-full"></div>
+        <div class="w-[3px] rounded-full bg-teal-600"></div>
         <div class="flex flex-col gap-1 py-1">
-          <h1 class="text-3xl font-bold text-teal-700 m-0">الفصول الدراسية</h1>
-          <p class="text-sm text-slate-500 m-0">إدارة المراحل الدراسية ومتابعة المجموعات وإجمالي أعداد الطلبة المنضمين لكل مرحلة.</p>
+          <h1 class="m-0 text-3xl font-bold text-teal-700">الفصول الدراسية</h1>
+          <p class="m-0 text-sm text-slate-500">
+            إدارة المراحل الدراسية ومتابعة المجموعات وإجمالي أعداد الطلبة المنضمين لكل مرحلة.
+          </p>
         </div>
       </div>
-      
+
       <div class="header-actions">
         <button class="create-btn" (click)="openCreateModal()">+ إنشاء مرحلة دراسية جديدة</button>
       </div>
@@ -22,29 +24,50 @@
       <div class="modern-search-bar group">
         <!-- Search Icon -->
         <div class="search-icon-box">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
         </div>
-        
+
         <!-- Input -->
         <input
           type="text"
           class="search-input"
           placeholder="ابحث باسم المرحلة الدراسية..."
           (input)="onSearch($event)" />
-          
+
         <!-- Decorative Keyboard Shortcut -->
         <div class="search-shortcut hidden md:flex">
           <kbd>Ctrl</kbd>
           <span>+</span>
           <kbd>K</kbd>
         </div>
-        
+
         <!-- Divider -->
         <div class="search-divider hidden md:block"></div>
-        
+
         <!-- Filter Action -->
         <button class="search-filter-btn hidden md:flex">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+          </svg>
           <span>تصفية</span>
         </button>
       </div>
@@ -52,9 +75,10 @@
   </div>
 
   <!-- Content Header -->
-  <div class="flex items-center justify-between mb-2">
-    <h2 class="text-lg font-bold text-slate-800 m-0">قائمة الفصول المتاحة</h2>
-    <div class="text-sm font-semibold text-teal-700 bg-teal-50 px-3 py-1 rounded-lg border border-teal-100">
+  <div class="mb-2 flex items-center justify-between">
+    <h2 class="m-0 text-lg font-bold text-slate-800">قائمة الفصول المتاحة</h2>
+    <div
+      class="rounded-lg border border-teal-100 bg-teal-50 px-3 py-1 text-sm font-semibold text-teal-700">
       {{ classroomsResult()?.totalCount || 0 }} فصل نشط
     </div>
   </div>
@@ -193,25 +217,37 @@
               </div>
 
               <!-- Tags & Stats Group -->
-              <div class="flex flex-col gap-4 mt-2 mb-auto">
+              <div class="mt-2 mb-auto flex flex-col gap-4">
                 <!-- Tags -->
                 <div class="flex items-center gap-2">
-                  <span class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-bold leading-none">{{ classroom.gradeLevelName }}</span>
-                  <span class="px-2.5 py-1 rounded-md bg-teal-50 text-teal-700 text-xs font-bold leading-none">{{ classroom.classroomTypeName }}</span>
+                  <span
+                    class="rounded-md bg-slate-100 px-2.5 py-1 text-xs leading-none font-bold text-slate-600">
+                    {{ classroom.gradeLevelName }}
+                  </span>
+                  <span
+                    class="rounded-md bg-teal-50 px-2.5 py-1 text-xs leading-none font-bold text-teal-700">
+                    {{ classroom.classroomTypeName }}
+                  </span>
                 </div>
 
                 <!-- Clean Stats -->
                 <div class="flex items-center gap-5">
                   <div class="flex flex-col gap-1">
-                    <span class="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider">كود الانضمام</span>
-                    <span class="text-sm font-bold text-slate-800">{{ classroom.enrollmentCode }}</span>
+                    <span class="text-[0.65rem] font-bold tracking-wider text-slate-400 uppercase">
+                      كود الانضمام
+                    </span>
+                    <span class="text-sm font-bold text-slate-800">
+                      {{ classroom.enrollmentCode }}
+                    </span>
                   </div>
-                  
-                  <div class="w-px h-6 bg-slate-200"></div>
+
+                  <div class="h-6 w-px bg-slate-200"></div>
 
                   <div class="flex flex-col gap-1">
-                    <span class="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider">الطلاب</span>
-                    <span class="text-sm font-bold text-slate-800 flex items-center gap-1">
+                    <span class="text-[0.65rem] font-bold tracking-wider text-slate-400 uppercase">
+                      الطلاب
+                    </span>
+                    <span class="flex items-center gap-1 text-sm font-bold text-slate-800">
                       <draya-classroom-student-count
                         [classroomId]="classroom.classroomId"
                         [fallbackCount]="classroom.studentCount"></draya-classroom-student-count>
@@ -219,10 +255,12 @@
                     </span>
                   </div>
 
-                  <div class="w-px h-6 bg-slate-200"></div>
+                  <div class="h-6 w-px bg-slate-200"></div>
 
                   <div class="flex flex-col gap-1">
-                    <span class="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider">السعر</span>
+                    <span class="text-[0.65rem] font-bold tracking-wider text-slate-400 uppercase">
+                      السعر
+                    </span>
                     <span class="text-sm font-bold text-teal-700">
                       {{ classroom.price === 0 ? 'مجاناً' : classroom.price + ' ج.م' }}
                     </span>
@@ -231,9 +269,9 @@
               </div>
 
               <!-- Bottom Row: Enter Button -->
-              <div class="flex items-center justify-end mt-4">
+              <div class="mt-4 flex items-center justify-end">
                 <button
-                  class="flex items-center justify-center gap-2 px-6 py-2.5 bg-teal-700 hover:bg-teal-800 text-white border-none rounded-[10px] text-sm font-bold transition-all active:scale-95 cursor-pointer"
+                  class="flex cursor-pointer items-center justify-center gap-2 rounded-[10px] border-none bg-teal-700 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-800 active:scale-95"
                   [routerLink]="['/teacher/classrooms', classroom.classroomId]">
                   <span>عرض التفاصيل</span>
                   <svg
@@ -256,7 +294,7 @@
 
       <!-- Pagination Controls -->
       @if (classroomsResult()!.totalCount > 0) {
-        <div class="mt-8 flex justify-center w-full">
+        <div class="mt-8 flex w-full justify-center">
           <draya-pagination
             [totalItems]="classroomsResult()!.totalCount"
             [pageSize]="pageSize"

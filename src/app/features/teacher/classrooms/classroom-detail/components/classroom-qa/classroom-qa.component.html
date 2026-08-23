@@ -3,19 +3,23 @@
   <div class="mb-2 flex flex-col gap-4 rounded-[12px] border border-gray-200 bg-white p-5">
     <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
       <div class="flex items-center gap-3">
-        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-[12px] bg-[#1B6D63]/10 text-[#1B6D63]">
+        <div
+          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-[12px] bg-[#1B6D63]/10 text-[#1B6D63]">
           <i class="pi pi-comments text-xl"></i>
         </div>
         <div>
-          <h2 class="m-0 text-xl font-bold leading-tight text-gray-900">ساحة المناقشات</h2>
+          <h2 class="m-0 text-xl leading-tight font-bold text-gray-900">ساحة المناقشات</h2>
           <p class="m-0 mt-0.5 text-sm text-gray-500">تواصل مع طلابك وأجب عن استفساراتهم</p>
         </div>
-        <span class="hidden rounded-[12px] border border-[#1B6D63]/20 bg-[#1B6D63]/5 px-3 py-1 text-sm font-bold text-[#1B6D63] md:inline-block">
+        <span
+          class="hidden rounded-[12px] border border-[#1B6D63]/20 bg-[#1B6D63]/5 px-3 py-1 text-sm font-bold text-[#1B6D63] md:inline-block">
           {{ questions().length }} استفسار
         </span>
       </div>
 
-      <button class="flex w-full items-center justify-center gap-2 rounded-[12px] bg-[#1B6D63] px-5 py-[10px] text-sm font-bold text-white transition-colors hover:bg-[#0f4f49] active:scale-[0.98] sm:w-auto" (click)="toggleNewQuestionMode()">
+      <button
+        class="flex w-full items-center justify-center gap-2 rounded-[12px] bg-[#1B6D63] px-5 py-[10px] text-sm font-bold text-white transition-colors hover:bg-[#0f4f49] active:scale-[0.98] sm:w-auto"
+        (click)="toggleNewQuestionMode()">
         <i class="pi" [ngClass]="isNewQuestionMode() ? 'pi-times' : 'pi-plus'"></i>
         {{ isNewQuestionMode() ? 'إلغاء' : 'إضافة منشور' }}
       </button>
@@ -25,11 +29,17 @@
 
     <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
       <!-- Filter Pills -->
-      <div class="flex w-full items-center gap-2 overflow-x-auto sm:w-auto" style="scrollbar-width: none">
+      <div
+        class="flex w-full items-center gap-2 overflow-x-auto sm:w-auto"
+        style="scrollbar-width: none">
         @for (opt of filterOptions; track opt.value) {
           <button
             class="flex items-center justify-center rounded-[12px] px-4 py-2 text-sm font-bold transition-colors active:scale-[0.98]"
-            [ngClass]="filters().filterBy === opt.value ? 'bg-[#1B6D63] text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'"
+            [ngClass]="
+              filters().filterBy === opt.value
+                ? 'bg-[#1B6D63] text-white'
+                : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+            "
             (click)="updateFilterBy(opt.value)">
             {{ opt.label }}
           </button>
@@ -37,13 +47,21 @@
       </div>
 
       <!-- Sort Pills -->
-      <div class="flex w-full shrink-0 items-center gap-2 overflow-x-auto sm:w-auto" style="scrollbar-width: none">
+      <div
+        class="flex w-full shrink-0 items-center gap-2 overflow-x-auto sm:w-auto"
+        style="scrollbar-width: none">
         @for (opt of sortOptions; track opt.value) {
           <button
             class="flex items-center justify-center gap-2 rounded-[12px] border px-4 py-2 text-sm font-bold transition-colors active:scale-[0.98]"
-            [ngClass]="filters().sortBy === opt.value ? 'border-transparent bg-gray-900 text-white' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'"
+            [ngClass]="
+              filters().sortBy === opt.value
+                ? 'border-transparent bg-gray-900 text-white'
+                : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+            "
             (click)="updateSortBy(opt.value)">
-            <i class="pi" [ngClass]="opt.value === 'newest' ? 'pi-sort-amount-down' : 'pi-sort-amount-up'"></i>
+            <i
+              class="pi"
+              [ngClass]="opt.value === 'newest' ? 'pi-sort-amount-down' : 'pi-sort-amount-up'"></i>
             {{ opt.label }}
           </button>
         }
@@ -53,9 +71,11 @@
 
   <!-- Inline New Question Composer -->
   @if (isNewQuestionMode()) {
-    <div class="animate-fade-in-up rounded-[12px] border border-gray-200 bg-white p-6 transition-all">
+    <div
+      class="animate-fade-in-up rounded-[12px] border border-gray-200 bg-white p-6 transition-all">
       <div class="flex gap-4">
-        <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[12px] bg-[#1B6D63] text-white">
+        <div
+          class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[12px] bg-[#1B6D63] text-white">
           @if (currentUserPictureUrl()) {
             <img [src]="currentUserPictureUrl()!" alt="" class="h-full w-full object-cover" />
           } @else {
@@ -65,15 +85,21 @@
         <div class="flex flex-1 flex-col gap-3">
           <textarea
             [(ngModel)]="newQuestionContent"
-            class="w-full resize-none rounded-[12px] border border-gray-200 bg-gray-50 p-4 text-gray-900 outline-none transition-all focus:border-[#1B6D63] focus:bg-white focus:ring-1 focus:ring-[#1B6D63]"
+            class="w-full resize-none rounded-[12px] border border-gray-200 bg-gray-50 p-4 text-gray-900 transition-all outline-none focus:border-[#1B6D63] focus:bg-white focus:ring-1 focus:ring-[#1B6D63]"
             rows="3"
             placeholder="بم تفكر؟ اطرح سؤالك أو استفسارك هنا..."
             [disabled]="isPosting()"></textarea>
 
           @if (selectedImagePreview()) {
-            <div class="animate-fade-in relative mt-1 w-fit rounded-[12px] border border-gray-200 bg-gray-50 p-1">
-              <img [src]="selectedImagePreview()" alt="معاينة" class="max-h-40 rounded-[8px] object-contain" />
-              <button class="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white transition-colors hover:bg-red-600 active:scale-[0.98]" (click)="removeSelectedImage()">
+            <div
+              class="animate-fade-in relative mt-1 w-fit rounded-[12px] border border-gray-200 bg-gray-50 p-1">
+              <img
+                [src]="selectedImagePreview()"
+                alt="معاينة"
+                class="max-h-40 rounded-[8px] object-contain" />
+              <button
+                class="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white transition-colors hover:bg-red-600 active:scale-[0.98]"
+                (click)="removeSelectedImage()">
                 <i class="pi pi-times text-[10px] font-bold"></i>
               </button>
             </div>
@@ -81,17 +107,30 @@
 
           <div class="mt-1 flex items-center justify-between">
             <div class="flex items-center gap-3">
-              <input type="file" #imageInput accept="image/*" class="hidden" (change)="onImageSelected($event)" />
-              <button class="flex items-center gap-2 rounded-[12px] px-3 py-2 text-sm font-bold text-gray-500 transition-colors hover:bg-gray-100 active:scale-[0.98]" (click)="imageInput.click()" [disabled]="isPosting()">
+              <input
+                type="file"
+                #imageInput
+                accept="image/*"
+                class="hidden"
+                (change)="onImageSelected($event)" />
+              <button
+                class="flex items-center gap-2 rounded-[12px] px-3 py-2 text-sm font-bold text-gray-500 transition-colors hover:bg-gray-100 active:scale-[0.98]"
+                (click)="imageInput.click()"
+                [disabled]="isPosting()">
                 <i class="pi pi-image text-lg"></i>
                 <span class="hidden sm:inline-block">إرفاق صورة</span>
               </button>
             </div>
             <div class="flex w-full justify-end gap-2 sm:w-auto">
-              <button class="rounded-[12px] px-5 py-[10px] text-sm font-bold text-gray-500 transition-colors hover:bg-gray-100 active:scale-[0.98]" (click)="toggleNewQuestionMode()">
+              <button
+                class="rounded-[12px] px-5 py-[10px] text-sm font-bold text-gray-500 transition-colors hover:bg-gray-100 active:scale-[0.98]"
+                (click)="toggleNewQuestionMode()">
                 إلغاء
               </button>
-              <button class="flex items-center justify-center gap-2 rounded-[12px] bg-[#1B6D63] px-6 py-[10px] text-sm font-bold text-white transition-colors hover:bg-[#0f4f49] disabled:opacity-50 active:scale-[0.98]" (click)="postNewQuestion()" [disabled]="(!newQuestionContent.trim() && !selectedImageFile()) || isPosting()">
+              <button
+                class="flex items-center justify-center gap-2 rounded-[12px] bg-[#1B6D63] px-6 py-[10px] text-sm font-bold text-white transition-colors hover:bg-[#0f4f49] active:scale-[0.98] disabled:opacity-50"
+                (click)="postNewQuestion()"
+                [disabled]="(!newQuestionContent.trim() && !selectedImageFile()) || isPosting()">
                 @if (isPosting()) {
                   <i class="pi pi-spin pi-spinner"></i>
                 } @else {
@@ -120,14 +159,22 @@
   } @else {
     <div class="flex flex-col gap-6 pb-12">
       @for (question of sortedQuestions(); track question.id) {
-        
         <!-- UNIFIED UNIT CARD -->
-        <div class="animate-fade-in-up flex flex-col rounded-[12px] border bg-white transition-colors" [ngClass]="localPinnedQuestions().has(question.id) || activeDropdownId() === question.id ? 'border-[#1B6D63]/30 ring-1 ring-[#1B6D63]/20' : 'border-gray-200'">
-          
+        <div
+          class="animate-fade-in-up flex flex-col rounded-[12px] border bg-white transition-colors"
+          [ngClass]="
+            localPinnedQuestions().has(question.id) || activeDropdownId() === question.id
+              ? 'border-[#1B6D63]/30 ring-1 ring-[#1B6D63]/20'
+              : 'border-gray-200'
+          ">
           <!-- Optional Pinned / Teacher Header -->
           @if (question.authorRole === 'Teacher' || localPinnedQuestions().has(question.id)) {
-            <div class="flex items-center justify-between rounded-t-[12px] border-b border-gray-100 px-6 py-3" [ngClass]="question.authorRole === 'Teacher' ? 'bg-[#1B6D63]/5' : 'bg-gray-50'">
-              <div class="flex items-center gap-2 text-xs font-bold" [ngClass]="question.authorRole === 'Teacher' ? 'text-[#1B6D63]' : 'text-gray-600'">
+            <div
+              class="flex items-center justify-between rounded-t-[12px] border-b border-gray-100 px-6 py-3"
+              [ngClass]="question.authorRole === 'Teacher' ? 'bg-[#1B6D63]/5' : 'bg-gray-50'">
+              <div
+                class="flex items-center gap-2 text-xs font-bold"
+                [ngClass]="question.authorRole === 'Teacher' ? 'text-[#1B6D63]' : 'text-gray-600'">
                 @if (question.authorRole === 'Teacher') {
                   <i class="pi pi-verified"></i>
                   <span>إعلان من المعلم</span>
@@ -138,7 +185,8 @@
               </div>
               @if (localPinnedQuestions().has(question.id) && question.authorRole === 'Teacher') {
                 <span class="flex items-center gap-1 text-[11px] font-bold text-[#1B6D63]/70">
-                  <i class="pi pi-thumbtack text-[10px]"></i> مثبت
+                  <i class="pi pi-thumbtack text-[10px]"></i>
+                  مثبت
                 </span>
               }
             </div>
@@ -150,9 +198,16 @@
             <div class="mb-4 flex items-start justify-between">
               <!-- Author Info -->
               <div class="flex items-center gap-4">
-                <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[12px] text-gray-600" [ngClass]="question.authorRole === 'Teacher' ? 'bg-[#1B6D63] text-white' : 'bg-gray-100'">
+                <div
+                  class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[12px] text-gray-600"
+                  [ngClass]="
+                    question.authorRole === 'Teacher' ? 'bg-[#1B6D63] text-white' : 'bg-gray-100'
+                  ">
                   @if (question.authorProfilePictureUrl) {
-                    <img [src]="question.authorProfilePictureUrl" alt="" class="h-full w-full object-cover" />
+                    <img
+                      [src]="question.authorProfilePictureUrl"
+                      alt=""
+                      class="h-full w-full object-cover" />
                   } @else {
                     <span class="text-lg font-bold">{{ question.authorName.charAt(0) }}</span>
                   }
@@ -160,17 +215,27 @@
                 <div class="flex flex-col gap-1">
                   <span class="text-base font-bold text-gray-900">{{ question.authorName }}</span>
                   <div class="flex flex-wrap items-center gap-2">
-                    <span class="rounded-[6px] border px-2 py-0.5 text-[11px] font-bold" [ngClass]="question.authorRole === 'Teacher' ? 'border-[#1B6D63]/20 bg-[#1B6D63]/10 text-[#1B6D63]' : 'border-gray-200 bg-gray-50 text-gray-600'">
+                    <span
+                      class="rounded-[6px] border px-2 py-0.5 text-[11px] font-bold"
+                      [ngClass]="
+                        question.authorRole === 'Teacher'
+                          ? 'border-[#1B6D63]/20 bg-[#1B6D63]/10 text-[#1B6D63]'
+                          : 'border-gray-200 bg-gray-50 text-gray-600'
+                      ">
                       {{ question.authorRole === 'Teacher' ? 'معلم' : 'طالب' }}
                     </span>
                     @if (question.hasTeacherAnswer) {
-                      <span class="flex items-center gap-1 rounded-[6px] border border-green-200 bg-green-50 px-2 py-0.5 text-[11px] font-bold text-green-700">
-                        <i class="pi pi-check text-[10px]"></i> تمت الإجابة
+                      <span
+                        class="flex items-center gap-1 rounded-[6px] border border-green-200 bg-green-50 px-2 py-0.5 text-[11px] font-bold text-green-700">
+                        <i class="pi pi-check text-[10px]"></i>
+                        تمت الإجابة
                       </span>
                     }
                     @if (question.voteCount >= 5) {
-                      <span class="flex items-center gap-1 rounded-[6px] border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-bold text-orange-600">
-                        <i class="pi pi-star-fill text-[10px]"></i> مهم
+                      <span
+                        class="flex items-center gap-1 rounded-[6px] border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-bold text-orange-600">
+                        <i class="pi pi-star-fill text-[10px]"></i>
+                        مهم
                       </span>
                     }
                   </div>
@@ -184,21 +249,36 @@
                   {{ question.createdAt | date: 'shortTime' }}
                 </span>
                 <div class="relative">
-                  <button class="flex h-8 w-8 items-center justify-center rounded-[10px] text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900 active:scale-[0.98]" (click)="toggleDropdown(question.id, $event)">
+                  <button
+                    class="flex h-8 w-8 items-center justify-center rounded-[10px] text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900 active:scale-[0.98]"
+                    (click)="toggleDropdown(question.id, $event)">
                     <i class="pi pi-ellipsis-v"></i>
                   </button>
                   @if (activeDropdownId() === question.id) {
-                    <div class="animate-fade-in absolute top-full left-0 z-50 mt-1 w-48 overflow-hidden rounded-[12px] border border-gray-100 bg-white shadow-lg">
-                      <button class="flex w-full items-center justify-between px-4 py-3 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-50" (click)="togglePin(question.id); toggleDropdown(question.id, $event)">
-                        <span>{{ localPinnedQuestions().has(question.id) ? 'إلغاء التثبيت' : 'تثبيت المنشور' }}</span>
+                    <div
+                      class="animate-fade-in absolute top-full left-0 z-50 mt-1 w-48 overflow-hidden rounded-[12px] border border-gray-100 bg-white shadow-lg">
+                      <button
+                        class="flex w-full items-center justify-between px-4 py-3 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-50"
+                        (click)="togglePin(question.id); toggleDropdown(question.id, $event)">
+                        <span>
+                          {{
+                            localPinnedQuestions().has(question.id)
+                              ? 'إلغاء التثبيت'
+                              : 'تثبيت المنشور'
+                          }}
+                        </span>
                         <i class="pi pi-thumbtack text-gray-400"></i>
                       </button>
                       @if (question.authorRole === 'Teacher') {
-                        <button class="flex w-full items-center justify-between border-t border-gray-50 px-4 py-3 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-50" (click)="startEditQuestion(question)">
+                        <button
+                          class="flex w-full items-center justify-between border-t border-gray-50 px-4 py-3 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-50"
+                          (click)="startEditQuestion(question)">
                           <span>تعديل</span>
                           <i class="pi pi-pencil text-gray-400"></i>
                         </button>
-                        <button class="flex w-full items-center justify-between border-t border-gray-50 px-4 py-3 text-sm font-bold text-red-600 transition-colors hover:bg-red-50" (click)="deleteQuestion(question.id)">
+                        <button
+                          class="flex w-full items-center justify-between border-t border-gray-50 px-4 py-3 text-sm font-bold text-red-600 transition-colors hover:bg-red-50"
+                          (click)="deleteQuestion(question.id)">
                           <span>حذف</span>
                           <i class="pi pi-trash text-red-400"></i>
                         </button>
@@ -212,39 +292,72 @@
             <!-- Content -->
             @if (editingQuestionId() === question.id) {
               <div class="mt-4 rounded-[12px] border border-[#1B6D63]/20 bg-[#1B6D63]/5 p-4">
-                <textarea [(ngModel)]="editQuestionContent" class="w-full resize-none rounded-[12px] border border-gray-200 bg-white p-3 text-gray-900 outline-none focus:border-[#1B6D63] focus:ring-1 focus:ring-[#1B6D63]" rows="3"></textarea>
+                <textarea
+                  [(ngModel)]="editQuestionContent"
+                  class="w-full resize-none rounded-[12px] border border-gray-200 bg-white p-3 text-gray-900 outline-none focus:border-[#1B6D63] focus:ring-1 focus:ring-[#1B6D63]"
+                  rows="3"></textarea>
                 <div class="mt-3 flex justify-end gap-2">
-                  <button class="rounded-[12px] px-4 py-2 text-sm font-bold text-gray-500 hover:bg-gray-100 active:scale-[0.98]" (click)="cancelEditQuestion()">إلغاء</button>
-                  <button class="rounded-[12px] bg-[#1B6D63] px-4 py-2 text-sm font-bold text-white hover:bg-[#0f4f49] active:scale-[0.98]" (click)="saveEditQuestion(question.id)">حفظ التعديل</button>
+                  <button
+                    class="rounded-[12px] px-4 py-2 text-sm font-bold text-gray-500 hover:bg-gray-100 active:scale-[0.98]"
+                    (click)="cancelEditQuestion()">
+                    إلغاء
+                  </button>
+                  <button
+                    class="rounded-[12px] bg-[#1B6D63] px-4 py-2 text-sm font-bold text-white hover:bg-[#0f4f49] active:scale-[0.98]"
+                    (click)="saveEditQuestion(question.id)">
+                    حفظ التعديل
+                  </button>
                 </div>
               </div>
             } @else {
-              <p class="whitespace-pre-wrap text-[15px] leading-loose text-gray-800">{{ question.content }}</p>
+              <p class="text-[15px] leading-loose whitespace-pre-wrap text-gray-800">
+                {{ question.content }}
+              </p>
             }
 
             @if (question.imageUrl) {
-              <div class="mt-4 flex overflow-hidden rounded-[12px] border border-gray-200 bg-gray-50 p-2">
-                <img [src]="question.imageUrl" alt="صورة مرفقة" class="max-h-96 w-auto rounded-[8px] object-contain" />
+              <div
+                class="mt-4 flex overflow-hidden rounded-[12px] border border-gray-200 bg-gray-50 p-2">
+                <img
+                  [src]="question.imageUrl"
+                  alt="صورة مرفقة"
+                  class="max-h-96 w-auto rounded-[8px] object-contain" />
               </div>
             }
 
             <!-- Question Footer Toolbar -->
             <div class="mt-6 flex items-center justify-between border-t border-gray-100 pt-4">
-              <button class="flex items-center gap-2 rounded-[12px] px-4 py-2 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-100 active:scale-[0.98]" (click)="toggleThread(question)">
-                <i class="pi" [ngClass]="expandedThreads().has(question.id) ? 'pi-chevron-up' : 'pi-reply'"></i>
+              <button
+                class="flex items-center gap-2 rounded-[12px] px-4 py-2 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-100 active:scale-[0.98]"
+                (click)="toggleThread(question)">
+                <i
+                  class="pi"
+                  [ngClass]="expandedThreads().has(question.id) ? 'pi-chevron-up' : 'pi-reply'"></i>
                 {{ expandedThreads().has(question.id) ? 'إخفاء الردود' : 'إضافة رد' }}
               </button>
 
               <div class="flex items-center gap-2">
-                <button class="flex items-center gap-2 rounded-[12px] border px-4 py-2 text-sm font-bold transition-colors active:scale-[0.98]" [ngClass]="question.hasVoted ? 'border-[#1B6D63]/20 bg-[#1B6D63]/10 text-[#1B6D63]' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'" [disabled]="votingQueue().has(question.id)" (click)="toggleVote(question)">
+                <button
+                  class="flex items-center gap-2 rounded-[12px] border px-4 py-2 text-sm font-bold transition-colors active:scale-[0.98]"
+                  [ngClass]="
+                    question.hasVoted
+                      ? 'border-[#1B6D63]/20 bg-[#1B6D63]/10 text-[#1B6D63]'
+                      : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                  "
+                  [disabled]="votingQueue().has(question.id)"
+                  (click)="toggleVote(question)">
                   @if (votingQueue().has(question.id)) {
                     <i class="pi pi-spin pi-spinner"></i>
                   } @else {
                     <span>{{ question.voteCount }}</span>
-                    <i class="pi" [ngClass]="question.hasVoted ? 'pi-thumbs-up-fill' : 'pi-thumbs-up'"></i>
+                    <i
+                      class="pi"
+                      [ngClass]="question.hasVoted ? 'pi-thumbs-up-fill' : 'pi-thumbs-up'"></i>
                   }
                 </button>
-                <button class="flex items-center gap-2 rounded-[12px] border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50 active:scale-[0.98]" (click)="toggleThread(question)">
+                <button
+                  class="flex items-center gap-2 rounded-[12px] border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50 active:scale-[0.98]"
+                  (click)="toggleThread(question)">
                   <span>{{ question.replyCount }}</span>
                   <i class="pi pi-comments"></i>
                 </button>
@@ -255,7 +368,6 @@
           <!-- Embedded Replies Block (Now inside the main card border) -->
           @if (expandedThreads().has(question.id)) {
             <div class="rounded-b-[12px] border-t border-gray-200 bg-gray-50 p-6">
-              
               <!-- Loader -->
               @if (threadLoading().has(question.id) && !threadReplies().has(question.id)) {
                 <div class="flex justify-center py-4 text-gray-400">
@@ -267,29 +379,46 @@
               @if (threadReplies().has(question.id)) {
                 <div class="flex flex-col gap-4">
                   @for (reply of threadReplies().get(question.id); track reply.id) {
-                    
                     <!-- Individual Reply Item -->
-                    <div class="flex flex-col rounded-[12px] border bg-white transition-colors" [ngClass]="reply.isTeacherAnswer || reply.authorRole === 'Teacher' || activeDropdownId() === reply.id ? 'border-[#1B6D63]/30 ring-1 ring-[#1B6D63]/10' : 'border-gray-200'">
-                      
+                    <div
+                      class="flex flex-col rounded-[12px] border bg-white transition-colors"
+                      [ngClass]="
+                        reply.isTeacherAnswer ||
+                        reply.authorRole === 'Teacher' ||
+                        activeDropdownId() === reply.id
+                          ? 'border-[#1B6D63]/30 ring-1 ring-[#1B6D63]/10'
+                          : 'border-gray-200'
+                      ">
                       <!-- Teacher Banner inside reply -->
                       @if (reply.isTeacherAnswer || reply.authorRole === 'Teacher') {
-                        <div class="flex items-center justify-between border-b border-[#1B6D63]/10 bg-[#1B6D63]/5 px-4 py-2">
+                        <div
+                          class="flex items-center justify-between border-b border-[#1B6D63]/10 bg-[#1B6D63]/5 px-4 py-2">
                           <div class="flex items-center gap-1 text-[11px] font-bold text-[#1B6D63]">
-                            <i class="pi pi-verified text-[10px]"></i> إجابة المعلم
+                            <i class="pi pi-verified text-[10px]"></i>
+                            إجابة المعلم
                           </div>
-                          
+
                           <!-- Reply Menu -->
                           <div class="relative">
-                            <button class="flex h-6 w-6 items-center justify-center rounded-[8px] text-gray-400 hover:bg-[#1B6D63]/10 hover:text-[#1B6D63]" (click)="toggleDropdown(reply.id, $event)">
+                            <button
+                              class="flex h-6 w-6 items-center justify-center rounded-[8px] text-gray-400 hover:bg-[#1B6D63]/10 hover:text-[#1B6D63]"
+                              (click)="toggleDropdown(reply.id, $event)">
                               <i class="pi pi-ellipsis-h text-[10px]"></i>
                             </button>
                             @if (activeDropdownId() === reply.id) {
-                              <div class="animate-fade-in absolute top-full left-0 z-50 mt-1 w-32 overflow-hidden rounded-[12px] border border-gray-100 bg-white text-xs shadow-lg">
-                                <button class="flex w-full items-center justify-between px-3 py-2 font-bold text-gray-700 hover:bg-gray-50" (click)="startEditReply(question.id, reply)">
-                                  <span>تعديل</span> <i class="pi pi-pencil"></i>
+                              <div
+                                class="animate-fade-in absolute top-full left-0 z-50 mt-1 w-32 overflow-hidden rounded-[12px] border border-gray-100 bg-white text-xs shadow-lg">
+                                <button
+                                  class="flex w-full items-center justify-between px-3 py-2 font-bold text-gray-700 hover:bg-gray-50"
+                                  (click)="startEditReply(question.id, reply)">
+                                  <span>تعديل</span>
+                                  <i class="pi pi-pencil"></i>
                                 </button>
-                                <button class="flex w-full items-center justify-between border-t border-gray-50 px-3 py-2 font-bold text-red-600 hover:bg-red-50" (click)="deleteReply(question.id, reply.id)">
-                                  <span>حذف</span> <i class="pi pi-trash"></i>
+                                <button
+                                  class="flex w-full items-center justify-between border-t border-gray-50 px-3 py-2 font-bold text-red-600 hover:bg-red-50"
+                                  (click)="deleteReply(question.id, reply.id)">
+                                  <span>حذف</span>
+                                  <i class="pi pi-trash"></i>
                                 </button>
                               </div>
                             }
@@ -297,37 +426,70 @@
                         </div>
                       } @else {
                         <!-- Normal Reply Menu -->
-                        <div class="flex justify-end px-4 pb-0 pt-2">
-                          <button class="text-xs font-bold text-red-500 hover:underline" (click)="deleteReply(question.id, reply.id)">حذف كمعلم</button>
+                        <div class="flex justify-end px-4 pt-2 pb-0">
+                          <button
+                            class="text-xs font-bold text-red-500 hover:underline"
+                            (click)="deleteReply(question.id, reply.id)">
+                            حذف كمعلم
+                          </button>
                         </div>
                       }
 
                       <!-- Reply Content -->
                       <div class="p-4">
                         <div class="mb-2 flex items-center gap-3">
-                          <div class="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-[8px] text-sm font-bold" [ngClass]="reply.authorRole === 'Teacher' ? 'bg-[#1B6D63] text-white' : 'bg-gray-100 text-gray-600'">
+                          <div
+                            class="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-[8px] text-sm font-bold"
+                            [ngClass]="
+                              reply.authorRole === 'Teacher'
+                                ? 'bg-[#1B6D63] text-white'
+                                : 'bg-gray-100 text-gray-600'
+                            ">
                             @if (reply.authorProfilePictureUrl) {
-                              <img [src]="reply.authorProfilePictureUrl" alt="" class="h-full w-full object-cover" />
+                              <img
+                                [src]="reply.authorProfilePictureUrl"
+                                alt=""
+                                class="h-full w-full object-cover" />
                             } @else {
                               <span>{{ reply.authorName.charAt(0) }}</span>
                             }
                           </div>
                           <div class="flex flex-col">
-                            <span class="text-sm font-bold text-gray-900" [ngClass]="reply.authorRole === 'Teacher' ? 'text-[#1B6D63]' : ''">{{ reply.authorName }}</span>
-                            <span class="text-[10px] text-gray-400">{{ reply.createdAt | date: 'shortTime' }}</span>
+                            <span
+                              class="text-sm font-bold text-gray-900"
+                              [ngClass]="reply.authorRole === 'Teacher' ? 'text-[#1B6D63]' : ''">
+                              {{ reply.authorName }}
+                            </span>
+                            <span class="text-[10px] text-gray-400">
+                              {{ reply.createdAt | date: 'shortTime' }}
+                            </span>
                           </div>
                         </div>
 
                         @if (editingReplyId() === reply.id) {
-                          <div class="mt-2 rounded-[12px] border border-[#1B6D63]/20 bg-[#1B6D63]/5 p-3">
-                            <textarea [(ngModel)]="editReplyContent" class="w-full resize-none rounded-[8px] border border-gray-200 p-2 text-sm outline-none focus:border-[#1B6D63]" rows="2"></textarea>
+                          <div
+                            class="mt-2 rounded-[12px] border border-[#1B6D63]/20 bg-[#1B6D63]/5 p-3">
+                            <textarea
+                              [(ngModel)]="editReplyContent"
+                              class="w-full resize-none rounded-[8px] border border-gray-200 p-2 text-sm outline-none focus:border-[#1B6D63]"
+                              rows="2"></textarea>
                             <div class="mt-2 flex justify-end gap-2">
-                              <button class="rounded-[8px] px-3 py-1.5 text-xs font-bold text-gray-500 hover:bg-gray-100" (click)="cancelEditReply()">إلغاء</button>
-                              <button class="rounded-[8px] bg-[#1B6D63] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#0f4f49]" (click)="saveEditReply(question.id, reply.id)">حفظ</button>
+                              <button
+                                class="rounded-[8px] px-3 py-1.5 text-xs font-bold text-gray-500 hover:bg-gray-100"
+                                (click)="cancelEditReply()">
+                                إلغاء
+                              </button>
+                              <button
+                                class="rounded-[8px] bg-[#1B6D63] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#0f4f49]"
+                                (click)="saveEditReply(question.id, reply.id)">
+                                حفظ
+                              </button>
                             </div>
                           </div>
                         } @else {
-                          <p class="pr-11 text-sm leading-relaxed text-gray-700">{{ reply.content }}</p>
+                          <p class="pr-11 text-sm leading-relaxed text-gray-700">
+                            {{ reply.content }}
+                          </p>
                         }
                       </div>
                     </div>
@@ -337,16 +499,31 @@
 
               <!-- Add Reply Box -->
               <div class="mt-4 flex gap-3">
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[10px] bg-[#1B6D63] text-white">
+                <div
+                  class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[10px] bg-[#1B6D63] text-white">
                   @if (currentUserPictureUrl()) {
-                    <img [src]="currentUserPictureUrl()!" alt="" class="h-full w-full object-cover" />
+                    <img
+                      [src]="currentUserPictureUrl()!"
+                      alt=""
+                      class="h-full w-full object-cover" />
                   } @else {
                     <span class="text-sm font-bold">{{ currentUserInitial() }}</span>
                   }
                 </div>
                 <div class="relative flex-1">
-                  <textarea [ngModel]="replyContents().get(question.id) || ''" (ngModelChange)="updateReplyContent(question.id, $event)" class="w-full resize-none rounded-[12px] border border-gray-300 bg-white p-3 pl-14 pr-3 text-sm text-gray-900 outline-none transition-colors focus:border-[#1B6D63]" rows="2" placeholder="أضف رداً..."></textarea>
-                  <button class="absolute bottom-2 left-2 flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#1B6D63] text-white transition-colors hover:bg-[#0f4f49] disabled:opacity-50 active:scale-[0.98]" [disabled]="!(replyContents().get(question.id) || '').trim() || threadLoading().has(question.id)" (click)="postReply(question.id)">
+                  <textarea
+                    [ngModel]="replyContents().get(question.id) || ''"
+                    (ngModelChange)="updateReplyContent(question.id, $event)"
+                    class="w-full resize-none rounded-[12px] border border-gray-300 bg-white p-3 pr-3 pl-14 text-sm text-gray-900 transition-colors outline-none focus:border-[#1B6D63]"
+                    rows="2"
+                    placeholder="أضف رداً..."></textarea>
+                  <button
+                    class="absolute bottom-2 left-2 flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#1B6D63] text-white transition-colors hover:bg-[#0f4f49] active:scale-[0.98] disabled:opacity-50"
+                    [disabled]="
+                      !(replyContents().get(question.id) || '').trim() ||
+                      threadLoading().has(question.id)
+                    "
+                    (click)="postReply(question.id)">
                     @if (threadLoading().has(question.id)) {
                       <i class="pi pi-spin pi-spinner text-xs"></i>
                     } @else {

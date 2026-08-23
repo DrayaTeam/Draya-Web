@@ -37,11 +37,9 @@
   border-radius: 999px;
   border: 1px solid #e2e8f0;
 
-
   &:hover {
     color: #0f172a;
     border-color: #cbd5e1;
-
   }
 
   .breadcrumb-sep {
@@ -344,7 +342,9 @@
   font-size: 1.125rem;
   font-weight: 800;
   color: #111827;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
   letter-spacing: 0.1em;
 }
 
@@ -541,5 +541,3 @@
     background: #134e48;
   }
 }
-
-

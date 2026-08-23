@@ -97,7 +97,6 @@ export class TeacherSidebarComponent {
     {
       headerKey: 'TEACHER.SIDEBAR.GROUP_ANALYTICS',
       items: [
-        
         {
           labelKey: 'TEACHER.SIDEBAR.REPORTS',
           link: '/teacher/reports',
@@ -129,4 +128,3 @@ export class TeacherSidebarComponent {
     this.auth.logout();
   }
 }
-

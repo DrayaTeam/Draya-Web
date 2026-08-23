@@ -1,13 +1,17 @@
 ﻿<div class="bento-dashboard" dir="rtl">
   <!-- Page Header -->
-  <header class="mb-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between animate-fade-in">
+  <header
+    class="animate-fade-in mb-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
     <div class="flex items-center gap-4">
-      <div class="bg-[#1B6D63]/10 text-[#1B6D63] flex h-14 w-14 shrink-0 items-center justify-center rounded-[12px]">
+      <div
+        class="flex h-14 w-14 shrink-0 items-center justify-center rounded-[12px] bg-[#1B6D63]/10 text-[#1B6D63]">
         <i class="pi pi-chart-bar text-2xl"></i>
       </div>
       <div>
-        <div class="flex items-center gap-2 mb-1">
-          <h1 class="m-0 text-3xl font-bold text-[#1B6D63]">{{ 'TEACHER.REPORTS.TITLE' | translate }}</h1>
+        <div class="mb-1 flex items-center gap-2">
+          <h1 class="m-0 text-3xl font-bold text-[#1B6D63]">
+            {{ 'TEACHER.REPORTS.TITLE' | translate }}
+          </h1>
         </div>
         <p class="m-0 mt-1 text-gray-500">
           {{ 'TEACHER.REPORTS.ANALYTICS_OVERVIEW' | translate }}
@@ -16,7 +20,7 @@
     </div>
 
     <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-      <div class="w-full sm:w-64 relative z-50">
+      <div class="relative z-50 w-full sm:w-64">
         <p-select
           appendTo="body"
           [options]="classrooms()"
@@ -26,14 +30,17 @@
           placeholder="{{ 'TEACHER.REPORTS.SELECT_CLASSROOM' | translate }}"
           [style]="{ width: '100%', borderRadius: '12px' }"
           [pt]="{
-            root: { class: '!rounded-[12px] !border !border-gray-200 !shadow-none hover:!border-[#1B6D63] focus-within:!border-[#1B6D63] focus-within:!ring-1 focus-within:!ring-[#1B6D63]' },
+            root: {
+              class:
+                '!rounded-[12px] !border !border-gray-200 !shadow-none hover:!border-[#1B6D63] focus-within:!border-[#1B6D63] focus-within:!ring-1 focus-within:!ring-[#1B6D63]',
+            },
             label: { class: '!py-3 !pr-5 !pl-4' },
             list: { class: '!py-2 !shadow-none !border !border-gray-200' },
-            option: { class: '!py-2.5 !pr-5 !pl-4 hover:!bg-[#1B6D63]/10 hover:!text-[#1B6D63]' }
+            option: { class: '!py-2.5 !pr-5 !pl-4 hover:!bg-[#1B6D63]/10 hover:!text-[#1B6D63]' },
           }"></p-select>
       </div>
 
-      <div class="w-full sm:w-72 relative z-50">
+      <div class="relative z-50 w-full sm:w-72">
         <p-select
           appendTo="body"
           [options]="students()"
@@ -44,15 +51,19 @@
           placeholder="{{ 'TEACHER.REPORTS.SELECT_STUDENT' | translate }}"
           [style]="{ width: '100%', borderRadius: '12px' }"
           [pt]="{
-            root: { class: '!rounded-[12px] !border !border-gray-200 !shadow-none hover:!border-[#1B6D63] focus-within:!border-[#1B6D63] focus-within:!ring-1 focus-within:!ring-[#1B6D63]' },
+            root: {
+              class:
+                '!rounded-[12px] !border !border-gray-200 !shadow-none hover:!border-[#1B6D63] focus-within:!border-[#1B6D63] focus-within:!ring-1 focus-within:!ring-[#1B6D63]',
+            },
             label: { class: '!py-3 !pr-5 !pl-4' },
             list: { class: '!py-2 !shadow-none !border !border-gray-200' },
-            option: { class: '!py-2.5 !pr-5 !pl-4 hover:!bg-[#1B6D63]/10 hover:!text-[#1B6D63]' }
+            option: { class: '!py-2.5 !pr-5 !pl-4 hover:!bg-[#1B6D63]/10 hover:!text-[#1B6D63]' },
           }">
           <ng-template pTemplate="selectedItem">
             @if (selectedStudent()) {
               <div class="flex items-center gap-3">
-                <div class="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-gray-100 text-xs font-bold text-gray-600">
+                <div
+                  class="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-gray-100 text-xs font-bold text-gray-600">
                   @if (selectedStudent()?.profilePictureUrl || selectedStudent()?.pictureUrl) {
                     <img
                       [src]="selectedStudent()?.profilePictureUrl || selectedStudent()?.pictureUrl"
@@ -68,18 +79,22 @@
           </ng-template>
 
           <ng-template let-student pTemplate="item">
-            <div class="flex items-center justify-between w-full">
+            <div class="flex w-full items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-teal-50 text-sm font-bold text-teal-700">
+                <div
+                  class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-teal-50 text-sm font-bold text-teal-700">
                   @if (student.profilePictureUrl || student.pictureUrl) {
-                    <img [src]="student.profilePictureUrl || student.pictureUrl" class="h-full w-full object-cover" alt="avatar" />
+                    <img
+                      [src]="student.profilePictureUrl || student.pictureUrl"
+                      class="h-full w-full object-cover"
+                      alt="avatar" />
                   } @else {
                     {{ student.fullName.charAt(0) }}
                   }
                 </div>
                 <span class="font-medium text-gray-700">{{ student.fullName }}</span>
               </div>
-              <span class="text-xs rounded-full bg-gray-100 px-2 py-1 text-gray-500">
+              <span class="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-500">
                 {{
                   student.status === 'Active'
                     ? ('TEACHER.REPORTS.ACTIVE' | translate)
@@ -237,7 +252,9 @@
                         </span>
                       </td>
                       <td class="text-xs text-slate-500" dir="ltr">
-                        @if (topic.exampleIncorrectAnswers && topic.exampleIncorrectAnswers.length > 0) {
+                        @if (
+                          topic.exampleIncorrectAnswers && topic.exampleIncorrectAnswers.length > 0
+                        ) {
                           {{ topic.exampleIncorrectAnswers[0] }}
                           @if (topic.exampleIncorrectAnswers.length > 1) {
                             <span class="text-slate-400">
@@ -261,6 +278,3 @@
     }
   }
 </div>
-
-
-

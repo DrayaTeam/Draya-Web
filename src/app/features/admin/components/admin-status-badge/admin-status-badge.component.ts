@@ -56,12 +56,15 @@ export class AdminStatusBadgeComponent {
 
     // Arabic string normalization
     if (str === 'نشط' || lower === 'active') return 'active';
-    if (str === 'غير نشط' || str === 'معطّل' || str === 'معطل' || lower === 'inactive') return 'inactive';
-    if (str === 'معلّق' || str === 'معلق' || str === 'قيد الانتظار' || lower === 'pending') return 'pending';
+    if (str === 'غير نشط' || str === 'معطّل' || str === 'معطل' || lower === 'inactive')
+      return 'inactive';
+    if (str === 'معلّق' || str === 'معلق' || str === 'قيد الانتظار' || lower === 'pending')
+      return 'pending';
     if (str === 'موافق عليه' || str === 'تمت الموافقة' || lower === 'approved') return 'approved';
     if (str === 'مدفوع' || str === 'تم الصرف' || lower === 'paid') return 'paid';
     if (str === 'مرفوض' || lower === 'rejected') return 'rejected';
-    if (str === 'ملغى' || str === 'ملغي' || lower === 'cancelled' || lower === 'canceled') return 'cancelled';
+    if (str === 'ملغى' || str === 'ملغي' || lower === 'cancelled' || lower === 'canceled')
+      return 'cancelled';
 
     return lower;
   });

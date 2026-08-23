@@ -93,4 +93,3 @@ export interface TeacherUrgentAlert {
   isDanger?: boolean;
   isWarning?: boolean;
 }
-

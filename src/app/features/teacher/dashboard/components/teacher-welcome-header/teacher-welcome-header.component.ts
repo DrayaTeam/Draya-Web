@@ -19,7 +19,7 @@ export class TeacherWelcomeHeaderComponent {
   readonly isDropdownOpen = signal(false);
 
   toggleNotifications(): void {
-    this.isDropdownOpen.update(v => !v);
+    this.isDropdownOpen.update((v) => !v);
     if (this.isDropdownOpen()) {
       this.notificationsService.markAllAsRead();
     }

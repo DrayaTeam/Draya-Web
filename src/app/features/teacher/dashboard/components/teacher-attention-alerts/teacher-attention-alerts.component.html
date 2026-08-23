@@ -22,9 +22,12 @@
     @for (alert of alerts(); track alert.id) {
       <div class="alert-item-row">
         <span class="alert-item-text">
-          {{ alert.titleKey | translate:alert.titleParams }}
+          {{ alert.titleKey | translate: alert.titleParams }}
         </span>
-        <span class="alert-pill" [class.red-pill]="alert.isDanger" [class.amber-pill]="alert.isWarning">
+        <span
+          class="alert-pill"
+          [class.red-pill]="alert.isDanger"
+          [class.amber-pill]="alert.isWarning">
           {{ alert.tagKey | translate }}
         </span>
       </div>

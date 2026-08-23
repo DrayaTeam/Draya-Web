@@ -1,7 +1,15 @@
 // src/app/features/teacher/classrooms/classroom-detail/components/classroom-students/classroom-students.component.ts
-import { Component, ChangeDetectionStrategy, input, inject, signal, effect, computed } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  input,
+  inject,
+  signal,
+  effect,
+  computed,
+} from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { TableModule, TableLazyLoadEvent } from 'primeng/table';
+import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
@@ -19,7 +27,17 @@ import { StudentDetailsModalComponent } from '../student-details-modal/student-d
 @Component({
   selector: 'draya-classroom-students',
   standalone: true,
-  imports: [CommonModule, DatePipe, TableModule, ButtonModule, TooltipModule, TeacherModalComponent, DrayaPaginationComponent, FormsModule, StudentDetailsModalComponent],
+  imports: [
+    CommonModule,
+    DatePipe,
+    TableModule,
+    ButtonModule,
+    TooltipModule,
+    TeacherModalComponent,
+    DrayaPaginationComponent,
+    FormsModule,
+    StudentDetailsModalComponent,
+  ],
   templateUrl: './classroom-students.component.html',
   styleUrl: './classroom-students.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,11 +63,11 @@ export class ClassroomStudentsComponent {
     const term = this.searchTerm().trim().toLowerCase();
     if (!term) return res;
 
-    const filteredItems = res.items.filter(s => s.fullName.toLowerCase().includes(term));
+    const filteredItems = res.items.filter((s) => s.fullName.toLowerCase().includes(term));
     return {
       ...res,
       items: filteredItems,
-      totalCount: filteredItems.length
+      totalCount: filteredItems.length,
     };
   });
 
@@ -147,7 +165,8 @@ export class ClassroomStudentsComponent {
         this.messageService?.add({
           severity: 'error',
           summary: 'ط®ط·ط£',
-          detail: 'ط­ط¯ط« ط®ط·ط£ ط£ط«ظ†ط§ط، ط¥ط²ط§ظ„ط© ط§ظ„ط·ط§ظ„ط¨. ظٹط±ط¬ظ‰ ط§ظ„ظ…ط­ط§ظˆظ„ط© ظ…ط±ط© ط£ط®ط±ظ‰.',
+          detail:
+            'ط­ط¯ط« ط®ط·ط£ ط£ط«ظ†ط§ط، ط¥ط²ط§ظ„ط© ط§ظ„ط·ط§ظ„ط¨. ظٹط±ط¬ظ‰ ط§ظ„ظ…ط­ط§ظˆظ„ط© ظ…ط±ط© ط£ط®ط±ظ‰.',
         });
       },
     });

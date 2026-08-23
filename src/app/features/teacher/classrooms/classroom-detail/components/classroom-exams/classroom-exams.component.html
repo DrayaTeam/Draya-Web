@@ -13,7 +13,8 @@
   <div class="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
     <!-- Section Filter -->
     @if (sections().length > 0) {
-      <div class="flex w-max flex-wrap items-center gap-2 rounded-[12px] bg-gray-50 p-1 border border-gray-100">
+      <div
+        class="flex w-max flex-wrap items-center gap-2 rounded-[12px] border border-gray-100 bg-gray-50 p-1">
         <button
           class="rounded-[10px] px-4 py-2 text-sm font-medium transition-colors"
           [class]="
@@ -53,7 +54,7 @@
   @if (filteredExams().length === 0) {
     <div class="rounded-[12px] border border-dashed border-gray-200 bg-gray-50 py-20 text-center">
       <div
-        class="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-[12px] bg-white text-gray-400 border border-gray-100">
+        class="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-[12px] border border-gray-100 bg-white text-gray-400">
         <i class="pi pi-file-edit text-3xl"></i>
       </div>
       <h3 class="mb-2 text-xl font-medium text-gray-900">
@@ -92,11 +93,13 @@
             </div>
 
             <div class="mb-5 flex items-center gap-3 text-xs text-gray-500">
-              <span class="flex items-center gap-1.5 rounded-[8px] bg-gray-50 px-2 py-1 border border-gray-100">
+              <span
+                class="flex items-center gap-1.5 rounded-[8px] border border-gray-100 bg-gray-50 px-2 py-1">
                 <i class="pi pi-list text-gray-400"></i>
                 {{ exam.totalQuestions }} أسئلة
               </span>
-              <span class="flex items-center gap-1.5 rounded-[8px] bg-gray-50 px-2 py-1 border border-gray-100">
+              <span
+                class="flex items-center gap-1.5 rounded-[8px] border border-gray-100 bg-gray-50 px-2 py-1">
                 <i class="pi pi-calendar text-gray-400"></i>
                 {{ exam.createdAt | date: 'shortDate' }}
               </span>

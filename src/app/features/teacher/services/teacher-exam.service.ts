@@ -15,8 +15,14 @@ import {
   providedIn: 'root',
 })
 export class TeacherExamService {
-  getExamAttempts(examId: string, page = 1, pageSize = 50): Observable<{ items: ExamAttemptDto[]; totalCount: number }> {
-    return this.http.get<{ items: ExamAttemptDto[]; totalCount: number }>(`${this.baseUrl}/${examId}/attempts?page=${page}&pageSize=${pageSize}`);
+  getExamAttempts(
+    examId: string,
+    page = 1,
+    pageSize = 50,
+  ): Observable<{ items: ExamAttemptDto[]; totalCount: number }> {
+    return this.http.get<{ items: ExamAttemptDto[]; totalCount: number }>(
+      `${this.baseUrl}/${examId}/attempts?page=${page}&pageSize=${pageSize}`,
+    );
   }
 
   private readonly http = inject(HttpClient);

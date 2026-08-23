@@ -103,7 +103,9 @@ export class WithdrawalModalComponent {
 
     const account = this.activeAccount();
     if (!account) {
-      this.errorMessage.set('ظٹط±ط¬ظ‰ طھط­ط¯ظٹط¯ ط­ط³ط§ط¨ ط§ظ„ط³ط­ط¨ ط£ظˆ ط¥ط¶ط§ظپط© ط­ط³ط§ط¨ ط¬ط¯ظٹط¯ ط£ظˆظ„ط§ظ‹.');
+      this.errorMessage.set(
+        'ظٹط±ط¬ظ‰ طھط­ط¯ظٹط¯ ط­ط³ط§ط¨ ط§ظ„ط³ط­ط¨ ط£ظˆ ط¥ط¶ط§ظپط© ط­ط³ط§ط¨ ط¬ط¯ظٹط¯ ط£ظˆظ„ط§ظ‹.',
+      );
       return;
     }
 
@@ -126,4 +128,3 @@ export class WithdrawalModalComponent {
       });
   }
 }
-

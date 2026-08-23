@@ -8,8 +8,8 @@
   justify-content: center;
   text-align: center;
   padding: 48px 24px;
-  background: #FFFFFF;
-  border: 1.5px dashed #E2E8F0;
+  background: #ffffff;
+  border: 1.5px dashed #e2e8f0;
   border-radius: 16px;
   margin: 16px 0;
   overflow: hidden;
@@ -17,7 +17,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    border-color: #CBD5E1;
+    border-color: #cbd5e1;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
   }
 
@@ -36,8 +36,8 @@
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #E6F4F1 0%, #DDF5F1 100%);
-    color: #1B6D63;
+    background: linear-gradient(135deg, #e6f4f1 0%, #ddf5f1 100%);
+    color: #1b6d63;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -55,14 +55,14 @@
   .empty-title {
     font-size: 1.125rem;
     font-weight: 700;
-    color: #0F172A;
+    color: #0f172a;
     margin: 0 0 8px 0;
     line-height: 1.4;
   }
 
   .empty-description {
     font-size: 0.875rem;
-    color: #64748B;
+    color: #64748b;
     max-width: 440px;
     line-height: 1.6;
     margin: 0 0 20px 0;
@@ -86,8 +86,8 @@
     justify-content: center;
     gap: 8px;
     padding: 10px 22px;
-    background: #1B6D63;
-    color: #FFFFFF;
+    background: #1b6d63;
+    color: #ffffff;
     font-size: 0.875rem;
     font-weight: 600;
     border-radius: 10px;
@@ -98,7 +98,7 @@
     transition: all 0.2s ease;
 
     &:hover {
-      background: #15554D;
+      background: #15554d;
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(27, 109, 99, 0.35);
     }
@@ -114,20 +114,20 @@
     justify-content: center;
     gap: 8px;
     padding: 10px 20px;
-    background: #F8FAFC;
+    background: #f8fafc;
     color: #334155;
     font-size: 0.875rem;
     font-weight: 600;
     border-radius: 10px;
-    border: 1px solid #CBD5E1;
+    border: 1px solid #cbd5e1;
     cursor: pointer;
     text-decoration: none;
     transition: all 0.2s ease;
 
     &:hover {
-      background: #F1F5F9;
-      color: #0F172A;
-      border-color: #94A3B8;
+      background: #f1f5f9;
+      color: #0f172a;
+      border-color: #94a3b8;
     }
   }
 }

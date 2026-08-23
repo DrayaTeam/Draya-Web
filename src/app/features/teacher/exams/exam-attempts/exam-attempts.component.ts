@@ -14,7 +14,13 @@ import { StudentRosterItemDto } from '../../../../core/models/student-roster.mod
 @Component({
   selector: 'draya-exam-attempts',
   standalone: true,
-  imports: [CommonModule, RouterLink, TableModule, StudentDetailsModalComponent, DrayaPaginationComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    TableModule,
+    StudentDetailsModalComponent,
+    DrayaPaginationComponent,
+  ],
   templateUrl: './exam-attempts.component.html',
   styleUrl: './exam-attempts.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,7 +31,7 @@ export class ExamAttemptsComponent implements OnInit {
 
   readonly examId = signal<string | null>(null);
   readonly exam = signal<TeacherExamDto | null>(null);
-  
+
   readonly attempts = signal<ExamAttemptDto[]>([]);
   readonly totalCount = signal<number>(0);
   readonly pageNumber = signal<number>(1);
@@ -51,13 +57,14 @@ export class ExamAttemptsComponent implements OnInit {
   private loadExam(id: string): void {
     this.examService.getExam(id).subscribe({
       next: (data) => this.exam.set(data),
-      error: () => console.error('Failed to load exam details')
+      error: () => console.error('Failed to load exam details'),
     });
   }
 
-  private loadAttempts(id: string, page: number = 1, pageSize: number = 10): void {
+  private loadAttempts(id: string, page = 1, pageSize = 10): void {
     this.isLoading.set(true);
-    this.examService.getExamAttempts(id, page, pageSize)
+    this.examService
+      .getExamAttempts(id, page, pageSize)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (res) => {
@@ -68,7 +75,7 @@ export class ExamAttemptsComponent implements OnInit {
         },
         error: () => {
           this.error.set('حدث خطأ أثناء جلب نتائج الطلاب.');
-        }
+        },
       });
   }
 
@@ -93,9 +100,9 @@ export class ExamAttemptsComponent implements OnInit {
       fullName: attempt.studentName,
       profilePictureUrl: '',
       enrolledAt: attempt.submittedAt,
-      status: 'Active'
+      status: 'Active',
     };
-    
+
     this.selectedStudentForDetails.set(mappedStudent);
     this.isDetailsModalOpen.set(true);
   }

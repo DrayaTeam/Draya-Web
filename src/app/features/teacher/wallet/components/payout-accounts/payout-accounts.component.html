@@ -6,7 +6,7 @@
     </div>
 
     @if (!isAdding()) {
-      <button 
+      <button
         class="inline-flex items-center gap-2 rounded-[12px] bg-[#1B6D63] px-5 py-[10px] text-sm font-medium text-white transition-colors hover:bg-[#0f4f49] active:scale-[0.98]"
         (click)="toggleAddForm()">
         <i class="pi pi-plus"></i>
@@ -22,7 +22,9 @@
 
       <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
         <div class="flex flex-col gap-2">
-          <label for="accountTypeSelect" class="text-xs font-semibold text-gray-700">نوع الحساب</label>
+          <label for="accountTypeSelect" class="text-xs font-semibold text-gray-700">
+            نوع الحساب
+          </label>
           <p-select
             appendTo="body"
             id="accountTypeSelect"
@@ -34,47 +36,53 @@
             placeholder="اختر نوع الحساب"
             [style]="{ width: '100%', borderRadius: '12px' }"
             [pt]="{
-              root: { class: '!rounded-[12px] !border !border-gray-200 !shadow-none hover:!border-[#1B6D63] focus-within:!border-[#1B6D63] focus-within:!ring-1 focus-within:!ring-[#1B6D63]' },
+              root: {
+                class:
+                  '!rounded-[12px] !border !border-gray-200 !shadow-none hover:!border-[#1B6D63] focus-within:!border-[#1B6D63] focus-within:!ring-1 focus-within:!ring-[#1B6D63]',
+              },
               label: { class: '!py-2.5 !pr-4 !pl-4' },
               list: { class: '!py-2 !shadow-none !border !border-gray-200' },
-              option: { class: '!py-2.5 !pr-4 !pl-4 hover:!bg-[#1B6D63]/10 hover:!text-[#1B6D63]' }
-            }">
-          </p-select>
+              option: { class: '!py-2.5 !pr-4 !pl-4 hover:!bg-[#1B6D63]/10 hover:!text-[#1B6D63]' },
+            }"></p-select>
         </div>
 
         <div class="flex flex-col gap-2">
-          <label for="accountNameInput" class="text-xs font-semibold text-gray-700">الاسم (كما يظهر في الحساب)</label>
+          <label for="accountNameInput" class="text-xs font-semibold text-gray-700">
+            الاسم (كما يظهر في الحساب)
+          </label>
           <input
             id="accountNameInput"
             type="text"
             [ngModel]="newAccountName()"
             (ngModelChange)="newAccountName.set($event)"
-            class="rounded-[12px] border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-[#1B6D63] focus:outline-none focus:ring-1 focus:ring-[#1B6D63]"
+            class="rounded-[12px] border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-[#1B6D63] focus:ring-1 focus:ring-[#1B6D63] focus:outline-none"
             placeholder="مثال: أحمد محمد" />
         </div>
 
         <div class="flex flex-col gap-2">
-          <label for="accountIdentifierInput" class="text-xs font-semibold text-gray-700">المعرف (رقم الهاتف أو إنستاباي)</label>
+          <label for="accountIdentifierInput" class="text-xs font-semibold text-gray-700">
+            المعرف (رقم الهاتف أو إنستاباي)
+          </label>
           <input
             id="accountIdentifierInput"
             type="text"
             [ngModel]="newAccountIdentifier()"
             (ngModelChange)="newAccountIdentifier.set($event)"
-            class="rounded-[12px] border border-gray-200 bg-white px-4 py-2.5 text-sm text-left focus:border-[#1B6D63] focus:outline-none focus:ring-1 focus:ring-[#1B6D63]"
+            class="rounded-[12px] border border-gray-200 bg-white px-4 py-2.5 text-left text-sm focus:border-[#1B6D63] focus:ring-1 focus:ring-[#1B6D63] focus:outline-none"
             placeholder="010XXXXXXXX"
             dir="ltr" />
         </div>
       </div>
 
       <div class="mt-6 flex items-center justify-end gap-3 border-t border-gray-200 pt-5">
-        <button 
+        <button
           class="rounded-[12px] border border-gray-200 bg-white px-5 py-[10px] text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 active:scale-[0.98]"
-          (click)="toggleAddForm()" 
+          (click)="toggleAddForm()"
           [disabled]="isSubmitting()">
           إلغاء
         </button>
         <button
-          class="inline-flex items-center justify-center min-w-[120px] rounded-[12px] bg-[#1B6D63] px-5 py-[10px] text-sm font-medium text-white transition-colors hover:bg-[#0f4f49] disabled:opacity-50 active:scale-[0.98]"
+          class="inline-flex min-w-[120px] items-center justify-center rounded-[12px] bg-[#1B6D63] px-5 py-[10px] text-sm font-medium text-white transition-colors hover:bg-[#0f4f49] active:scale-[0.98] disabled:opacity-50"
           (click)="submitNewAccount()"
           [disabled]="isSubmitting() || !newAccountName() || !newAccountIdentifier()">
           @if (isSubmitting()) {
@@ -93,34 +101,51 @@
       <i class="pi pi-spinner pi-spin text-3xl text-gray-400"></i>
     </div>
   } @else if (accounts().length === 0 && !isAdding()) {
-    <div class="flex flex-col items-center justify-center rounded-[12px] border border-dashed border-gray-200 bg-gray-50 py-16 text-center">
-      <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-[12px] border border-gray-100 bg-white text-gray-400">
+    <div
+      class="flex flex-col items-center justify-center rounded-[12px] border border-dashed border-gray-200 bg-gray-50 py-16 text-center">
+      <div
+        class="mb-4 flex h-16 w-16 items-center justify-center rounded-[12px] border border-gray-100 bg-white text-gray-400">
         <i class="pi pi-credit-card text-2xl"></i>
       </div>
       <p class="text-sm font-medium text-gray-900">لم تقم بإضافة أي حسابات سحب بعد.</p>
-      <button class="mt-2 text-sm font-semibold text-[#1B6D63] hover:underline" (click)="toggleAddForm()">إضافة حساب الآن</button>
+      <button
+        class="mt-2 text-sm font-semibold text-[#1B6D63] hover:underline"
+        (click)="toggleAddForm()">
+        إضافة حساب الآن
+      </button>
     </div>
   } @else {
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       @for (account of accounts(); track account.id) {
-        <div class="flex items-center justify-between rounded-[12px] border border-gray-200 bg-white p-5 transition-colors hover:border-gray-300">
+        <div
+          class="flex items-center justify-between rounded-[12px] border border-gray-200 bg-white p-5 transition-colors hover:border-gray-300">
           <div class="flex items-center gap-4">
-            <div class="flex h-12 w-12 items-center justify-center rounded-[12px] bg-gray-50 text-gray-600 border border-gray-100">
-              <i class="pi" [ngClass]="account.accountType === AccountType.InstaPay ? 'pi-send' : 'pi-building'"></i>
+            <div
+              class="flex h-12 w-12 items-center justify-center rounded-[12px] border border-gray-100 bg-gray-50 text-gray-600">
+              <i
+                class="pi"
+                [ngClass]="
+                  account.accountType === AccountType.InstaPay ? 'pi-send' : 'pi-building'
+                "></i>
             </div>
             <div>
               <div class="flex items-center gap-2">
                 <h4 class="text-sm font-bold text-gray-900">{{ account.accountName }}</h4>
                 @if (account.isDefault) {
-                  <span class="rounded-[6px] bg-gray-100 px-2 py-0.5 text-[10px] font-bold text-gray-600 border border-gray-200">أساسي</span>
+                  <span
+                    class="rounded-[6px] border border-gray-200 bg-gray-100 px-2 py-0.5 text-[10px] font-bold text-gray-600">
+                    أساسي
+                  </span>
                 }
               </div>
-              <p class="mt-0.5 text-xs font-medium text-gray-500" dir="ltr">{{ account.accountIdentifier }}</p>
+              <p class="mt-0.5 text-xs font-medium text-gray-500" dir="ltr">
+                {{ account.accountIdentifier }}
+              </p>
             </div>
           </div>
-          
+
           <div class="flex items-center gap-2">
-            <button 
+            <button
               class="rounded-[10px] border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-700 transition-colors hover:bg-gray-50 active:scale-[0.98]"
               (click)="withdrawRequested.emit(account)">
               طلب سحب
@@ -145,6 +170,3 @@
     </div>
   }
 </div>
-
-
-

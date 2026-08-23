@@ -55,7 +55,6 @@ export interface GeneratedQuestionDto {
   options?: { text?: string; isCorrect?: boolean }[];
 }
 
-
 export interface ExamAttemptDto {
   id: string;
   studentId: string;

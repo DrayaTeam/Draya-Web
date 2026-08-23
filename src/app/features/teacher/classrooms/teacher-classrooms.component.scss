@@ -101,7 +101,7 @@
   justify-content: center;
   color: #94a3b8;
   transition: color 200ms ease;
-  
+
   .modern-search-bar:focus-within & {
     color: var(--draya-primary-600, #0d9488);
   }
@@ -133,7 +133,7 @@
   font-size: 0.65rem;
   font-weight: 600;
   margin: 0 8px;
-  
+
   kbd {
     background-color: #f8fafc;
     border: 1px solid #e2e8f0;
@@ -141,7 +141,6 @@
     padding: 3px 6px;
     font-family: inherit;
     color: #94a3b8;
-
   }
 }
 
@@ -309,8 +308,6 @@
     text-overflow: ellipsis;
   }
 }
-
-
 
 .pagination-wrapper {
   display: flex;
@@ -791,6 +788,3 @@
   background: #f1f5f9;
   margin: 4px 0;
 }
-
-
-

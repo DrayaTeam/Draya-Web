@@ -1,8 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, input, output } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  ExamQuestionDto,
-} from '../../../../../../core/models/teacher-exam.model';
+import { ExamQuestionDto } from '../../../../../../core/models/teacher-exam.model';
 import { TeacherExamService } from '../../../../services/teacher-exam.service';
 import { ToastService } from '../../../../../../core/services/toast.service';
 

@@ -29,11 +29,10 @@ import {
   host: { class: 'block w-full' },
 })
 export class PayoutAccountsComponent implements OnInit {
-
   readonly accountTypeOptions = [
     { label: 'إنستاباي (Instapay)', value: AccountType.InstaPay },
     { label: 'حساب بنكي', value: AccountType.BankAccount },
-    { label: 'محفظة إلكترونية', value: AccountType.MobileWallet }
+    { label: 'محفظة إلكترونية', value: AccountType.MobileWallet },
   ];
   private readonly walletService = inject(WalletService);
   private readonly destroyRef = inject(DestroyRef);
@@ -162,5 +161,3 @@ export class PayoutAccountsComponent implements OnInit {
       });
   }
 }
-
-
