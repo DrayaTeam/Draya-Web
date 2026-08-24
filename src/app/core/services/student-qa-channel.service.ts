@@ -133,6 +133,12 @@ export class StudentQaChannelService extends ApiBaseService {
     this.hubConnection.on('QuestionCreated', (payload: SignalRQuestionCreatedPayload) => {
       if (payload.classroomId === this.currentJoinedClassroomId) {
         const currentUserId = this.auth.currentUser()?.userId;
+        const isOwnQuestion = payload.authorId === currentUserId;
+        const alreadyInList = this.questions().some((q) => q.id === payload.questionId);
+
+        // Skip if own question (already added by HTTP tap in askQuestion) or duplicate
+        if (isOwnQuestion || alreadyInList) return;
+
         const newQuestion: QuestionItem = {
           id: payload.questionId,
           classroomId: payload.classroomId,
@@ -143,7 +149,7 @@ export class StudentQaChannelService extends ApiBaseService {
           replyCount: 0,
           hasTeacherAnswer: false,
           hasVoted: false,
-          isAuthor: payload.authorId === currentUserId,
+          isAuthor: false,
         };
 
         this.questions.update((list) => [newQuestion, ...list]);
@@ -168,20 +174,26 @@ export class StudentQaChannelService extends ApiBaseService {
           }),
         );
 
-        // If thread is active, append reply
+        // If thread is active, append reply — but skip if the current user sent it
+        // (already appended by the HTTP tap in sendReply to avoid duplication)
         if (this.activeQuestion()?.id === payload.questionId) {
           const currentUserId = this.auth.currentUser()?.userId;
-          const newReply: QuestionReplyItem = {
-            id: payload.replyId,
-            questionId: payload.questionId,
-            authorId: payload.authorId,
-            content: payload.content,
-            createdAt: payload.createdAt || new Date().toISOString(),
-            isTeacherAnswer: payload.isTeacherAnswer,
-            isAuthor: payload.authorId === currentUserId,
-          };
+          const isOwnReply = payload.authorId === currentUserId;
+          const alreadyInList = this.activeReplies().some((r) => r.id === payload.replyId);
 
-          this.activeReplies.update((replies) => [...replies, newReply]);
+          if (!isOwnReply && !alreadyInList) {
+            const newReply: QuestionReplyItem = {
+              id: payload.replyId,
+              questionId: payload.questionId,
+              authorId: payload.authorId,
+              content: payload.content,
+              createdAt: payload.createdAt || new Date().toISOString(),
+              isTeacherAnswer: payload.isTeacherAnswer,
+              isAuthor: false,
+            };
+
+            this.activeReplies.update((replies) => [...replies, newReply]);
+          }
         }
       }
     });
