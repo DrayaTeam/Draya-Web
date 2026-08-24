@@ -95,6 +95,14 @@ export const teacherRoutes: Routes = [
         title: 'مراجعة إجابات الطالب — درايَة',
       },
       {
+        path: 'pending-reviews',
+        loadComponent: () =>
+          import('./exams/pending-reviews/pending-reviews.component').then(
+            (m) => m.TeacherPendingReviewsPageComponent,
+          ),
+        title: 'مراجعات بانتظار الاعتماد — درايَة',
+      },
+      {
         path: 'channel',
         loadComponent: () =>
           import('./channel/teacher-channel.component').then((m) => m.TeacherChannelComponent),

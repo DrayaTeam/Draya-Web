@@ -1,0 +1,92 @@
+<div class="pending-reviews-page" dir="rtl">
+  <!-- Page Header -->
+  <div class="page-header-row">
+    <div class="flex items-stretch gap-3">
+      <div class="w-[3px] rounded-full bg-teal-600"></div>
+      <div class="flex flex-col gap-1 py-1">
+        <h1 class="m-0 text-3xl font-bold text-teal-700">
+          {{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.TITLE' | translate }}
+        </h1>
+        <p class="m-0 text-sm text-slate-500">
+          {{ 'TEACHER.PENDING_REVIEWS_PAGE.SUBTITLE' | translate }}
+        </p>
+      </div>
+    </div>
+
+    @if (totalPendingCount() > 0) {
+      <span class="page-count-pill">{{ totalPendingCount() }}</span>
+    }
+  </div>
+
+  <!-- Content -->
+  <div class="page-body-card">
+    @if (isLoading()) {
+      <div class="state-row loading-row">
+        <span class="state-spinner"></span>
+        <span>{{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.LOADING' | translate }}</span>
+      </div>
+    } @else if (classrooms().length === 0) {
+      <div class="empty-state">
+        <svg
+          width="40"
+          height="40"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        <span>{{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.EMPTY' | translate }}</span>
+      </div>
+    } @else {
+      <div class="classroom-accordion">
+        @for (classroom of classrooms(); track classroom.classroomId) {
+          <div class="classroom-group">
+            <button
+              type="button"
+              class="classroom-group-header"
+              (click)="toggleClassroom(classroom.classroomId)">
+              <span>{{ classroom.classroomName }}</span>
+              <svg
+                class="chevron-icon"
+                [class.expanded]="expandedClassroomId() === classroom.classroomId"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+
+            @if (expandedClassroomId() === classroom.classroomId) {
+              <div class="exams-list">
+                @for (exam of classroom.exams; track exam.examId) {
+                  <div class="exam-group">
+                    <span class="exam-title-label">{{ exam.examTitle }}</span>
+                    @for (attempt of exam.pendingReviews; track attempt.attemptId) {
+                      <button
+                        type="button"
+                        class="pending-attempt-row"
+                        (click)="openAttempt(attempt.attemptId)">
+                        <span class="attempt-student-name">{{ attempt.studentName }}</span>
+                        <span class="action-required-pill">
+                          {{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.ACTION_REQUIRED' | translate }}
+                        </span>
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

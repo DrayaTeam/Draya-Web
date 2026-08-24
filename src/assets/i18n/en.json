@@ -508,6 +508,9 @@
       "SUBSCRIPTION": "Subscription & Usage",
       "ACCOUNT": "My Account"
     },
+    "PENDING_REVIEWS_PAGE": {
+      "SUBTITLE": "Every student attempt that needs your approval or manual grading, grouped by classroom and exam."
+    },
     "CLASSROOMS": {
       "TITLE": "Classrooms",
       "SUBTITLE": "Manage your student groups and classrooms",
@@ -570,9 +573,10 @@
       },
       "PENDING_REVIEWS": {
         "TITLE": "Pending Reviews",
-        "LOADING": "Loading pending reviews...",
+        "LOADING": "Loading...",
         "EMPTY": "No attempts are waiting for review right now",
-        "ACTION_REQUIRED": "Action Required"
+        "ACTION_REQUIRED": "Action Required",
+        "VIEW_DETAILS": "Tap to view details"
       },
       "FOLLOWUP_TABLE": {
         "TITLE": "Students Needing Follow-up",

@@ -196,20 +196,13 @@
   line-height: 1.2;
 }
 
-/* Pending Reviews Widget — pinned above the footer, bounded so a long
-   classroom/exam list scrolls internally instead of pushing the footer
-   (wallet/account/logout links) out of view. */
+/* Pending Reviews summary card — pinned above the footer. It's a single
+   compact row linking to /teacher/pending-reviews, not an expandable list,
+   so it never needs its own scroll region. */
 .sidebar-pending-reviews-wrap {
   flex-shrink: 0;
-  max-height: 260px;
-  overflow-y: auto;
   padding: 12px 10px;
   border-top: 1px solid var(--draya-border, #ebefef);
-
-  ::ng-deep .dashboard-card {
-    border: none;
-    padding: 0;
-  }
 }
 
 /* Sidebar Footer Area */

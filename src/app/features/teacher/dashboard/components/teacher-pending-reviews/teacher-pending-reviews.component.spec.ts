@@ -30,7 +30,7 @@ describe('TeacherPendingReviewsComponent', () => {
     httpMock.verify();
   });
 
-  it('should create and load pending reviews', () => {
+  it('should create and count pending reviews across all classrooms/exams', () => {
     const req = httpMock.expectOne((r) => r.url.includes('/teachers/pending-reviews'));
     req.flush({
       items: [
@@ -43,6 +43,7 @@ describe('TeacherPendingReviewsComponent', () => {
               examTitle: 'Midterm',
               pendingReviews: [
                 { attemptId: 'a1', studentId: 's1', studentName: 'Ahmed', score: 45 },
+                { attemptId: 'a2', studentId: 's2', studentName: 'Sara', score: 60 },
               ],
             },
           ],
@@ -57,11 +58,14 @@ describe('TeacherPendingReviewsComponent', () => {
     });
 
     expect(fixture.componentInstance).toBeTruthy();
-    expect(fixture.componentInstance.totalPendingCount()).toBe(1);
-    expect(fixture.componentInstance.expandedClassroomId()).toBe('c1');
+    expect(fixture.componentInstance.totalPendingCount()).toBe(2);
   });
 
-  it('should render an empty state when there is nothing pending', () => {
+  it('is always a link to the full pending-reviews page, regardless of count', () => {
+    // Regression test: this card used to be a classroom/exam/attempt
+    // accordion embedded directly in the sidebar. It must now always be a
+    // single link out to /teacher/pending-reviews — clicking an item never
+    // toggles anything in place anymore.
     const req = httpMock.expectOne((r) => r.url.includes('/teachers/pending-reviews'));
     req.flush({
       items: [],
@@ -73,6 +77,10 @@ describe('TeacherPendingReviewsComponent', () => {
       hasPreviousPage: false,
     });
     fixture.detectChanges();
+
+    const link = fixture.nativeElement.querySelector('a.pending-reviews-nav-card');
+    expect(link).toBeTruthy();
+    expect(link.getAttribute('href')).toBe('/teacher/pending-reviews');
 
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.empty-row')).toBeTruthy();
