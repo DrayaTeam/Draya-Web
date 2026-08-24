@@ -43,6 +43,9 @@ export class StudentDashboardComponent implements OnInit {
   // Display only first 3 upcoming exams on dashboard — full list lives on /student/exams
   readonly displayedUpcomingExams = computed(() => this.upcomingExams().slice(0, 3));
 
+  // Display only first 3 weakness topics on dashboard — full list lives on /student/reports
+  readonly displayedWeaknessTopics = computed(() => this.weaknessTopics().slice(0, 3));
+
   // Loading / error signals — used for skeleton + error banner in template
   readonly loading = this.dashboardService.loading;
   readonly error = this.dashboardService.error;

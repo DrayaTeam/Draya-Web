@@ -10,7 +10,7 @@ import { StudentDashboardComponent } from './student-dashboard.component';
 import { StudentDashboardService } from '../../../core/services/student-dashboard.service';
 import { AuthService } from '../../auth';
 import { ToastService } from '../../../core/services/toast.service';
-import { UpcomingExamItem } from '../../../core/models/student-dashboard.model';
+import { UpcomingExamItem, WeaknessTopicItem } from '../../../core/models/student-dashboard.model';
 
 describe('StudentDashboardComponent', () => {
   let component: StudentDashboardComponent;
@@ -57,7 +57,14 @@ describe('StudentDashboardComponent', () => {
                 isImportant: false,
               })),
             ),
-            weaknessTopics: signal([]),
+            weaknessTopics: signal<WeaknessTopicItem[]>(
+              Array.from({ length: 5 }, (_, i) => ({
+                id: `topic_${i + 1}`,
+                topicTitle: `نقطة ضعف ${i + 1}`,
+                scorePercent: 40,
+                barColor: '#9810FA',
+              })),
+            ),
             loadDashboard: () => undefined,
           },
         },
@@ -89,5 +96,12 @@ describe('StudentDashboardComponent', () => {
     // is still reachable via the "عرض كل الامتحانات" link to /student/exams.
     expect(component.upcomingExams().length).toBe(5);
     expect(component.displayedUpcomingExams().length).toBe(3);
+  });
+
+  it('should limit the dashboard weakness-topics widget to 3 items even though more exist', () => {
+    // Same cap as the upcoming-exams widget above — full list is still
+    // reachable via the "فتح تقارير التحليل المتقدمة" link to /student/reports.
+    expect(component.weaknessTopics().length).toBe(5);
+    expect(component.displayedWeaknessTopics().length).toBe(3);
   });
 });

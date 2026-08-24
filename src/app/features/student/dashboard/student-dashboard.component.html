@@ -424,7 +424,7 @@
 
           <div class="topics-list-group">
             @if (weaknessTopics().length > 0) {
-              @for (topic of weaknessTopics(); track topic.id) {
+              @for (topic of displayedWeaknessTopics(); track topic.id) {
                 <draya-weakness-topic-card [topic]="topic" />
               }
             } @else {
