@@ -20,12 +20,24 @@
   </div>
 
   @if (isLoading()) {
-    <div class="state-message">
-      {{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.LOADING' | translate }}
+    <div class="state-row loading-row">
+      <span class="state-spinner"></span>
+      <span>{{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.LOADING' | translate }}</span>
     </div>
   } @else if (classrooms().length === 0) {
-    <div class="state-message empty-message">
-      {{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.EMPTY' | translate }}
+    <div class="state-row empty-row">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.4"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+      <span>{{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.EMPTY' | translate }}</span>
     </div>
   } @else {
     <div class="classroom-accordion">

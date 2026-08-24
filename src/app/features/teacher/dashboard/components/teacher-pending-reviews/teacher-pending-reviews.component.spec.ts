@@ -57,6 +57,6 @@ describe('TeacherPendingReviewsComponent', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.empty-message')).toBeTruthy();
+    expect(compiled.querySelector('.empty-row')).toBeTruthy();
   });
 });
