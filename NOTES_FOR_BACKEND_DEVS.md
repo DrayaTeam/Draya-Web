@@ -302,4 +302,33 @@ public class UpdateStudentProfileRequest
 
 ---
 
+## 📌 Note 19: Several Dashboard/Analytics Score Fields Have No Confirmed Scale
+
+### 🔍 Issue Description
+
+- A full audit against the live swagger spec (2026-08-24) confirmed that almost every score field on exam/attempt/weakness DTOs is either a paired `score`+`maxScore`, or an explicitly-percent field (`proficiencyPercent`, `currentProficiencyPercent`) — see Note 16's resolution.
+- A handful of **dashboard/analytics** fields were not part of that pass and have **no paired max/total field and no naming convention indicating scale**: `TeacherDashboardDto.classAverage`, `DailySubmissionActivityDto.averageScore`, `StudentAtRiskDto.overallAverage`, `RecentSubmissionDto.score`, `StudentDashboardDto.overallAverage`, `StudentAnalyticsDto.overallAverage` / `.highestScore`.
+- The frontend previously had **inconsistent, wrong guesses** about these fields' scale in different places (e.g. dividing `averageScore` by 5 in one spot while treating the identical field as already 0-100 elsewhere). We've now standardized all of these to be **treated as already a 0-100 percentage**, based on the strong convention set by every other confirmed field in this API — but this is an inference, not a confirmation, for this specific set of fields.
+
+### 💡 Recommendation for Backend Team
+
+- Please confirm whether `classAverage`, `averageScore` (on `DailySubmissionActivityDto`), `overallAverage` (on `TeacherDashboardDto`'s related DTOs and `StudentAnalyticsDto`), `score` (on `RecentSubmissionDto`), and `StudentDashboardDto.overallAverage` are always 0-100 percentages. If any of them are actually raw points on a different scale, please add a paired max/total field (matching the `finalScore`+`maxScore` pattern) rather than leaving the client to guess.
+
+---
+
+## 📌 Note 20: A Few More Endpoints Still Have No Response Schema in Swagger
+
+### 🔍 Issue Description
+
+Following up on Note 5 (mostly resolved — exam/attempt/weakness/notification DTOs are now typed): three endpoints touched by tonight's audit are still undocumented (`200: (no body)` in swagger), so the client is still parsing them tolerantly/defensively rather than against a real contract:
+- `GET /api/v1/exams/{examId}/attempts` (teacher-side attempt list per exam — used by the exam-attempts screen; in particular we cannot confirm whether `finalScore` here is paired with a `maxScore` the way `StudentExamAttemptSummaryDto`/`AttemptResultsDto` are).
+- `GET /api/v1/exams/{examId}/student-view`
+- `GET /api/v1/exams/generations/{generationId}` (also returns an undocumented `206` alongside `200`/`404` — please clarify what `206` means here, e.g. partial/in-progress vs. a paging convention).
+
+### 💡 Recommendation for Backend Team
+
+- Add response schemas for these three, in particular confirming `GET /exams/{examId}/attempts`'s per-attempt score shape (paired with a max, like every other confirmed attempt DTO).
+
+---
+
 _Last updated: 2026-08-24 by Frontend Team_
