@@ -1,4 +1,12 @@
-import { Component, ChangeDetectionStrategy, effect, inject, signal, OnInit } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  computed,
+  effect,
+  inject,
+  signal,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
@@ -14,6 +22,7 @@ import {
 } from '../../../core/models/teacher-reports.model';
 import { DialogModule } from 'primeng/dialog';
 import { SignalRService } from '../../../core/signalr/signalr.service';
+import { normalizeScoreToPercent } from '../../../core/services/student-reports.service';
 
 @Component({
   selector: 'draya-teacher-reports',
@@ -42,6 +51,20 @@ export class TeacherReportsComponent implements OnInit {
   readonly latestReport = signal<PerformanceReportDto | null>(null);
   readonly isLoadingAnalytics = signal<boolean>(false);
   readonly isApproving = signal<boolean>(false);
+
+  // StudentAnalyticsDto.overallAverage/highestScore have no confirmed scale
+  // (no paired maxScore in swagger), so this reuses the same normalization
+  // the student's own reports page applies to the identical fields --
+  // otherwise a teacher and a student can see two different numbers for the
+  // same student's same analytics.
+  readonly normalizedOverallAverage = computed(() => {
+    const raw = this.studentAnalytics()?.overallAverage;
+    return raw === undefined || raw === null ? null : normalizeScoreToPercent(raw);
+  });
+  readonly normalizedHighestScore = computed(() => {
+    const raw = this.studentAnalytics()?.highestScore;
+    return raw === undefined || raw === null ? null : normalizeScoreToPercent(raw);
+  });
 
   constructor() {
     // Hub D (/hubs/reports): a new AI performance report finished generating.

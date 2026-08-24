@@ -154,12 +154,12 @@
           <div class="doc-stats-inline">
             <span class="stat-item">
               {{ 'TEACHER.REPORTS.OVERALL_AVERAGE' | translate }}:
-              <strong>{{ studentAnalytics()?.overallAverage | number: '1.0-1' }}%</strong>
+              <strong>{{ normalizedOverallAverage() ?? 0 }}%</strong>
             </span>
             <span class="stat-divider">â€¢</span>
             <span class="stat-item">
               {{ 'TEACHER.REPORTS.HIGHEST_SCORE' | translate }}:
-              <strong>{{ studentAnalytics()?.highestScore | number: '1.0-1' }}%</strong>
+              <strong>{{ normalizedHighestScore() ?? 0 }}%</strong>
             </span>
             <span class="stat-divider">â€¢</span>
             <span class="stat-item">

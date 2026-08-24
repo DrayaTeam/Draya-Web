@@ -79,8 +79,12 @@ export class TeacherDashboardService {
     const totalSubmissions = points.reduce((sum, p) => sum + p.submissionsCount, 0);
     const avgScoreSum = points.reduce((sum, p) => sum + p.averageScore, 0);
     const rawAverage = avgScoreSum / points.length;
-    // Assuming scores are out of 5, convert to percentage for the UI
-    const averagePerformance = Math.round((rawAverage / 5) * 100);
+    // DailySubmissionActivityDto.averageScore has no paired max/total field in
+    // swagger, but every other score field in this API is confirmed already a
+    // 0-100 percent (see NOTES_FOR_BACKEND_DEVS.md) -- trusting that same
+    // convention here rather than guessing a /5 scale, which silently divided
+    // a real percentage by 5 and rendered a number a fifth of the true average.
+    const averagePerformance = Math.max(0, Math.min(100, Math.round(rawAverage)));
 
     const peakPoint = points.reduce((prev, current) =>
       prev.submissionsCount > current.submissionsCount ? prev : current,
@@ -128,7 +132,7 @@ export class TeacherDashboardService {
             const avg = Number.isInteger(data.classAverage)
               ? data.classAverage
               : data.classAverage.toFixed(1);
-            newStats[avgIdx] = { ...newStats[avgIdx], value: `${avg}` };
+            newStats[avgIdx] = { ...newStats[avgIdx], value: `${avg}%` };
           }
           const examIdx = newStats.findIndex((s) => s.id === 'pending_exams');
           if (examIdx > -1) {
@@ -169,8 +173,10 @@ export class TeacherDashboardService {
             studentName: s.studentName,
             initials: initials.toUpperCase(),
             courseName: s.classroomName || 'عام',
+            // overallAverage is confirmed already a 0-100 percent, matching the
+            // rest of this API -- not a 0-5 scale.
             averageScore: Number(s.overallAverage.toFixed(1)),
-            riskLevel: s.overallAverage < 2.5 ? 'high' : 'medium',
+            riskLevel: s.overallAverage < 50 ? 'high' : 'medium',
           };
         });
         this._studentsNeedingFollowup.set(studentsNeedingFollowup);
@@ -186,8 +192,11 @@ export class TeacherDashboardService {
             initials: initials.toUpperCase(),
             timeAgoKey: 'SHARED.TIME.RECENTLY', // You can add logic to format date to timeAgo
             examTitle: s.examTitle,
-            score: s.score,
-            gradeType: s.score >= 4 ? 'excellent' : s.score >= 2.5 ? 'good' : 'average',
+            // score is confirmed already a 0-100 percent (nullable when grading
+            // hasn't finished) -- not a 0-5 scale.
+            score: s.score ?? 0,
+            gradeType:
+              (s.score ?? 0) >= 85 ? 'excellent' : (s.score ?? 0) >= 65 ? 'good' : 'average',
           };
         });
         this._recentSubmissions.set(recentSubmissions);
