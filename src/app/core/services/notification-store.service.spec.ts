@@ -41,9 +41,13 @@ describe('NotificationStoreService', () => {
     localStorage.clear();
   });
 
-  it('should be created and load initial notifications', () => {
+  it('should be created and start with no fabricated notifications', () => {
+    // Regression test: this used to seed two hardcoded "welcome" notifications
+    // for every user, which then persisted forever (fetchNotifications() merges
+    // rather than replaces) and showed up mixed in with real backend data
+    // indefinitely. The store must start empty and rely on the real backend.
     expect(service).toBeTruthy();
-    expect(service.notifications().length).toBeGreaterThan(0);
+    expect(service.notifications().length).toBe(0);
   });
 
   it('should add a notification and trigger toast', () => {
@@ -78,10 +82,10 @@ describe('NotificationStoreService', () => {
     expect(toastServiceStub.success).toHaveBeenCalledWith('Exam Graded', 'Score 95/100');
   });
 
-  it('should fetch notifications from GET /api/v1/notifications', () => {
+  it('should fetch notifications from GET /api/v1/Notifications (confirmed casing)', () => {
     service.fetchNotifications(1, 10).subscribe();
 
-    const req = httpMock.expectOne((r) => r.url.includes('/notifications'));
+    const req = httpMock.expectOne((r) => r.url.includes('/Notifications'));
     expect(req.request.method).toBe('GET');
     req.flush({
       items: [
@@ -101,7 +105,7 @@ describe('NotificationStoreService', () => {
     expect(service.notifications().some((n) => n.id === 'server-1')).toBeTrue();
   });
 
-  it('should mark a notification as read and send PUT /api/v1/notifications/{id}/read', () => {
+  it('should mark a notification as read and send PUT /api/v1/Notifications/{id}/read', () => {
     service.addNotification(
       {
         title: 'Unread Item',
@@ -115,7 +119,7 @@ describe('NotificationStoreService', () => {
     const id = service.notifications()[0].id;
     service.markAsRead(id);
 
-    const req = httpMock.expectOne((r) => r.url.includes(`/notifications/${id}/read`));
+    const req = httpMock.expectOne((r) => r.url.includes(`/Notifications/${id}/read`));
     expect(req.request.method).toBe('PUT');
     req.flush(null, { status: 204, statusText: 'No Content' });
 
@@ -123,10 +127,10 @@ describe('NotificationStoreService', () => {
     expect(service.unreadCount()).toBe(unreadBefore - 1);
   });
 
-  it('should mark all notifications as read and send PUT /api/v1/notifications/read-all', () => {
+  it('should mark all notifications as read and send PUT /api/v1/Notifications/read-all', () => {
     service.markAllAsRead();
 
-    const req = httpMock.expectOne((r) => r.url.includes('/notifications/read-all'));
+    const req = httpMock.expectOne((r) => r.url.includes('/Notifications/read-all'));
     expect(req.request.method).toBe('PUT');
     req.flush(null, { status: 204, statusText: 'No Content' });
 
@@ -134,22 +138,22 @@ describe('NotificationStoreService', () => {
     expect(service.hasUnread()).toBeFalse();
   });
 
-  it('should remove a notification and send DELETE /api/v1/notifications/{id}', () => {
+  it('should remove a notification and send DELETE /api/v1/Notifications/{id}', () => {
     service.addNotification({ title: 'Test', message: 'Msg', type: 'info' }, false);
     const id = service.notifications()[0].id;
     service.removeNotification(id);
 
-    const req = httpMock.expectOne((r) => r.url.includes(`/notifications/${id}`));
+    const req = httpMock.expectOne((r) => r.url.includes(`/Notifications/${id}`));
     expect(req.request.method).toBe('DELETE');
     req.flush(null, { status: 204, statusText: 'No Content' });
 
     expect(service.notifications().some((n) => n.id === id)).toBeFalse();
   });
 
-  it('should clear all notifications and send DELETE /api/v1/notifications', () => {
+  it('should clear all notifications and send DELETE /api/v1/Notifications', () => {
     service.clearAll();
 
-    const req = httpMock.expectOne((r) => r.url.endsWith('/notifications'));
+    const req = httpMock.expectOne((r) => r.url.endsWith('/Notifications'));
     expect(req.request.method).toBe('DELETE');
     req.flush(null, { status: 204, statusText: 'No Content' });
 

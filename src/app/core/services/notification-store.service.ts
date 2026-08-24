@@ -66,10 +66,11 @@ export class NotificationStoreService extends ApiBaseService {
       // Fallback on parse error
     }
 
-    // Default starter notifications if empty
-    const defaults = this.getDefaultNotifications();
-    this._notifications.set(defaults);
-    this.saveToStorage(userId, defaults);
+    // No cache yet — start empty and let fetchNotifications() populate real
+    // data. Previously this seeded two hardcoded "welcome" notifications,
+    // which persisted forever (fetchNotifications() merges rather than
+    // replaces) and showed up mixed in with real notifications indefinitely.
+    this._notifications.set([]);
   }
 
   private saveToStorage(userId: string, items: AppNotification[]): void {
@@ -88,7 +89,7 @@ export class NotificationStoreService extends ApiBaseService {
 
   /**
    * Fetches historical notifications from the backend API:
-   * GET /api/v1/notifications?page={page}&pageSize={pageSize}&unreadOnly={unreadOnly}
+   * GET /api/v1/Notifications?page={page}&pageSize={pageSize}&unreadOnly={unreadOnly}
    */
   fetchNotifications(
     page = 1,
@@ -96,7 +97,7 @@ export class NotificationStoreService extends ApiBaseService {
     unreadOnly = false,
   ): Observable<PaginatedNotificationsResponse | null> {
     this.isLoading.set(true);
-    return this.get<PaginatedNotificationsResponse>('/notifications', {
+    return this.get<PaginatedNotificationsResponse>('/Notifications', {
       page,
       pageSize,
       unreadOnly,
@@ -184,8 +185,8 @@ export class NotificationStoreService extends ApiBaseService {
     this._notifications.update((list) => list.map((n) => (n.id === id ? { ...n, read: true } : n)));
     this.persistCurrent();
 
-    // Sync with backend: PUT /api/v1/notifications/{id}/read
-    this.put<void>(`/notifications/${id}/read`, {})
+    // Sync with backend: PUT /api/v1/Notifications/{id}/read
+    this.put<void>(`/Notifications/${id}/read`, {})
       .pipe(catchError(() => of(null)))
       .subscribe();
   }
@@ -194,8 +195,8 @@ export class NotificationStoreService extends ApiBaseService {
     this._notifications.update((list) => list.map((n) => ({ ...n, read: true })));
     this.persistCurrent();
 
-    // Sync with backend: PUT /api/v1/notifications/read-all
-    this.put<void>('/notifications/read-all', {})
+    // Sync with backend: PUT /api/v1/Notifications/read-all
+    this.put<void>('/Notifications/read-all', {})
       .pipe(catchError(() => of(null)))
       .subscribe();
   }
@@ -204,8 +205,8 @@ export class NotificationStoreService extends ApiBaseService {
     this._notifications.update((list) => list.filter((n) => n.id !== id));
     this.persistCurrent();
 
-    // Sync with backend: DELETE /api/v1/notifications/{id}
-    this.delete<void>(`/notifications/${id}`)
+    // Sync with backend: DELETE /api/v1/Notifications/{id}
+    this.delete<void>(`/Notifications/${id}`)
       .pipe(catchError(() => of(null)))
       .subscribe();
   }
@@ -214,8 +215,8 @@ export class NotificationStoreService extends ApiBaseService {
     this._notifications.set([]);
     this.persistCurrent();
 
-    // Sync with backend: DELETE /api/v1/notifications
-    this.delete<void>('/notifications')
+    // Sync with backend: DELETE /api/v1/Notifications
+    this.delete<void>('/Notifications')
       .pipe(catchError(() => of(null)))
       .subscribe();
   }
@@ -238,56 +239,5 @@ export class NotificationStoreService extends ApiBaseService {
     } catch {
       return '';
     }
-  }
-
-  private getDefaultNotifications(): AppNotification[] {
-    const role = this.auth.currentUser()?.role?.toLowerCase();
-    const now = new Date();
-
-    if (role === 'teacher') {
-      return [
-        {
-          id: 'welcome_teacher',
-          title: 'مرحباً بك في درايَة!',
-          message:
-            'تم تفعيل حسابك كمعلم بنجاح. يمكنك الآن إنشاء باقاتك وتوليد الامتحانات بالذكاء الاصطناعي.',
-          type: 'success',
-          createdAt: new Date(now.getTime() - 1000 * 60 * 30).toISOString(),
-          read: false,
-          link: '/teacher/dashboard',
-        },
-        {
-          id: 'tip_materials',
-          title: 'توليد امتحانات ذكية',
-          message: 'قم برفع مذكراتك الدراسية في المكتبة لتوليد أسئلة دقيقة مخصصة لطلابك.',
-          type: 'info',
-          createdAt: new Date(now.getTime() - 1000 * 60 * 120).toISOString(),
-          read: true,
-          link: '/teacher/library',
-        },
-      ];
-    }
-
-    return [
-      {
-        id: 'welcome_student',
-        title: 'مرحباً بك في منصة درايَة!',
-        message: 'ابدأ تصفح المعلمين وانضم لفصولك الدراسية لخوض الامتحانات التجريبية التفاعلية.',
-        type: 'success',
-        createdAt: new Date(now.getTime() - 1000 * 60 * 15).toISOString(),
-        read: false,
-        link: '/student/dashboard',
-      },
-      {
-        id: 'exam_tip',
-        title: 'تقارير الأداء الذكية',
-        message:
-          'بعد كل اختبار، سيقوم الذكاء الاصطناعي بتحديد نقاط القوة والضعف لديك لتقديم تمارين مخصصة.',
-        type: 'info',
-        createdAt: new Date(now.getTime() - 1000 * 60 * 60).toISOString(),
-        read: true,
-        link: '/student/reports',
-      },
-    ];
   }
 }
