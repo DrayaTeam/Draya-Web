@@ -740,8 +740,12 @@ export class StudentExamTakingService extends ApiBaseService {
               isPendingGrading,
             };
           });
+
+          // Sort questions in review by their question index (1, 2, 3...)
+          mappedReviewQuestions.sort((a, b) => a.questionIndex - b.questionIndex);
         } else if (this.examResult().reviewQuestions.length > 0) {
-          mappedReviewQuestions = this.examResult().reviewQuestions as ExamReviewItem[];
+          mappedReviewQuestions = [...this.examResult().reviewQuestions] as ExamReviewItem[];
+          mappedReviewQuestions.sort((a, b) => a.questionIndex - b.questionIndex);
         }
 
         const hasPendingQuestions = mappedReviewQuestions.some((q) => q.isPendingGrading);
@@ -750,12 +754,25 @@ export class StudentExamTakingService extends ApiBaseService {
           (hasPendingQuestions &&
             (res.needsTeacherReview || res.finalScore === null || res.finalScore === undefined));
 
-        // Percentage calculation
+        // Percentage calculation unified across all views
         let pct = 0;
         if (hasAnyGraded && maxTotal > 0) {
           pct = Math.min(100, Math.round((earnedTotal / maxTotal) * 100));
-        } else if (res.finalScore !== undefined && res.finalScore !== null && res.finalScore > 0) {
-          pct = Math.min(100, Math.round(res.finalScore));
+        } else if (res.finalScore !== undefined && res.finalScore !== null) {
+          const rawScore = Number(res.finalScore);
+          const total = Number(res.maxScore || maxTotal || answersList.length || questionsList.length || 0);
+
+          if (total > 0 && rawScore <= total) {
+            pct = Math.min(100, Math.round((rawScore / total) * 100));
+          } else if (rawScore > 10 && rawScore <= 100) {
+            pct = Math.min(100, Math.round(rawScore));
+          } else if (rawScore <= 5 && total === 0) {
+            pct = Math.min(100, Math.round((rawScore / 5) * 100));
+          } else if (rawScore <= 10 && total === 0) {
+            pct = Math.min(100, Math.round((rawScore / 10) * 100));
+          } else {
+            pct = Math.min(100, Math.round(rawScore));
+          }
         }
 
         let gradeLabel = 'قيد التقييم والمراجعة ⏳';

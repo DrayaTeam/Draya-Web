@@ -320,7 +320,7 @@ export class StudentEnrollmentService extends ApiBaseService {
             m.fileUrl ||
             m.url ||
             (m.materialId
-              ? `http://draya-api.runasp.net/api/v1/materials/${m.materialId}/stream`
+              ? `/api/v1/materials/${m.materialId}/stream`
               : '');
 
           const durationText =

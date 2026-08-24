@@ -27,6 +27,21 @@ export class GlobalErrorHandler implements ErrorHandler {
         }
       }
 
+      // If a new deployment was pushed to Vercel and the client attempts to load
+      // an outdated lazy chunk hash, auto-reload the window once to fetch the new bundle.
+      const isChunkFailed =
+        /loading chunk|dynamically imported module|failed to fetch dynamically/i.test(message);
+
+      if (isChunkFailed && typeof window !== 'undefined') {
+        const lastChunkReload = sessionStorage.getItem('draya_last_chunk_reload');
+        const now = Date.now();
+        if (!lastChunkReload || now - Number(lastChunkReload) > 10000) {
+          sessionStorage.setItem('draya_last_chunk_reload', String(now));
+          window.location.reload();
+          return;
+        }
+      }
+
       router.navigate(['/error'], {
         skipLocationChange: true,
         state: { error: message },

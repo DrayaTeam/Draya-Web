@@ -41,7 +41,7 @@ export interface StudentExamSummaryDto {
 export interface StudentExamItem {
   readonly id: string;
   readonly title: string;
-  readonly teacherName: string;
+  readonly teacherName?: string;
   readonly subjectName: string;
   readonly status: ExamStatusType;
   readonly statusLabel: string;

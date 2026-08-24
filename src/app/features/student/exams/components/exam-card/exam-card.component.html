@@ -97,10 +97,12 @@
   <!-- Exam Header (Title & Teacher Name) -->
   <div class="exam-header-info">
     <h3 class="exam-card-title">{{ exam().title }}</h3>
-    <div class="teacher-name-row">
-      <span class="t-label">المعلم:</span>
-      <span class="t-value">{{ exam().teacherName }}</span>
-    </div>
+    @if (exam().teacherName) {
+      <div class="teacher-name-row">
+        <span class="t-label">المعلم:</span>
+        <span class="t-value">{{ exam().teacherName }}</span>
+      </div>
+    }
     @if (exam().needsTeacherReview) {
       <div class="needs-review-badge">
         <span>⚠️ بانتظار اعتماد المعلم لبعض الإجابات</span>

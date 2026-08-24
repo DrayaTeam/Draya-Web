@@ -7,6 +7,7 @@ import {
 } from '@microsoft/signalr';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../features/auth/services/auth.service';
+import { environment } from '../../../../environments/environment';
 
 export interface TeacherNotificationItem {
   id: string;
@@ -72,7 +73,7 @@ export class TeacherNotificationsService {
     if (this.reportsConnection?.state === HubConnectionState.Connected) return;
 
     const token = this.auth.accessToken() ?? '';
-    const hubUrl = 'http://draya-api.runasp.net/hubs/reports';
+    const hubUrl = environment.reportsHubUrl || '/hubs/reports';
 
     this.reportsConnection = new HubConnectionBuilder()
       .withUrl(hubUrl, { accessTokenFactory: () => token })
@@ -89,7 +90,7 @@ export class TeacherNotificationsService {
       this.messageService.add({
         severity: 'success',
         summary: 'تقرير جديد',
-        detail: 'Ѫeم إنهاء تقرير الأداء للطالة. يمكنك الآن مداجعتم.',
+        detail: 'تم إنهاء تقرير الأداء للطالب. يمكنك الآن مراجعته.',
         life: 5000,
       });
     });
@@ -99,8 +100,8 @@ export class TeacherNotificationsService {
       (payload: { studentId: string; topicName: string }) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Ѫٝبيه: تّاجع مسѪٝوى طالب',
-          detail: '٪ٕ رد تراجع خطير في أدااـ أحد الطلاب في موضوع: ' + payload.topicName + '.',
+          summary: 'تنبيه: تراجع مستوى طالب',
+          detail: 'تم رصد تراجع في أداء أحد الطلاب في موضوع: ' + payload.topicName + '.',
           life: 8000,
         });
       },
@@ -118,7 +119,7 @@ export class TeacherNotificationsService {
     if (this.materialsConnection?.state === HubConnectionState.Connected) return;
 
     const token = this.auth.accessToken() ?? '';
-    const hubUrl = 'http://draya-api.runasp.net/hubs/materials';
+    const hubUrl = environment.materialsHubUrl || '/hubs/materials';
 
     this.materialsConnection = new HubConnectionBuilder()
       .withUrl(hubUrl, { accessTokenFactory: () => token })
@@ -139,7 +140,7 @@ export class TeacherNotificationsService {
             severity: 'success',
             summary: 'معالجة المادة',
             detail:
-              'تم�� معالجة المادة التعليمية بنجاح بنظام الذكاء الاصطناعي. (' +
+              'تمت معالجة المادة التعليمية بنجاح بنظام الذكاء الاصطناعي. (' +
               payload.message +
               ')',
             life: 5000,
@@ -153,7 +154,7 @@ export class TeacherNotificationsService {
           this.messageService.add({
             severity: 'error',
             summary: 'فشل معالجة المادة',
-            detail: 'ѭدث خطأ أثناء معالجة المادة التعليمية: ' + payload.message,
+            detail: 'حدث خطأ أثناء معالجة المادة التعليمية: ' + payload.message,
             life: 8000,
           });
         }

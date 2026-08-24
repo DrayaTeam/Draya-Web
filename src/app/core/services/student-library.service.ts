@@ -28,7 +28,7 @@ export function resolveMaterialUrl(url: string | null | undefined): string {
     .split('/')
     .map((segment) => encodeURIComponent(segment))
     .join('/');
-  return `http://draya-api.runasp.net/${encoded}`;
+  return `/${encoded}`;
 }
 
 @Injectable({

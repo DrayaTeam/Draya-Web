@@ -63,7 +63,7 @@ export class StudentQaChannelService extends ApiBaseService {
     }
 
     const token = this.auth.accessToken();
-    const hubUrl = environment.qaHubUrl || 'http://draya-api.runasp.net/hubs/qa';
+    const hubUrl = environment.qaHubUrl || '/hubs/qa';
 
     try {
       this.hubConnection = new signalR.HubConnectionBuilder()

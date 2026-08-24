@@ -139,7 +139,7 @@ export class StudentExamsService extends ApiBaseService {
         (ex) =>
           ex.title.toLowerCase().includes(query) ||
           ex.subjectName.toLowerCase().includes(query) ||
-          ex.teacherName.toLowerCase().includes(query),
+          (ex.teacherName ? ex.teacherName.toLowerCase().includes(query) : false),
       );
     }
 
@@ -242,7 +242,7 @@ export class StudentExamsService extends ApiBaseService {
             return {
               id: ex.id,
               title: ex.title || ex.topic || 'امتحان تفاعلي',
-              teacherName: ex.teacherName || 'أستاذ المادة',
+              teacherName: ex.teacherName || undefined,
               subjectName: ex.subjectName || ex.topic || 'المنهج الدراسي',
               status,
               statusLabel,
