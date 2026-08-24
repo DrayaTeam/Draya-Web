@@ -79,10 +79,10 @@ export class GenerateExamComponent implements OnInit {
     if (!q) return false;
 
     // If they have free exams, balance is irrelevant (always sufficient)
-    if (q.remainingFreeExams > 0) return false;
+    if (q.remainingFreeQuota > 0) return false;
 
     // Backend calculation fallback
-    if (q.hasSufficientBalance) return false;
+    if (q.hasSufficientBalanceForPaid) return false;
 
     // If backend says insufficient, check our locally aggregated wallet balance just in case
     // it's a backend calculation issue (e.g., ignoring EarnedBalance).

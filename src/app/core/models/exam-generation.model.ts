@@ -39,10 +39,11 @@ export interface GenerateExamResponse {
   generationId: string;
 }
 
+/** Confirmed against swagger (http://draya-api.runasp.net/swagger/v1/swagger.json), 2026-08-24. */
 export interface AIExamQuotaDto {
   freeMonthlyQuota: number;
-  freeExamsUsedThisMonth: number;
-  remainingFreeExams: number;
+  freeExamsUsed: number;
+  remainingFreeQuota: number;
   aiExamPrice: number;
-  hasSufficientBalance: boolean;
+  hasSufficientBalanceForPaid: boolean;
 }
