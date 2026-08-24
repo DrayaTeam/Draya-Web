@@ -2,7 +2,11 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
-import { StudentExamsService, deriveExamStatus } from './student-exams.service';
+import {
+  StudentExamsService,
+  deriveExamStatus,
+  formatExamScoreDisplay,
+} from './student-exams.service';
 import { StudentExamSummaryDto } from '../models/student-exam.model';
 
 function makeExam(overrides: Partial<StudentExamSummaryDto> = {}): StudentExamSummaryDto {
@@ -99,5 +103,25 @@ describe('StudentExamsService', () => {
     expect(mapped[0].latestAttemptId).toBe('att-2');
     expect(mapped[0].needsTeacherReview).toBeTrue();
     expect(mapped[0].status).toBe('completed');
+  });
+
+  describe('formatExamScoreDisplay', () => {
+    it('formats score with total count into percentage correctly', () => {
+      const result = formatExamScoreDisplay(3, 5);
+      expect(result.percent).toBe(60);
+      expect(result.text).toBe('الدرجة: 60%');
+    });
+
+    it('formats raw percentage directly if > 10', () => {
+      const result = formatExamScoreDisplay(85);
+      expect(result.percent).toBe(85);
+      expect(result.text).toBe('الدرجة: 85%');
+    });
+
+    it('returns تم التسليم when score is null or undefined', () => {
+      const result = formatExamScoreDisplay(null);
+      expect(result.percent).toBeNull();
+      expect(result.text).toBe('تم التسليم');
+    });
   });
 });

@@ -47,4 +47,17 @@ describe('ReportWeaknessTopicComponent', () => {
     button.click();
     expect(component.startReview.emit).toHaveBeenCalledWith(mockTopic);
   });
+
+  it('should toggle button label and style when isReviewed is true', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const button = compiled.querySelector('.action-btn') as HTMLElement;
+    expect(button.textContent).toContain('بدء المراجعة التفاعلية');
+    expect(button.classList.contains('action-btn-reviewed')).toBeFalse();
+
+    fixture.componentRef.setInput('isReviewed', true);
+    fixture.detectChanges();
+
+    expect(button.textContent).toContain('عرض المراجعة المحفوظة');
+    expect(button.classList.contains('action-btn-reviewed')).toBeTrue();
+  });
 });

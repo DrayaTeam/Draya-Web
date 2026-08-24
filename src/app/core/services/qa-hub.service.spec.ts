@@ -16,10 +16,7 @@ describe('QaHubService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        QaHubService,
-        { provide: AuthService, useValue: authServiceStub },
-      ],
+      providers: [QaHubService, { provide: AuthService, useValue: authServiceStub }],
     });
     service = TestBed.inject(QaHubService);
   });

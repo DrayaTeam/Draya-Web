@@ -22,14 +22,36 @@ import {
   SubmitAttemptResponseDto,
 } from '../models/student-exam-taking.model';
 
-function toExamWeaknessTopics(items: readonly StudentWeaknessItem[]): ExamWeaknessTopic[] {
-  return items.slice(0, 3).map((w) => ({
-    id: w.id,
-    title: w.topicName,
-    accuracyPercentage: w.proficiencyPercent,
-    aiTip: `نسبة إتقانك الحالية لهذا الموضوع ${w.proficiencyPercent}%. استخدم زر المراجعة التفاعلية في صفحة تقاريري لمزيد من التوصيات.`,
-    reviewLectureUrl: '/student/reports',
-  }));
+function toExamWeaknessTopics(
+  items: readonly StudentWeaknessItem[],
+  classroomId?: string | null,
+  attemptPct?: number,
+  examTopic?: string,
+): ExamWeaknessTopic[] {
+  return items.slice(0, 3).map((w) => {
+    let accuracy = w.proficiencyPercent;
+    if (
+      examTopic &&
+      (w.topicName.trim().toLowerCase() === examTopic.trim().toLowerCase() ||
+        examTopic.trim().toLowerCase().includes(w.topicName.trim().toLowerCase()))
+    ) {
+      if (typeof attemptPct === 'number' && attemptPct > 0) {
+        accuracy = attemptPct;
+      }
+    } else if (accuracy > 0 && accuracy <= 5) {
+      accuracy = Math.min(100, Math.round((accuracy / 5) * 100));
+    } else if (accuracy > 0 && accuracy <= 10) {
+      accuracy = Math.min(100, Math.round((accuracy / 10) * 100));
+    }
+
+    return {
+      id: w.id,
+      title: w.topicName,
+      accuracyPercentage: accuracy,
+      aiTip: `نسبة إتقانك لهذا الموضوع ${accuracy}%. استخدم زر المراجعة التفاعلية في صفحة تقاريري لمزيد من التوصيات.`,
+      reviewLectureUrl: classroomId ? `/student/classroom/${classroomId}` : '',
+    };
+  });
 }
 
 /** Tolerant shape of GET /exams/{examId}/student-view — untyped in swagger. */
@@ -126,6 +148,7 @@ export class StudentExamTakingService extends ApiBaseService {
   readonly isLoading = signal<boolean>(false);
   readonly currentAttemptId = signal<string | null>(null);
   readonly currentExamId = signal<string>('');
+  readonly currentClassroomId = signal<string | null>(null);
 
   readonly currentQuestionIndex = signal<number>(0);
   readonly isSubmitted = signal<boolean>(false);
@@ -317,6 +340,7 @@ export class StudentExamTakingService extends ApiBaseService {
         if (!exam) return;
         if (exam.title) this.examTitle.set(exam.title);
         if (exam.topic) this.examLevelText.set(`الموضوع: ${exam.topic}`);
+        if (exam.classroomId) this.currentClassroomId.set(exam.classroomId);
         const mapped = mapExamQuestions(exam.questions, exam.topic);
         if (mapped.length > 0) {
           this.questions.set(mapped);
@@ -782,7 +806,15 @@ export class StudentExamTakingService extends ApiBaseService {
         // showing the score/answers.
         if (!isGradingPending) {
           this.weaknessService.loadActiveWeaknesses().subscribe((list) => {
-            this.examResult.update((r) => ({ ...r, weaknessTopics: toExamWeaknessTopics(list) }));
+            this.examResult.update((r) => ({
+              ...r,
+              weaknessTopics: toExamWeaknessTopics(
+                list,
+                this.currentClassroomId(),
+                pct,
+                res.examTitle || this.examTitle(),
+              ),
+            }));
           });
         }
 

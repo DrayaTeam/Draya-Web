@@ -15,3 +15,9 @@ export interface AppNotification {
 }
 
 export type CreateNotificationPayload = Omit<AppNotification, 'id' | 'createdAt' | 'read'>;
+
+export interface PaginatedNotificationsResponse {
+  readonly items: AppNotification[];
+  readonly unreadCount: number;
+  readonly totalCount: number;
+}

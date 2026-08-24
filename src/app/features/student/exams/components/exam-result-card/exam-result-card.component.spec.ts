@@ -47,4 +47,37 @@ describe('ExamResultCardComponent', () => {
     expect(compiled.querySelector('.score-percentage')?.textContent).toContain('66.6%');
     expect(compiled.querySelector('.topic-title')?.textContent).toContain('التباديل');
   });
+
+  it('should not render lecture button when reviewLectureUrl is empty or #', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('.lecture-link-btn')).toBeNull();
+  });
+
+  it('should render lecture button and emit openLecture when valid URL provided', () => {
+    spyOn(component.openLecture, 'emit');
+
+    const reportWithUrl: ExamResultReport = {
+      ...mockReport,
+      weaknessTopics: [
+        {
+          id: 'w1',
+          title: 'التباديل وحساب المضاريب',
+          accuracyPercentage: 33,
+          aiTip: 'أخطاء متكررة.',
+          reviewLectureUrl: '/student/classroom/cls-123',
+        },
+      ],
+    };
+
+    fixture.componentRef.setInput('report', reportWithUrl);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const button = compiled.querySelector('.lecture-link-btn') as HTMLElement;
+    expect(button).toBeTruthy();
+    expect(button.textContent).toContain('الانتقال إلى الفصل الدراسي للمراجعة');
+
+    button.click();
+    expect(component.openLecture.emit).toHaveBeenCalledWith('/student/classroom/cls-123');
+  });
 });

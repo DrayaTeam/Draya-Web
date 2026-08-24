@@ -15,7 +15,6 @@ import { StudentReportsService } from '../../../core/services/student-reports.se
 import { StudentExamsService } from '../../../core/services/student-exams.service';
 import { StudentWeaknessService } from '../../../core/services/student-weakness.service';
 import { StudentExamSummaryDto as ExamDto } from '../../../core/models/student-exam.model';
-import { StudentWeaknessItem } from '../../../core/models/student-weakness.model';
 import { GenerationStatus } from '../../../core/models/exam-generation.model';
 import { AuthService } from '../../auth/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
@@ -28,23 +27,6 @@ import { DrayaCardSkeletonComponent } from '../../../shared/components/card-skel
 import { ReportWeaknessTopic, TopicRevisionDto } from '../../../core/models/student-reports.model';
 
 import { SignalRService } from '../../../core/signalr/signalr.service';
-
-/** Same color-by-severity rule the old analytics-derived mapping used. */
-function toReportWeaknessTopic(w: StudentWeaknessItem): ReportWeaknessTopic {
-  const isSevere = w.proficiencyPercent < 50;
-  return {
-    id: w.id,
-    topicTitle: w.topicName,
-    subjectName: w.subjectName,
-    badgeText: isSevere ? 'تحتاج تحسين عاجل' : 'في طور التحسن',
-    scorePercent: w.proficiencyPercent,
-    barMarkerColor: isSevere ? '#FF2056' : '#FE9A00',
-    badgeBgColor: isSevere ? '#FFE4E6' : '#FEF3C6',
-    badgeTextColor: isSevere ? '#A50036' : '#973C00',
-    scoreTextColor: isSevere ? '#EC003F' : '#E17100',
-    exampleIncorrectAnswers: w.exampleIncorrectAnswers,
-  };
-}
 
 function normalizeGenerationStatus(status: number | string | undefined): GenerationStatus | null {
   if (typeof status === 'number') return status as GenerationStatus;
@@ -111,10 +93,47 @@ export class StudentReportsComponent implements OnInit, OnDestroy {
   readonly isLoading = this.reportsService.isLoading;
 
   // Weaknesses are driven by the dedicated /Weaknesses/active and
-  // /Weaknesses/resolved endpoints now, not scraped from analytics.weakTopics[].
-  readonly activeWeaknessTopics = computed(() =>
-    this.weaknessService.activeWeaknesses().map(toReportWeaknessTopic),
-  );
+  // /Weaknesses/resolved endpoints, enriched with matching exam scores when available.
+  readonly activeWeaknessTopics = computed(() => {
+    const list = this.weaknessService.activeWeaknesses();
+    const exams = this.examsService.exams();
+
+    return list.map((w) => {
+      let finalScore = w.proficiencyPercent;
+      if (finalScore <= 10) {
+        const cleanName = w.topicName.trim().toLowerCase();
+        const matched = exams.find((e) => {
+          const t = e.title?.trim().toLowerCase() || '';
+          const s = e.subjectName?.trim().toLowerCase() || '';
+          return (
+            t === cleanName || t.includes(cleanName) || cleanName.includes(t) || s === cleanName
+          );
+        });
+
+        if (matched && typeof matched.scorePercent === 'number' && matched.scorePercent > 0) {
+          finalScore = matched.scorePercent;
+        } else if (finalScore > 0 && finalScore <= 5) {
+          finalScore = Math.min(100, Math.round((finalScore / 5) * 100));
+        } else if (finalScore > 0 && finalScore <= 10) {
+          finalScore = Math.min(100, Math.round((finalScore / 10) * 100));
+        }
+      }
+
+      const isSevere = finalScore < 50;
+      return {
+        id: w.id,
+        topicTitle: w.topicName,
+        subjectName: w.subjectName,
+        badgeText: isSevere ? 'تحتاج تحسين عاجل' : 'في طور التحسن',
+        scorePercent: finalScore,
+        barMarkerColor: isSevere ? '#FF2056' : '#FE9A00',
+        badgeBgColor: isSevere ? '#FFE4E6' : '#FEF3C6',
+        badgeTextColor: isSevere ? '#A50036' : '#973C00',
+        scoreTextColor: isSevere ? '#EC003F' : '#E17100',
+        exampleIncorrectAnswers: w.exampleIncorrectAnswers,
+      };
+    });
+  });
   readonly resolvedWeaknesses = this.weaknessService.resolvedWeaknesses;
   readonly isLoadingWeaknesses = computed(
     () => this.weaknessService.isLoadingActive() || this.weaknessService.isLoadingResolved(),
@@ -129,6 +148,12 @@ export class StudentReportsComponent implements OnInit, OnDestroy {
   readonly revisionLoadFailed = signal<boolean>(false);
   readonly currentTopicTitle = signal<string>('');
   readonly currentSubjectId = signal<string | undefined>(undefined);
+  readonly cachedTopicReviews = signal<Record<string, TopicRevisionDto>>({});
+
+  isTopicReviewed(topicTitle: string): boolean {
+    const clean = (topicTitle || '').trim().toLowerCase();
+    return !!this.cachedTopicReviews()[clean];
+  }
 
   constructor() {
     effect(() => {
@@ -177,8 +202,37 @@ export class StudentReportsComponent implements OnInit, OnDestroy {
       next: () => void 0,
       error: () => void 0,
     });
+    this.examsService.loadExams();
     this.weaknessService.loadActiveWeaknesses().subscribe();
     this.weaknessService.loadResolvedWeaknesses().subscribe();
+    this.loadCachedReviewsFromStorage();
+  }
+
+  private getStorageKey(): string {
+    const studentId = this.resolveStudentId() || 'anonymous';
+    return `draya_topic_reviews_${studentId}`;
+  }
+
+  private loadCachedReviewsFromStorage(): void {
+    try {
+      const raw = localStorage.getItem(this.getStorageKey());
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') {
+          this.cachedTopicReviews.set(parsed);
+        }
+      }
+    } catch {
+      // fallback silently
+    }
+  }
+
+  private saveCachedReviewsToStorage(): void {
+    try {
+      localStorage.setItem(this.getStorageKey(), JSON.stringify(this.cachedTopicReviews()));
+    } catch {
+      // fallback silently
+    }
   }
 
   ngOnDestroy(): void {
@@ -318,17 +372,27 @@ export class StudentReportsComponent implements OnInit, OnDestroy {
       this.toastService.error('خطأ في الجلسة', 'تعذر التعرف على حسابك، يرجى تسجيل الدخول مجدداً.');
       return;
     }
-    this.currentTopicTitle.set(topic.topicTitle);
+    const cleanTitle = (topic.topicTitle || '').trim();
+    const normalizedKey = cleanTitle.toLowerCase();
+    this.currentTopicTitle.set(cleanTitle);
     this.currentSubjectId.set(topic.subjectId);
+
+    // 1. Check local cache to avoid duplicate API calls if review was already generated
+    const cached = this.cachedTopicReviews()[normalizedKey];
+    if (cached) {
+      this.activeRevision.set(cached);
+      this.loadingRevision.set(false);
+      this.revisionLoadFailed.set(false);
+      this.showRevisionModal.set(true);
+      return;
+    }
+
+    // 2. Otherwise fetch from backend interactive-review endpoint
     this.showRevisionModal.set(true);
     this.loadingRevision.set(true);
     this.revisionLoadFailed.set(false);
 
-    // No client-side cache and no fabricated fallback here on purpose — the
-    // backend owns caching/invalidation of this response (see
-    // BACKEND_ISSUES_REPORT.md), and a fake "successful" response on error
-    // would hide real failures instead of surfacing them.
-    this.reportsService.getTopicRevision(studentId, topic.topicTitle).subscribe((rev) => {
+    this.reportsService.getTopicRevision(studentId, cleanTitle).subscribe((rev) => {
       this.loadingRevision.set(false);
       if (!rev) {
         this.revisionLoadFailed.set(true);
@@ -336,6 +400,12 @@ export class StudentReportsComponent implements OnInit, OnDestroy {
         return;
       }
       this.activeRevision.set(rev);
+      // Cache the successfully generated/fetched review
+      this.cachedTopicReviews.update((map) => ({
+        ...map,
+        [normalizedKey]: rev,
+      }));
+      this.saveCachedReviewsToStorage();
     });
   }
 
@@ -407,5 +477,309 @@ export class StudentReportsComponent implements OnInit, OnDestroy {
         },
       });
     });
+  }
+
+  onDownloadPdf(): void {
+    const rev = this.activeRevision();
+    if (!rev) return;
+
+    const topic = this.currentTopicTitle() || 'مراجعة الذكاء الاصطناعي';
+    const dateStr = new Date().toLocaleDateString('ar-EG', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    const studentUser = this.authService.currentUser();
+    const studentName = studentUser?.fullName || studentUser?.email || 'طالب منصة دراية';
+
+    // Helper to format Markdown lines to HTML for print
+    const formatMd = (text: string | null | undefined): string => {
+      if (!text) return '';
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/```([\s\S]*?)```/g, '<pre class="code-block"><code>$1</code></pre>')
+        .replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n\n/g, '<p></p>')
+        .replace(/\n- (.*)/g, '<li>$1</li>')
+        .replace(/\n\d+\. (.*)/g, '<li>$1</li>');
+    };
+
+    const recHtml = formatMd(rev.recommendation);
+    const expHtml = formatMd(rev.aiExplanation);
+
+    const incorrectList = (rev.exampleIncorrectAnswers || [])
+      .map((ans) => `<li>${ans}</li>`)
+      .join('');
+    const formulasList = (rev.keyFormulas || []).map((f) => `<li>${f}</li>`).join('');
+
+    const htmlContent = `
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <title>مراجعة وتشخيص - ${topic}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+      color: #1e293b;
+      background-color: #ffffff;
+      padding: 24px;
+      line-height: 1.6;
+      direction: rtl;
+      text-align: right;
+    }
+    @page {
+      size: A4 portrait;
+      margin: 12mm 15mm 15mm 15mm;
+    }
+    @media print {
+      body {
+        padding: 0;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+    .header-card {
+      background: linear-gradient(135deg, #1B6D63 0%, #0d4a43 100%);
+      color: #ffffff;
+      padding: 20px 24px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-subtitle {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+    .meta-box {
+      text-align: left;
+      font-size: 12px;
+      opacity: 0.95;
+      line-height: 1.5;
+    }
+    .meta-box span {
+      font-weight: 700;
+    }
+    .section-card {
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      page-break-inside: avoid;
+    }
+    .section-teal {
+      background-color: #f0fdf9;
+      border: 1px solid #99f6e4;
+    }
+    .section-teal h3 {
+      color: #115e59;
+    }
+    .section-slate {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+    .section-slate h3 {
+      color: #0f172a;
+    }
+    .section-rose {
+      background-color: #fff1f2;
+      border: 1px solid #fecdd3;
+    }
+    .section-rose h3 {
+      color: #9f1239;
+    }
+    .section-amber {
+      background-color: #fffbeb;
+      border: 1px solid #fde68a;
+    }
+    .section-amber h3 {
+      color: #92400e;
+    }
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .content-body {
+      font-size: 13px;
+      color: #334155;
+      line-height: 1.7;
+    }
+    .content-body p { margin-bottom: 8px; }
+    .content-body ul { margin-right: 20px; margin-bottom: 8px; }
+    .content-body li { margin-bottom: 4px; }
+    .code-block {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: 'Fira Code', Consolas, monospace;
+      padding: 12px 16px;
+      border-radius: 8px;
+      direction: ltr;
+      text-align: left;
+      font-size: 12px;
+      line-height: 1.5;
+      overflow-x: auto;
+      margin: 12px 0;
+    }
+    .inline-code {
+      background-color: #e2e8f0;
+      color: #0f172a;
+      font-family: 'Fira Code', monospace;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      direction: ltr;
+      display: inline-block;
+    }
+    .footer-bar {
+      margin-top: 24px;
+      padding-top: 12px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-card">
+    <div>
+      <div class="brand-title">
+        <span>🤖</span>
+        <span>منصة دراية | تقرير المراجعة والتشخيص الذكي</span>
+      </div>
+      <div class="brand-subtitle">الموضوع: ${topic}</div>
+    </div>
+    <div class="meta-box">
+      <div>الطالب: <span>${studentName}</span></div>
+      <div>التاريخ: <span>${dateStr}</span></div>
+    </div>
+  </div>
+
+  ${
+    recHtml
+      ? `
+  <div class="section-card section-teal">
+    <div class="section-title">
+      <span>💡</span>
+      <span>التوصية الأكاديمية</span>
+    </div>
+    <div class="content-body">
+      ${recHtml}
+    </div>
+  </div>`
+      : ''
+  }
+
+  ${
+    expHtml
+      ? `
+  <div class="section-card section-slate">
+    <div class="section-title">
+      <span>🔍</span>
+      <span>التحليل التشخيصي والمفاهيم الجوهرية</span>
+    </div>
+    <div class="content-body">
+      ${expHtml}
+    </div>
+  </div>`
+      : ''
+  }
+
+  ${
+    incorrectList
+      ? `
+  <div class="section-card section-rose">
+    <div class="section-title">
+      <span>⚠️</span>
+      <span>أمثلة على الإجابات غير الدقيقة ونقاط الانتباه</span>
+    </div>
+    <div class="content-body">
+      <ul>${incorrectList}</ul>
+    </div>
+  </div>`
+      : ''
+  }
+
+  ${
+    formulasList
+      ? `
+  <div class="section-card section-amber">
+    <div class="section-title">
+      <span>📌</span>
+      <span>القوانين والنقاط المفتاحية</span>
+    </div>
+    <div class="content-body">
+      <ul>${formulasList}</ul>
+    </div>
+  </div>`
+      : ''
+  }
+
+  <div class="footer-bar">
+    <span>منصة دراية للتعليم الذكي © ${new Date().getFullYear()}</span>
+    <span>تقرير تشخيصي صادر بالذكاء الاصطناعي</span>
+  </div>
+</body>
+</html>`;
+
+    // Create a printable hidden iframe
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const iframeDoc = iframe.contentWindow?.document || iframe.contentDocument;
+    if (iframeDoc) {
+      iframeDoc.open();
+      iframeDoc.write(htmlContent);
+      iframeDoc.close();
+
+      setTimeout(() => {
+        try {
+          iframe.contentWindow?.focus();
+          iframe.contentWindow?.print();
+        } catch {
+          const printWindow = window.open('', '_blank');
+          if (printWindow) {
+            printWindow.document.write(htmlContent);
+            printWindow.document.close();
+          }
+        } finally {
+          setTimeout(() => {
+            iframe.remove();
+          }, 3000);
+        }
+      }, 300);
+
+      this.toastService.info(
+        'جاري تجهيز ملف الـ PDF 📄',
+        'تم فتح نافذة الطباعة والحفظ بصيغة PDF بنجاح.',
+      );
+    }
   }
 }

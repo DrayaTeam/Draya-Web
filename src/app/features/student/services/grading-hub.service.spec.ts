@@ -4,6 +4,9 @@ import { GradingHubService } from './grading-hub.service';
 import { AuthService } from '../../auth/services/auth.service';
 import { signal } from '@angular/core';
 
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+
 // Minimal stub for AuthService
 const authServiceStub = {
   accessToken: signal<string | null>('test-token'),
@@ -16,7 +19,12 @@ describe('GradingHubService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [GradingHubService, { provide: AuthService, useValue: authServiceStub }],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        GradingHubService,
+        { provide: AuthService, useValue: authServiceStub },
+      ],
     });
     service = TestBed.inject(GradingHubService);
   });

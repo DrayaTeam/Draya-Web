@@ -8,8 +8,8 @@ export const environment = {
   qaHubUrl: '/hubs/qa',
   useMockTeacherDashboardApi: true,
   useMockAuthApi: false,
-  // Flip to true once backend confirms /hubs/notifications is live.
-  enableNotificationsHub: false,
+  // Hub is now live on backend
+  enableNotificationsHub: true,
   enableQaHub: true,
   examHubUrl: '/hubs/exam-generation',
   enableExamHub: true,

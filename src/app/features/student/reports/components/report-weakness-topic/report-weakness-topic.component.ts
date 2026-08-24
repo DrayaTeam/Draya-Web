@@ -14,5 +14,6 @@ import { ReportWeaknessTopic } from '../../../../../core/models/student-reports.
 })
 export class ReportWeaknessTopicComponent {
   readonly topic = input.required<ReportWeaknessTopic>();
+  readonly isReviewed = input<boolean>(false);
   readonly startReview = output<ReportWeaknessTopic>();
 }

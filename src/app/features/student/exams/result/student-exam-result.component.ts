@@ -78,9 +78,22 @@ export class StudentExamResultComponent implements OnInit {
   }
 
   onOpenLecture(lectureUrl: string): void {
-    void lectureUrl;
-    this.toastService.info('المحاضرة التأسيسية', `جاري التوجيه إلى المحاضرة التأسيسية للمراجعة...`);
-    this.router.navigate(['/student/courses']);
+    if (!lectureUrl || lectureUrl.trim() === '' || lectureUrl.trim() === '#') {
+      return;
+    }
+
+    const trimmed = lectureUrl.trim();
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      window.open(trimmed, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    if (trimmed.startsWith('/')) {
+      this.router.navigateByUrl(trimmed);
+      return;
+    }
+
+    this.router.navigate(['/student/classroom', trimmed]);
   }
 
   onBackToExams(): void {

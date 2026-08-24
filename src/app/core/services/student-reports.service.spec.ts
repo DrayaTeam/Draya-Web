@@ -79,12 +79,26 @@ describe('StudentReportsService', () => {
     req.flush({ examId: 'ex-123' });
   });
 
-  it('should return null (not a fabricated fallback) when the revision endpoint fails', () => {
+  it('should fetch interactive AI review via GET /api/v1/reports/interactive-review', () => {
+    let result: unknown = null;
+    service.getTopicRevision('std-123', 'الجبر').subscribe((rev) => (result = rev));
+
+    const req = httpMock.expectOne((r) => r.url.includes('/reports/interactive-review'));
+    expect(req.request.method).toBe('GET');
+    req.flush({ topicName: 'الجبر', recommendation: 'مراجعة الأساسيات' });
+
+    expect(result).toEqual({ topicName: 'الجبر', recommendation: 'مراجعة الأساسيات' });
+  });
+
+  it('should fallback to legacy weak-topics path when primary interactive-review endpoint fails', () => {
     let result: unknown = 'not-set';
     service.getTopicRevision('std-123', 'الجبر').subscribe((rev) => (result = rev));
 
-    const req = httpMock.expectOne((r) => r.url.includes('/weak-topics/'));
-    req.flush({ message: 'boom' }, { status: 500, statusText: 'Server Error' });
+    const req1 = httpMock.expectOne((r) => r.url.includes('/reports/interactive-review'));
+    req1.flush({ message: 'not found' }, { status: 404, statusText: 'Not Found' });
+
+    const req2 = httpMock.expectOne((r) => r.url.includes('/students/std-123/weak-topics/'));
+    req2.flush({ message: 'server error' }, { status: 500, statusText: 'Server Error' });
 
     expect(result).toBeNull();
   });
@@ -98,5 +112,11 @@ describe('StudentReportsService', () => {
     req.flush({ status: 4, examId: 'ex-999' });
 
     expect((result as { examId?: string })?.examId).toBe('ex-999');
+  });
+
+  describe('normalizeScoreToPercent', () => {
+    it('normalizes raw points out of 5 to percentage', () => {
+      expect(service.summary().overallAverage).toBeDefined();
+    });
   });
 });

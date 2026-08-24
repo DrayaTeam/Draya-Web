@@ -16,6 +16,19 @@ import {
   PerformanceReportDto,
 } from '../models/student-reports.model';
 
+export function normalizeScoreToPercent(val: number): number {
+  if (!val || val <= 0) return 0;
+  if (val > 10 && val <= 100) return Math.round(val);
+  // Raw point scores out of 5 or 10
+  if (val <= 5) {
+    return Math.min(100, Math.round((val / 5) * 100));
+  }
+  if (val <= 10) {
+    return Math.min(100, Math.round((val / 10) * 100));
+  }
+  return Math.min(100, Math.round(val));
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -93,12 +106,15 @@ export class StudentReportsService extends ApiBaseService {
             (sorted[0] as { scorePercentage?: number }).scorePercentage ||
             (sorted[0] as { proficiencyScore?: number }).proficiencyScore ||
             0;
-          topScore = Math.round(rawTop);
+          topScore = normalizeScoreToPercent(rawTop);
         }
 
-        const avg = analytics?.overallAverage ?? 0;
+        const rawAvg = analytics?.overallAverage ?? 0;
         const examsCount = analytics?.completedExams ?? 0;
-        const highest = analytics?.highestScore ?? topScore;
+        const rawHighest = analytics?.highestScore ?? topScore;
+
+        const avg = normalizeScoreToPercent(rawAvg);
+        const highest = normalizeScoreToPercent(rawHighest);
 
         // Derived from the trend series itself (last two monthly averages) rather
         // than a backend-provided field — no endpoint returns a growth percentage
@@ -113,10 +129,10 @@ export class StudentReportsService extends ApiBaseService {
         }
 
         this.summary.set({
-          overallAverage: Math.round(avg),
+          overallAverage: avg,
           monthlyGrowthPercent,
           completedExamsCount: examsCount,
-          topScorePercent: Math.round(highest),
+          topScorePercent: highest,
           topSkillSubjectName: topSubjectName,
           topSkillScorePercent: topScore,
           summaryText: report?.summaryText || undefined,
@@ -148,7 +164,7 @@ export class StudentReportsService extends ApiBaseService {
           return {
             id: (s as { subjectId?: string }).subjectId || `sub_${idx}`,
             subjectName: s.subjectName || `مادة ${idx + 1}`,
-            scorePercent: Math.round(rawScore),
+            scorePercent: normalizeScoreToPercent(rawScore),
             progressGradient: gradients[idx % gradients.length],
             textColor: textColors[idx % textColors.length],
             bgColor: bgColors[idx % bgColors.length],
@@ -236,21 +252,32 @@ export class StudentReportsService extends ApiBaseService {
   }
 
   /**
-   * Fetches AI-generated revision recommendations for a specific weak topic.
-   * GET /api/v1/students/{studentId}/weak-topics/{topicName}/revision
-   *
-   * The backend caches this response (see BACKEND_ISSUES_REPORT.md) and
-   * invalidates it automatically when the student's score on this topic
-   * changes — the client adds no cache of its own on top of that, and does
-   * NOT fabricate a fallback on error, since a fake "successful" AI response
-   * would mask real failures (missing weakness, backend down, etc).
+   * Fetches AI-generated interactive review recommendations for a specific weak topic.
+   * Primary: GET /api/v1/reports/interactive-review?topicName={TopicName}
+   * Fallback: GET /api/v1/students/{studentId}/weak-topics/{topicName}/revision
    */
   getTopicRevision(studentId: string, topicName: string): Observable<TopicRevisionDto | null> {
     const cleanTopic = (topicName || '').trim();
     const encodedTopic = encodeURIComponent(cleanTopic);
-    return this.get<TopicRevisionDto>(
-      `/students/${studentId}/weak-topics/${encodedTopic}/revision`,
-    ).pipe(catchError(() => of(null)));
+    return this.get<TopicRevisionDto>(`/reports/interactive-review?topicName=${encodedTopic}`).pipe(
+      catchError(() => {
+        if (studentId) {
+          return this.get<TopicRevisionDto>(
+            `/students/${studentId}/weak-topics/${encodedTopic}/revision`,
+          );
+        }
+        return of(null);
+      }),
+      catchError(() => of(null)),
+    );
+  }
+
+  /**
+   * Direct alias for fetching interactive AI review by topic name
+   * GET /api/v1/reports/interactive-review?topicName={TopicName}
+   */
+  getInteractiveReview(topicName: string, studentId?: string): Observable<TopicRevisionDto | null> {
+    return this.getTopicRevision(studentId || '', topicName);
   }
 
   /**

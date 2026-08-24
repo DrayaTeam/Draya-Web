@@ -112,6 +112,18 @@
       transform: translateX(-3px);
     }
   }
+
+  &.action-btn-reviewed {
+    background: #eef9f6;
+    border-color: #1b6d63;
+    color: #1b6d63;
+    font-weight: 700;
+
+    &:hover {
+      background: #1b6d63;
+      color: #ffffff;
+    }
+  }
 }
 
 @media (max-width: 768px) {

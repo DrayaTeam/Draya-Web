@@ -18,6 +18,7 @@ import {
 import { AuthService } from '../../features/auth/services/auth.service';
 import { NotificationStoreService } from '../services/notification-store.service';
 import { environment } from '../../../environments/environment';
+import type { AppNotification } from '../models/notification.model';
 import type {
   MaterialParsedEvent,
   ExamGenerationCompletedEvent,
@@ -141,6 +142,17 @@ export class SignalRService {
     this.connection.onclose(() => this._status.set('Disconnected'));
 
     // ── Typed server-to-client event handlers ─────────────────────────────
+    // 1. Unified Hub notifications pushed from backend
+    this.connection.on('ReceiveNotification', (payload: AppNotification) => {
+      console.log('[SignalR] ReceiveNotification received:', payload);
+      this.notificationStore.receiveRemoteNotification(payload);
+    });
+    this.connection.on('receiveNotification', (payload: AppNotification) => {
+      console.log('[SignalR] receiveNotification received:', payload);
+      this.notificationStore.receiveRemoteNotification(payload);
+    });
+
+    // 2. Specific hub events
     this.connection.on('MaterialParsed', (payload: MaterialParsedEvent) => {
       this._materialParsed.set(payload);
       this.notificationStore.addNotification({

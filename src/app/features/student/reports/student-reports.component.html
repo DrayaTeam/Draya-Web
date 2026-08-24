@@ -329,6 +329,7 @@
         @for (topic of activeWeaknessTopics(); track topic.id) {
           <app-report-weakness-topic
             [topic]="topic"
+            [isReviewed]="isTopicReviewed(topic.topicTitle)"
             (startReview)="onStartReview($event)"></app-report-weakness-topic>
         } @empty {
           @if (!isLoadingWeaknesses()) {
@@ -389,13 +390,38 @@
               <p class="text-xs font-medium text-teal-700">{{ currentTopicTitle() }}</p>
             </div>
           </div>
-          <button
-            type="button"
-            class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-            aria-label="إغلاق النافذة"
-            (click)="closeRevisionModal()">
-            ✕
-          </button>
+          <div class="flex items-center gap-2">
+            @if (activeRevision() && !loadingRevision()) {
+              <button
+                type="button"
+                class="flex items-center gap-1.5 rounded-lg border border-teal-200 bg-teal-50 px-2.5 py-1.5 text-xs font-bold text-teal-700 shadow-sm transition hover:bg-teal-100 hover:text-teal-800"
+                aria-label="تحميل التقرير كـ PDF"
+                title="تحميل ملخص المراجعة كملف PDF"
+                (click)="onDownloadPdf()">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                <span class="hidden sm:inline">تحميل PDF</span>
+              </button>
+            }
+            <button
+              type="button"
+              class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              aria-label="إغلاق النافذة"
+              (click)="closeRevisionModal()">
+              ✕
+            </button>
+          </div>
         </div>
 
         <!-- Modal Body (Scrollable with max-height constraint) -->
@@ -488,12 +514,36 @@
         <!-- Modal Footer (Fixed) -->
         <div
           class="flex flex-shrink-0 flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/80 px-5 py-4 sm:px-6">
-          <button
-            type="button"
-            class="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
-            (click)="closeRevisionModal()">
-            إغلاق
-          </button>
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              class="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
+              (click)="closeRevisionModal()">
+              إغلاق
+            </button>
+            @if (activeRevision() && !loadingRevision()) {
+              <button
+                type="button"
+                class="flex items-center gap-1.5 rounded-xl border border-teal-600 bg-white px-4 py-2.5 text-sm font-bold text-teal-700 shadow-sm transition hover:bg-teal-50 active:scale-95"
+                (click)="onDownloadPdf()"
+                title="تنزيل التقرير والمراجعة كملف PDF">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                <span>تحميل كـ PDF</span>
+              </button>
+            }
+          </div>
           <button
             type="button"
             class="flex items-center gap-2 rounded-xl bg-teal-700 px-5 py-2.5 text-sm font-bold text-white shadow-md transition hover:bg-teal-800 active:scale-95 disabled:opacity-50"

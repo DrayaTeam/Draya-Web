@@ -2,7 +2,7 @@
   <!-- Right Card: Estimated Score & Grade -->
   <div class="score-card" [class.pending-card]="report().isGradingPending">
     <span class="card-subtitle">
-      {{ report().isGradingPending ? 'حالة التقييم' : 'النتيجة التقديرية' }}
+      {{ report().isGradingPending ? 'حالة التقييم' : 'النتيجة' }}
     </span>
     <h2
       class="score-percentage"
@@ -75,23 +75,35 @@
               <span class="tip-text">{{ topic.aiTip }}</span>
             </div>
 
-            <button
-              type="button"
-              class="lecture-link-btn"
-              (click)="openLecture.emit(topic.reviewLectureUrl)">
-              <span>افتح المحاضرة التأسيسية للمراجعة</span>
-              <svg
-                class="link-arrow"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-            </button>
+            @if (
+              topic.reviewLectureUrl &&
+              topic.reviewLectureUrl.trim() !== '' &&
+              topic.reviewLectureUrl.trim() !== '#'
+            ) {
+              <button
+                type="button"
+                class="lecture-link-btn"
+                (click)="openLecture.emit(topic.reviewLectureUrl)">
+                <span>
+                  {{
+                    topic.reviewLectureUrl.includes('classroom')
+                      ? 'الانتقال إلى الفصل الدراسي للمراجعة'
+                      : 'افتح المحاضرة التأسيسية للمراجعة'
+                  }}
+                </span>
+                <svg
+                  class="link-arrow"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </button>
+            }
           </div>
         }
       </div>

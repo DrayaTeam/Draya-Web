@@ -53,6 +53,64 @@ export function deriveExamStatus(
   return 'available';
 }
 
+export function formatExamScoreDisplay(
+  score: number | null | undefined,
+  questionsCount?: number,
+  maxScore?: number,
+): { text: string; percent: number | null } {
+  if (score === undefined || score === null) {
+    return { text: 'تم التسليم', percent: null };
+  }
+
+  const rawScore = Number(score);
+  if (rawScore <= 0) {
+    return { text: 'الدرجة: 0%', percent: 0 };
+  }
+
+  const total = Number(maxScore || questionsCount || 0);
+
+  // If explicit total is known (e.g. 5 questions) and rawScore is points (e.g. 3)
+  if (total > 0 && rawScore <= total) {
+    const percent = Math.min(100, Math.round((rawScore / total) * 100));
+    return {
+      text: `الدرجة: ${percent}%`,
+      percent,
+    };
+  }
+
+  // If rawScore is already a percentage (e.g. 60, 85, 100)
+  if (rawScore > 10 && rawScore <= 100) {
+    return {
+      text: `الدرجة: ${Math.round(rawScore)}%`,
+      percent: Math.round(rawScore),
+    };
+  }
+
+  // If rawScore is out of 5 (e.g. 1, 2, 3, 4, 5)
+  if (rawScore <= 5) {
+    const percent = Math.min(100, Math.round((rawScore / 5) * 100));
+    return {
+      text: `الدرجة: ${percent}%`,
+      percent,
+    };
+  }
+
+  // If rawScore is out of 10 (e.g. 6, 7, 8, 9, 10)
+  if (rawScore <= 10) {
+    const percent = Math.min(100, Math.round((rawScore / 10) * 100));
+    return {
+      text: `الدرجة: ${percent}%`,
+      percent,
+    };
+  }
+
+  const percent = Math.min(100, Math.round(rawScore));
+  return {
+    text: `الدرجة: ${percent}%`,
+    percent,
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 export class StudentExamsService extends ApiBaseService {
   readonly headerInfo = signal<StudentExamsHeaderInfo>({
@@ -134,13 +192,16 @@ export class StudentExamsService extends ApiBaseService {
             let statusLabel = 'متاح للحل الآن 🔥';
             let secondaryDetailText = 'جاهز للبدء';
 
+            const scoreInfo = formatExamScoreDisplay(
+              ex.latestScore,
+              ex.questionsCount || ex.totalQuestions,
+              ex.maxScore,
+            );
+
             switch (status) {
               case 'completed':
                 statusLabel = 'مكتمل ومصحح ✅';
-                secondaryDetailText =
-                  ex.latestScore !== undefined && ex.latestScore !== null
-                    ? `الدرجة: ${ex.latestScore}%`
-                    : 'تم التسليم';
+                secondaryDetailText = scoreInfo.text;
                 break;
               case 'in-progress':
                 statusLabel = 'جلسة جارية ⏳';
@@ -190,7 +251,7 @@ export class StudentExamsService extends ApiBaseService {
               cornerTintBg: colors[idx % colors.length],
               allowedAttempts: ex.allowedAttempts ?? 1,
               attemptsTaken: ex.usedAttempts ?? attempts.length,
-              scorePercent: ex.latestScore,
+              scorePercent: scoreInfo.percent ?? ex.latestScore,
               latestAttemptId: latestAttempt?.id,
               needsTeacherReview,
             };

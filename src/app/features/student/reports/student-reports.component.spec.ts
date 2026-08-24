@@ -81,4 +81,62 @@ describe('StudentReportsComponent', () => {
     component.closeRevisionModal();
     expect(component.showRevisionModal()).toBeFalse();
   });
+
+  it('should trigger PDF download when activeRevision is present', () => {
+    const toastService = TestBed.inject(ToastService);
+    const toastSpy = spyOn(toastService, 'info');
+
+    // Should do nothing when activeRevision is null
+    component.activeRevision.set(null);
+    component.onDownloadPdf();
+    expect(toastSpy).not.toHaveBeenCalled();
+
+    // Should create iframe and trigger toast when activeRevision is set
+    component.activeRevision.set({
+      topicName: 'المشتقات',
+      recommendation: 'مراجعة الأساسيات',
+      aiExplanation: 'شرح تفصيلي للموضوع',
+      exampleIncorrectAnswers: ['إجابة خاطئة 1'],
+      keyFormulas: ['القانون الأول'],
+    });
+    component.currentTopicTitle.set('المشتقات');
+
+    component.onDownloadPdf();
+    expect(toastSpy).toHaveBeenCalledWith(
+      'جاري تجهيز ملف الـ PDF 📄',
+      'تم فتح نافذة الطباعة والحفظ بصيغة PDF بنجاح.',
+    );
+  });
+
+  it('should use cached review and not call getTopicRevision again', () => {
+    const revisionSpy = spyOn(reportsService, 'getTopicRevision').and.returnValue(
+      of({
+        topicName: 'المشتقات والتكامل',
+        recommendation: 'توصية',
+      }),
+    );
+
+    const mockWeakness = {
+      id: 'test-1',
+      topicTitle: 'المشتقات والتكامل',
+      subjectName: 'الرياضيات',
+      badgeText: 'تحسين',
+      scorePercent: 40,
+      barMarkerColor: '#FF0000',
+      badgeBgColor: '#FFF',
+      badgeTextColor: '#000',
+      scoreTextColor: '#FF0000',
+    };
+
+    // 1st call: not cached, calls endpoint
+    component.onStartReview(mockWeakness);
+    expect(revisionSpy).toHaveBeenCalledTimes(1);
+    expect(component.isTopicReviewed('المشتقات والتكامل')).toBeTrue();
+
+    // 2nd call: cached, must NOT call endpoint again
+    revisionSpy.calls.reset();
+    component.onStartReview(mockWeakness);
+    expect(revisionSpy).not.toHaveBeenCalled();
+    expect(component.activeRevision()?.topicName).toBe('المشتقات والتكامل');
+  });
 });

@@ -23,6 +23,9 @@ export interface StudentExamSummaryDto {
   startDate?: string;
   endDate?: string | null;
   allowedAttempts?: number;
+  questionsCount?: number;
+  totalQuestions?: number;
+  maxScore?: number;
   createdAt?: string;
   hasSubmitted?: boolean;
   attemptStatus?: 'NotStarted' | 'InProgress' | 'PendingGrading' | 'Completed' | string;
