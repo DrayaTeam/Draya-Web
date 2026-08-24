@@ -522,8 +522,6 @@
       "EMPTY_DESC": "You haven't created any classrooms matching your filters yet. Click the button above to start."
     },
     "DASHBOARD": {
-      "CURRENT_DATE": "Sunday, July 20, 2026",
-      "GREETING": "Good evening, Mr. Mohamed",
       "GREETING_SUBTITLE": "Here is a summary of your academy activity today",
       "REVIEW_AI_BTN": "Review AI Reports",
       "AI_BANNER": {
