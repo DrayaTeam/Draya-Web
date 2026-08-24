@@ -10,6 +10,7 @@ import { StudentDashboardComponent } from './student-dashboard.component';
 import { StudentDashboardService } from '../../../core/services/student-dashboard.service';
 import { AuthService } from '../../auth';
 import { ToastService } from '../../../core/services/toast.service';
+import { UpcomingExamItem } from '../../../core/models/student-dashboard.model';
 
 describe('StudentDashboardComponent', () => {
   let component: StudentDashboardComponent;
@@ -46,7 +47,16 @@ describe('StudentDashboardComponent', () => {
               subscribedPackagesCount: 3,
             }),
             enrolledCourses: signal([]),
-            upcomingExams: signal([]),
+            upcomingExams: signal<UpcomingExamItem[]>(
+              Array.from({ length: 5 }, (_, i) => ({
+                id: `exam_${i + 1}`,
+                title: `اختبار ${i + 1}`,
+                timeText: 'غداً',
+                tagText: 'رياضيات',
+                borderMarkerColor: '#E17100',
+                isImportant: false,
+              })),
+            ),
             weaknessTopics: signal([]),
             loadDashboard: () => undefined,
           },
@@ -71,5 +81,13 @@ describe('StudentDashboardComponent', () => {
   it('should limit displayed courses to 3 items', () => {
     expect(component.displayedCourses().length).toBe(0);
     expect(component.remainingCoursesCount()).toBe(0);
+  });
+
+  it('should limit the dashboard upcoming-exams widget to 3 items even though more exist', () => {
+    // Regression test: the widget used to render every upcoming exam with no
+    // cap, unlike the courses list which was already capped to 3. Full list
+    // is still reachable via the "عرض كل الامتحانات" link to /student/exams.
+    expect(component.upcomingExams().length).toBe(5);
+    expect(component.displayedUpcomingExams().length).toBe(3);
   });
 });

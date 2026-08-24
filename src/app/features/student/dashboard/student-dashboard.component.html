@@ -386,7 +386,7 @@
 
           <div class="exams-list-group">
             @if (upcomingExams().length > 0) {
-              @for (exam of upcomingExams(); track exam.id) {
+              @for (exam of displayedUpcomingExams(); track exam.id) {
                 <draya-upcoming-exam-card [exam]="exam" />
               }
             } @else {
