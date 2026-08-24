@@ -6,6 +6,7 @@ import { AuthService } from '../../../auth';
 import { ThemeService } from '../../../../core/services/theme.service';
 import { LocaleService } from '../../../../core/locale/locale.service';
 import { LogoComponent } from '../../../../shared/components/logo/logo.component';
+import { TeacherPendingReviewsComponent } from '../../dashboard/components/teacher-pending-reviews/teacher-pending-reviews.component';
 
 export interface NavGroup {
   headerKey: string;
@@ -34,7 +35,13 @@ export interface NavItem {
 @Component({
   selector: 'draya-teacher-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, TranslatePipe, LogoComponent],
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    TranslatePipe,
+    LogoComponent,
+    TeacherPendingReviewsComponent,
+  ],
   templateUrl: './teacher-sidebar.component.html',
   styleUrl: './teacher-sidebar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

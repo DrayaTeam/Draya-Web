@@ -34,4 +34,15 @@ describe('TeacherSidebarComponent', () => {
     expect(component.navGroups.length).toBeGreaterThan(0);
     expect(component.footerNavItems.length).toBeGreaterThan(0);
   });
+
+  it('renders the pending-reviews widget inside the sidebar itself', () => {
+    // Regression test: this widget used to live in the dashboard page's main
+    // content column, not the persistent nav sidebar, so it only showed up
+    // on the dashboard route. It must render inside <aside> here so it's
+    // visible from every teacher route, not just the dashboard.
+    const widget = fixture.nativeElement.querySelector('aside draya-teacher-pending-reviews');
+    expect(widget)
+      .withContext('draya-teacher-pending-reviews should render inside the sidebar aside')
+      .not.toBeNull();
+  });
 });
