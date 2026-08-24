@@ -214,19 +214,29 @@ export class PackageDetailsComponent implements OnInit {
       return 'معاينة وتحميل 📄';
     }
     if (les.type === 'exam') {
-      const now = new Date();
-      if (les.startDate && new Date(les.startDate) > now) {
-        const d = new Date(les.startDate);
-        const dateStr = d.toLocaleDateString('ar-EG', {
-          day: 'numeric',
-          month: 'short',
-        });
-        return `يبدأ ${dateStr} ⏳`;
+      switch (les.examStatus) {
+        case 'in-progress':
+          return 'متابعة المحاولة ⏳';
+        case 'pending-grading':
+          return 'قيد التصحيح 🧠';
+        case 'completed':
+          return 'عرض النتيجة ✅';
+        case 'scheduled': {
+          if (les.startDate) {
+            const dateStr = new Date(les.startDate).toLocaleDateString('ar-EG', {
+              day: 'numeric',
+              month: 'short',
+            });
+            return `يبدأ ${dateStr} ⏳`;
+          }
+          return 'مجدول لاحقاً ⏳';
+        }
+        case 'expired':
+          return 'انتهت الفترة ⛔';
+        case 'available':
+        default:
+          return 'امتحن الآن ✍️';
       }
-      if (les.endDate && new Date(les.endDate) < now) {
-        return 'انتهت الفترة ⛔';
-      }
-      return 'امتحن الآن ✍️';
     }
     return 'مشاهدة الآن ▶';
   }
@@ -234,31 +244,55 @@ export class PackageDetailsComponent implements OnInit {
   onSelectLesson(lesson: LessonItem): void {
     if (this.isEnrolled()) {
       if (lesson.type === 'exam') {
-        const now = new Date();
-        if (lesson.startDate && new Date(lesson.startDate) > now) {
-          const d = new Date(lesson.startDate).toLocaleDateString('ar-EG', {
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-          });
-          this.toast.info('موعد الامتحان', `هذا الامتحان مجدول وسيبدأ في: ${d}.`);
-          return;
+        const examId =
+          lesson.id && !lesson.id.startsWith('les_') && !lesson.id.startsWith('exam_')
+            ? lesson.id
+            : null;
+
+        switch (lesson.examStatus) {
+          case 'scheduled': {
+            const d = lesson.startDate
+              ? new Date(lesson.startDate).toLocaleDateString('ar-EG', {
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : '';
+            this.toast.info(
+              'موعد الامتحان',
+              d ? `هذا الامتحان مجدول وسيبدأ في: ${d}.` : 'هذا الامتحان لم يبدأ بعد.',
+            );
+            return;
+          }
+          case 'expired':
+            this.toast.warning(
+              'انتهت فترة الامتحان ⛔',
+              'لقد انتهت الفترة الزمنية المحددة لأداء هذا الامتحان.',
+            );
+            return;
+          case 'completed':
+          case 'pending-grading':
+            this.toast.info('تقرير النتيجة', `فتح تقرير الإجابات لاختبار: ${lesson.title}`);
+            if (examId) {
+              this.router.navigate(['/student/exams', examId, 'result'], {
+                queryParams: lesson.latestAttemptId ? { attemptId: lesson.latestAttemptId } : {},
+              });
+            } else {
+              this.router.navigate(['/student/exams']);
+            }
+            return;
+          case 'in-progress':
+          case 'available':
+          default:
+            this.toast.info('اختبار تدريبي', `جارٍ الانتقال للامتحان: ${lesson.title}`);
+            if (examId) {
+              this.router.navigate(['/student/exams', examId, 'take']);
+            } else {
+              this.router.navigate(['/student/exams']);
+            }
+            return;
         }
-        if (lesson.endDate && new Date(lesson.endDate) < now) {
-          this.toast.warning(
-            'انتهت فترة الامتحان ⛔',
-            'لقد انتهت الفترة الزمنية المحددة لأداء هذا الامتحان.',
-          );
-          return;
-        }
-        this.toast.info('اختبار تدريبي', `جارٍ الانتقال للامتحان: ${lesson.title}`);
-        if (lesson.id && !lesson.id.startsWith('les_') && !lesson.id.startsWith('exam_')) {
-          this.router.navigate(['/student/exams', lesson.id, 'take']);
-        } else {
-          this.router.navigate(['/student/exams']);
-        }
-        return;
       }
       // Open lesson viewer modal
       this.selectedLesson.set(lesson);

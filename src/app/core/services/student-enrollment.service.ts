@@ -10,6 +10,12 @@ import {
   ClassroomFeedbackSummaryDto,
   SubmitClassroomFeedbackRequest,
 } from '../models/student-courses.model';
+import {
+  ExamStatusType,
+  StudentExamSummaryDto,
+  StudentExamAttemptSummaryDto,
+} from '../models/student-exam.model';
+import { deriveExamStatus } from './student-exams.service';
 
 export interface ClassroomMaterialDto {
   materialId: string;
@@ -52,6 +58,18 @@ export interface LessonItem {
   endDate?: string | null;
   allowedAttempts?: number;
   isAvailable?: boolean;
+  /**
+   * Real exam lifecycle state (only meaningful when type === 'exam'), derived
+   * the same way the exams list page does via deriveExamStatus() -- so this
+   * card and the exams list never disagree about whether an exam is still
+   * open, already submitted, or awaiting grading.
+   */
+  examStatus?: ExamStatusType;
+  usedAttempts?: number;
+  latestScore?: number | null;
+  maxScore?: number;
+  latestAttemptId?: string;
+  needsTeacherReview?: boolean;
 }
 
 export interface SectionItemDto {
@@ -221,36 +239,13 @@ export class StudentEnrollmentService extends ApiBaseService {
       sectionsRes: this.get<SectionItemDto[] | { items?: SectionItemDto[] }>(
         `/classrooms/${classroomId}/sections`,
       ).pipe(catchError(() => of(null))),
-      examsRes: this.get<
-        | {
-            items?: {
-              id?: string;
-              examId?: string;
-              sectionId?: string;
-              title?: string;
-              topic?: string;
-              durationMinutes?: number;
-              allowedAttempts?: number;
-              questionsCount?: number;
-              questions?: unknown[];
-              startDate?: string;
-              endDate?: string;
-            }[];
-          }
-        | {
-            id?: string;
-            examId?: string;
-            sectionId?: string;
-            title?: string;
-            topic?: string;
-            durationMinutes?: number;
-            allowedAttempts?: number;
-            questionsCount?: number;
-            questions?: unknown[];
-            startDate?: string;
-            endDate?: string;
-          }[]
-      >('/students/exams', { page: 1, pageSize: 50 }).pipe(
+      // Confirmed shape (StudentExamSummaryDto) -- carries hasSubmitted/attemptStatus/
+      // latestScore/usedAttempts/attempts, needed to know an exam's real lifecycle
+      // state instead of only its scheduling window.
+      examsRes: this.get<StudentExamSummaryDto[] | { items?: StudentExamSummaryDto[] }>(
+        '/students/exams',
+        { page: 1, pageSize: 50 },
+      ).pipe(
         map((res) => (Array.isArray(res) ? res : res?.items || [])),
         catchError(() => of([])),
       ),
@@ -276,29 +271,11 @@ export class StudentEnrollmentService extends ApiBaseService {
           rawMaterials = materialsRes.items;
         }
 
-        let rawExams: {
-          id?: string;
-          examId?: string;
-          sectionId?: string;
-          title?: string;
-          topic?: string;
-          durationMinutes?: number;
-          allowedAttempts?: number;
-          questionsCount?: number;
-          questions?: unknown[];
-          startDate?: string;
-          endDate?: string;
-        }[] = [];
-        if (Array.isArray(examsRes)) {
-          rawExams = examsRes;
-        } else if (
-          examsRes &&
-          typeof examsRes === 'object' &&
-          'items' in examsRes &&
-          Array.isArray((examsRes as { items: unknown[] }).items)
-        ) {
-          rawExams = (examsRes as { items: typeof rawExams }).items;
-        }
+        // examsRes is already flattened to StudentExamSummaryDto[] by the pipe above.
+        const rawExams: StudentExamSummaryDto[] = examsRes;
+        const examsById = new Map<string, StudentExamSummaryDto>(
+          rawExams.filter((e) => !!e.id).map((e) => [e.id as string, e]),
+        );
 
         const mapMaterialToLesson = (
           m: (typeof rawMaterials)[0],
@@ -319,9 +296,7 @@ export class StudentEnrollmentService extends ApiBaseService {
             m.currentVersion?.fileUrl ||
             m.fileUrl ||
             m.url ||
-            (m.materialId
-              ? `/api/v1/materials/${m.materialId}/stream`
-              : '');
+            (m.materialId ? `/api/v1/materials/${m.materialId}/stream` : '');
 
           const durationText =
             m.durationText || (isPdf ? 'مستند PDF' : isExam ? 'اختبار تدريبي' : 'فيديو تعليمي');
@@ -336,25 +311,14 @@ export class StudentEnrollmentService extends ApiBaseService {
         };
 
         const mapExamToLesson = (
-          e: (typeof rawExams)[0] & {
-            questionsCount?: number;
-            durationMinutes?: number;
-            allowedAttempts?: number;
-            startDate?: string;
-            startsAt?: string;
-            scheduledAt?: string;
-            availableFrom?: string;
-            endDate?: string | null;
-            endsAt?: string;
-            availableTo?: string;
-          },
+          e: StudentExamSummaryDto,
           idx: number,
           prefix = 'exam',
         ): LessonItem => {
-          const examId = e.examId || e.id || `${prefix}_${idx + 1}`;
+          const examId = e.id || `${prefix}_${idx + 1}`;
           const examTitle =
             e.title || (e.topic ? `اختبار: ${e.topic}` : `امتحان إلكتروني ${idx + 1}`);
-          const qCount = e.questionsCount || e.questions?.length;
+          const qCount = e.questionsCount || e.totalQuestions;
           const durMin = e.durationMinutes;
           const durationParts: string[] = [];
           if (qCount) durationParts.push(`${qCount} أسئلة`);
@@ -364,12 +328,9 @@ export class StudentEnrollmentService extends ApiBaseService {
               ? `${durationParts.join(' · ')} · اختبار إلكتروني`
               : 'اختبار إلكتروني تفاعلي';
 
-          const start = e.startDate || e.startsAt || e.scheduledAt || e.availableFrom;
-          const end = e.endDate || e.endsAt || e.availableTo;
-          const now = new Date();
-          const isUpcoming = start ? new Date(start) > now : false;
-          const isExpired = end ? new Date(end) < now : false;
-          const isAvailable = !isUpcoming && !isExpired;
+          const status = deriveExamStatus(e);
+          const attempts: StudentExamAttemptSummaryDto[] = e.attempts || [];
+          const latestAttempt = attempts.length > 0 ? attempts[attempts.length - 1] : undefined;
 
           return {
             id: examId,
@@ -379,9 +340,15 @@ export class StudentEnrollmentService extends ApiBaseService {
             durationMinutes: durMin,
             allowedAttempts: e.allowedAttempts,
             fileUrl: `/student/exams/${examId}/take`,
-            startDate: start,
-            endDate: end,
-            isAvailable,
+            startDate: e.startDate,
+            endDate: e.endDate,
+            isAvailable: status === 'available' || status === 'in-progress',
+            examStatus: status,
+            usedAttempts: e.usedAttempts,
+            latestScore: e.latestScore,
+            maxScore: e.maxScore,
+            latestAttemptId: latestAttempt?.id,
+            needsTeacherReview: attempts.some((a) => a.needsTeacherReview),
           };
         };
 
@@ -428,8 +395,17 @@ export class StudentEnrollmentService extends ApiBaseService {
               fileUrl: vid.fileUrl || vid.url || '',
             }));
 
-            // 3. Embedded exams
+            // 3. Embedded exams. /classrooms/{id}/sections is classroom-level, not
+            // per-student, so it never carries attempt/submission data on its own --
+            // cross-reference by id against rawExams (the student's real exam list,
+            // which does) so a completed/in-progress exam still shows its real
+            // status here instead of only a scheduling-window guess.
             const embeddedExams: LessonItem[] = (sec.exams || []).map((ex, eIdx) => {
+              const matched = ex.id ? examsById.get(ex.id) : undefined;
+              if (matched) {
+                return mapExamToLesson(matched, eIdx, secId);
+              }
+
               const exAny = ex as Record<string, string | undefined>;
               const start =
                 exAny['startDate'] ||
@@ -437,6 +413,8 @@ export class StudentEnrollmentService extends ApiBaseService {
                 exAny['scheduledAt'] ||
                 exAny['availableFrom'];
               const end = exAny['endDate'] || exAny['endsAt'] || exAny['availableTo'];
+              const isUpcoming = start ? new Date(start) > new Date() : false;
+              const isExpired = end ? new Date(end) < new Date() : false;
               return {
                 id: ex.id || `exam_${secId}_${eIdx + 1}`,
                 title:
@@ -448,7 +426,8 @@ export class StudentEnrollmentService extends ApiBaseService {
                 fileUrl: ex.id ? `/student/exams/${ex.id}/take` : '/student/exams',
                 startDate: start,
                 endDate: end,
-                isAvailable: !start || new Date(start) <= new Date(),
+                isAvailable: !isUpcoming && !isExpired,
+                examStatus: isUpcoming ? 'scheduled' : isExpired ? 'expired' : 'available',
               };
             });
 

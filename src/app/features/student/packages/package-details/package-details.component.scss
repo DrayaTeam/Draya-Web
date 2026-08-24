@@ -664,6 +664,16 @@
                 color: #e11d48;
                 background: #ffe4e6;
               }
+
+              &.exam-completed-hint {
+                color: #1d4ed8;
+                background: #dbeafe;
+              }
+
+              &.exam-expired-hint {
+                color: #64748b;
+                background: #e2e8f0;
+              }
             }
 
             .lock-pill {

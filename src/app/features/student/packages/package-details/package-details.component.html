@@ -383,8 +383,18 @@
                         @if (isEnrolled()) {
                           <span
                             class="play-hint"
-                            [class.exam-hint]="les.type === 'exam'"
-                            [class.pdf-hint]="les.type === 'pdf'">
+                            [class.exam-hint]="
+                              les.type === 'exam' &&
+                              les.examStatus !== 'completed' &&
+                              les.examStatus !== 'expired'
+                            "
+                            [class.pdf-hint]="les.type === 'pdf'"
+                            [class.exam-completed-hint]="
+                              les.type === 'exam' && les.examStatus === 'completed'
+                            "
+                            [class.exam-expired-hint]="
+                              les.type === 'exam' && les.examStatus === 'expired'
+                            ">
                             {{ getLessonActionLabel(les) }}
                           </span>
                         } @else {
