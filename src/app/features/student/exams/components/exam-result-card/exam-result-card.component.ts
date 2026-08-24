@@ -1,6 +1,6 @@
 // src/app/features/student/exams/components/exam-result-card/exam-result-card.component.ts
 
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ExamResultReport } from '../../../../../core/models/student-exam-taking.model';
 
@@ -14,5 +14,4 @@ import { ExamResultReport } from '../../../../../core/models/student-exam-taking
 })
 export class ExamResultCardComponent {
   readonly report = input.required<ExamResultReport>();
-  readonly openLecture = output<string>();
 }

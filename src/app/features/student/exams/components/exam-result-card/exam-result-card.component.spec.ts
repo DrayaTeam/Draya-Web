@@ -15,15 +15,7 @@ describe('ExamResultCardComponent', () => {
     gradeLabel: 'مقبول',
     isPassed: true,
     submittedAt: '20 يوليو 2026',
-    weaknessTopics: [
-      {
-        id: 'w1',
-        title: 'التباديل وحساب المضاريب',
-        accuracyPercentage: 33,
-        aiTip: 'أخطاء متكررة في فهم قيم ن الممكنة لمضروب العدد.',
-        reviewLectureUrl: '#',
-      },
-    ],
+    weaknessTopics: [],
     reviewQuestions: [],
   };
 
@@ -42,42 +34,27 @@ describe('ExamResultCardComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render score percentage and weakness topic title', () => {
+  it('should render score percentage and grade label', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.score-percentage')?.textContent).toContain('66.6%');
-    expect(compiled.querySelector('.topic-title')?.textContent).toContain('التباديل');
+    expect(compiled.querySelector('.grade-pill')?.textContent).toContain('مقبول');
   });
 
-  it('should not render lecture button when reviewLectureUrl is empty or #', () => {
+  it('should not render an AI weakness analysis card', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.lecture-link-btn')).toBeNull();
+    expect(compiled.querySelector('.ai-analysis-card')).toBeNull();
   });
 
-  it('should render lecture button and emit openLecture when valid URL provided', () => {
-    spyOn(component.openLecture, 'emit');
-
-    const reportWithUrl: ExamResultReport = {
+  it('should show a pending state when grading is still in progress', () => {
+    const pendingReport: ExamResultReport = {
       ...mockReport,
-      weaknessTopics: [
-        {
-          id: 'w1',
-          title: 'التباديل وحساب المضاريب',
-          accuracyPercentage: 33,
-          aiTip: 'أخطاء متكررة.',
-          reviewLectureUrl: '/student/classroom/cls-123',
-        },
-      ],
+      isGradingPending: true,
     };
 
-    fixture.componentRef.setInput('report', reportWithUrl);
+    fixture.componentRef.setInput('report', pendingReport);
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    const button = compiled.querySelector('.lecture-link-btn') as HTMLElement;
-    expect(button).toBeTruthy();
-    expect(button.textContent).toContain('الانتقال إلى الفصل الدراسي للمراجعة');
-
-    button.click();
-    expect(component.openLecture.emit).toHaveBeenCalledWith('/student/classroom/cls-123');
+    expect(compiled.querySelector('.score-percentage')?.textContent).toContain('⏳');
   });
 });

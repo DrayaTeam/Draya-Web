@@ -149,10 +149,8 @@
       </div>
     }
 
-    <!-- Summary Score & AI Weakness Report Cards -->
-    <app-exam-result-card
-      [report]="resultReport()"
-      (openLecture)="onOpenLecture($event)"></app-exam-result-card>
+    <!-- Summary Score Card -->
+    <app-exam-result-card [report]="resultReport()"></app-exam-result-card>
 
     <!-- Detailed Questions & Answers Review Section -->
     <section class="review-section">

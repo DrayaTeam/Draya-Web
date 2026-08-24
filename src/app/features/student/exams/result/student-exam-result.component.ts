@@ -77,25 +77,6 @@ export class StudentExamResultComponent implements OnInit {
     }
   }
 
-  onOpenLecture(lectureUrl: string): void {
-    if (!lectureUrl || lectureUrl.trim() === '' || lectureUrl.trim() === '#') {
-      return;
-    }
-
-    const trimmed = lectureUrl.trim();
-    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
-      window.open(trimmed, '_blank', 'noopener,noreferrer');
-      return;
-    }
-
-    if (trimmed.startsWith('/')) {
-      this.router.navigateByUrl(trimmed);
-      return;
-    }
-
-    this.router.navigate(['/student/classroom', trimmed]);
-  }
-
   onBackToExams(): void {
     this.examService.resetExamSession();
     this.router.navigate(['/student/exams']);

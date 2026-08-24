@@ -1,13 +1,14 @@
 .result-summary-grid {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 24px;
+  display: flex;
+  justify-content: center;
   direction: rtl;
   margin-bottom: 40px;
 }
 
-/* Right Card: Score Summary */
+/* Score Summary Card */
 .score-card {
+  width: 100%;
+  max-width: 420px;
   background: #ffffff;
   border: 1px solid #ebefef;
   border-radius: 24px;
@@ -67,32 +68,6 @@
   }
 }
 
-.pending-ai-analysis-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 32px 16px;
-  text-align: center;
-  background: #f8fafc;
-  border: 1px dashed #cbd5e1;
-  border-radius: 16px;
-
-  .pending-analysis-icon {
-    font-size: 32px;
-    margin-bottom: 12px;
-  }
-
-  .pending-analysis-text {
-    font-family: 'Cairo', sans-serif;
-    font-size: 13px;
-    line-height: 22px;
-    color: #64748b;
-    margin: 0;
-    max-width: 400px;
-  }
-}
-
 .card-footer-date {
   width: 100%;
   padding-top: 16px;
@@ -103,137 +78,8 @@
   color: #525e5a;
 }
 
-/* Left Card: AI Weakness Topics */
-.ai-analysis-card {
-  background: #ffffff;
-  border: 1px solid #ebefef;
-  border-radius: 24px;
-  padding: 28px 24px;
-  box-shadow: 0px 20px 25px -5px rgba(0, 0, 0, 0.05);
-}
-
-.ai-card-header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 24px;
-}
-
-.ai-badge-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  background: rgba(124, 58, 237, 0.12);
-  border-radius: 999px;
-  font-family: 'Cairo', sans-serif;
-  font-weight: 700;
-  font-size: 12px;
-  color: #7c3aed;
-}
-
-.ai-sparkle-icon {
-  width: 12px;
-  height: 12px;
-  display: block;
-}
-
-.ai-card-title {
-  font-family: 'Cairo', sans-serif;
-  font-weight: 800;
-  font-size: 16px;
-  color: #151b19;
-  margin: 0;
-}
-
-.weakness-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.weakness-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.topic-header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.topic-title {
-  font-family: 'Cairo', sans-serif;
-  font-weight: 700;
-  font-size: 13px;
-  color: #151b19;
-  margin: 0;
-}
-
-.accuracy-tag {
-  font-family: 'Cairo', sans-serif;
-  font-weight: 700;
-  font-size: 13px;
-  color: #ef4444;
-}
-
-.progress-track {
-  width: 100%;
-  height: 6px;
-  background: #ddf5f1;
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: #ef4444;
-  border-radius: 999px;
-}
-
-.tip-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'Cairo', sans-serif;
-  font-weight: 500;
-  font-size: 12px;
-  color: #525e5a;
-}
-
-.tip-icon {
-  font-size: 14px;
-}
-
-.lecture-link-btn {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: transparent;
-  border: none;
-  padding: 0;
-  font-family: 'Cairo', sans-serif;
-  font-weight: 700;
-  font-size: 12px;
-  color: #1b6d63;
-  cursor: pointer;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-.link-arrow {
-  width: 12px;
-  height: 12px;
-  display: block;
-}
-
 @media (max-width: 900px) {
-  .result-summary-grid {
-    grid-template-columns: 1fr;
+  .score-card {
+    max-width: 100%;
   }
 }
