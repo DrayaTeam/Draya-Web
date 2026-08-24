@@ -160,4 +160,64 @@ describe('NotificationStoreService', () => {
     expect(service.notifications().length).toBe(0);
     expect(service.unreadCount()).toBe(0);
   });
+
+  describe('legacy fabricated-notification cleanup', () => {
+    it('strips the old hardcoded welcome notifications out of pre-existing localStorage on load', () => {
+      // Regression test: fixing the seeding logic alone doesn't help anyone who
+      // already had the app open before the fix -- their localStorage already
+      // has the fabricated entries saved, and the old loader trusted cached
+      // data unconditionally. This proves the migration actually runs on load.
+      localStorage.setItem(
+        'draya_notifications_test_user_1',
+        JSON.stringify([
+          {
+            id: 'welcome_student',
+            title: 'مرحباً بك في منصة درايَة!',
+            message: 'fake',
+            type: 'success',
+            read: false,
+            createdAt: new Date().toISOString(),
+          },
+          {
+            id: 'exam_tip',
+            title: 'تقارير الأداء الذكية',
+            message: 'fake',
+            type: 'info',
+            read: true,
+            createdAt: new Date().toISOString(),
+          },
+          {
+            id: 'real-notif-1',
+            title: 'Real notification',
+            message: 'from the backend',
+            type: 'info',
+            read: false,
+            createdAt: new Date().toISOString(),
+          },
+        ]),
+      );
+
+      // Re-create the service now that localStorage is pre-seeded (the outer
+      // beforeEach already created one against empty storage).
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          provideHttpClient(),
+          provideHttpClientTesting(),
+          NotificationStoreService,
+          { provide: AuthService, useValue: authServiceStub },
+          { provide: ToastService, useValue: toastServiceStub },
+        ],
+      });
+      const freshService = TestBed.inject(NotificationStoreService);
+
+      const ids = freshService.notifications().map((n) => n.id);
+      expect(ids).toEqual(['real-notif-1']);
+
+      // The cleaned list must also be persisted back, so the fake entries
+      // don't reappear on the next load.
+      const persisted = JSON.parse(localStorage.getItem('draya_notifications_test_user_1') || '[]');
+      expect(persisted.map((n: { id: string }) => n.id)).toEqual(['real-notif-1']);
+    });
+  });
 });

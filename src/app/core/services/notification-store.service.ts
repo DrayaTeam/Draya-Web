@@ -50,6 +50,21 @@ export class NotificationStoreService extends ApiBaseService {
     return `draya_notifications_${userId}`;
   }
 
+  /**
+   * IDs of the hardcoded "welcome" notifications a previous version of this
+   * service seeded into every new user's storage. Anyone who used the app
+   * before the 2026-08-24 fix still has these sitting in localStorage, and
+   * without this migration they'd keep seeing them forever — the fix alone
+   * only stops *new* fabrication, it doesn't retroactively clean up what
+   * already got saved.
+   */
+  private static readonly LEGACY_FABRICATED_IDS = new Set([
+    'welcome_teacher',
+    'tip_materials',
+    'welcome_student',
+    'exam_tip',
+  ]);
+
   private loadNotificationsForUser(userId: string): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
@@ -58,7 +73,13 @@ export class NotificationStoreService extends ApiBaseService {
       if (raw) {
         const parsed = JSON.parse(raw) as AppNotification[];
         if (Array.isArray(parsed)) {
-          this._notifications.set(parsed);
+          const cleaned = parsed.filter(
+            (n) => !NotificationStoreService.LEGACY_FABRICATED_IDS.has(n?.id),
+          );
+          this._notifications.set(cleaned);
+          if (cleaned.length !== parsed.length) {
+            this.saveToStorage(userId, cleaned);
+          }
           return;
         }
       }
