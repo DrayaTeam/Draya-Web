@@ -24,7 +24,11 @@ import { ResolvedWeaknessItemComponent } from './components/resolved-weakness-it
 import { DrayaEmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { MarkdownRendererComponent } from '../../../shared/components/markdown-renderer/markdown-renderer.component';
 import { DrayaCardSkeletonComponent } from '../../../shared/components/card-skeleton/card-skeleton.component';
-import { ReportWeaknessTopic, TopicRevisionDto } from '../../../core/models/student-reports.model';
+import {
+  ReportWeaknessTopic,
+  TopicRevisionDto,
+  TrendPointResult,
+} from '../../../core/models/student-reports.model';
 
 import { SignalRService } from '../../../core/signalr/signalr.service';
 
@@ -51,6 +55,79 @@ function normalizeGenerationStatus(status: number | string | undefined): Generat
 // SignalR is the primary channel; this only guards against it silently dropping.
 const GENERATION_POLL_INTERVAL_MS = 5000;
 const GENERATION_POLL_MAX_TRIES = 18; // ~90s
+
+// Skill radar geometry (viewBox 0 0 240 220) — an N-sided web instead of a
+// fixed pentagon, since the student's actual subject count varies.
+const RADAR_CENTER_X = 120;
+const RADAR_CENTER_Y = 100;
+const RADAR_MAX_RADIUS = 80;
+const RADAR_RING_LEVELS = [25, 50, 75, 100];
+const RADAR_LABEL_OFFSET = 16;
+const RADAR_MIN_SUBJECTS = 3;
+
+interface RadarChartLabel {
+  readonly x: number;
+  readonly y: number;
+  readonly text: string;
+  readonly anchor: 'start' | 'middle' | 'end';
+}
+
+interface RadarChartSpoke {
+  readonly x2: number;
+  readonly y2: number;
+}
+
+interface RadarChartViewModel {
+  readonly ringPoints: readonly string[];
+  readonly spokes: readonly RadarChartSpoke[];
+  readonly skillPolygonPoints: string;
+  readonly labels: readonly RadarChartLabel[];
+}
+
+// Trend/evolution chart geometry (viewBox 0 0 500 200).
+const TREND_X_START = 60;
+const TREND_X_END = 460;
+const TREND_Y_TOP = 30; // 100%
+const TREND_Y_BASELINE = 170; // 0%
+
+interface TrendChartPoint {
+  readonly x: number;
+  readonly y: number;
+  readonly label: string;
+}
+
+interface TrendChartViewModel {
+  readonly linePath: string;
+  readonly areaPath: string;
+  readonly points: readonly TrendChartPoint[];
+}
+
+type GrowthTone = 'positive' | 'negative' | 'neutral';
+
+interface GrowthPillViewModel {
+  readonly text: string;
+  readonly tone: GrowthTone;
+}
+
+/** Converts one trend point to a 0-100 percentage using averageMaxScore when available. */
+function trendPointPercent(t: TrendPointResult): number {
+  if (typeof t.averageScore !== 'number') return 0;
+  if (typeof t.averageMaxScore === 'number' && t.averageMaxScore > 0) {
+    return Math.max(0, Math.min(100, (t.averageScore / t.averageMaxScore) * 100));
+  }
+  return Math.max(0, Math.min(100, t.averageScore));
+}
+
+function trendPointLabel(t: TrendPointResult): string {
+  if (t.monthName) return t.monthName;
+  if (t.month) {
+    const d = new Date(t.month);
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleDateString('ar-EG', { month: 'short' });
+    }
+  }
+  return '';
+}
 
 @Component({
   selector: 'app-student-reports',
@@ -90,7 +167,103 @@ export class StudentReportsComponent implements OnInit, OnDestroy {
   readonly summary = this.reportsService.summary;
   readonly subjectScores = this.reportsService.subjectScores;
   readonly skillPoints = this.reportsService.skillRadarPoints;
+  readonly trendPoints = this.reportsService.trendPoints;
   readonly isLoading = this.reportsService.isLoading;
+
+  /**
+   * Renders the actual skillPoints() data as an N-sided radar web instead of
+   * the fixed 5-axis pentagon mockup this card used to show regardless of the
+   * student's real subjects. Null below RADAR_MIN_SUBJECTS — a 1-2 point
+   * "radar" doesn't read as a meaningful shape.
+   */
+  readonly radarChart = computed<RadarChartViewModel | null>(() => {
+    const points = this.skillPoints();
+    const n = points.length;
+    if (n < RADAR_MIN_SUBJECTS) return null;
+
+    const angleFor = (i: number) => (-90 + (i * 360) / n) * (Math.PI / 180);
+    const vertexAt = (i: number, radius: number) => {
+      const angle = angleFor(i);
+      return {
+        x: RADAR_CENTER_X + radius * Math.cos(angle),
+        y: RADAR_CENTER_Y + radius * Math.sin(angle),
+      };
+    };
+
+    const ringPoints = RADAR_RING_LEVELS.map((level) => {
+      const r = (RADAR_MAX_RADIUS * level) / 100;
+      return Array.from({ length: n }, (_, i) => {
+        const v = vertexAt(i, r);
+        return `${v.x.toFixed(1)},${v.y.toFixed(1)}`;
+      }).join(' ');
+    });
+
+    const spokes: RadarChartSpoke[] = Array.from({ length: n }, (_, i) => {
+      const v = vertexAt(i, RADAR_MAX_RADIUS);
+      return { x2: v.x, y2: v.y };
+    });
+
+    const skillPolygonPoints = points
+      .map((p, i) => {
+        const clamped = Math.max(0, Math.min(100, p.percent));
+        const v = vertexAt(i, (RADAR_MAX_RADIUS * clamped) / 100);
+        return `${v.x.toFixed(1)},${v.y.toFixed(1)}`;
+      })
+      .join(' ');
+
+    const labels: RadarChartLabel[] = points.map((p, i) => {
+      const v = vertexAt(i, RADAR_MAX_RADIUS + RADAR_LABEL_OFFSET);
+      const dx = v.x - RADAR_CENTER_X;
+      const anchor: 'start' | 'middle' | 'end' = dx > 8 ? 'start' : dx < -8 ? 'end' : 'middle';
+      return { x: v.x, y: v.y, text: p.name, anchor };
+    });
+
+    return { ringPoints, spokes, skillPolygonPoints, labels };
+  });
+
+  /**
+   * Renders the actual trendPoints() series as a real line/area chart instead
+   * of the fixed 3-point mockup curve this card used to show unconditionally.
+   */
+  readonly trendChart = computed<TrendChartViewModel | null>(() => {
+    const points = this.trendPoints();
+    if (points.length === 0) return null;
+
+    const yFor = (percent: number) =>
+      TREND_Y_BASELINE - (percent / 100) * (TREND_Y_BASELINE - TREND_Y_TOP);
+    const xFor = (index: number) =>
+      points.length === 1
+        ? (TREND_X_START + TREND_X_END) / 2
+        : TREND_X_START + index * ((TREND_X_END - TREND_X_START) / (points.length - 1));
+
+    const chartPoints: TrendChartPoint[] = points.map((t, i) => ({
+      x: xFor(i),
+      y: yFor(trendPointPercent(t)),
+      label: trendPointLabel(t),
+    }));
+
+    const linePath = chartPoints
+      .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
+      .join(' ');
+
+    const areaPath =
+      chartPoints.length > 1
+        ? `M ${chartPoints[0].x.toFixed(1)} ${TREND_Y_BASELINE} ` +
+          chartPoints.map((p) => `L ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ') +
+          ` L ${chartPoints[chartPoints.length - 1].x.toFixed(1)} ${TREND_Y_BASELINE} Z`
+        : '';
+
+    return { linePath, areaPath, points: chartPoints };
+  });
+
+  /** Wording/tone must reflect the real trend — a fixed "positive" pill lies when the student is declining. */
+  readonly growthPill = computed<GrowthPillViewModel | null>(() => {
+    if (this.trendPoints().length < 2) return null;
+    const growth = this.summary().monthlyGrowthPercent;
+    if (growth > 0) return { text: 'تطور إيجابي مستمر ✨', tone: 'positive' };
+    if (growth < 0) return { text: 'انخفاض في الأداء ⚠️', tone: 'negative' };
+    return { text: 'أداء مستقر 〰️', tone: 'neutral' };
+  });
 
   // Weaknesses are driven by the dedicated /Weaknesses/active and
   // /Weaknesses/resolved endpoints. proficiencyPercent is a topic-level

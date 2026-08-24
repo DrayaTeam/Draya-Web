@@ -160,4 +160,74 @@ describe('StudentReportsComponent', () => {
     expect(topics.length).toBe(1);
     expect(topics[0].scorePercent).toBe(8);
   });
+
+  describe('radarChart', () => {
+    it('is null when fewer than 3 subjects are present (not a meaningful radar shape)', () => {
+      reportsService.skillRadarPoints.set([{ name: 'رياضيات', percent: 80 }]);
+      fixture.detectChanges();
+
+      expect(component.radarChart()).toBeNull();
+    });
+
+    it('renders one ring per level and one spoke/label per subject for real subject data', () => {
+      // Regression test: this card used to render a hardcoded 5-axis pentagon
+      // (رياضيات/فيزياء/كيمياء/أحياء/لغات) unconditionally, ignoring the
+      // student's real subjects entirely.
+      reportsService.skillRadarPoints.set([
+        { name: 'رياضيات', percent: 90 },
+        { name: 'فيزياء', percent: 60 },
+        { name: 'كيمياء', percent: 40 },
+      ]);
+      fixture.detectChanges();
+
+      const radar = component.radarChart();
+      expect(radar).not.toBeNull();
+      expect(radar?.ringPoints.length).toBe(4); // 25/50/75/100 rings
+      expect(radar?.spokes.length).toBe(3);
+      expect(radar?.labels.map((l) => l.text)).toEqual(['رياضيات', 'فيزياء', 'كيمياء']);
+      // Each ring/skill polygon must have exactly one "x,y" pair per subject.
+      expect(radar?.skillPolygonPoints.split(' ').length).toBe(3);
+    });
+  });
+
+  describe('trendChart / growthPill', () => {
+    it('is null with no trend data instead of showing a fixed mock curve', () => {
+      reportsService.trendPoints.set([]);
+      fixture.detectChanges();
+
+      expect(component.trendChart()).toBeNull();
+      expect(component.growthPill()).toBeNull();
+    });
+
+    it('renders real month labels and a percentage-based path from trendPoints()', () => {
+      // Regression test: this card used to render a hardcoded 3-point curve
+      // labeled مايو/يونيو/يوليو regardless of the student's real history.
+      reportsService.trendPoints.set([
+        { month: '2026-06-01T00:00:00Z', averageScore: 4, averageMaxScore: 10 },
+        { month: '2026-07-01T00:00:00Z', averageScore: 8.5, averageMaxScore: 10 },
+      ]);
+      reportsService.summary.update((s) => ({ ...s, monthlyGrowthPercent: 45 }));
+      fixture.detectChanges();
+
+      const chart = component.trendChart();
+      expect(chart).not.toBeNull();
+      expect(chart?.points.length).toBe(2);
+      expect(chart?.points[0].label).not.toBe('مايو'); // real month, not the old hardcoded label
+      expect(chart?.areaPath).toContain('Z');
+
+      const pill = component.growthPill();
+      expect(pill?.tone).toBe('positive');
+    });
+
+    it('shows a negative-tone pill when the real trend is declining, not a fixed positive one', () => {
+      reportsService.trendPoints.set([
+        { month: '2026-06-01T00:00:00Z', averageScore: 9, averageMaxScore: 10 },
+        { month: '2026-07-01T00:00:00Z', averageScore: 5, averageMaxScore: 10 },
+      ]);
+      reportsService.summary.update((s) => ({ ...s, monthlyGrowthPercent: -40 }));
+      fixture.detectChanges();
+
+      expect(component.growthPill()?.tone).toBe('negative');
+    });
+  });
 });
