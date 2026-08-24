@@ -6,6 +6,7 @@ import {
   SubscribedPackage,
   StudentCoursesHeaderInfo,
   ClassroomDtoPagedResult,
+  StudentProgressDto,
 } from '../models/student-courses.model';
 
 const COURSE_GRADIENTS = [
@@ -51,17 +52,19 @@ export class StudentCoursesService extends ApiBaseService {
           const items = res?.items || [];
           this._subscribedPackages.set(
             items.map((c, idx) => {
+              // studentProgress is an object returned by the backend inside ClassroomDto
               const progressObj =
                 typeof c.studentProgress === 'object' && c.studentProgress !== null
-                  ? c.studentProgress
+                  ? (c.studentProgress as StudentProgressDto)
                   : null;
+              // If studentProgress is a plain number treat it as progressPercent (legacy shape)
               const progressPercent =
                 typeof c.studentProgress === 'number'
                   ? c.studentProgress
-                  : (progressObj?.progressPercent ?? 0);
-              const totalLessons = progressObj?.totalLessons ?? c.materialsCount ?? 10;
-              const completedLessons =
-                progressObj?.completedLessons ?? Math.round((progressPercent / 100) * totalLessons);
+                  : (progressObj?.progressPercent ?? null);
+              // Use real backend values only — no hardcoded fallbacks
+              const totalLessons = progressObj?.totalLessons ?? null;
+              const completedLessons = progressObj?.completedLessons ?? null;
 
               return {
                 id: c.classroomId,
@@ -71,9 +74,9 @@ export class StudentCoursesService extends ApiBaseService {
                 subjectName: c.subjectName || 'المادة الدراسية',
                 statusText: c.isActive ? 'سارية ومفعّلة' : 'غير نشطة',
                 isActive: c.isActive,
-                completedLessons: isNaN(completedLessons) ? 0 : completedLessons,
-                totalLessons: isNaN(totalLessons) || totalLessons === 0 ? 1 : totalLessons,
-                progressPercent: isNaN(progressPercent) ? 0 : progressPercent,
+                completedLessons,
+                totalLessons,
+                progressPercent,
                 studyGroupName: c.classroomTypeName
                   ? `${c.classroomTypeName} - ${c.gradeLevelName || ''}`
                   : 'مجموعة دراسية',

@@ -42,40 +42,46 @@
 
   <!-- Card Body Section -->
   <div class="card-body-content">
-    <!-- Academic Progress Numbers Row -->
-    <div class="progress-info-row">
-      <div class="progress-title-group">
-        <svg
-          class="progress-icon"
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#009689"
-          stroke-width="2.5"
-          stroke-linecap="round"
-          stroke-linejoin="round">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-        </svg>
-        <span class="progress-label">التقدم الدراسي:</span>
+    <!-- Academic Progress Numbers Row — shown only when backend returns real progress data -->
+    @if (package().progressPercent !== null) {
+      <div class="progress-info-row">
+        <div class="progress-title-group">
+          <svg
+            class="progress-icon"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#009689"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>
+          <span class="progress-label">التقدم الدراسي:</span>
+        </div>
+
+        <div class="progress-ratio-value">
+          <span class="ratio-text">
+            @if (package().completedLessons !== null && package().totalLessons !== null) {
+              {{ package().completedLessons }} / {{ package().totalLessons }} محاضرة ({{
+                package().progressPercent
+              }}%)
+            } @else {
+              {{ package().progressPercent }}%
+            }
+          </span>
+        </div>
       </div>
 
-      <div class="progress-ratio-value">
-        <span class="ratio-text">
-          {{ package().completedLessons }} / {{ package().totalLessons }} محاضرة ({{
-            package().progressPercent
-          }}%)
-        </span>
+      <!-- Progress Bar Track -->
+      <div class="progress-track-bar">
+        <div
+          class="progress-fill-bar"
+          [style.width.%]="package().progressPercent"
+          [style.background]="package().progressGradient"></div>
       </div>
-    </div>
-
-    <!-- Progress Bar Track -->
-    <div class="progress-track-bar">
-      <div
-        class="progress-fill-bar"
-        [style.width.%]="package().progressPercent"
-        [style.background]="package().progressGradient"></div>
-    </div>
+    }
 
     <!-- Study Group Box -->
     <div class="study-group-box">

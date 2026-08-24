@@ -5,9 +5,9 @@ export interface SubscribedPackage {
   readonly subjectName: string;
   readonly statusText: string;
   readonly isActive: boolean;
-  readonly completedLessons: number;
-  readonly totalLessons: number;
-  readonly progressPercent: number;
+  readonly completedLessons: number | null;
+  readonly totalLessons: number | null;
+  readonly progressPercent: number | null;
   readonly studyGroupName: string;
   readonly bannerImageUrl: string;
   readonly progressGradient: string;
