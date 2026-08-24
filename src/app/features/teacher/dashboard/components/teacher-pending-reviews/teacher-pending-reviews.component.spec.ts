@@ -32,19 +32,29 @@ describe('TeacherPendingReviewsComponent', () => {
 
   it('should create and load pending reviews', () => {
     const req = httpMock.expectOne((r) => r.url.includes('/teachers/pending-reviews'));
-    req.flush([
-      {
-        classroomId: 'c1',
-        classroomName: 'Web Dev 101',
-        exams: [
-          {
-            examId: 'e1',
-            examTitle: 'Midterm',
-            pendingReviews: [{ attemptId: 'a1', studentId: 's1', studentName: 'Ahmed', score: 45 }],
-          },
-        ],
-      },
-    ]);
+    req.flush({
+      items: [
+        {
+          classroomId: 'c1',
+          classroomName: 'Web Dev 101',
+          exams: [
+            {
+              examId: 'e1',
+              examTitle: 'Midterm',
+              pendingReviews: [
+                { attemptId: 'a1', studentId: 's1', studentName: 'Ahmed', score: 45 },
+              ],
+            },
+          ],
+        },
+      ],
+      totalCount: 1,
+      pageNumber: 1,
+      pageSize: 10,
+      totalPages: 1,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    });
 
     expect(fixture.componentInstance).toBeTruthy();
     expect(fixture.componentInstance.totalPendingCount()).toBe(1);
@@ -53,7 +63,15 @@ describe('TeacherPendingReviewsComponent', () => {
 
   it('should render an empty state when there is nothing pending', () => {
     const req = httpMock.expectOne((r) => r.url.includes('/teachers/pending-reviews'));
-    req.flush([]);
+    req.flush({
+      items: [],
+      totalCount: 0,
+      pageNumber: 1,
+      pageSize: 10,
+      totalPages: 0,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    });
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;

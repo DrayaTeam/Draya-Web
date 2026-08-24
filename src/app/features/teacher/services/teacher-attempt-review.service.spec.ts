@@ -24,15 +24,27 @@ describe('TeacherAttemptReviewService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should fetch pending reviews from /teachers/pending-reviews', () => {
+  it('should extract .items from the PagedResult envelope returned by /teachers/pending-reviews', () => {
+    // Confirmed with backend: this endpoint returns PagedResult<PendingReviewClassroomDto>,
+    // i.e. the classrooms live under `.items`, not at the response root. Calling
+    // .reduce() on the root object used to crash the dashboard with
+    // "t.reduce is not a function" before this was unwrapped.
     let result: unknown[] = [];
     service.getPendingReviews().subscribe((res) => (result = res));
 
     const req = httpMock.expectOne((r) => r.url.includes('/teachers/pending-reviews'));
     expect(req.request.method).toBe('GET');
-    req.flush([{ classroomId: 'c1', classroomName: 'Web Dev', exams: [] }]);
+    req.flush({
+      items: [{ classroomId: 'c1', classroomName: 'Web Dev', exams: [] }],
+      totalCount: 1,
+      pageNumber: 1,
+      pageSize: 10,
+      totalPages: 1,
+      hasNextPage: false,
+      hasPreviousPage: false,
+    });
 
-    expect(result.length).toBe(1);
+    expect(result).toEqual([{ classroomId: 'c1', classroomName: 'Web Dev', exams: [] }]);
   });
 
   it('should return an empty list (not throw) when pending reviews fails', () => {
@@ -45,21 +57,7 @@ describe('TeacherAttemptReviewService', () => {
     expect(result).toEqual([]);
   });
 
-  it('should unwrap an { items: [...] } envelope instead of returning a non-array', () => {
-    // Regression test: a bare array is documented in swagger, but this endpoint
-    // is untyped in practice. A wrapped response used to be passed straight
-    // through, and calling .reduce() on it in the dashboard widget crashed
-    // with "t.reduce is not a function".
-    let result: unknown[] = ['sentinel'];
-    service.getPendingReviews().subscribe((res) => (result = res));
-
-    const req = httpMock.expectOne((r) => r.url.includes('/teachers/pending-reviews'));
-    req.flush({ items: [{ classroomId: 'c1', classroomName: 'Web Dev', exams: [] }] });
-
-    expect(result).toEqual([{ classroomId: 'c1', classroomName: 'Web Dev', exams: [] }]);
-  });
-
-  it('should normalize a null/empty pending reviews response to an array', () => {
+  it('should normalize a malformed/empty pending reviews response to an array', () => {
     let result: unknown[] = ['sentinel'];
     service.getPendingReviews().subscribe((res) => (result = res));
 

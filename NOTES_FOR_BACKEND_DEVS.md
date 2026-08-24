@@ -283,15 +283,16 @@ public class UpdateStudentProfileRequest
 
 ## 📌 Note 18: `GET /teachers/pending-reviews` — Confirm Response Is a Bare Array
 
-### 🔍 Issue Description
+### ✅ Resolved — 2026-08-24
+
+**Backend response:** The endpoint correctly returns `PagedResult<PendingReviewClassroomDto>` with an `items` array — not a bare array. The Swagger annotation is accurate; the crash was the frontend calling `.reduce()` on the root paged-result object instead of `.items`. Backend is adding an explicit `<remarks>` doc comment to the endpoint to prevent future confusion.
+
+**Frontend fix:** `TeacherAttemptReviewService.getPendingReviews()` now types the response as `PaginatedResponse<PendingReviewClassroomDto>` (the same paging envelope used elsewhere in this codebase) and reads `res.items`, instead of the speculative bare-array/`items`/`data` normalization guess from the original fix. Regression tests updated to flush the real `PagedResult` shape.
+
+### 🔍 Original Issue Description
 
 - Swagger types this endpoint as returning `PendingReviewClassroomDto[]` directly, and that's what the frontend originally assumed and called `.reduce()` on immediately.
-- We can't yet confirm from a live response whether every environment actually returns a bare array — several other endpoints in this API that are typed as one shape in swagger have been observed wrapping the payload in an `{ items: [...] }` or `{ data: [...] }` envelope instead. If `/teachers/pending-reviews` ever does the same, calling `.reduce()` directly on the response throws `TypeError: t.reduce is not a function` and crashes the whole teacher dashboard (this reproduced for us and is fixed on our side by normalizing the response defensively).
-- This note is precautionary, not a confirmed live bug — but given the pattern elsewhere in this API, please confirm the exact shape returned in production so we can drop the defensive normalization once it's verified unnecessary.
-
-### 💡 Recommendation for Backend Team
-
-- Confirm `GET /api/v1/teachers/pending-reviews` always returns a bare `PendingReviewClassroomDto[]` with no wrapping envelope, in every environment (dev/staging/prod), and keep it that way — this endpoint feeds a dashboard widget that iterates the response immediately on load.
+- Calling `.reduce()` directly on the paged-result root object throws `TypeError: t.reduce is not a function` and crashes the whole teacher dashboard — this reproduced for us and is now fixed by reading `.items`.
 
 ---
 

@@ -7,6 +7,7 @@ import {
   OverrideScoreRequestDto,
 } from '../../../core/models/teacher-attempt-review.model';
 import { AttemptResultResponseDto } from '../../../core/models/student-exam-taking.model';
+import { PaginatedResponse } from '../../../core/models/classroom.model';
 
 /**
  * Teacher-side attempt review: the "Pending Reviews" dashboard widget and the
@@ -19,20 +20,13 @@ import { AttemptResultResponseDto } from '../../../core/models/student-exam-taki
 @Injectable({ providedIn: 'root' })
 export class TeacherAttemptReviewService extends ApiBaseService {
   /**
-   * GET /api/v1/teachers/pending-reviews (typed in swagger as an array, but
-   * untyped endpoints in this API have been observed wrapping the array in an
-   * `items`/`data` envelope instead — normalize defensively so a shape
-   * mismatch can't crash the dashboard with "reduce is not a function").
+   * GET /api/v1/teachers/pending-reviews — returns PagedResult<PendingReviewClassroomDto>
+   * (confirmed with backend), i.e. the classrooms live under `.items`, not at
+   * the response root. `?? []` guards only against a malformed/empty body.
    */
   getPendingReviews(): Observable<PendingReviewClassroomDto[]> {
-    return this.get<
-      | PendingReviewClassroomDto[]
-      | { items?: PendingReviewClassroomDto[]; data?: PendingReviewClassroomDto[] }
-    >('/teachers/pending-reviews').pipe(
-      map((res) => {
-        if (Array.isArray(res)) return res;
-        return res?.items ?? res?.data ?? [];
-      }),
+    return this.get<PaginatedResponse<PendingReviewClassroomDto>>('/teachers/pending-reviews').pipe(
+      map((res) => res.items ?? []),
       catchError(() => of([])),
     );
   }
