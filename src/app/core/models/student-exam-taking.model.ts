@@ -35,6 +35,9 @@ export interface AnswerGradingResultDto {
   confidenceScore?: number | null;
   isAiGraded: boolean;
   needsTeacherReview: boolean;
+  /** true once the score is locked in (deterministic questions finalize automatically). Confirmed nested here (GradingResultDto), not on the answer itself, via swagger 2026-08-24. */
+  isFinalized?: boolean;
+  reviewedByTeacherId?: string | null;
   rationale?: string | null;
   teacherOverrideScore?: number | null;
 }
@@ -51,9 +54,6 @@ export interface AttemptAnswerResultDto {
   questionText?: string;
   questionType?: string;
   rubric?: string | null;
-  /** true once the score is locked in (deterministic questions finalize automatically). */
-  isFinalized?: boolean;
-  reviewedByTeacherId?: string | null;
 }
 
 export interface AttemptResultResponseDto {

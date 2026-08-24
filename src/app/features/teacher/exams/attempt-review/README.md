@@ -22,8 +22,8 @@ Lets a teacher review a student's graded exam attempt answer-by-answer and overr
 
 ## 3. Backend API Contracts & DTOs
 
-- `GET /api/v1/teachers/pending-reviews` → `PendingReviewClassroomDto[]` (typed in swagger — `core/models/teacher-attempt-review.model.ts`).
-- `GET /api/v1/attempts/{attemptId}/results` → `AttemptResultResponseDto` — **shared** with the student exam-taking flow (`core/models/student-exam-taking.model.ts`); the teacher view of the same payload carries `questionText`, `questionType`, `rubric`, `isFinalized`, `reviewedByTeacherId` per the backend hand-off doc.
+- `GET /api/v1/teachers/pending-reviews` → `PagedResult<PendingReviewClassroomDto>` (confirmed via swagger 2026-08-24 — `core/models/teacher-attempt-review.model.ts`).
+- `GET /api/v1/attempts/{attemptId}/results` → `AttemptResultResponseDto` — **shared** with the student exam-taking flow (`core/models/student-exam-taking.model.ts`); the teacher view of the same payload carries `questionText`, `questionType`, `rubric` on the answer, and `isFinalized`/`reviewedByTeacherId` **nested inside `gradingResult`** (confirmed via swagger 2026-08-24 — earlier code read these off the answer itself, which always evaluated to `undefined`).
 - `PUT /api/v1/attempts/{attemptId}/answers/{answerId}/override` with `{ newScore }` → `204 No Content`. The client never recomputes the attempt total itself — it always refetches `/results` after a successful override so the recalculated score, finalized state, and any resolved weakness are reflected exactly as the backend computed them.
 
 ---

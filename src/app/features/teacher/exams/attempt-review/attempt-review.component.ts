@@ -38,7 +38,7 @@ export class AttemptReviewComponent implements OnInit {
   readonly needsReviewCount = computed(
     () =>
       (this.result()?.answers || []).filter(
-        (a) => a.gradingResult?.needsTeacherReview && !a.isFinalized,
+        (a) => a.gradingResult?.needsTeacherReview && !a.gradingResult?.isFinalized,
       ).length,
   );
 

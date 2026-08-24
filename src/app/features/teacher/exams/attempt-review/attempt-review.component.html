@@ -59,9 +59,11 @@
       @for (answer of result()!.answers; track answer.answerId) {
         <div
           class="rounded-2xl border bg-white p-6 shadow-sm"
-          [class.border-amber-300]="answer.gradingResult?.needsTeacherReview && !answer.isFinalized"
+          [class.border-amber-300]="
+            answer.gradingResult?.needsTeacherReview && !answer.gradingResult?.isFinalized
+          "
           [class.border-gray-100]="
-            !(answer.gradingResult?.needsTeacherReview && !answer.isFinalized)
+            !(answer.gradingResult?.needsTeacherReview && !answer.gradingResult?.isFinalized)
           ">
           <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
             @if (answer.questionType) {
@@ -69,13 +71,13 @@
                 {{ answer.questionType }}
               </span>
             }
-            @if (answer.gradingResult?.needsTeacherReview && !answer.isFinalized) {
+            @if (answer.gradingResult?.needsTeacherReview && !answer.gradingResult?.isFinalized) {
               <span
                 class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
                 <i class="pi pi-exclamation-triangle ms-1"></i>
                 إجراء مطلوب
               </span>
-            } @else if (answer.isFinalized) {
+            } @else if (answer.gradingResult?.isFinalized) {
               <span
                 class="rounded-full border border-green-100 bg-green-50 px-3 py-1 text-xs font-bold text-green-700">
                 معتمدة
@@ -112,7 +114,7 @@
               }
             </div>
 
-            @if (answer.gradingResult.needsTeacherReview && !answer.isFinalized) {
+            @if (answer.gradingResult.needsTeacherReview && !answer.gradingResult?.isFinalized) {
               <div class="flex flex-wrap items-center gap-3 border-t border-gray-100 pt-3">
                 <label class="text-sm font-bold text-gray-700" [for]="'score-' + answer.answerId">
                   الدرجة المعدّلة (من {{ answer.gradingResult.maxScore }}):

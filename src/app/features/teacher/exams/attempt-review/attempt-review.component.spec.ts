@@ -59,9 +59,9 @@ describe('AttemptReviewComponent', () => {
             maxScore: 10,
             isAiGraded: true,
             needsTeacherReview: true,
+            isFinalized: false,
             rationale: 'partially correct',
           },
-          isFinalized: false,
         },
       ],
     });
@@ -80,8 +80,13 @@ describe('AttemptReviewComponent', () => {
         {
           answerId: 'ans-1',
           examQuestionId: 'q1',
-          gradingResult: { score: 0, maxScore: 10, isAiGraded: true, needsTeacherReview: true },
-          isFinalized: false,
+          gradingResult: {
+            score: 0,
+            maxScore: 10,
+            isAiGraded: true,
+            needsTeacherReview: true,
+            isFinalized: false,
+          },
         },
       ],
     });
@@ -106,12 +111,39 @@ describe('AttemptReviewComponent', () => {
           answerId: 'ans-1',
           examQuestionId: 'q1',
           gradingResult: { score: 10, maxScore: 10, isAiGraded: false, needsTeacherReview: false },
-          isFinalized: true,
         },
       ],
     });
 
     expect(component.result()?.finalScore).toBe(100);
+    expect(component.needsReviewCount()).toBe(0);
+  });
+
+  it('should stop counting an answer as needing review once gradingResult.isFinalized is true', () => {
+    // Regression test: isFinalized/reviewedByTeacherId are nested inside
+    // gradingResult on the wire (confirmed via swagger), not on the answer
+    // itself. Reading answer.isFinalized directly always evaluated to
+    // undefined, so a finalized answer's amber "needs action" badge never
+    // cleared even after the teacher's override was saved.
+    flushResults({
+      attemptId: 'att-1',
+      examId: 'exam-1',
+      finalScore: 100,
+      answers: [
+        {
+          answerId: 'ans-1',
+          examQuestionId: 'q1',
+          gradingResult: {
+            score: 10,
+            maxScore: 10,
+            isAiGraded: false,
+            needsTeacherReview: true,
+            isFinalized: true,
+          },
+        },
+      ],
+    });
+
     expect(component.needsReviewCount()).toBe(0);
   });
 
@@ -124,8 +156,13 @@ describe('AttemptReviewComponent', () => {
         {
           answerId: 'ans-1',
           examQuestionId: 'q1',
-          gradingResult: { score: 0, maxScore: 10, isAiGraded: true, needsTeacherReview: true },
-          isFinalized: false,
+          gradingResult: {
+            score: 0,
+            maxScore: 10,
+            isAiGraded: true,
+            needsTeacherReview: true,
+            isFinalized: false,
+          },
         },
       ],
     });
