@@ -36,4 +36,20 @@ describe('ResolvedWeaknessItemComponent', () => {
     expect(compiled.querySelector('.topic-title')?.textContent).toContain('الجبر');
     expect(compiled.querySelector('.delta-pill')?.textContent).toContain('43');
   });
+
+  it('should default to 100% mastery when proficiency is zero or missing', () => {
+    fixture.componentRef.setInput('weakness', {
+      id: 'w2',
+      topicName: 'Python Basics',
+      subjectName: 'برمجة',
+      proficiencyPercent: 0,
+    });
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('.score-box')?.textContent).toContain('100%');
+    expect(compiled.querySelector('.delta-pill')?.textContent).toContain(
+      'أداء ممتاز ومتقن بنجاح 🌟',
+    );
+  });
 });

@@ -1,22 +1,17 @@
 <div class="resolved-card">
-  <div class="badge-icon">🏆</div>
-
-  <div class="content-col">
-    <div class="topic-title">{{ weakness().topicName }}</div>
-    <div class="meta-row">
-      <span class="subject-name">{{ weakness().subjectName }}</span>
-      <span class="mastered-pill">تم الإتقان ✅</span>
+  <div class="right-info">
+    <div class="badge-icon">🏆</div>
+    <div class="content-col">
+      <div class="topic-title">{{ weakness().topicName }}</div>
+      <div class="meta-row">
+        <span class="subject-name">{{ weakness().subjectName || 'عام' }}</span>
+        <span class="mastered-pill">أتقنتها بنجاح ✅</span>
+      </div>
     </div>
   </div>
 
   <div class="score-col">
-    <div class="score-box">{{ weakness().proficiencyPercent }}%</div>
-    @if (weakness().delta !== undefined) {
-      <div class="delta-pill">تحسّن بمقدار +{{ weakness().delta }}%</div>
-    } @else if (weakness().previousProficiencyPercent !== undefined) {
-      <div class="delta-pill">
-        من {{ weakness().previousProficiencyPercent }}% إلى {{ weakness().proficiencyPercent }}%
-      </div>
-    }
+    <div class="score-box">{{ proficiencyPercent() }}%</div>
+    <div class="delta-pill">{{ masteryMessage() }}</div>
   </div>
 </div>

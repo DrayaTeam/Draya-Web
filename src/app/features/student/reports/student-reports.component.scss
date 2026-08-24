@@ -243,16 +243,32 @@
   transition: width 0.4s ease;
 }
 
-/* Row 4: Weakness Topics Section */
+/* Row 4 & 5: Weakness Topics & Mastered Topics */
 .weakness-section {
   position: relative;
   z-index: 1;
+  margin-top: 28px;
+}
+
+.resolved-weakness-section {
+  margin-top: 36px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: #0f172a;
+  margin-bottom: 16px;
 }
 
 .topics-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 /* Responsive Breakpoints */

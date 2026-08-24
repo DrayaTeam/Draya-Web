@@ -124,7 +124,7 @@ export class StudentReportsComponent implements OnInit, OnDestroy {
         id: w.id,
         topicTitle: w.topicName,
         subjectName: w.subjectName,
-        badgeText: isSevere ? 'تحتاج تحسين عاجل' : 'في طور التحسن',
+        badgeText: isSevere ? 'فرصة للتحسين والتعزيز ⚡' : 'في مسار الإتقان 📈',
         scorePercent: finalScore,
         barMarkerColor: isSevere ? '#FF2056' : '#FE9A00',
         badgeBgColor: isSevere ? '#FFE4E6' : '#FEF3C6',
