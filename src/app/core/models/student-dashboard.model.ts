@@ -38,46 +38,45 @@ export interface StudentDashboardSummary {
   readonly cumulativeAverage: number;
   readonly completedLessonsCount: number;
   readonly subscribedPackagesCount: number;
-  readonly monthlyGrowthPercent: number;
-  readonly percentileRanking: number;
 }
 
 // ── API response shape (GET /api/v1/dashboard/student) ──────────────────────
-
-export interface DashboardApiEnrolledCourse {
-  id: string;
-  title: string;
-  teacherName: string;
-  subjectName: string;
-  completedLessons: number;
-  totalLessons: number;
-  progressPercent: number;
-  thumbnailUrl: string;
-}
+// Confirmed against the live swagger spec (StudentDashboardDto), 2026-08-24.
+// The previous version of this type had no field in common with the real
+// contract except completedLessonsCount/subscribedPackagesCount by
+// coincidence -- studentName, streakDays, cumulativeAverage,
+// monthlyGrowthPercent, percentileRanking, enrolledCourses, and
+// weaknessTopics never existed on the wire. There is no backend field at all
+// for monthly growth or percentile ranking, so those were removed from the
+// UI rather than left permanently showing "+0%" / "top 0%".
 
 export interface DashboardApiUpcomingExam {
-  id: string;
-  title: string;
-  timeText: string;
-  isImportant: boolean;
+  examId: string;
+  title?: string | null;
+  startDate: string;
+  endDate?: string | null;
 }
 
-export interface DashboardApiWeaknessTopic {
-  id: string;
-  topicTitle: string;
-  scorePercent: number;
+export interface DashboardApiPointOfFocus {
+  topicName?: string | null;
+  proficiencyPercent: number;
+}
+
+export interface DashboardApiDailyLesson {
+  materialId: string;
+  title?: string | null;
+  completedLectures: number;
+  totalLectures: number;
 }
 
 export interface StudentDashboardApiResponse {
-  studentName: string;
-  streakDays: number;
-  cumulativeAverage: number;
+  overallAverage: number;
   completedLessonsCount: number;
   subscribedPackagesCount: number;
-  scheduledExamsCount: number;
-  monthlyGrowthPercent: number;
-  percentileRanking: number;
-  enrolledCourses: DashboardApiEnrolledCourse[];
-  upcomingExams: DashboardApiUpcomingExam[];
-  weaknessTopics: DashboardApiWeaknessTopic[];
+  urgentAlerts?: string[] | null;
+  dailyLessons?: DashboardApiDailyLesson[] | null;
+  upcomingExams?: DashboardApiUpcomingExam[] | null;
+  pointsNeedingFocus?: DashboardApiPointOfFocus[] | null;
+  lastActivityDate?: string | null;
+  currentStreak: number;
 }

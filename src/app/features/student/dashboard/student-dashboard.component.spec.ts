@@ -44,8 +44,6 @@ describe('StudentDashboardComponent', () => {
               cumulativeAverage: 88,
               completedLessonsCount: 12,
               subscribedPackagesCount: 3,
-              monthlyGrowthPercent: 10,
-              percentileRanking: 92,
             }),
             enrolledCourses: signal([]),
             upcomingExams: signal([]),

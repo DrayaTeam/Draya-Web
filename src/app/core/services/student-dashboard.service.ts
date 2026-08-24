@@ -54,8 +54,6 @@ export class StudentDashboardService extends ApiBaseService {
     cumulativeAverage: 0,
     completedLessonsCount: 0,
     subscribedPackagesCount: 0,
-    monthlyGrowthPercent: 0,
-    percentileRanking: 0,
   });
 
   private readonly _enrolledCourses = signal<EnrolledCourseItem[]>([]);
@@ -120,84 +118,81 @@ export class StudentDashboardService extends ApiBaseService {
           const rawEnrolled = classrooms?.items || [];
           const rawExams = Array.isArray(exams) ? exams : exams?.items || [];
 
-          const enrolledList: EnrolledCourseItem[] =
-            dash?.enrolledCourses && dash.enrolledCourses.length > 0
-              ? dash.enrolledCourses.map((c, i) => ({
-                  id: c.id,
-                  title: c.title,
-                  teacherName: c.teacherName,
-                  subjectName: c.subjectName,
-                  completedLessons: c.completedLessons ?? 0,
-                  totalLessons: c.totalLessons ?? 0,
-                  progressPercent: c.progressPercent ?? 0,
-                  thumbnailUrl: c.thumbnailUrl ?? 'assets/images/default-classroom.svg',
-                  progressGradient: COURSE_GRADIENTS[i % COURSE_GRADIENTS.length],
-                }))
-              : rawEnrolled.map((c, i) => {
-                  const prog =
-                    typeof c.studentProgress === 'object' && c.studentProgress !== null
-                      ? c.studentProgress
-                      : null;
-                  const progressPercent =
-                    typeof c.studentProgress === 'number'
-                      ? c.studentProgress
-                      : (prog?.progressPercent ?? prog?.percentage ?? 0);
-                  const totalLessons = prog?.totalLessons ?? prog?.totalCount ?? 1;
-                  const completedLessons = prog?.completedLessons ?? prog?.completedCount ?? 0;
+          // dashboard/student's StudentDashboardDto has no enrolledCourses field at
+          // all -- /classrooms is the only real source for this list.
+          const enrolledList: EnrolledCourseItem[] = rawEnrolled.map((c, i) => {
+            const prog =
+              typeof c.studentProgress === 'object' && c.studentProgress !== null
+                ? c.studentProgress
+                : null;
+            const progressPercent =
+              typeof c.studentProgress === 'number'
+                ? c.studentProgress
+                : (prog?.progressPercent ?? prog?.percentage ?? 0);
+            const totalLessons = prog?.totalLessons ?? prog?.totalCount ?? 1;
+            const completedLessons = prog?.completedLessons ?? prog?.completedCount ?? 0;
 
-                  return {
-                    id: c.classroomId || c.id || `crs-${i}`,
-                    title: c.name || 'الفصل الدراسي',
-                    teacherName: c.teacherName || 'أستاذ المادة',
-                    subjectName: c.subjectName || 'المنهج الدراسي',
-                    completedLessons: isNaN(completedLessons) ? 0 : completedLessons,
-                    totalLessons: isNaN(totalLessons) || totalLessons === 0 ? 1 : totalLessons,
-                    progressPercent: isNaN(progressPercent) ? 0 : progressPercent,
-                    thumbnailUrl: c.imageUrl || 'assets/images/default-classroom.svg',
-                    progressGradient: COURSE_GRADIENTS[i % COURSE_GRADIENTS.length],
-                  };
-                });
+            return {
+              id: c.classroomId || c.id || `crs-${i}`,
+              title: c.name || 'الفصل الدراسي',
+              teacherName: c.teacherName || 'أستاذ المادة',
+              subjectName: c.subjectName || 'المنهج الدراسي',
+              completedLessons: isNaN(completedLessons) ? 0 : completedLessons,
+              totalLessons: isNaN(totalLessons) || totalLessons === 0 ? 1 : totalLessons,
+              progressPercent: isNaN(progressPercent) ? 0 : progressPercent,
+              thumbnailUrl: c.imageUrl || 'assets/images/default-classroom.svg',
+              progressGradient: COURSE_GRADIENTS[i % COURSE_GRADIENTS.length],
+            };
+          });
 
-          const upcomingList: UpcomingExamItem[] =
+          // dash.upcomingExams (StudentDashboardDto.upcomingExams) only carries
+          // examId/title/startDate/endDate -- no timeText/isImportant on the wire,
+          // so those are always computed client-side from startDate + position,
+          // same as the /students/exams fallback used when dash didn't return any.
+          const examSource: { id: string; title?: string | null; startDate?: string | null }[] =
             dash?.upcomingExams && dash.upcomingExams.length > 0
               ? dash.upcomingExams.map((e) => ({
-                  id: e.id,
+                  id: e.examId,
                   title: e.title,
-                  timeText: e.timeText ?? 'متاح للحل الآن',
-                  tagText: e.isImportant ? 'هام' : 'مراجعة',
-                  borderMarkerColor: examBorderColor(e.isImportant),
-                  isImportant: !!e.isImportant,
+                  startDate: e.startDate,
                 }))
-              : rawExams.map((e, idx) => ({
-                  id: e.id,
-                  title: e.title || 'امتحان تفاعلي',
-                  timeText: e.startDate
-                    ? `يبدأ ${new Date(e.startDate).toLocaleDateString('ar-EG', { month: 'short', day: 'numeric' })}`
-                    : 'متاح للحل الآن',
-                  tagText: idx === 0 ? 'هام' : 'تقييم',
-                  borderMarkerColor: examBorderColor(idx === 0),
-                  isImportant: idx === 0,
-                }));
+              : rawExams;
 
-          const weaknessList: WeaknessTopicItem[] = (dash?.weaknessTopics ?? []).map((w) => ({
-            id: w.id,
-            topicTitle: w.topicTitle,
-            scorePercent: w.scorePercent ?? 0,
-            barColor: weaknessBarColor(w.scorePercent ?? 0),
+          const upcomingList: UpcomingExamItem[] = examSource.map((e, idx) => ({
+            id: e.id,
+            title: e.title || 'امتحان تفاعلي',
+            timeText: e.startDate
+              ? `يبدأ ${new Date(e.startDate).toLocaleDateString('ar-EG', { month: 'short', day: 'numeric' })}`
+              : 'متاح للحل الآن',
+            tagText: idx === 0 ? 'هام' : 'تقييم',
+            borderMarkerColor: examBorderColor(idx === 0),
+            isImportant: idx === 0,
           }));
 
-          const studentName = me?.fullName?.split(' ')[0] || dash?.studentName || 'الطالب';
+          // dash.weaknessTopics never existed on the wire -- the real analog is
+          // pointsNeedingFocus (topicName/proficiencyPercent, already 0-100).
+          const weaknessList: WeaknessTopicItem[] = (dash?.pointsNeedingFocus ?? []).map(
+            (w, idx) => {
+              const percent = Math.max(0, Math.min(100, Math.round(w.proficiencyPercent ?? 0)));
+              return {
+                id: `focus-${idx}`,
+                topicTitle: w.topicName || `موضوع ${idx + 1}`,
+                scorePercent: percent,
+                barColor: weaknessBarColor(percent),
+              };
+            },
+          );
+
+          const studentName = me?.fullName?.split(' ')[0] || 'الطالب';
 
           this._summary.set({
             studentName,
             currentDateText: formatArabicDate(new Date()),
-            scheduledExamsCount: dash?.scheduledExamsCount ?? upcomingList.length,
-            streakDays: dash?.streakDays ?? 1,
-            cumulativeAverage: dash?.cumulativeAverage ?? 0,
+            scheduledExamsCount: upcomingList.length,
+            streakDays: dash?.currentStreak ?? 0,
+            cumulativeAverage: Math.round(dash?.overallAverage ?? 0),
             completedLessonsCount: materials?.totalCount ?? dash?.completedLessonsCount ?? 0,
             subscribedPackagesCount: dash?.subscribedPackagesCount ?? enrolledList.length,
-            monthlyGrowthPercent: dash?.monthlyGrowthPercent ?? 0,
-            percentileRanking: dash?.percentileRanking ?? 0,
           });
 
           this._enrolledCourses.set(enrolledList);
