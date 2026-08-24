@@ -29,6 +29,39 @@ export function normalizeScoreToPercent(val: number): number {
   return Math.min(100, Math.round(val));
 }
 
+/**
+ * Backend confirmed `proficiencyPercent` on subject-proficiency records is
+ * always an already-normalized 0-100 percentage (see NOTES_FOR_BACKEND_DEVS.md
+ * Note 16 resolution) — trust it directly instead of running it through the
+ * magnitude-guessing normalizer, which would corrupt a genuinely low value
+ * (e.g. 4.5%) into something like "4.5 out of 5" = 90%. Only the other,
+ * unconfirmed legacy field names still go through the guess-based fallback.
+ */
+function subjectProficiencyPercent(s: {
+  proficiencyPercent?: number;
+  scorePercentage?: number;
+  proficiencyScore?: number;
+}): number {
+  if (typeof s.proficiencyPercent === 'number') {
+    return Math.max(0, Math.min(100, Math.round(s.proficiencyPercent)));
+  }
+  return normalizeScoreToPercent(s.scorePercentage ?? s.proficiencyScore ?? 0);
+}
+
+/**
+ * Converts one trend point to a 0-100 percentage using the backend-supplied
+ * `averageMaxScore`. Returns null when `averageScore` is missing entirely —
+ * distinct from a real 0%, since a missing point shouldn't count toward the
+ * month-over-month delta at all.
+ */
+function trendPointPercent(t: TrendPointResult | undefined): number | null {
+  if (!t || typeof t.averageScore !== 'number') return null;
+  if (typeof t.averageMaxScore === 'number' && t.averageMaxScore > 0) {
+    return Math.max(0, Math.min(100, Math.round((t.averageScore / t.averageMaxScore) * 100)));
+  }
+  return Math.max(0, Math.min(100, Math.round(t.averageScore)));
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -90,23 +123,10 @@ export class StudentReportsService extends ApiBaseService {
         let topScore = 0;
         if (subjects.length > 0) {
           const sorted = [...subjects].sort(
-            (a, b) =>
-              ((b as { proficiencyPercent?: number }).proficiencyPercent ||
-                (b as { scorePercentage?: number }).scorePercentage ||
-                (b as { proficiencyScore?: number }).proficiencyScore ||
-                0) -
-              ((a as { proficiencyPercent?: number }).proficiencyPercent ||
-                (a as { scorePercentage?: number }).scorePercentage ||
-                (a as { proficiencyScore?: number }).proficiencyScore ||
-                0),
+            (a, b) => subjectProficiencyPercent(b) - subjectProficiencyPercent(a),
           );
           topSubjectName = sorted[0].subjectName || 'عام';
-          const rawTop =
-            (sorted[0] as { proficiencyPercent?: number }).proficiencyPercent ||
-            (sorted[0] as { scorePercentage?: number }).scorePercentage ||
-            (sorted[0] as { proficiencyScore?: number }).proficiencyScore ||
-            0;
-          topScore = normalizeScoreToPercent(rawTop);
+          topScore = subjectProficiencyPercent(sorted[0]);
         }
 
         const rawAvg = analytics?.overallAverage ?? 0;
@@ -119,12 +139,19 @@ export class StudentReportsService extends ApiBaseService {
         // Derived from the trend series itself (last two monthly averages) rather
         // than a backend-provided field — no endpoint returns a growth percentage
         // directly, and this is a real computation, not a fabricated placeholder.
+        //
+        // Each trend point is converted to a percentage via averageScore /
+        // averageMaxScore before comparing — subtracting raw averageScore values
+        // directly would make the delta swing wildly whenever consecutive months
+        // happen to be dominated by exams on different point scales (e.g. a 5-point
+        // exam one month, a 20-point exam the next), per NOTES_FOR_BACKEND_DEVS.md
+        // Note 16's resolution.
         let monthlyGrowthPercent = 0;
         if (trends.length >= 2) {
-          const last = trends[trends.length - 1]?.averageScore;
-          const prev = trends[trends.length - 2]?.averageScore;
-          if (typeof last === 'number' && typeof prev === 'number') {
-            monthlyGrowthPercent = Math.round(last - prev);
+          const lastPercent = trendPointPercent(trends[trends.length - 1]);
+          const prevPercent = trendPointPercent(trends[trends.length - 2]);
+          if (lastPercent !== null && prevPercent !== null) {
+            monthlyGrowthPercent = Math.round(lastPercent - prevPercent);
           }
         }
 
@@ -155,21 +182,14 @@ export class StudentReportsService extends ApiBaseService {
         const textColors = ['#0084D1', '#9810FA', '#009966', '#D97706'];
         const bgColors = ['#F0F9FF', '#FAF5FF', '#ECFDF5', '#FEF3C7'];
 
-        const mappedSubjects: SubjectScoreItem[] = subjects.map((s, idx) => {
-          const rawScore =
-            (s as { proficiencyPercent?: number }).proficiencyPercent ||
-            (s as { scorePercentage?: number }).scorePercentage ||
-            (s as { proficiencyScore?: number }).proficiencyScore ||
-            0;
-          return {
-            id: (s as { subjectId?: string }).subjectId || `sub_${idx}`,
-            subjectName: s.subjectName || `مادة ${idx + 1}`,
-            scorePercent: normalizeScoreToPercent(rawScore),
-            progressGradient: gradients[idx % gradients.length],
-            textColor: textColors[idx % textColors.length],
-            bgColor: bgColors[idx % bgColors.length],
-          };
-        });
+        const mappedSubjects: SubjectScoreItem[] = subjects.map((s, idx) => ({
+          id: (s as { subjectId?: string }).subjectId || `sub_${idx}`,
+          subjectName: s.subjectName || `مادة ${idx + 1}`,
+          scorePercent: subjectProficiencyPercent(s),
+          progressGradient: gradients[idx % gradients.length],
+          textColor: textColors[idx % textColors.length],
+          bgColor: bgColors[idx % bgColors.length],
+        }));
         this.subjectScores.set(mappedSubjects);
 
         // Weakness topics
@@ -219,17 +239,10 @@ export class StudentReportsService extends ApiBaseService {
         this.weaknessTopics.set(mappedWeak);
 
         // Skill radar points
-        const radar: SkillRadarPoint[] = subjects.map((s) => {
-          const rawScore =
-            (s as { proficiencyPercent?: number }).proficiencyPercent ||
-            (s as { scorePercentage?: number }).scorePercentage ||
-            (s as { proficiencyScore?: number }).proficiencyScore ||
-            0;
-          return {
-            name: s.subjectName || '',
-            percent: Math.round(rawScore),
-          };
-        });
+        const radar: SkillRadarPoint[] = subjects.map((s) => ({
+          name: s.subjectName || '',
+          percent: subjectProficiencyPercent(s),
+        }));
         this.skillRadarPoints.set(radar);
       }),
       map(() => true),

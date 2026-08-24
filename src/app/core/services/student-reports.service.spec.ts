@@ -119,4 +119,57 @@ describe('StudentReportsService', () => {
       expect(service.summary().overallAverage).toBeDefined();
     });
   });
+
+  it('trusts a genuinely low proficiencyPercent instead of guessing it is "out of 5"', () => {
+    // Regression test: backend confirmed subjectProficiencies.proficiencyPercent is
+    // already a 0-100 percentage (NOTES_FOR_BACKEND_DEVS.md Note 16). A prior version
+    // ran it through the magnitude-guessing normalizer, which turned a real 4.5%
+    // score into "4.5 out of 5" = 90%.
+    service.loadReports('std-123').subscribe();
+
+    const analyticsReq = httpMock.expectOne((r) => r.url.includes('/students/std-123/analytics'));
+    analyticsReq.flush({
+      overallAverage: 60,
+      highestScore: 60,
+      completedExams: 1,
+      subjectProficiencies: [{ subjectId: 's1', subjectName: 'رياضيات', proficiencyPercent: 4.5 }],
+      weakTopics: [],
+    });
+
+    const reportReq = httpMock.expectOne((r) =>
+      r.url.includes('/students/std-123/performance-reports/latest'),
+    );
+    reportReq.flush({ id: 'rep-1', weakTopics: [], subjectProficiencies: [] });
+
+    expect(service.subjectScores()[0].scorePercent).toBe(5);
+  });
+
+  it('computes monthlyGrowthPercent from percentages, not raw averageScore magnitudes', () => {
+    // Regression test: subtracting raw averageScore values directly made the delta
+    // swing wildly when consecutive months had exams on different point scales
+    // (e.g. 8.5/10 one month vs 14.5/20 the next look like a huge raw drop, but
+    // both are actually 85% -> 72.5%, a real but much smaller decline).
+    service.loadReports('std-123').subscribe();
+
+    const analyticsReq = httpMock.expectOne((r) => r.url.includes('/students/std-123/analytics'));
+    analyticsReq.flush({
+      overallAverage: 80,
+      highestScore: 90,
+      completedExams: 2,
+      subjectProficiencies: [],
+      weakTopics: [],
+      trendPoints: [
+        { month: '2026-07-01', averageScore: 14.5, averageMaxScore: 20 },
+        { month: '2026-08-01', averageScore: 8.5, averageMaxScore: 10 },
+      ],
+    });
+
+    const reportReq = httpMock.expectOne((r) =>
+      r.url.includes('/students/std-123/performance-reports/latest'),
+    );
+    reportReq.flush({ id: 'rep-1', weakTopics: [], subjectProficiencies: [] });
+
+    // 14.5/20 = 72.5% -> 8.5/10 = 85% => +12 or +13 depending on rounding order, not +(-6)
+    expect(service.summary().monthlyGrowthPercent).toBeGreaterThan(0);
+  });
 });

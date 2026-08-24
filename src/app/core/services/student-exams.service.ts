@@ -58,14 +58,14 @@ export function deriveExamStatus(
  * percentage — used by the exams list, the exam-taking result screen, and
  * the reports page so the same underlying score always renders identically.
  *
- * The backend does not reliably indicate whether a bare score field (no
- * accompanying max) is already a 0-100 percentage or raw points on some
- * other scale (see BACKEND_ISSUES_REPORT.md / NOTES_FOR_BACKEND_DEVS.md
- * Note 16). Guessing the scale from the number's magnitude (e.g. "<=10 means
- * out of 10") is unreliable by construction — a genuine 8% score is
- * indistinguishable from 8/10 — so this deliberately does NOT do that.
- * When an explicit total is known, it's used; otherwise the raw score is
- * treated as an already-computed percentage and only clamped to [0, 100].
+ * Backend now always supplies an explicit `maxScore` alongside exam/attempt
+ * scores (NOTES_FOR_BACKEND_DEVS.md Note 16, resolved 2026-08-24), so the real
+ * scale is normally known and this just divides. The magnitude-guessing this
+ * function deliberately avoids (e.g. "<=10 means out of 10") is unreliable by
+ * construction — a genuine 8% score is indistinguishable from 8/10 — so when
+ * no total is available at all, the raw score is treated as an
+ * already-computed percentage and only clamped to [0, 100], rather than
+ * guessed at.
  */
 export function formatExamScoreDisplay(
   score: number | null | undefined,
@@ -175,7 +175,7 @@ export class StudentExamsService extends ApiBaseService {
             const scoreInfo = formatExamScoreDisplay(
               ex.latestScore,
               ex.questionsCount || ex.totalQuestions,
-              ex.maxScore,
+              latestAttempt?.maxScore ?? ex.maxScore,
             );
 
             switch (status) {

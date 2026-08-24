@@ -98,6 +98,8 @@ export interface TrendPointResult {
   readonly month?: string;
   readonly monthName?: string;
   readonly averageScore?: number;
+  /** Backend now always supplies this alongside averageScore — divide to get a real percentage. */
+  readonly averageMaxScore?: number;
 }
 
 export interface WeakTopicResult {

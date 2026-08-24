@@ -7,6 +7,7 @@ export type ExamStatusType =
 export interface StudentExamAttemptSummaryDto {
   id: string;
   finalScore?: number | null;
+  maxScore?: number;
   needsTeacherReview?: boolean;
   submittedAt?: string | null;
   startedAt?: string;

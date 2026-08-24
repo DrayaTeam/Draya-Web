@@ -27,6 +27,7 @@ import type {
   GenerationProgressEvent,
   ReportGeneratedEvent,
   StudentAtRiskEvent,
+  AnswerScoreOverriddenEvent,
 } from '../models/signalr-events.model';
 
 export type ConnectionStatus =
@@ -69,6 +70,10 @@ export class SignalRService {
   private readonly _newChatMessage = signal<NewChatMessageEvent | null>(null);
   readonly newChatMessage = this._newChatMessage.asReadonly();
 
+  private readonly _answerScoreOverridden = signal<AnswerScoreOverriddenEvent | null>(null);
+  /** Fires when a teacher overrides an individual answer's score post-grading. */
+  readonly answerScoreOverridden = this._answerScoreOverridden.asReadonly();
+
   private readonly _generationProgressUpdated = signal<GenerationProgressEvent | null>(null);
   readonly generationProgressUpdated = this._generationProgressUpdated.asReadonly();
 
@@ -90,9 +95,15 @@ export class SignalRService {
         void this.startConnection().catch((err: unknown) => {
           console.warn('[SignalR] Auto-connect on login state failed:', err);
         });
-        void this.startReportsHub().catch((err: unknown) => {
-          console.warn('[SignalR] Reports hub auto-connect failed:', err);
-        });
+
+        // ReportGenerated/StudentAtRisk are teacher-only events (both link to
+        // /teacher/reports) — only teachers need this connection, so students
+        // don't pay for a hub attempt (and its console noise) they'll never use.
+        if (this.auth.currentUser()?.role === 'teacher') {
+          void this.startReportsHub().catch((err: unknown) => {
+            console.warn('[SignalR] Reports hub auto-connect failed:', err);
+          });
+        }
       } else {
         void this.stopConnection();
       }
@@ -194,6 +205,16 @@ export class SignalRService {
     });
     this.connection.on('NewChatMessage', (payload: NewChatMessageEvent) => {
       this._newChatMessage.set(payload);
+    });
+    this.connection.on('AnswerScoreOverridden', (payload: AnswerScoreOverriddenEvent) => {
+      console.log('[SignalR] AnswerScoreOverridden:', payload);
+      this._answerScoreOverridden.set(payload);
+      this.notificationStore.addNotification({
+        title: 'تحديث في نتيجة الامتحان 📝',
+        message: 'قام المعلم بمراجعة وتعديل درجة إحدى إجاباتك — تم تحديث نتيجتك.',
+        type: 'info',
+        link: '/student/reports',
+      });
     });
 
     try {

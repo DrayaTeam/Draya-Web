@@ -89,3 +89,15 @@ export interface StudentAtRiskEvent {
   readonly studentId: string;
   readonly topicName: string;
 }
+
+/**
+ * Emitted when a teacher overrides an individual answer's score after grading
+ * (legacy, /hubs/notifications). `newScore` is a raw point value for that one
+ * answer, not the recalculated attempt-level percentage — the client always
+ * refetches attempt results rather than trying to patch the total from this.
+ */
+export interface AnswerScoreOverriddenEvent {
+  readonly attemptId: string;
+  readonly answerId: string;
+  readonly newScore: number;
+}

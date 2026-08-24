@@ -1,4 +1,4 @@
-import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal, untracked } from '@angular/core';
 import { Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 import { ApiBaseService } from '../api/api-base.service';
 import { SignalRService } from '../signalr/signalr.service';
@@ -7,6 +7,10 @@ import { StudentWeaknessService } from './student-weakness.service';
 import { formatExamScoreDisplay } from './student-exams.service';
 import { ApiError } from '../models/api-error.model';
 import { StudentWeaknessItem } from '../models/student-weakness.model';
+import type {
+  GradingCompletedEvent,
+  AnswerScoreOverriddenEvent,
+} from '../models/signalr-events.model';
 import {
   AnswerSubmissionDto,
   AttemptResultResponseDto,
@@ -209,12 +213,21 @@ export class StudentExamTakingService extends ApiBaseService {
     super();
 
     // ── SignalR Real-Time AI Grading Listener ──────────────────────────────
-    // Listens to real-time events from SignalR and immediately fetches final grading results
+    // Listens to real-time events from SignalR and immediately fetches final grading results.
+    // `lastHandledGradingEvent` guards against Angular's dev-mode double change-detection
+    // pass re-running this effect for the same already-processed event object, which would
+    // otherwise fire fetchAttemptResults() (and its HTTP call) twice per real event.
+    let lastHandledGradingEvent: GradingCompletedEvent | null = null;
     effect(() => {
       const gradingEvent = this.signalR.gradingCompleted();
-      if (!gradingEvent) return;
+      if (!gradingEvent || gradingEvent === lastHandledGradingEvent) return;
+      lastHandledGradingEvent = gradingEvent;
 
-      const currentAttempt = this.currentAttemptId() || this.examResult().attemptId;
+      // examResult() is read untracked: fetchAttemptResults() below writes to
+      // it, and tracking it here would make the effect re-fire on its own
+      // write, refetching the same attempt in a loop.
+      const currentAttempt =
+        this.currentAttemptId() || untracked(() => this.examResult().attemptId);
       const eventAttemptId = gradingEvent.attemptId || gradingEvent.studentExamAttemptId;
       if (
         currentAttempt &&
@@ -239,6 +252,33 @@ export class StudentExamTakingService extends ApiBaseService {
           this.gradingStage.set('pending_review');
           this.isGradingInProgress.set(false);
         }
+      }
+    });
+
+    // ── SignalR Teacher Override Listener ───────────────────────────────────
+    // A teacher can override one answer's score after grading completes. The
+    // backend recalculates the attempt total server-side, so this only
+    // refetches results for the currently-viewed attempt rather than trying
+    // to patch the percentage from the raw per-answer newScore in the event.
+    // Same dedup guard as the grading listener above, for the same reason.
+    let lastHandledOverrideEvent: AnswerScoreOverriddenEvent | null = null;
+    effect(() => {
+      const overrideEvent = this.signalR.answerScoreOverridden();
+      if (!overrideEvent || overrideEvent === lastHandledOverrideEvent) return;
+      lastHandledOverrideEvent = overrideEvent;
+
+      // See the grading-listener effect above for why examResult() is untracked here.
+      const currentAttempt =
+        this.currentAttemptId() || untracked(() => this.examResult().attemptId);
+      if (
+        currentAttempt &&
+        overrideEvent.attemptId.toLowerCase() === currentAttempt.toLowerCase()
+      ) {
+        this.toastService.info(
+          'تحديث في النتيجة 📝',
+          'قام المعلم بمراجعة إحدى إجاباتك — يتم الآن تحديث نتيجتك.',
+        );
+        this.fetchAttemptResults(currentAttempt).subscribe();
       }
     });
   }

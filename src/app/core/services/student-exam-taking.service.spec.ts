@@ -1,10 +1,12 @@
 import { TestBed } from '@angular/core/testing';
+import { signal, WritableSignal } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import {
   StudentExamTakingService,
   interpretStartAttemptError,
 } from './student-exam-taking.service';
+import { SignalRService } from '../signalr/signalr.service';
 
 describe('StudentExamTakingService', () => {
   let service: StudentExamTakingService;
@@ -217,5 +219,61 @@ describe('StudentExamTakingService', () => {
 
     expect(service.examResult().weaknessTopics.length).toBe(1);
     expect(service.examResult().weaknessTopics[0].title).toBe('الجبر');
+  });
+
+  describe('answerScoreOverridden SignalR listener', () => {
+    let fakeGradingCompleted: WritableSignal<unknown>;
+    let fakeAnswerScoreOverridden: WritableSignal<unknown>;
+
+    beforeEach(() => {
+      fakeGradingCompleted = signal(null);
+      fakeAnswerScoreOverridden = signal(null);
+
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          provideHttpClient(),
+          provideHttpClientTesting(),
+          {
+            provide: SignalRService,
+            useValue: {
+              gradingCompleted: fakeGradingCompleted,
+              answerScoreOverridden: fakeAnswerScoreOverridden,
+            },
+          },
+        ],
+      });
+      service = TestBed.inject(StudentExamTakingService);
+      httpMock = TestBed.inject(HttpTestingController);
+    });
+
+    it('refetches attempt results when a teacher override matches the currently-viewed attempt', () => {
+      service.currentAttemptId.set('att-1');
+
+      fakeAnswerScoreOverridden.set({ attemptId: 'att-1', answerId: 'ans-1', newScore: 9 });
+      TestBed.tick();
+
+      const req = httpMock.expectOne((r) => r.url.includes('/attempts/att-1/results'));
+      expect(req.request.method).toBe('GET');
+      req.flush({
+        attemptId: 'att-1',
+        examId: 'exam-1',
+        isSubmitted: true,
+        submittedAt: '2026-01-01T00:00:00Z',
+        finalScore: 95,
+        needsTeacherReview: false,
+        answers: [],
+      });
+    });
+
+    it('ignores an override event for a different attempt than the one being viewed', () => {
+      service.currentAttemptId.set('att-1');
+
+      fakeAnswerScoreOverridden.set({ attemptId: 'att-999', answerId: 'ans-1', newScore: 9 });
+      TestBed.tick();
+
+      const matched = httpMock.match((r) => r.url.includes('/attempts/'));
+      expect(matched.length).toBe(0);
+    });
   });
 });

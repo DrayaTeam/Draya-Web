@@ -105,6 +105,28 @@ describe('StudentExamsService', () => {
     expect(mapped[0].status).toBe('completed');
   });
 
+  it("prefers the latest attempt's own maxScore over the exam-level maxScore for score display", () => {
+    // Backend confirmed GET /students/exams now includes maxScore per attempt
+    // (not just at the exam level) — prefer the attempt's own value so score
+    // and total always come from the same object.
+    service.loadExams();
+    const req = httpMock.expectOne((r) => r.url.includes('/students/exams'));
+    req.flush({
+      items: [
+        makeExam({
+          id: 'exam-7',
+          hasSubmitted: true,
+          latestScore: 8.5,
+          maxScore: 20, // exam-level total differs from the attempt's own total
+          attempts: [{ id: 'att-1', finalScore: 8.5, maxScore: 10, needsTeacherReview: false }],
+        }),
+      ],
+    });
+
+    const mapped = service.exams();
+    expect(mapped[0].scorePercent).toBe(85);
+  });
+
   describe('formatExamScoreDisplay', () => {
     it('formats score with total count into percentage correctly', () => {
       const result = formatExamScoreDisplay(3, 5);
