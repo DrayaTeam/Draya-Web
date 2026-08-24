@@ -16,14 +16,6 @@
     </h3>
 
     <div class="meta-line">
-      @if (book().pagesCount && book().pagesCount > 0) {
-        <span>{{ book().pagesCount }} صفحة</span>
-        <span class="dot-separator">•</span>
-      }
-      @if (book().fileSizeMb && book().fileSizeMb > 0) {
-        <span>{{ book().fileSizeMb }} MB</span>
-        <span class="dot-separator">•</span>
-      }
       <span class="format-tag">{{ book().fileFormat }}</span>
     </div>
 
