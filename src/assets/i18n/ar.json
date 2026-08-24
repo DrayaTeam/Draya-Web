@@ -573,10 +573,11 @@
       },
       "PENDING_REVIEWS": {
         "TITLE": "مراجعات بانتظار الاعتماد",
+        "SHORT_TITLE": "مراجعات معلقة",
         "LOADING": "جارٍ التحميل...",
         "EMPTY": "لا توجد محاولات بانتظار المراجعة حالياً",
-        "ACTION_REQUIRED": "إجراء مطلوب",
-        "VIEW_DETAILS": "اضغط لعرض التفاصيل"
+        "EMPTY_SHORT": "لا يوجد شيء حالياً ✓",
+        "ACTION_REQUIRED": "إجراء مطلوب"
       },
       "FOLLOWUP_TABLE": {
         "TITLE": "طلاب يحتاجون متابعة",

@@ -1,48 +1,47 @@
 <a routerLink="/teacher/pending-reviews" class="pending-reviews-nav-card">
-  <div class="pr-icon-wrap">
+  <div class="pr-top-row">
+    <div class="pr-icon-wrap">
+      <svg
+        width="15"
+        height="15"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#7C3AED"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    </div>
+
+    <span class="pr-title">{{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.SHORT_TITLE' | translate }}</span>
+
+    @if (totalPendingCount() > 0) {
+      <span class="pr-count-pill">{{ totalPendingCount() }}</span>
+    }
+
     <svg
-      width="15"
-      height="15"
+      class="pr-chevron"
+      width="14"
+      height="14"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#7C3AED"
+      stroke="currentColor"
       stroke-width="2.2"
       stroke-linecap="round"
       stroke-linejoin="round">
-      <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+      <polyline points="15 18 9 12 15 6" />
     </svg>
   </div>
 
-  <div class="pr-text-col">
-    <span class="pr-title">{{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.TITLE' | translate }}</span>
-    @if (isLoading()) {
-      <span class="pr-sub loading-row">
-        <span class="state-spinner"></span>
-        {{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.LOADING' | translate }}
-      </span>
-    } @else if (totalPendingCount() > 0) {
-      <span class="pr-sub">{{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.VIEW_DETAILS' | translate }}</span>
-    } @else {
-      <span class="pr-sub empty-row">
-        {{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.EMPTY' | translate }}
-      </span>
-    }
-  </div>
-
-  @if (totalPendingCount() > 0) {
-    <span class="pr-count-pill">{{ totalPendingCount() }}</span>
+  @if (isLoading()) {
+    <span class="pr-sub loading-row">
+      <span class="state-spinner"></span>
+      {{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.LOADING' | translate }}
+    </span>
+  } @else if (totalPendingCount() === 0) {
+    <span class="pr-sub empty-row">
+      {{ 'TEACHER.DASHBOARD.PENDING_REVIEWS.EMPTY_SHORT' | translate }}
+    </span>
   }
-
-  <svg
-    class="pr-chevron"
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2.2"
-    stroke-linecap="round"
-    stroke-linejoin="round">
-    <polyline points="15 18 9 12 15 6" />
-  </svg>
 </a>

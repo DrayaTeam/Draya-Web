@@ -573,10 +573,11 @@
       },
       "PENDING_REVIEWS": {
         "TITLE": "Pending Reviews",
+        "SHORT_TITLE": "Pending Reviews",
         "LOADING": "Loading...",
         "EMPTY": "No attempts are waiting for review right now",
-        "ACTION_REQUIRED": "Action Required",
-        "VIEW_DETAILS": "Tap to view details"
+        "EMPTY_SHORT": "Nothing right now ✓",
+        "ACTION_REQUIRED": "Action Required"
       },
       "FOLLOWUP_TABLE": {
         "TITLE": "Students Needing Follow-up",

@@ -5,8 +5,8 @@
 
 .pending-reviews-nav-card {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 4px;
   width: 100%;
   padding: 10px 12px;
   border-radius: 10px;
@@ -26,9 +26,16 @@
   }
 }
 
+.pr-top-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
 .pr-icon-wrap {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   flex-shrink: 0;
   border-radius: 8px;
   background: rgba(124, 58, 237, 0.12);
@@ -37,32 +44,46 @@
   justify-content: center;
 }
 
-.pr-text-col {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-  flex: 1;
-}
-
 .pr-title {
+  flex: 1;
+  min-width: 0;
   font-size: 0.8125rem;
   font-weight: 700;
   color: #151b19;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
+.pr-count-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.pr-chevron {
+  flex-shrink: 0;
+  color: #94a3a0;
+  transition: transform 150ms ease-out;
+}
+
+// Sits below the title row, using the full card width so longer status text
+// wraps onto a second line instead of being squeezed/truncated next to the
+// icon and chevron.
 .pr-sub {
   display: flex;
   align-items: center;
   gap: 6px;
+  padding-inline-start: 34px;
   font-size: 0.6875rem;
+  line-height: 1.4;
   color: #62748e;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 
   &.empty-row {
     color: #009966;
@@ -89,25 +110,4 @@
   .state-spinner {
     animation: none;
   }
-}
-
-.pr-count-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  border-radius: 999px;
-  background: #ef4444;
-  color: #ffffff;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.pr-chevron {
-  flex-shrink: 0;
-  color: #94a3a0;
-  transition: transform 150ms ease-out;
 }
