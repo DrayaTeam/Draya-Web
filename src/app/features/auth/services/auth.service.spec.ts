@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { AuthService } from './auth.service';
 import { AUTH_API, IAuthApi } from './auth-api.token';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Subject } from 'rxjs';
 import { ApiError } from '../../../core/models/api-error.model';
 import {
   AuthResponse,
@@ -108,6 +108,51 @@ describe('AuthService', () => {
           done();
         },
       });
+    });
+
+    it('should treat a 200 response missing accessToken/refreshToken as a failure, not corrupt storage', (done) => {
+      // Regression test: swagger documents POST /auth/refresh-token as
+      // returning no body on 200. Silently accepting that as success used to
+      // write the literal string "undefined" into localStorage instead of
+      // failing the refresh loudly.
+      authApiSpy.refreshToken.and.returnValue(of({} as AuthResponse));
+
+      service.refreshToken('old-refresh-token').subscribe({
+        error: () => {
+          expect(localStorage.getItem('draya_access_token')).toBeNull();
+          expect(service.currentUser()).toBeNull();
+          done();
+        },
+      });
+    });
+  });
+
+  describe('refresh() concurrency', () => {
+    it('shares one in-flight refresh call across concurrent callers instead of racing multiple', (done) => {
+      // Regression test: two 401s arriving at once used to each call
+      // refreshToken() independently. If the backend rotates refresh tokens,
+      // only the first of those parallel calls succeeds and the rest fail
+      // and force-logout a session that was actually fine.
+      // A Subject stands in for the HTTP call so both refresh() calls are
+      // genuinely in flight before either resolves (a synchronous mock would
+      // let the first call finish before the second even starts).
+      const response$ = new Subject<AuthResponse>();
+      authApiSpy.refreshToken.and.returnValue(response$);
+      localStorage.setItem('draya_refresh_token', 'shared-refresh-token');
+
+      let completed = 0;
+      const onDone = () => {
+        completed++;
+        if (completed === 2) {
+          expect(authApiSpy.refreshToken.calls.count()).toBe(1);
+          done();
+        }
+      };
+
+      service.refresh().subscribe({ next: onDone });
+      service.refresh().subscribe({ next: onDone });
+      response$.next(mockAuthResponse);
+      response$.complete();
     });
   });
 

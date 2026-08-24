@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { catchError, finalize, Observable, throwError, tap, map, of } from 'rxjs';
+import { catchError, finalize, Observable, throwError, tap, map, of, shareReplay } from 'rxjs';
 import { AUTH_API } from './auth-api.token';
 import { User, UserProfile, UserRole } from '../../../core/models/user.model';
 import { ApiError } from '../../../core/models/api-error.model';
@@ -148,7 +148,15 @@ export class AuthService {
     this._isLoading.set(true);
     this._authError.set(null);
     return this.authApi.refreshToken(token).pipe(
-      tap((res) => this.handleAuthSuccess(res)),
+      tap((res) => {
+        // A 200 with a missing accessToken/refreshToken (e.g. an empty body)
+        // must not be treated as success — writing "undefined" into storage
+        // would silently corrupt the session instead of failing loudly.
+        if (!res?.accessToken || !res?.refreshToken) {
+          throw new Error('Refresh-token response is missing accessToken/refreshToken.');
+        }
+        this.handleAuthSuccess(res);
+      }),
       catchError((error: ApiError) => {
         this._authError.set(error);
         this.clearStorage();
@@ -158,11 +166,40 @@ export class AuthService {
     );
   }
 
+  private refreshInProgress$: Observable<AuthResponse> | null = null;
+
+  /**
+   * Refreshes the access token, sharing one in-flight HTTP call across every
+   * concurrent caller instead of firing one refresh request per 401.
+   *
+   * Without this, a page that fires several API calls at once (e.g. loading
+   * an exam) triggers one refresh-token call per failed request when the
+   * access token has expired. If the backend rotates refresh tokens (issues
+   * a new one and invalidates the old on each use — standard practice), only
+   * the first of those parallel calls succeeds; every other one races against
+   * an already-consumed refresh token, fails, and calls logout() — which
+   * clears the fresh tokens the first call just stored and force-logs-out a
+   * user whose session was actually fine. This is a likely cause of the
+   * exam start intermittently failing with what looks like an unrelated
+   * error, or the session appearing to silently end mid-flow.
+   */
   refresh(): Observable<AuthResponse> {
+    if (this.refreshInProgress$) {
+      return this.refreshInProgress$;
+    }
+
     const refreshToken = isPlatformBrowser(this.platformId)
       ? localStorage.getItem('draya_refresh_token')
       : null;
-    return this.refreshToken(refreshToken ?? '');
+
+    const request$ = this.refreshToken(refreshToken ?? '').pipe(
+      shareReplay(1),
+      finalize(() => {
+        this.refreshInProgress$ = null;
+      }),
+    );
+    this.refreshInProgress$ = request$;
+    return request$;
   }
 
   updateLocalUser(partial: Partial<User>): void {
