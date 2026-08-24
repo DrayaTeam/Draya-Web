@@ -93,32 +93,19 @@ export class StudentReportsComponent implements OnInit, OnDestroy {
   readonly isLoading = this.reportsService.isLoading;
 
   // Weaknesses are driven by the dedicated /Weaknesses/active and
-  // /Weaknesses/resolved endpoints, enriched with matching exam scores when available.
+  // /Weaknesses/resolved endpoints. proficiencyPercent is a topic-level
+  // metric — it is NOT the same thing as any single exam's score, so it must
+  // never be substituted with a fuzzy-matched exam's scorePercent (a prior
+  // version of this code did exactly that, which silently mixed two
+  // unrelated numbers together). See NOTES_FOR_BACKEND_DEVS.md Note 16 if
+  // this field is ever observed to arrive on a non-percentage scale — that's
+  // a backend contract issue to fix at the source, not something to guess
+  // around here.
   readonly activeWeaknessTopics = computed(() => {
     const list = this.weaknessService.activeWeaknesses();
-    const exams = this.examsService.exams();
 
     return list.map((w) => {
-      let finalScore = w.proficiencyPercent;
-      if (finalScore <= 10) {
-        const cleanName = w.topicName.trim().toLowerCase();
-        const matched = exams.find((e) => {
-          const t = e.title?.trim().toLowerCase() || '';
-          const s = e.subjectName?.trim().toLowerCase() || '';
-          return (
-            t === cleanName || t.includes(cleanName) || cleanName.includes(t) || s === cleanName
-          );
-        });
-
-        if (matched && typeof matched.scorePercent === 'number' && matched.scorePercent > 0) {
-          finalScore = matched.scorePercent;
-        } else if (finalScore > 0 && finalScore <= 5) {
-          finalScore = Math.min(100, Math.round((finalScore / 5) * 100));
-        } else if (finalScore > 0 && finalScore <= 10) {
-          finalScore = Math.min(100, Math.round((finalScore / 10) * 100));
-        }
-      }
-
+      const finalScore = Math.max(0, Math.min(100, Math.round(w.proficiencyPercent)));
       const isSevere = finalScore < 50;
       return {
         id: w.id,

@@ -4,6 +4,7 @@ import { ApiBaseService } from '../api/api-base.service';
 import { SignalRService } from '../signalr/signalr.service';
 import { ToastService } from './toast.service';
 import { StudentWeaknessService } from './student-weakness.service';
+import { formatExamScoreDisplay } from './student-exams.service';
 import { ApiError } from '../models/api-error.model';
 import { StudentWeaknessItem } from '../models/student-weakness.model';
 import {
@@ -754,25 +755,15 @@ export class StudentExamTakingService extends ApiBaseService {
           (hasPendingQuestions &&
             (res.needsTeacherReview || res.finalScore === null || res.finalScore === undefined));
 
-        // Percentage calculation unified across all views
+        // Percentage calculation — shares formatExamScoreDisplay() with the
+        // exams list and reports page so the same score never renders
+        // differently across screens (see NOTES_FOR_BACKEND_DEVS.md Note 16).
         let pct = 0;
         if (hasAnyGraded && maxTotal > 0) {
           pct = Math.min(100, Math.round((earnedTotal / maxTotal) * 100));
         } else if (res.finalScore !== undefined && res.finalScore !== null) {
-          const rawScore = Number(res.finalScore);
-          const total = Number(res.maxScore || maxTotal || answersList.length || questionsList.length || 0);
-
-          if (total > 0 && rawScore <= total) {
-            pct = Math.min(100, Math.round((rawScore / total) * 100));
-          } else if (rawScore > 10 && rawScore <= 100) {
-            pct = Math.min(100, Math.round(rawScore));
-          } else if (rawScore <= 5 && total === 0) {
-            pct = Math.min(100, Math.round((rawScore / 5) * 100));
-          } else if (rawScore <= 10 && total === 0) {
-            pct = Math.min(100, Math.round((rawScore / 10) * 100));
-          } else {
-            pct = Math.min(100, Math.round(rawScore));
-          }
+          const total = res.maxScore || maxTotal || answersList.length || questionsList.length || 0;
+          pct = formatExamScoreDisplay(res.finalScore, undefined, total).percent ?? 0;
         }
 
         let gradeLabel = 'قيد التقييم والمراجعة ⏳';

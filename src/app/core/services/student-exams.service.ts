@@ -53,6 +53,20 @@ export function deriveExamStatus(
   return 'available';
 }
 
+/**
+ * Single source of truth for turning a raw backend score into a display
+ * percentage — used by the exams list, the exam-taking result screen, and
+ * the reports page so the same underlying score always renders identically.
+ *
+ * The backend does not reliably indicate whether a bare score field (no
+ * accompanying max) is already a 0-100 percentage or raw points on some
+ * other scale (see BACKEND_ISSUES_REPORT.md / NOTES_FOR_BACKEND_DEVS.md
+ * Note 16). Guessing the scale from the number's magnitude (e.g. "<=10 means
+ * out of 10") is unreliable by construction — a genuine 8% score is
+ * indistinguishable from 8/10 — so this deliberately does NOT do that.
+ * When an explicit total is known, it's used; otherwise the raw score is
+ * treated as an already-computed percentage and only clamped to [0, 100].
+ */
 export function formatExamScoreDisplay(
   score: number | null | undefined,
   questionsCount?: number,
@@ -63,52 +77,18 @@ export function formatExamScoreDisplay(
   }
 
   const rawScore = Number(score);
-  if (rawScore <= 0) {
-    return { text: 'الدرجة: 0%', percent: 0 };
-  }
-
   const total = Number(maxScore || questionsCount || 0);
 
-  // If explicit total is known (e.g. 5 questions) and rawScore is points (e.g. 3)
-  if (total > 0 && rawScore <= total) {
-    const percent = Math.min(100, Math.round((rawScore / total) * 100));
-    return {
-      text: `الدرجة: ${percent}%`,
-      percent,
-    };
-  }
+  // Only divide by an explicit total when the raw score is actually within
+  // it (points-out-of-total). If it exceeds the total, the two don't agree
+  // on units — treating rawScore as already a percentage is the safer
+  // fallback than dividing into a >100% result.
+  const percent =
+    total > 0 && rawScore <= total
+      ? Math.max(0, Math.min(100, Math.round((rawScore / total) * 100)))
+      : Math.max(0, Math.min(100, Math.round(rawScore)));
 
-  // If rawScore is already a percentage (e.g. 60, 85, 100)
-  if (rawScore > 10 && rawScore <= 100) {
-    return {
-      text: `الدرجة: ${Math.round(rawScore)}%`,
-      percent: Math.round(rawScore),
-    };
-  }
-
-  // If rawScore is out of 5 (e.g. 1, 2, 3, 4, 5)
-  if (rawScore <= 5) {
-    const percent = Math.min(100, Math.round((rawScore / 5) * 100));
-    return {
-      text: `الدرجة: ${percent}%`,
-      percent,
-    };
-  }
-
-  // If rawScore is out of 10 (e.g. 6, 7, 8, 9, 10)
-  if (rawScore <= 10) {
-    const percent = Math.min(100, Math.round((rawScore / 10) * 100));
-    return {
-      text: `الدرجة: ${percent}%`,
-      percent,
-    };
-  }
-
-  const percent = Math.min(100, Math.round(rawScore));
-  return {
-    text: `الدرجة: ${percent}%`,
-    percent,
-  };
+  return { text: `الدرجة: ${percent}%`, percent };
 }
 
 @Injectable({ providedIn: 'root' })

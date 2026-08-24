@@ -123,5 +123,24 @@ describe('StudentExamsService', () => {
       expect(result.percent).toBeNull();
       expect(result.text).toBe('تم التسليم');
     });
+
+    it('does not misinterpret a genuinely low percentage as points-out-of-10', () => {
+      // Regression test: a bare score of 8 with no total used to be guessed as
+      // "8 out of 10" -> 80%, which silently corrupts a real 8% score.
+      const result = formatExamScoreDisplay(8);
+      expect(result.percent).toBe(8);
+    });
+
+    it('falls back to treating the score as a percentage when it exceeds the given total', () => {
+      // total and rawScore disagree on units (e.g. stale/mismatched maxScore) —
+      // dividing would produce a nonsensical >100% figure before clamping.
+      const result = formatExamScoreDisplay(85, 5);
+      expect(result.percent).toBe(85);
+    });
+
+    it('clamps out-of-range values to [0, 100]', () => {
+      expect(formatExamScoreDisplay(150).percent).toBe(100);
+      expect(formatExamScoreDisplay(-10).percent).toBe(0);
+    });
   });
 });
