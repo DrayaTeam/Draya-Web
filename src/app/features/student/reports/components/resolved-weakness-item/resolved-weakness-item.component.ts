@@ -12,13 +12,13 @@ import { StudentWeaknessItem } from '../../../../../core/models/student-weakness
 export class ResolvedWeaknessItemComponent {
   readonly weakness = input.required<StudentWeaknessItem>();
 
+  // proficiencyPercent is already a normalized 0-100 value from the service
+  // (StudentWeaknessService), which itself is confirmed against swagger — no
+  // magnitude-guessing needed here. A resolved weakness with no percent at
+  // all (shouldn't happen, but the field isn't guaranteed) reads as mastered.
   readonly proficiencyPercent = computed(() => {
     const raw = this.weakness().proficiencyPercent;
-    if (raw && raw > 10) return Math.min(100, Math.round(raw));
-    if (raw && raw > 0 && raw <= 5) return Math.min(100, Math.round((raw / 5) * 100));
-    if (raw && raw > 0 && raw <= 10) return Math.min(100, Math.round((raw / 10) * 100));
-    // Default mastery score for mastered topics
-    return 100;
+    return raw > 0 ? Math.max(0, Math.min(100, Math.round(raw))) : 100;
   });
 
   readonly masteryMessage = computed(() => {

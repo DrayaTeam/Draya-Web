@@ -37,6 +37,23 @@ describe('ResolvedWeaknessItemComponent', () => {
     expect(compiled.querySelector('.delta-pill')?.textContent).toContain('43');
   });
 
+  it('should trust a low real proficiency instead of guessing it is "out of 10"', () => {
+    // Regression test: the old logic guessed <=10 meant "out of 10" and multiplied
+    // up, turning a genuine 8% into 80%. proficiencyPercent is already a
+    // confirmed 0-100 percent from the service (currentProficiencyPercent on
+    // the wire) — no guessing needed.
+    fixture.componentRef.setInput('weakness', {
+      id: 'w3',
+      topicName: 'موضوع نادر',
+      subjectName: 'عام',
+      proficiencyPercent: 8,
+    });
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('.score-box')?.textContent).toContain('8%');
+  });
+
   it('should default to 100% mastery when proficiency is zero or missing', () => {
     fixture.componentRef.setInput('weakness', {
       id: 'w2',

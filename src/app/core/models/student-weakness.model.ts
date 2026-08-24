@@ -1,25 +1,48 @@
 // src/app/core/models/student-weakness.model.ts
 //
-// GET /api/v1/Weaknesses/active and GET /api/v1/Weaknesses/resolved both return a
-// bare `200 OK` with no schema in swagger, so this DTO is modeled tolerantly from
-// the backend hand-off docs rather than a typed contract — every field the backend
-// hasn't confirmed is optional, and the service normalizes rather than trusting it.
+// Confirmed against the live swagger spec (http://draya-api.runasp.net/swagger/v1/swagger.json,
+// 2026-08-24) — these are typed contracts now, not guesses. Notably, the backend does NOT
+// send subjectName or exampleIncorrectAnswers on either shape, and the percent field is
+// named currentProficiencyPercent (not proficiencyPercent) on the wire.
+
+/** GET /api/v1/weaknesses/active — WeaknessDto[] */
 export interface WeaknessDto {
-  id?: string;
+  id: string;
+  topicId: string;
   topicName: string;
-  subjectName?: string;
-  /** Current proficiency score (0-100) for this topic, right now. */
-  proficiencyPercent: number;
-  status?: 'Active' | 'Resolved' | string;
-  isActive?: boolean;
-  /** Only present on resolved weaknesses per the hand-off doc — improvement since the weakness was first flagged. */
-  delta?: number;
-  previousProficiencyPercent?: number;
-  exampleIncorrectAnswers?: string[];
-  lastUpdatedAt?: string;
+  currentProficiencyPercent: number;
+  lastUpdatedAt: string;
 }
 
-/** Normalized view-model the reports UI renders. */
+/** GET /api/v1/weaknesses/resolved — ResolvedWeaknessDto[] */
+export interface ResolvedWeaknessDto {
+  id: string;
+  topicId: string;
+  topicName: string;
+  currentProficiencyPercent: number;
+  previousProficiencyPercent: number;
+  delta: number;
+  lastUpdatedAt: string;
+}
+
+/** GET /api/v1/weaknesses/{id}/history — WeaknessHistoryDto[], the progression log behind one weakness. */
+export interface WeaknessHistoryDto {
+  historyId: string;
+  previousProficiencyPercent: number;
+  newProficiencyPercent: number;
+  previousIsActive: boolean;
+  newIsActive: boolean;
+  createdAt: string;
+  triggeredByAttemptId?: string | null;
+}
+
+/**
+ * Normalized view-model the reports UI renders. subjectName has no backend
+ * source at all right now (see NOTES_FOR_BACKEND_DEVS.md) and always falls
+ * back to a generic label; exampleIncorrectAnswers is likewise never
+ * populated from the wire — both are kept as optional so the UI degrades
+ * rather than assuming data that doesn't exist.
+ */
 export interface StudentWeaknessItem {
   readonly id: string;
   readonly topicName: string;

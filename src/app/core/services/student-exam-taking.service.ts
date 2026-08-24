@@ -827,7 +827,7 @@ export class StudentExamTakingService extends ApiBaseService {
           isPassed: !isGradingPending && pct >= 50,
           isGradingPending,
           // Weaknesses are no longer derived from wrong answers here — the result
-          // page refreshes them from the authoritative GET /Weaknesses/active
+          // page refreshes them from the authoritative GET /weaknesses/active
           // endpoint once grading completes (see student-weakness.service.ts).
           weaknessTopics: [],
           reviewQuestions: mappedReviewQuestions,

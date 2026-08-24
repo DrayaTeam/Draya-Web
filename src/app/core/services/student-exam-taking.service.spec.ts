@@ -187,7 +187,7 @@ describe('StudentExamTakingService', () => {
     expect('correctOptionId' in question).toBeFalse();
   });
 
-  it('should refresh weaknesses from /Weaknesses/active once grading actually completes', () => {
+  it('should refresh weaknesses from /weaknesses/active once grading actually completes', () => {
     service.fetchAttemptResults('att-graded').subscribe();
 
     const resultsReq = httpMock.expectOne((r) => r.url.includes('/attempts/att-graded/results'));
@@ -213,7 +213,7 @@ describe('StudentExamTakingService', () => {
       ],
     });
 
-    const weaknessReq = httpMock.expectOne((r) => r.url.includes('/Weaknesses/active'));
+    const weaknessReq = httpMock.expectOne((r) => r.url.includes('/weaknesses/active'));
     expect(weaknessReq.request.method).toBe('GET');
     weaknessReq.flush([{ topicName: 'الجبر', proficiencyPercent: 55 }]);
 

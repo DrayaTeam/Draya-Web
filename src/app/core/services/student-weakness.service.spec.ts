@@ -24,36 +24,48 @@ describe('StudentWeaknessService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should load and normalize active weaknesses', () => {
+  it('should call the confirmed lowercase /weaknesses/active endpoint', () => {
     service.loadActiveWeaknesses().subscribe();
-    const req = httpMock.expectOne((r) => r.url.includes('/Weaknesses/active'));
+    const req = httpMock.expectOne((r) => r.url.includes('/weaknesses/active'));
     expect(req.request.method).toBe('GET');
+    req.flush([]);
+  });
+
+  it('should read currentProficiencyPercent (the real wire field), not proficiencyPercent', () => {
+    // Regression test: swagger confirms WeaknessDto sends currentProficiencyPercent,
+    // not proficiencyPercent. Reading the wrong field name silently produced 0%
+    // for every single active weakness regardless of the real score.
+    service.loadActiveWeaknesses().subscribe();
+    const req = httpMock.expectOne((r) => r.url.includes('/weaknesses/active'));
     req.flush([
-      { topicName: 'التفاضل', proficiencyPercent: 42.6, subjectName: 'رياضيات' },
-      { topicName: 'الديناميكا', proficiencyPercent: 30 },
+      { id: 'w1', topicId: 't1', topicName: 'التفاضل', currentProficiencyPercent: 42.6 },
+      { id: 'w2', topicId: 't2', topicName: 'الديناميكا', currentProficiencyPercent: 30 },
     ]);
 
     const list = service.activeWeaknesses();
     expect(list.length).toBe(2);
     expect(list[0].proficiencyPercent).toBe(43);
-    expect(list[1].subjectName).toBe('عام');
+    expect(list[1].proficiencyPercent).toBe(30);
     expect(service.isLoadingActive()).toBeFalse();
   });
 
-  it('should load resolved weaknesses with delta/previousProficiencyPercent when present', () => {
+  it('should call the confirmed lowercase /weaknesses/resolved endpoint and map delta/previousProficiencyPercent', () => {
     service.loadResolvedWeaknesses().subscribe();
-    const req = httpMock.expectOne((r) => r.url.includes('/Weaknesses/resolved'));
+    const req = httpMock.expectOne((r) => r.url.includes('/weaknesses/resolved'));
     req.flush([
       {
+        id: 'w3',
+        topicId: 't3',
         topicName: 'الجبر',
-        proficiencyPercent: 90,
-        delta: 43,
+        currentProficiencyPercent: 90,
         previousProficiencyPercent: 47,
+        delta: 43,
       },
     ]);
 
     const list = service.resolvedWeaknesses();
     expect(list.length).toBe(1);
+    expect(list[0].proficiencyPercent).toBe(90);
     expect(list[0].delta).toBe(43);
     expect(list[0].previousProficiencyPercent).toBe(47);
   });
@@ -68,10 +80,40 @@ describe('StudentWeaknessService', () => {
       },
     ]);
     service.loadActiveWeaknesses().subscribe();
-    const req = httpMock.expectOne((r) => r.url.includes('/Weaknesses/active'));
+    const req = httpMock.expectOne((r) => r.url.includes('/weaknesses/active'));
     req.flush({ message: 'boom' }, { status: 500, statusText: 'Server Error' });
 
     expect(service.activeWeaknesses()).toEqual([]);
     expect(service.isLoadingActive()).toBeFalse();
+  });
+
+  it('should fetch weakness progression history from /weaknesses/{id}/history', () => {
+    let result: unknown[] = [];
+    service.getWeaknessHistory('w1').subscribe((res) => (result = res));
+
+    const req = httpMock.expectOne((r) => r.url.includes('/weaknesses/w1/history'));
+    expect(req.request.method).toBe('GET');
+    req.flush([
+      {
+        historyId: 'h1',
+        previousProficiencyPercent: 40,
+        newProficiencyPercent: 60,
+        previousIsActive: true,
+        newIsActive: true,
+        createdAt: '2026-08-01T00:00:00Z',
+      },
+    ]);
+
+    expect(result.length).toBe(1);
+  });
+
+  it('should return an empty history list (not throw) when the request fails', () => {
+    let result: unknown[] = [{ sentinel: true }];
+    service.getWeaknessHistory('w1').subscribe((res) => (result = res));
+
+    const req = httpMock.expectOne((r) => r.url.includes('/weaknesses/w1/history'));
+    req.flush({ message: 'boom' }, { status: 404, statusText: 'Not Found' });
+
+    expect(result).toEqual([]);
   });
 });
