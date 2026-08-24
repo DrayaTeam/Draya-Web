@@ -46,6 +46,17 @@ export class StudentDashboardComponent implements OnInit {
   // Display only first 3 weakness topics on dashboard — full list lives on /student/reports
   readonly displayedWeaknessTopics = computed(() => this.weaknessTopics().slice(0, 3));
 
+  // "تنبيهات ومواعيد عاجلة" card — the 2 soonest real upcoming exams, not the
+  // hardcoded "امتحان الجبر التراكمي" / "امتحان الفيزياء" mockup this card
+  // used to show unconditionally regardless of the student's real schedule.
+  readonly urgentAlerts = computed(() => this.upcomingExams().slice(0, 2));
+  readonly urgentAlertsCountLabel = computed(() => {
+    const n = this.urgentAlerts().length;
+    if (n === 1) return 'تنبيه جديد';
+    if (n === 2) return 'تنبيهان جديدان';
+    return `${n} تنبيهات جديدة`;
+  });
+
   // Loading / error signals — used for skeleton + error banner in template
   readonly loading = this.dashboardService.loading;
   readonly error = this.dashboardService.error;

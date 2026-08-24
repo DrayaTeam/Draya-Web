@@ -1,6 +1,6 @@
 // src/app/features/student/dashboard/student-dashboard.component.spec.ts
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { signal } from '@angular/core';
+import { signal, WritableSignal } from '@angular/core';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
@@ -15,8 +15,20 @@ import { UpcomingExamItem, WeaknessTopicItem } from '../../../core/models/studen
 describe('StudentDashboardComponent', () => {
   let component: StudentDashboardComponent;
   let fixture: ComponentFixture<StudentDashboardComponent>;
+  let upcomingExamsSignal: WritableSignal<UpcomingExamItem[]>;
 
   beforeEach(async () => {
+    upcomingExamsSignal = signal<UpcomingExamItem[]>(
+      Array.from({ length: 5 }, (_, i) => ({
+        id: `exam_${i + 1}`,
+        title: `اختبار ${i + 1}`,
+        timeText: 'غداً',
+        tagText: 'رياضيات',
+        borderMarkerColor: '#E17100',
+        isImportant: false,
+      })),
+    );
+
     await TestBed.configureTestingModule({
       imports: [StudentDashboardComponent],
       providers: [
@@ -47,16 +59,7 @@ describe('StudentDashboardComponent', () => {
               subscribedPackagesCount: 3,
             }),
             enrolledCourses: signal([]),
-            upcomingExams: signal<UpcomingExamItem[]>(
-              Array.from({ length: 5 }, (_, i) => ({
-                id: `exam_${i + 1}`,
-                title: `اختبار ${i + 1}`,
-                timeText: 'غداً',
-                tagText: 'رياضيات',
-                borderMarkerColor: '#E17100',
-                isImportant: false,
-              })),
-            ),
+            upcomingExams: upcomingExamsSignal,
             weaknessTopics: signal<WeaknessTopicItem[]>(
               Array.from({ length: 5 }, (_, i) => ({
                 id: `topic_${i + 1}`,
@@ -103,5 +106,31 @@ describe('StudentDashboardComponent', () => {
     // reachable via the "فتح تقارير التحليل المتقدمة" link to /student/reports.
     expect(component.weaknessTopics().length).toBe(5);
     expect(component.displayedWeaknessTopics().length).toBe(3);
+  });
+
+  it('drives the "تنبيهات ومواعيد عاجلة" card from real upcoming exams, capped to 2', () => {
+    // Regression test: this card used to hardcode two fake exams
+    // ("امتحان الجبر التراكمي" / "امتحان الفيزياء") unconditionally, with a
+    // fixed "تنبيهان جديدان" pill regardless of the student's real schedule.
+    expect(component.urgentAlerts().length).toBe(2);
+    expect(component.urgentAlerts()[0].id).toBe('exam_1');
+    expect(component.urgentAlertsCountLabel()).toBe('تنبيهان جديدان');
+  });
+
+  it('uses correct Arabic singular/plural wording for the alert count pill', () => {
+    upcomingExamsSignal.set([]);
+    expect(component.urgentAlerts().length).toBe(0);
+
+    upcomingExamsSignal.set([
+      {
+        id: 'exam_1',
+        title: 'اختبار 1',
+        timeText: 'غداً',
+        tagText: 'رياضيات',
+        borderMarkerColor: '#E17100',
+        isImportant: true,
+      },
+    ]);
+    expect(component.urgentAlertsCountLabel()).toBe('تنبيه جديد');
   });
 });

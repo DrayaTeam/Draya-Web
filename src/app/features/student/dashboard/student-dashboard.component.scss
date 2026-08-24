@@ -740,6 +740,21 @@
       }
     }
   }
+
+  .alerts-empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    color: #009966;
+    text-align: center;
+  }
 }
 
 // Lower Main Content Grid (Courses List + Sidebar)

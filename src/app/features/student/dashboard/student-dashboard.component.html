@@ -244,32 +244,37 @@
             </div>
             <span class="alerts-title">تنبيهات ومواعيد عاجلة</span>
           </div>
-          <span class="alert-count-pill">تنبيهان جديدان</span>
+          @if (urgentAlerts().length > 0) {
+            <span class="alert-count-pill">{{ urgentAlertsCountLabel() }}</span>
+          }
         </div>
 
-        <div class="alerts-list">
-          <div class="alert-row red-border">
-            <div class="alert-info">
-              <span class="dot red-dot"></span>
-              <div class="text-group">
-                <span class="item-title">امتحان الجبر التراكمي</span>
-                <span class="item-date">غداً 10:00 ص</span>
+        @if (urgentAlerts().length > 0) {
+          <div class="alerts-list">
+            @for (exam of urgentAlerts(); track exam.id) {
+              <div
+                class="alert-row"
+                [class.red-border]="exam.isImportant"
+                [class.yellow-border]="!exam.isImportant">
+                <div class="alert-info">
+                  <span
+                    class="dot"
+                    [class.red-dot]="exam.isImportant"
+                    [class.orange-dot]="!exam.isImportant"></span>
+                  <div class="text-group">
+                    <span class="item-title">{{ exam.title }}</span>
+                    <span class="item-date">{{ exam.timeText }}</span>
+                  </div>
+                </div>
+                <span [class]="exam.isImportant ? 'badge-urgent-red' : 'badge-urgent-orange'">
+                  {{ exam.isImportant ? 'عاجل جدًا' : 'قريباً' }}
+                </span>
               </div>
-            </div>
-            <span class="badge-urgent-red">عاجل جدًا</span>
+            }
           </div>
-
-          <div class="alert-row yellow-border">
-            <div class="alert-info">
-              <span class="dot orange-dot"></span>
-              <div class="text-group">
-                <span class="item-title">امتحان الفيزياء (الموجات)</span>
-                <span class="item-date">الخميس القادم</span>
-              </div>
-            </div>
-            <span class="badge-urgent-orange">قريباً</span>
-          </div>
-        </div>
+        } @else {
+          <div class="alerts-empty-state">لا توجد تنبيهات أو مواعيد عاجلة حالياً 👍</div>
+        }
       </div>
     </div>
 
