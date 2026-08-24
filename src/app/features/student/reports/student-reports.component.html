@@ -159,44 +159,21 @@
           }
         </div>
 
-        <!-- Area Chart SVG Visualization — driven by trendChart(), built from real trendPoints() -->
+        <!-- ApexCharts Area Visualization — driven by trendChart(), built from real trendPoints() -->
         <div class="chart-body">
           @if (trendChart(); as chart) {
-            <svg viewBox="0 0 500 200" class="h-full w-full" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stop-color="#0F4F49" stop-opacity="0.25" />
-                  <stop offset="100%" stop-color="#0EA5E9" stop-opacity="0.0" />
-                </linearGradient>
-              </defs>
-
-              <!-- Dashed Grid Lines -->
-              <line x1="40" y1="30" x2="480" y2="30" stroke="#F1F5F9" stroke-dasharray="4 4" />
-              <line x1="40" y1="70" x2="480" y2="70" stroke="#F1F5F9" stroke-dasharray="4 4" />
-              <line x1="40" y1="110" x2="480" y2="110" stroke="#F1F5F9" stroke-dasharray="4 4" />
-              <line x1="40" y1="150" x2="480" y2="150" stroke="#F1F5F9" stroke-dasharray="4 4" />
-
-              <!-- Axis Y Labels -->
-              <text x="30" y="34" fill="#64748B" font-size="10" text-anchor="end">100</text>
-              <text x="30" y="74" fill="#64748B" font-size="10" text-anchor="end">75</text>
-              <text x="30" y="114" fill="#64748B" font-size="10" text-anchor="end">50</text>
-              <text x="30" y="154" fill="#64748B" font-size="10" text-anchor="end">25</text>
-              <text x="30" y="180" fill="#64748B" font-size="10" text-anchor="end">0</text>
-
-              <!-- Area Shape & Line -->
-              @if (chart.areaPath) {
-                <path [attr.d]="chart.areaPath" fill="url(#areaGradient)" />
-              }
-              <path [attr.d]="chart.linePath" fill="none" stroke="#0F4F49" stroke-width="3" />
-
-              <!-- Data Points & Axis X Labels -->
-              @for (p of chart.points; track $index) {
-                <circle [attr.cx]="p.x" [attr.cy]="p.y" r="4" fill="#0F4F49" />
-                <text [attr.x]="p.x" y="190" fill="#64748B" font-size="11" text-anchor="middle">
-                  {{ p.label }}
-                </text>
-              }
-            </svg>
+            <apx-chart
+              [series]="chart.series"
+              [chart]="chart.chart"
+              [colors]="chart.colors"
+              [stroke]="chart.stroke"
+              [fill]="chart.fill"
+              [dataLabels]="chart.dataLabels"
+              [markers]="chart.markers"
+              [grid]="chart.grid"
+              [xaxis]="chart.xaxis"
+              [yaxis]="chart.yaxis"
+              [tooltip]="chart.tooltip"></apx-chart>
           } @else {
             <div class="chart-empty-state">لا توجد بيانات كافية بعد لعرض منحنى التطور.</div>
           }

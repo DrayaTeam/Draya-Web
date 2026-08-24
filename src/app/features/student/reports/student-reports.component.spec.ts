@@ -188,6 +188,25 @@ describe('StudentReportsComponent', () => {
       // Each ring/skill polygon must have exactly one "x,y" pair per subject.
       expect(radar?.skillPolygonPoints.split(' ').length).toBe(3);
     });
+
+    it('caps the web to the top 5 subjects by score when the student has more than 5', () => {
+      // Regression test: with more than ~5 subjects the web gets crowded and
+      // axis labels start colliding, so only the top 5 (by score) are shown.
+      reportsService.skillRadarPoints.set([
+        { name: 'أ', percent: 10 },
+        { name: 'ب', percent: 90 },
+        { name: 'ج', percent: 80 },
+        { name: 'د', percent: 20 },
+        { name: 'هـ', percent: 70 },
+        { name: 'و', percent: 60 },
+        { name: 'ز', percent: 30 },
+      ]);
+      fixture.detectChanges();
+
+      const radar = component.radarChart();
+      expect(radar?.labels.length).toBe(5);
+      expect(radar?.labels.map((l) => l.text)).toEqual(['ب', 'ج', 'هـ', 'و', 'ز']);
+    });
   });
 
   describe('trendChart / growthPill', () => {
@@ -199,7 +218,7 @@ describe('StudentReportsComponent', () => {
       expect(component.growthPill()).toBeNull();
     });
 
-    it('renders real month labels and a percentage-based path from trendPoints()', () => {
+    it('renders real month labels and a percentage-based series from trendPoints()', () => {
       // Regression test: this card used to render a hardcoded 3-point curve
       // labeled مايو/يونيو/يوليو regardless of the student's real history.
       reportsService.trendPoints.set([
@@ -211,12 +230,26 @@ describe('StudentReportsComponent', () => {
 
       const chart = component.trendChart();
       expect(chart).not.toBeNull();
-      expect(chart?.points.length).toBe(2);
-      expect(chart?.points[0].label).not.toBe('مايو'); // real month, not the old hardcoded label
-      expect(chart?.areaPath).toContain('Z');
+      expect(chart?.series[0].data as number[]).toEqual([40, 85]);
+      expect(chart?.xaxis.categories?.[0]).not.toBe('مايو'); // real month, not the old hardcoded label
 
       const pill = component.growthPill();
       expect(pill?.tone).toBe('positive');
+    });
+
+    it('pads a single real month with a flat leading point instead of a lone floating dot', () => {
+      // Regression test: with only one month on record there's nothing to
+      // draw a trend between — the old SVG chart rendered an isolated dot in
+      // the middle of the card. A synthetic unlabeled point at the same value
+      // is prepended so the line reads as a flat baseline instead.
+      reportsService.trendPoints.set([
+        { month: '2026-08-01T00:00:00Z', averageScore: 6, averageMaxScore: 10 },
+      ]);
+      fixture.detectChanges();
+
+      const chart = component.trendChart();
+      expect(chart?.series[0].data as number[]).toEqual([60, 60]);
+      expect(chart?.xaxis.categories).toEqual(['', jasmine.any(String)]);
     });
 
     it('shows a negative-tone pill when the real trend is declining, not a fixed positive one', () => {

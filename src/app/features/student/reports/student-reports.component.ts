@@ -11,6 +11,19 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import {
+  NgApexchartsModule,
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexXAxis,
+  ApexYAxis,
+  ApexStroke,
+  ApexFill,
+  ApexGrid,
+  ApexDataLabels,
+  ApexTooltip,
+  ApexMarkers,
+} from 'ng-apexcharts';
 import { StudentReportsService } from '../../../core/services/student-reports.service';
 import { StudentExamsService } from '../../../core/services/student-exams.service';
 import { StudentWeaknessService } from '../../../core/services/student-weakness.service';
@@ -58,8 +71,13 @@ const GENERATION_POLL_MAX_TRIES = 18; // ~90s
 
 // Skill radar geometry (viewBox 0 0 240 220) — an N-sided web instead of a
 // fixed pentagon, since the student's actual subject count varies.
+// RADAR_CENTER_Y is offset down from the 110 vertical midpoint: with the
+// label offset added on top of the radius, the topmost axis label's baseline
+// otherwise lands right at y=4, and its ascenders get clipped by the SVG's
+// y=0 edge (this is the "label hidden behind something" bug at the top of
+// the chart).
 const RADAR_CENTER_X = 120;
-const RADAR_CENTER_Y = 100;
+const RADAR_CENTER_Y = 112;
 const RADAR_MAX_RADIUS = 80;
 const RADAR_RING_LEVELS = [25, 50, 75, 100];
 const RADAR_LABEL_OFFSET = 16;
@@ -84,22 +102,22 @@ interface RadarChartViewModel {
   readonly labels: readonly RadarChartLabel[];
 }
 
-// Trend/evolution chart geometry (viewBox 0 0 500 200).
-const TREND_X_START = 60;
-const TREND_X_END = 460;
-const TREND_Y_TOP = 30; // 100%
-const TREND_Y_BASELINE = 170; // 0%
+// Radar shows at most this many subjects, even when the student has more —
+// beyond ~5 axes the web gets crowded and labels start colliding.
+const RADAR_MAX_SUBJECTS = 5;
 
-interface TrendChartPoint {
-  readonly x: number;
-  readonly y: number;
-  readonly label: string;
-}
-
-interface TrendChartViewModel {
-  readonly linePath: string;
-  readonly areaPath: string;
-  readonly points: readonly TrendChartPoint[];
+interface TrendChartOptions {
+  readonly series: ApexAxisChartSeries;
+  readonly chart: ApexChart;
+  readonly xaxis: ApexXAxis;
+  readonly yaxis: ApexYAxis;
+  readonly stroke: ApexStroke;
+  readonly fill: ApexFill;
+  readonly grid: ApexGrid;
+  readonly dataLabels: ApexDataLabels;
+  readonly tooltip: ApexTooltip;
+  readonly markers: ApexMarkers;
+  readonly colors: string[];
 }
 
 type GrowthTone = 'positive' | 'negative' | 'neutral';
@@ -134,6 +152,7 @@ function trendPointLabel(t: TrendPointResult): string {
   standalone: true,
   imports: [
     CommonModule,
+    NgApexchartsModule,
     ReportKpiCardComponent,
     ReportWeaknessTopicComponent,
     ResolvedWeaknessItemComponent,
@@ -174,10 +193,14 @@ export class StudentReportsComponent implements OnInit, OnDestroy {
    * Renders the actual skillPoints() data as an N-sided radar web instead of
    * the fixed 5-axis pentagon mockup this card used to show regardless of the
    * student's real subjects. Null below RADAR_MIN_SUBJECTS — a 1-2 point
-   * "radar" doesn't read as a meaningful shape.
+   * "radar" doesn't read as a meaningful shape. Capped to the top
+   * RADAR_MAX_SUBJECTS by score — beyond that the web gets crowded and axis
+   * labels start colliding with each other.
    */
   readonly radarChart = computed<RadarChartViewModel | null>(() => {
-    const points = this.skillPoints();
+    const points = [...this.skillPoints()]
+      .sort((a, b) => b.percent - a.percent)
+      .slice(0, RADAR_MAX_SUBJECTS);
     const n = points.length;
     if (n < RADAR_MIN_SUBJECTS) return null;
 
@@ -222,38 +245,75 @@ export class StudentReportsComponent implements OnInit, OnDestroy {
   });
 
   /**
-   * Renders the actual trendPoints() series as a real line/area chart instead
-   * of the fixed 3-point mockup curve this card used to show unconditionally.
+   * Renders the actual trendPoints() series as a real ApexCharts area chart.
+   * With only one real month on record there's nothing to draw a meaningful
+   * trend line between, so a lone floating dot used to be the result — instead
+   * a synthetic leading point at the same value is prepended (unlabeled) so
+   * the line reads as a flat baseline that will start moving once a second
+   * month of real data lands, rather than an isolated marker.
    */
-  readonly trendChart = computed<TrendChartViewModel | null>(() => {
+  readonly trendChart = computed<TrendChartOptions | null>(() => {
     const points = this.trendPoints();
     if (points.length === 0) return null;
 
-    const yFor = (percent: number) =>
-      TREND_Y_BASELINE - (percent / 100) * (TREND_Y_BASELINE - TREND_Y_TOP);
-    const xFor = (index: number) =>
-      points.length === 1
-        ? (TREND_X_START + TREND_X_END) / 2
-        : TREND_X_START + index * ((TREND_X_END - TREND_X_START) / (points.length - 1));
+    const categories = points.map((t) => trendPointLabel(t));
+    const data = points.map((t) => Math.round(trendPointPercent(t) * 10) / 10);
 
-    const chartPoints: TrendChartPoint[] = points.map((t, i) => ({
-      x: xFor(i),
-      y: yFor(trendPointPercent(t)),
-      label: trendPointLabel(t),
-    }));
+    if (points.length === 1) {
+      categories.unshift('');
+      data.unshift(data[0]);
+    }
 
-    const linePath = chartPoints
-      .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
-      .join(' ');
-
-    const areaPath =
-      chartPoints.length > 1
-        ? `M ${chartPoints[0].x.toFixed(1)} ${TREND_Y_BASELINE} ` +
-          chartPoints.map((p) => `L ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ') +
-          ` L ${chartPoints[chartPoints.length - 1].x.toFixed(1)} ${TREND_Y_BASELINE} Z`
-        : '';
-
-    return { linePath, areaPath, points: chartPoints };
+    return {
+      series: [{ name: 'المتوسط التراكمي', data }],
+      chart: {
+        type: 'area',
+        height: '100%',
+        fontFamily: 'Cairo, sans-serif',
+        toolbar: { show: false },
+        zoom: { enabled: false },
+        animations: { enabled: true },
+      },
+      colors: ['#0F4F49'],
+      stroke: { curve: 'smooth', width: 3 },
+      fill: {
+        type: 'gradient',
+        gradient: { shadeIntensity: 1, opacityFrom: 0.25, opacityTo: 0, stops: [0, 90, 100] },
+      },
+      dataLabels: { enabled: false },
+      markers: {
+        size: points.length === 1 ? [0, 5] : 4,
+        colors: ['#0F4F49'],
+        strokeColors: '#ffffff',
+        strokeWidth: 2,
+        hover: { size: 6 },
+      },
+      grid: {
+        borderColor: '#F1F5F9',
+        strokeDashArray: 4,
+        xaxis: { lines: { show: false } },
+        yaxis: { lines: { show: true } },
+      },
+      xaxis: {
+        categories,
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+        labels: { style: { colors: '#64748B', fontSize: '11px', fontFamily: 'Cairo' } },
+      },
+      yaxis: {
+        min: 0,
+        max: 100,
+        tickAmount: 4,
+        labels: {
+          style: { colors: '#64748B', fontSize: '10px', fontFamily: 'Cairo' },
+          formatter: (v: number) => `${Math.round(v)}`,
+        },
+      },
+      tooltip: {
+        theme: 'light',
+        y: { formatter: (v: number) => `${v}%` },
+      },
+    };
   });
 
   /** Wording/tone must reflect the real trend — a fixed "positive" pill lies when the student is declining. */
