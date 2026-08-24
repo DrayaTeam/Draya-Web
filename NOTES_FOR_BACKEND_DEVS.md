@@ -245,7 +245,13 @@ public class UpdateStudentProfileRequest
 
 ## 📌 Note 16: `finalScore` Has No Reliable Scale Indicator (drives fragile frontend score-guessing)
 
-### 🔍 Issue Description
+### ✅ Resolved — 2026-08-24
+
+**Backend response:** `maxScore` is now explicitly supplied alongside `finalScore`/`latestScore` on `GetStudentExams` (both exam-level and per-attempt) and alongside `averageScore` as `averageMaxScore` on `GetLatestPerformanceReport` trend points. `SubjectProficiencies.proficiencyPercent` and `WeakTopics.proficiencyPercent`/`previousProficiencyPercent`/`delta` were confirmed already normalized 0–100 and unchanged.
+
+**Frontend fix:** All magnitude-guessing removed from the confirmed fields. `formatExamScoreDisplay()` prefers a per-attempt `maxScore` over the exam-level one when both are present; `subjectProficiencyPercent()` (new helper in `student-reports.service.ts`) trusts `proficiencyPercent` directly instead of guessing; `monthlyGrowthPercent` now diffs trend points as `averageScore / averageMaxScore` percentages instead of subtracting raw `averageScore` values, which previously swung wildly whenever consecutive months had exams on different point scales.
+
+### 🔍 Original Issue Description
 
 - `AttemptResultResponseDto.finalScore` (returned by `GET /api/v1/attempts/{attemptId}/results`) is sometimes a raw points value (e.g. `7` out of a 10-point exam) and sometimes appears to already be a 0–100 percentage, with no field reliably indicating which. `maxScore` on the same DTO is present in some responses and absent/zero in others.
 - Per-answer detail (`AnswerGradingResultDto.score`/`.maxScore`) is the one reliable source — the frontend correctly derives the percentage from `sum(score)/sum(maxScore)` when that detail is present. The ambiguity only shows up in the **fallback** path, when only the aggregate `finalScore` is available (e.g. a weak-topic summary in `WeakTopicResult`/`PerformanceReportDto`, or a `StudentExamSummaryDto.latestScore`) with no per-answer breakdown to compute from.
