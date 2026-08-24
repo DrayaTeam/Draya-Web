@@ -45,6 +45,30 @@ describe('TeacherAttemptReviewService', () => {
     expect(result).toEqual([]);
   });
 
+  it('should unwrap an { items: [...] } envelope instead of returning a non-array', () => {
+    // Regression test: a bare array is documented in swagger, but this endpoint
+    // is untyped in practice. A wrapped response used to be passed straight
+    // through, and calling .reduce() on it in the dashboard widget crashed
+    // with "t.reduce is not a function".
+    let result: unknown[] = ['sentinel'];
+    service.getPendingReviews().subscribe((res) => (result = res));
+
+    const req = httpMock.expectOne((r) => r.url.includes('/teachers/pending-reviews'));
+    req.flush({ items: [{ classroomId: 'c1', classroomName: 'Web Dev', exams: [] }] });
+
+    expect(result).toEqual([{ classroomId: 'c1', classroomName: 'Web Dev', exams: [] }]);
+  });
+
+  it('should normalize a null/empty pending reviews response to an array', () => {
+    let result: unknown[] = ['sentinel'];
+    service.getPendingReviews().subscribe((res) => (result = res));
+
+    const req = httpMock.expectOne((r) => r.url.includes('/teachers/pending-reviews'));
+    req.flush(null);
+
+    expect(result).toEqual([]);
+  });
+
   it('should fetch attempt results from /attempts/{attemptId}/results', () => {
     let result: unknown = null;
     service.getAttemptResults('att-1').subscribe((res) => (result = res));

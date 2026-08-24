@@ -261,4 +261,38 @@ public class UpdateStudentProfileRequest
 
 ---
 
+## 📌 Note 17: SignalR Hubs Fail on Production (WebSocket + ServerSentEvents Both Rejected) — Infra, Not Purely Backend Code
+
+### 🔍 Issue Description
+
+- On the deployed production site, every SignalR hub connection (`/hubs/notifications`, `/hubs/reports`, `/hubs/materials`, `/hubs/qa`, `/hubs/exam-generation`, `/hubs/exam-grading`) fails both the WebSocket and ServerSentEvents transports before falling back to LongPolling:
+  - `WebSocket connection to 'wss://draya-lms.vercel.app/hubs/notifications?...' failed`
+  - `Failed to start the transport 'ServerSentEvents': ... the connection could not be found on the server, either the connection ID is not present on the server, or a proxy is refusing/buffering the connection. If you have multiple servers check that sticky sessions are enabled.`
+  - A `401` is also seen on the hub negotiate request itself in some sessions.
+- Root cause on our side: `vercel.json` proxies `/hubs/:path*` (and `/api/:path*`) to `http://draya-api.runasp.net/hubs/:path*` via a Vercel **rewrite**. Vercel's rewrite/edge layer works for plain request/response HTTP calls, but it does **not** tunnel WebSocket upgrades, and it does not guarantee the same serverless/edge instance handles every poll of a single long-polling or SSE "connection" — which is exactly what the SignalR client's own error text is describing (no sticky sessions across the proxy).
+- The backend is also only reachable over plain `http://` (`draya-api.runasp.net`), not `https://`. Since the frontend is served over `https://draya-lms.vercel.app`, a direct `wss://`/`https://` connection straight to the backend would additionally be blocked by the browser as mixed content — the Vercel rewrite is currently the only reason the REST calls work at all.
+- Net effect: every real-time feature (live notifications, exam-generation/grading progress push, reports-ready push, QA hub) currently degrades to whatever polling fallback the frontend has for it, or silently does nothing if no fallback exists. This is **not** the same bug as the "t.reduce is not a function" crash reported alongside it — the SignalR failures are caught and logged as warnings, not thrown, so they don't crash the page — but they mean real-time features are effectively non-functional in production right now.
+
+### 💡 Recommendation for Backend Team
+
+- Serve the API over **HTTPS** with a real TLS certificate (a bare HTTP-only backend behind a proxy is the blocker for connecting directly, and is also a security gap on its own for anything carrying auth tokens).
+- Once HTTPS is available, we can point `signalrHubUrl`/`reportsHubUrl`/etc. at the backend's own absolute origin (`wss://draya-api.<domain>/hubs/...`) instead of routing hub traffic through the Vercel rewrite, which resolves the transport/sticky-session problem entirely (REST calls can stay proxied through `/api/*` since those are stateless single request/response).
+- Alternatively, if the backend must stay behind the Vercel proxy for hubs too, confirm whether the hosting supports WebSocket passthrough and sticky sessions end-to-end — but going direct to an HTTPS backend origin is the more reliable fix.
+
+---
+
+## 📌 Note 18: `GET /teachers/pending-reviews` — Confirm Response Is a Bare Array
+
+### 🔍 Issue Description
+
+- Swagger types this endpoint as returning `PendingReviewClassroomDto[]` directly, and that's what the frontend originally assumed and called `.reduce()` on immediately.
+- We can't yet confirm from a live response whether every environment actually returns a bare array — several other endpoints in this API that are typed as one shape in swagger have been observed wrapping the payload in an `{ items: [...] }` or `{ data: [...] }` envelope instead. If `/teachers/pending-reviews` ever does the same, calling `.reduce()` directly on the response throws `TypeError: t.reduce is not a function` and crashes the whole teacher dashboard (this reproduced for us and is fixed on our side by normalizing the response defensively).
+- This note is precautionary, not a confirmed live bug — but given the pattern elsewhere in this API, please confirm the exact shape returned in production so we can drop the defensive normalization once it's verified unnecessary.
+
+### 💡 Recommendation for Backend Team
+
+- Confirm `GET /api/v1/teachers/pending-reviews` always returns a bare `PendingReviewClassroomDto[]` with no wrapping envelope, in every environment (dev/staging/prod), and keep it that way — this endpoint feeds a dashboard widget that iterates the response immediately on load.
+
+---
+
 _Last updated: 2026-08-24 by Frontend Team_
