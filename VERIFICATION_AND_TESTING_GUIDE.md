@@ -1,6 +1,8 @@
-# دليل التحقق واختبار شاشات الطالب — درايَة
+# دليل التحقق والاختبار اليدوي — درايَة
 
-هذا المستند يوثق الترتيب الدقيق لمنهجية التطبيق والتحقق من الجودة (Standard Quality Verification Workflow) التي تم تنفيذها لبناء واجهات الطالب وفقاً لتصميمات Figma، بالإضافة إلى رابط الاستضافة على Vercel.
+هذا المستند يوثق منهجية التحقق من الجودة (Standard Quality Verification Workflow) المتبعة في المشروع، ودليل اختبار يدوي شامل لكل الشاشات والتدفقات (Flows) الحالية لكل من الطالب والمعلم، بالإضافة إلى رابط الاستضافة على Vercel.
+
+آخر تحديث: 2026-08-24 — بعد دمج دورة حياة الامتحان الكاملة، تتبع نقاط الضعف، مراجعة إجابات المعلم، إعادة تعيين كلمة المرور بـ OTP، وإصلاح عطل لوحة تحكم المعلم.
 
 ---
 
@@ -9,67 +11,118 @@
 - 🔗 **رابط الإنتاج المباشر:** [https://draya-lms.vercel.app](https://draya-lms.vercel.app)
 - 📊 **رابط لوحة الفحص (Inspect):** [https://vercel.com/mahmoud1-2mostafas-projects/draya-lms](https://vercel.com/mahmoud1-2mostafas-projects/draya-lms)
 
+> ملاحظة: الروابط أدناه معطاة كمسارات نسبية (`/student/...`, `/teacher/...`) — أضف رابط الإنتاج قبلها، أو استخدم `http://localhost:4200` عند التشغيل محلياً بـ `ng serve`.
+
 ---
 
-## 📋 الترتيب المتبع في التطبيق (Implementation & Verification Order)
+## 📋 منهجية التحقق قبل أي دمج (Verification Pipeline)
 
-1. **التحليل وتصميم الهيكلية (Component & Signals Architecture):**
-   - إنشاء الموديلات `student-dashboard.model.ts`, `student-courses.model.ts`, `student-exam.model.ts`, `student-reports.model.ts`, `student-library.model.ts`, `student-exam-taking.model.ts`.
-   - إنشاء الخدمات والـ State Management باستخدام Angular Signals (`StudentDashboardService`, `StudentCoursesService`, `StudentExamsService`, `StudentReportsService`, `StudentLibraryService`, `StudentExamTakingService`).
-2. **تقسيم الواجهات إلى مكونات صغيرة جداً (Modular Sub-components):**
-   - **لوحة التحكم (`/student/dashboard`):** `CourseProgressCardComponent`, `UpcomingExamCardComponent`, `WeaknessTopicCardComponent`.
-   - **باقاتي الدراسية (`/student/courses`):** `SubscribedPackageCardComponent`.
-   - **الامتحانات والواجبات (`/student/exams`):** `ExamCardComponent`.
-   - **أداء الامتحان النشط (`/student/exams/take`):** `ExamQuestionCardComponent`, `ExamQuestionMapComponent`, `ExamSecurityWarningComponent`.
-   - **نتيجة الامتحان والتحليل (`/student/exams/:id/result`):** `ExamResultCardComponent`, `ExamQuestionReviewCardComponent`.
-   - **تقاريري ودرجاتي (`/student/reports`):** `ReportKpiCardComponent`, `ReportWeaknessTopicComponent`.
-   - **المكتبة الرقمية (`/student/library`):** `BookCardComponent`.
-3. **فحص التنسيق والـ Linting:**
+يُنفَّذ هذا التسلسل بالكامل بعد أي تعديل في الكود، قبل الدمج في `develop`:
+
+1. **Linting:**
    ```bash
-   npm run lint
+   npx ng lint
    ```
-   - **النتيجة:** ✅ `All files pass linting.` (0 أخطاء).
-4. **تشغيل اختبارات الوحدة الشاملة (Karma Unit Tests):**
+   *القاعدة: صفر أخطاء وصفر تحذيرات.*
+
+2. **التنسيق (Prettier):**
+   ```bash
+   npx prettier --write "src/**/*.{ts,html,scss,json}"
+   ```
+   يُفضَّل تمرير قائمة الملفات المعدَّلة صراحةً بدل النمط الشامل لتفادي إعادة تنسيق كامل المستودع.
+
+3. **فحص أخطاء الـ Console أثناء التصفح اليدوي:** صفر `console.error` غير معالَجة، صفر Promise rejection غير ملتقَطة، صفر أخطاء ربط قوالب Angular. **يجب تنفيذ هذه الخطوة دائماً قبل اعتبار أي إصلاح واجهة مكتملاً.**
+
+4. **اختبارات الوحدة (Karma/Jasmine):**
    ```bash
    npx ng test --watch=false
    ```
-   - **النتيجة:** ✅ `TOTAL: 130 SUCCESS` (نجاح جميع الاختبارات الـ 130 بالكامل).
-5. **البناء الإنتاجي (Production Build):**
+   *القاعدة: 100% من الاختبارات ناجحة. العدد الحالي: 381/381.*
+
+5. **البناء الإنتاجي:**
    ```bash
-   npx ng build
+   npx ng build --configuration=production
    ```
-   - **النتيجة:** ✅ `Application bundle generation complete.` (تم البناء بنجاح وبدون أي أخطاء).
-6. **الرفع والدمج في Git والنشر على Vercel:**
+   *القاعدة: يجب أن ينتهي بـ `Application bundle generation complete` بدون أخطاء.*
+
+6. **الدمج والنشر:**
    ```bash
-   git add .
-   git commit -m "feat(student): implement full student portal screens suite"
-   git push origin feature/student
-   git checkout develop && git merge feature/student && git push origin develop
+   git checkout -b fix/<or>-feat/<scope>
+   git add <ملفات محددة، وليس -A>
+   git commit -m "..."
+   git push -u origin <branch>
+   git checkout develop && git merge --ff-only <branch>
+   git push origin develop
    npx vercel --prod --yes
    ```
-   - **النتيجة:** ✅ `Deployed to production: https://draya-web-pink.vercel.app`
 
 ---
 
-## 🔍 دليل الاختبار اليدوي للمستخدم (Manual Testing Checklist)
+## 🔍 دليل الاختبار اليدوي — تدفقات الطالب (Student Flows)
 
-### 1. شاشة "أداء الامتحان النشط" (`/student/exams/take`):
-افتح الرابط [https://draya-web-pink.vercel.app/student/exams/take](https://draya-web-pink.vercel.app/student/exams/take):
-- [ ] **البار العلوي للاختبار:** عنوان الامتحان والعداد التنازلي المتبقي.
-- [ ] **بطاقة السؤال النشط:** خيارات الإجابة التفاعلية (MCQ)، زر `تعليم السؤال` للمراجعة، وأزرار التنقل.
-- [ ] **خريطة الأسئلة:** أزرار الأرقام (1, 2, 3...) والتأثيرات البصرية.
-- [ ] **كارت المراقبة الأمنية:** كارت أمني يحذر من مغادرة التبويب.
+### 1. قائمة الامتحانات (`/student/exams`)
+تحقق من ظهور **كل الحالات الست** بشكل صحيح على بطاقة الامتحان، وأن كل حالة لها زر الإجراء الصحيح:
+
+| الحالة | متى تظهر | زر الإجراء المتوقع |
+|---|---|---|
+| `scheduled` (مجدول) | `startDate` في المستقبل | معطّل، يعرض تاريخ البدء |
+| `available` (متاح) | لا يوجد شرط آخر ينطبق | **ابدأ الامتحان** |
+| `in-progress` (قيد التنفيذ) | يوجد محاولة بحالة `InProgress` | **استكمال المحاولة** |
+| `pending-grading` (بانتظار التصحيح) | `attemptStatus === 'PendingGrading'` | **عرض** (تظهر رسالة "قيد المراجعة" في صفحة النتيجة) |
+| `completed` (مكتمل) | `hasSubmitted` أو استُنفدت المحاولات | **عرض النتيجة**، و**إعادة المحاولة** إن تبقّت محاولات |
+| `expired` (منتهي) | `endDate` مضى ولم يُسلَّم | معطّل، لا يظهر زر فارغ |
+
+- [ ] شارة **"بحاجة لمراجعة"** تظهر على البطاقة عندما يحمل أي attempt علم `needsTeacherReview`.
+- [ ] عرض "المحاولة N من M" عندما `allowedAttempts > 1`.
+
+### 2. أداء الامتحان (`/student/exams/:id/take`)
+- [ ] **البار العلوي:** عنوان الامتحان والعداد التنازلي.
+- [ ] **بطاقة السؤال:** إجابة MCQ باختيار واحد، وإجابة مقالية (Essay) بحقل نصي — تحقق من كلا النوعين على امتحان يحتوي عليهما معاً.
+- [ ] **خريطة الأسئلة:** التنقل المباشر بين الأسئلة.
+- [ ] **كارت المراقبة الأمنية:** تحذير عند تبديل التبويب؛ عند تجاوز حد المخالفات يُقفَل الامتحان ويُرسَل للخادم للتصحيح (لا تُكتَب نتيجة صفر محلياً).
+- [ ] **الإرسال (Submit):** يُقبَل حتى مع استجابة `202` من الخادم، ثم ينتقل تلقائياً لتتبع التصحيح.
+- [ ] **استكمال محاولة قيد التنفيذ:** أعد فتح امتحان بحالة `in-progress` وتأكد من استرجاع نفس الإجابات المحفوظة.
+
+### 3. تتبع التصحيح والنتيجة (`/student/exams/:id/result?attemptId=...`)
+> **ملاحظة مهمة:** بطاقة "المواضيع والمهارات الأضعف" (تحليل الذكاء الاصطناعي) أُزيلت من هذه الشاشة بتاريخ 2026-08-24 — تتبّع نقاط الضعف الآن حصرياً من شاشة **تقاريري** (انظر البند 4). لا تتوقع ظهورها هنا بعد الآن.
+- [ ] **بطاقة النتيجة:** نسبة مئوية واحدة موثوقة (وليست مبنية على تخمين مقياس الدرجة)، شارة النجاح/الرسوب، تاريخ التسليم.
+- [ ] **حالة "قيد التصحيح":** عند `isGradingPending`، تظهر أيقونة ⏳ بدل النسبة مع نص توضيحي، وزر **تحديث حالة النتيجة**.
+- [ ] **مراجعة الأسئلة التفصيلية:** كل سؤال يعرض إجابة الطالب، الإجابة الصحيحة (عند توفرها)، وحالة "بانتظار مراجعة المعلم" للإجابات المقالية التي لم تُعتمَد بعد بدل تصنيفها كخاطئة.
+- [ ] **زيارة محاولة سابقة تحديداً:** استخدم رابطاً يحمل `attemptId` محدد من عدة محاولات على نفس الامتحان، وتأكد من عرض تلك المحاولة بالذات وليس الأحدث دائماً.
+
+### 4. تقاريري ودرجاتي (`/student/reports`)
+- [ ] **قسم نقاط الضعف النشطة (Active):** شريط تقدّم بنسبة `proficiencyPercent` الحقيقية القادمة من `GET /Weaknesses/active` — بدون تلاعب أو مطابقة تقريبية مع درجات امتحانات أخرى.
+- [ ] **قسم المواضيع المتقَنة (Resolved):** شارة إنجاز وفرق التحسّن (delta) عند توفره من `GET /Weaknesses/resolved`.
+- [ ] **مراجعة الذكاء الاصطناعي لموضوع:** الضغط على "ابدأ المراجعة" يعرض توصية حقيقية من الخادم أو حالة خطأ صريحة مع إعادة محاولة — ولا يعرض أبداً نصاً افتراضياً ثابتاً عند فشل الطلب.
+- [ ] **طلب امتحان تدريبي (Practice Exam):** يتتبّع التوليد عبر SignalR أو الاستطلاع (Polling) الفعلي، وليس عبر مطابقة عنوان الامتحان تخمينياً.
 
 ---
 
-### 2. شاشة "نتيجة الامتحان والتحليل بالـ AI" (`/student/exams/exam-1/result`):
-افتح الرابط [https://draya-web-pink.vercel.app/student/exams/exam-1/result](https://draya-web-pink.vercel.app/student/exams/exam-1/result):
-- [ ] **بطاقة النتيجة التقديرية:** النسبة التقديرية الكبيرة وشارة التقدير.
-- [ ] **بطاقة تحليل الذكاء الاصطناعي:** مهارات التباديل والتوافيق ودقة الحل ورابط المحاضرة التأسيسية.
-- [ ] **مراجعة الأسئلة والإجابات التفصيلية:** كروت مراجعة الأسئلة الصحيحة والخاطئة.
+## 🔍 دليل الاختبار اليدوي — تدفقات المعلم (Teacher Flows)
+
+### 5. لوحة تحكم المعلم (`/teacher/dashboard`)
+- [ ] **الشريط الجانبي:** يحتوي على رابط "مراجعات بانتظار الاعتماد" منفصل عن التنبيهات العامة.
+- [ ] **بطاقة المراجعات المعلَّقة:** تحمّل من `GET /teachers/pending-reviews` وتُعرض كأكورديون فصل ← امتحان ← محاولة. **افحص الـ Console عند التحميل** — أي استجابة غير متوقعة الشكل يجب ألا تُسقِط الصفحة بالكامل (تم إصلاح عطل `t.reduce is not a function` بتاريخ 2026-08-24 بجعل معالجة الاستجابة متسامحة مع الأشكال غير القياسية).
+- [ ] الضغط على صف مراجعة معلَّقة ينقل مباشرة إلى شاشة مراجعة تلك المحاولة.
+
+### 6. مراجعة إجابات محاولة (`/teacher/attempts/:attemptId/review`)
+- [ ] تظهر الإجابات التي وضع الذكاء الاصطناعي عليها علم `needsTeacherReview` بشكل مميّز (نص السؤال، معيار التصحيح Rubric، إجابة الطالب، درجة الذكاء الاصطناعي).
+- [ ] تعديل الدرجة عبر حقل رقمي محدود بـ `maxScore` ثم اعتماد التعديل يستدعي `PUT /attempts/{id}/answers/{answerId}/override`.
+- [ ] بعد الاعتماد: يُعاد جلب النتائج تلقائياً وتظهر الدرجة الكلية المُعاد احتسابها من الخادم — **لا يُحسب أي مجموع محلياً على الواجهة**.
+- [ ] السيناريو الكامل (اختبار الانحدار A من خطة إعادة الدمج): درجة الذكاء الاصطناعي 0/10 ← تعديل المعلم إلى 10/10 ← بعد إعادة الجلب: الدرجة الكلية محدَّثة، والإجابة معتمدة (`isFinalized`)، والموضوع المرتبط انتقل من نشط إلى محلول في `/student/reports` لنفس الطالب.
 
 ---
 
-### 3. شاشة "المكتبة الرقمية" (`/student/library`):
-افتح الرابط [https://draya-web-pink.vercel.app/student/library](https://draya-web-pink.vercel.app/student/library):
-- [ ] مراجعة البحث التفاعلي وتصفية الكتب وجميع كروت الكتب الـ 4.
+## 🔍 دليل الاختبار اليدوي — المصادقة (Auth)
+
+### 7. استعادة كلمة المرور بـ OTP (`/auth/forgot-password`)
+- [ ] الخطوة الأولى: إدخال البريد الإلكتروني وطلب الرمز (`POST /auth/password-reset/request`).
+- [ ] الخطوة الثانية: حقل الرمز يقبل **6 أرقام فقط** (رفض أي إدخال أقل أو غير رقمي).
+- [ ] تأكيد كلمة المرور الجديدة عبر `POST /auth/password-reset/confirm`، مع رسائل خطأ واضحة (وليس Toast عام) عند فشل التحقق من الحقول.
+- [ ] الدخول إلى `/auth/reset-password` مباشرة (المسار القديم) يجب أن يُعيد التوجيه تلقائياً إلى `/auth/forgot-password`.
+
+---
+
+## ⚠️ فحص إلزامي: أخطاء الـ Console
+
+**يجب دائماً فتح أدوات المطوّر (DevTools Console) أثناء أي اختبار يدوي، لكل شاشة تم تعديلها، قبل تأكيد نجاح المهمة.** أخطاء الـ SignalR (`WebSocket connection failed`, `401` على `/hubs/*`) معروفة حالياً ومرتبطة بمشكلة بنية تحتية موثّقة (راجع Note 17 في `NOTES_FOR_BACKEND_DEVS.md`) — هذه تُسجَّل كـ `warn` وليست أخطاء توقف الصفحة، فتجاهلها عند تتبع أعطال أخرى. أي `console.error` أو استثناء غير ملتقَط (Unhandled Exception) يظهر مع أي شاشة أخرى هو عطل حقيقي ويجب إصلاحه فوراً قبل الدمج.
