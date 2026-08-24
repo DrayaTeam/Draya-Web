@@ -694,7 +694,9 @@
       "COL_SUBJECT": "المادة",
       "COL_TOPIC": "الموضوع",
       "COL_PROFICIENCY": "مستوى الإتقان",
-      "COL_EXAMPLES": "أخطاء متكررة شائعة"
+      "COL_EXAMPLES": "أخطاء متكررة شائعة",
+      "TOAST_REPORT_READY": "تقرير أداء جديد جاهز للمراجعة",
+      "TOAST_STUDENT_AT_RISK": "طالب يحتاج متابعة: {{topicName}}"
     }
   },
   "ADMIN": {

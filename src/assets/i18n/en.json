@@ -694,7 +694,9 @@
       "COL_SUBJECT": "Subject",
       "COL_TOPIC": "Topic",
       "COL_PROFICIENCY": "Proficiency Level",
-      "COL_EXAMPLES": "Common Mistakes"
+      "COL_EXAMPLES": "Common Mistakes",
+      "TOAST_REPORT_READY": "New performance report is ready for review",
+      "TOAST_STUDENT_AT_RISK": "Student needs attention: {{topicName}}"
     }
   },
   "ADMIN": {

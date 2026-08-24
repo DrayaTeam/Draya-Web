@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, effect, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
@@ -7,12 +7,13 @@ import { ClassroomService } from '../services/classroom.service';
 import { TeacherReportsService } from '../services/teacher-reports.service';
 import { ClassroomDto } from '../../../core/models/classroom.model';
 import { StudentRosterItemDto } from '../../../core/models/student-roster.model';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   StudentAnalyticsDto,
   PerformanceReportDto,
 } from '../../../core/models/teacher-reports.model';
 import { DialogModule } from 'primeng/dialog';
+import { SignalRService } from '../../../core/signalr/signalr.service';
 
 @Component({
   selector: 'draya-teacher-reports',
@@ -26,6 +27,8 @@ export class TeacherReportsComponent implements OnInit {
   private readonly classroomService = inject(ClassroomService);
   private readonly reportsService = inject(TeacherReportsService);
   private readonly messageService = inject(MessageService);
+  private readonly translateService = inject(TranslateService);
+  private readonly signalRService = inject(SignalRService);
 
   readonly classrooms = signal<ClassroomDto[]>([]);
   readonly selectedClassroom = signal<ClassroomDto | null>(null);
@@ -39,6 +42,39 @@ export class TeacherReportsComponent implements OnInit {
   readonly latestReport = signal<PerformanceReportDto | null>(null);
   readonly isLoadingAnalytics = signal<boolean>(false);
   readonly isApproving = signal<boolean>(false);
+
+  constructor() {
+    // Hub D (/hubs/reports): a new AI performance report finished generating.
+    // Refresh the currently open student's data if the event is about them —
+    // otherwise it's just informational for a student not currently in view.
+    effect(() => {
+      const event = this.signalRService.reportGenerated();
+      if (!event) return;
+
+      this.messageService.add({
+        severity: 'success',
+        summary: this.translateService.instant('TEACHER.REPORTS.TOAST_REPORT_READY'),
+      });
+
+      if (event.studentId === this.selectedStudent()?.studentId) {
+        this.loadStudentData(event.studentId);
+      }
+    });
+
+    // Hub D (/hubs/reports): the system detected a student is severely
+    // falling behind on a specific topic.
+    effect(() => {
+      const event = this.signalRService.studentAtRisk();
+      if (!event) return;
+
+      this.messageService.add({
+        severity: 'warn',
+        summary: this.translateService.instant('TEACHER.REPORTS.TOAST_STUDENT_AT_RISK', {
+          topicName: event.topicName,
+        }),
+      });
+    });
+  }
 
   ngOnInit(): void {
     this.loadClassrooms();
