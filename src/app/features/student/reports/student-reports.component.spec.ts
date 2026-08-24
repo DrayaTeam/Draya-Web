@@ -11,6 +11,7 @@ import { provideRouter } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { StudentReportsService } from '../../../core/services/student-reports.service';
+import { StudentWeaknessService } from '../../../core/services/student-weakness.service';
 import { AuthService } from '../../auth/services/auth.service';
 import { User } from '../../../core/models/user.model';
 
@@ -138,5 +139,25 @@ describe('StudentReportsComponent', () => {
     component.onStartReview(mockWeakness);
     expect(revisionSpy).not.toHaveBeenCalled();
     expect(component.activeRevision()?.topicName).toBe('المشتقات والتكامل');
+  });
+
+  it('should render proficiencyPercent as-is without cross-matching it against unrelated exam scores', () => {
+    // Regression test: a prior version replaced a low proficiencyPercent with
+    // a fuzzy-matched exam's unrelated scorePercent whenever it was <= 10.
+    // A genuinely low topic proficiency must survive untouched.
+    const weaknessService = TestBed.inject(StudentWeaknessService);
+    weaknessService.activeWeaknesses.set([
+      {
+        id: 'w1',
+        topicName: 'التفاضل',
+        subjectName: 'رياضيات',
+        proficiencyPercent: 8,
+      },
+    ]);
+    fixture.detectChanges();
+
+    const topics = component.activeWeaknessTopics();
+    expect(topics.length).toBe(1);
+    expect(topics[0].scorePercent).toBe(8);
   });
 });

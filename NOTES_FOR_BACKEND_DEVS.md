@@ -7,17 +7,19 @@ This document tracks backend API improvements, missing DTO fields, or behavioral
 ## 📌 Note 1: Student Profile Update DTO — Missing Parent Guardian Fields (PUT /api/v1/students/profile)
 
 ### 🔍 Issue Description
+
 - In **Student Registration** (POST /api/v1/auth/register/student), RegisterStudentRequest accepts all three parent guardian properties:
   - parentGuardianName (string)
   - parentGuardianPhone (string)
   - parentGuardianEmail (string)
 - However, in **Student Profile Update** (PUT /api/v1/students/profile), UpdateStudentProfileRequest currently only accepts:
-  - ullName (string)
+  - ullName (string)
   - parentGuardianEmail (string)
   - dateOfBirth (date-time)
   - ❌ parentGuardianName and parentGuardianPhone are **missing** from UpdateStudentProfileRequest.
 
 ### 💡 Recommendation for Backend Team
+
 Add parentGuardianName and parentGuardianPhone as nullable optional string fields to UpdateStudentProfileRequest DTO and update the student profile command handler so students can update their guardian’s name and WhatsApp contact number from their account settings.
 
 `csharp
@@ -36,10 +38,12 @@ public class UpdateStudentProfileRequest
 ## 📌 Note 2: Re-enrollment After Student Removal (POST /api/v1/classrooms/enroll & POST /api/v1/classrooms/{id}/checkout)
 
 ### 🔍 Issue Description
+
 - When a student is removed/unenrolled from a classroom, attempting to re-enroll with a new center code or initiate a new checkout session returns 404 Not Found or a zero price error.
 - **Original Feedback:** لو ال student اتشال من ال classroom هينفع يرجع تاني ولا لا بكود جديد فا بلاقي سعر الاشتراك بسفر و بيكون notfound مش بقدر تروح لبوابة الدفع
 
 ### 💡 Recommendation for Backend Team
+
 - In the enrollment and checkout handlers, handle the state where an enrollment record exists with status Unenrolled or Revoked by allowing re-activation with a valid new enrollmentCode or creating a fresh Paymob checkout order.
 
 ---
@@ -47,19 +51,23 @@ public class UpdateStudentProfileRequest
 ## 📌 Note 3: Teacher Name & Picture in Classroom Endpoints (GET /api/v1/teachers & GET /api/v1/classrooms)
 
 ### 🔍 Issue Description
-- In some responses of GET /classrooms and GET /teachers, the 	eacherName property returns the subject name instead of the teacher's actual ullName, and pictureUrl is occasionally mismatched or empty.
+
+- In some responses of GET /classrooms and GET /teachers, the eacherName property returns the subject name instead of the teacher's actual ullName, and pictureUrl is occasionally mismatched or empty.
 
 ### 💡 Recommendation for Backend Team
-- Ensure SQL joins/projections consistently map Teacher.FullName and Teacher.ProfilePictureUrl to 	eacherName and 	eacherAvatarUrl / pictureUrl.
+
+- Ensure SQL joins/projections consistently map Teacher.FullName and Teacher.ProfilePictureUrl to eacherName and eacherAvatarUrl / pictureUrl.
 
 ---
 
 ## 📌 Note 4: Student Progress Percentage & Materials Count on Classrooms (GET /api/v1/classrooms)
 
 ### 🔍 Issue Description
+
 - Student classroom cards require displaying the student's individual progress percentage (e.g. 75%) and the total number of materials/lessons published in that classroom.
 
 ### 💡 Recommendation for Backend Team
+
 - Include studentProgress (integer 0-100 or float) and materialsCount / lessonsCount in the ClassroomSummaryDto returned by GET /api/v1/classrooms and GET /api/v1/classrooms/{id} when accessed with a Student JWT.
 
 ---
@@ -67,9 +75,11 @@ public class UpdateStudentProfileRequest
 ## 📌 Note 5: Support Image Attachment in Reply Update Endpoint (PUT /api/v1/questions/{questionId}/replies/{replyId})
 
 ### 🔍 Issue Description
+
 - While creating a question or reply supports photo attachments via multipart endpoints (/questions/with-photo, /replies/with-photo), updating a reply only accepts raw JSON text without an image URL / attachment option.
 
 ### 💡 Recommendation for Backend Team
+
 - Update UpdateReplyRequest or provide a multipart endpoint to allow updating/removing the attached image URL on existing discussion replies.
 
 ---
@@ -77,9 +87,11 @@ public class UpdateStudentProfileRequest
 ## 📌 Note 6: Password Reset Email Delivery for Supervisors & Admins (POST /api/v1/auth/password-reset/request)
 
 ### 🔍 Issue Description
+
 - Password reset emails need to be verified and dispatched properly for all platform roles, specifically Supervisor and Admin accounts, ensuring the generated token and reset link point correctly to the frontend reset screen.
 
 ### 💡 Recommendation for Backend Team
+
 - Verify SMTP/SendGrid delivery for Admin and Supervisor user accounts when POST /api/v1/auth/password-reset/request is invoked with an administrator email address.
 
 ---
@@ -87,9 +99,11 @@ public class UpdateStudentProfileRequest
 ## 📌 Note 7: Global Platform Students Listing Endpoint for Admin (GET /api/v1/admin/students)
 
 ### 🔍 Issue Description
+
 - The Admin dashboard requires an endpoint to list and search all enrolled students across all teachers, along with global enrollment counts.
 
 ### 💡 Recommendation for Backend Team
+
 - Provide GET /api/v1/admin/students supporting pagination (pageNumber, pageSize), search query (search), and grade level filter (gradeLevelId), returning items with { studentId, fullName, email, phone, parentGuardianPhone, enrolledClassroomsCount, createdAt }.
 
 ---
@@ -97,9 +111,11 @@ public class UpdateStudentProfileRequest
 ## 📌 Note 8: Admin Profile Information Update (PUT /api/v1/admin/profile or PUT /api/v1/auth/me)
 
 ### 🔍 Issue Description
+
 - Platform administrators need to update their display name, phone number, and preferences from the admin settings screen.
 
 ### 💡 Recommendation for Backend Team
+
 - Provide PUT /api/v1/admin/profile or extend PUT /api/v1/auth/me to accept { fullName, phoneNumber } for Administrator accounts.
 
 ---
@@ -107,9 +123,11 @@ public class UpdateStudentProfileRequest
 ## 📌 Note 9: Media Streaming Content Security Headers (GET /api/v1/materials/{id}/stream)
 
 ### 🔍 Issue Description
+
 - To prevent unauthorized downloading and piracy of educational materials, streaming endpoints should deliver inline viewing headers.
 
 ### 💡 Recommendation for Backend Team
+
 - Return Content-Disposition: inline and X-Frame-Options: SAMEORIGIN on GET /api/v1/materials/{id}/stream responses for protected video and document media.
 
 ---
@@ -117,18 +135,22 @@ public class UpdateStudentProfileRequest
 ## 📌 Note 10: Real-time Notifications SignalR Hub & History (GET /api/v1/notifications + /hubs/notifications)
 
 ### 🔍 Issue Description
+
 - The top navigation bar includes an interactive notification bell to display real-time announcements, exam grade alerts, and new Q&A replies.
 
 ### 💡 Recommendation for Backend Team
+
 - Establish a SignalR hub at /hubs/notifications and REST endpoint GET /api/v1/notifications returning { id, title, message, type, read, createdAt } with PUT /api/v1/notifications/{id}/read to mark as seen.
 
 ## 📌 Note 11: Fix 403 Forbidden on GET /api/v1/exams for Student Role (or provide GET /api/v1/students/exams)
 
 ### 🔍 Issue Description
+
 - Currently, when an enrolled student navigates to `/student/exams`, the frontend calls `GET /api/v1/exams` to retrieve their upcoming, scheduled, and active exams.
 - The ASP.NET Core backend rejects the request with **`403 (Forbidden)`** because the `ExamsController` currently enforces `[Authorize(Roles = "Teacher")]` on the entire controller or on `GET /api/v1/exams`.
 
 ### 💡 Recommendation for Backend Team
+
 - Either update `GET /api/v1/exams` authorization to:
   ```csharp
   [Authorize(Roles = "Teacher,Student")]
@@ -145,10 +167,12 @@ public class UpdateStudentProfileRequest
 ## 📌 Note 12: Inconsistent Route Versioning for Classroom Sections (GET /api/classrooms/{id}/sections)
 
 ### 🔍 Issue Description
+
 - Most platform controllers are versioned under `/api/v1/...`, but the `ClassroomSectionsController` is routed under `/api/classrooms/{classroomId}/sections` (missing `/v1`).
 - Calling `/api/v1/classrooms/{id}/sections` returns **`404 (Not Found)`**.
 
 ### 💡 Recommendation for Backend Team
+
 - Standardize the route by adding `api/v1/classrooms/{classroomId}/sections` (or supporting both `/api/v1/...` and `/api/...` through `[Route("api/v1/classrooms/{classroomId}/sections")]`).
 
 ---
@@ -156,10 +180,12 @@ public class UpdateStudentProfileRequest
 ## 📌 Note 13: Allow Unenrolled Students & Visitors to View Classroom Feedback (GET /api/v1/classrooms/{id}/feedback)
 
 ### 🔍 Issue Description
+
 - When prospective students view package details `/student/packages/{id}` before purchasing to read student reviews and ratings, calling `GET /api/v1/classrooms/{id}/feedback` returns **`403 (Forbidden)`**.
 - Prospective students need to see course ratings and reviews to decide whether to purchase the course.
 
 ### 💡 Recommendation for Backend Team
+
 - Make `GET /api/v1/classrooms/{classroomId}/feedback` publicly accessible or allow `[AllowAnonymous]` / `[Authorize(Roles = "Student,Teacher,Admin,SuperAdmin")]` without requiring an active classroom enrollment to view public reviews.
 
 ---
@@ -167,10 +193,12 @@ public class UpdateStudentProfileRequest
 ## 📌 Note 14: Manual Balance Adjustments History / Audit Log for Admin (GET /api/v1/admin/financial/adjustments)
 
 ### 🔍 Issue Description
+
 - Platform administrators can create manual balance adjustments via `POST /api/v1/admin/financial/adjustments`.
 - However, there is currently no corresponding `GET /api/v1/admin/financial/adjustments` endpoint to view a paginated audit log of all manual adjustments made by administrators across all teachers.
 
 ### 💡 Recommendation for Backend Team
+
 - Provide `GET /api/v1/admin/financial/adjustments` with query parameters `(pageNumber, pageSize, teacherId, balanceType)` returning:
   ```json
   {
@@ -193,4 +221,44 @@ public class UpdateStudentProfileRequest
   ```
 
 ---
-*Last updated: 2026-08-20 by Frontend Team*
+
+## 📌 Note 15: 403 Forbidden on GET /api/v1/exams/generations/{generationId} for Student Role (blocks practice-exam tracking)
+
+### 🔍 Issue Description
+
+- This is the same root cause as **Note 11** (`ExamsController` restricted to `[Authorize(Roles = "Teacher")]`), but flagged separately because it blocks a _student_-only feature end to end, not just the exam list.
+- When a student requests an AI practice exam for a weak topic (`POST /api/v1/students/{studentId}/weak-topics/{topicName}/practice-exam`, 202 Accepted), the frontend tracks generation progress via `GET /api/v1/exams/generations/{generationId}` — the exact same endpoint the teacher module polls after `POST /api/v1/exams/generate`.
+- Because the whole `ExamsController` (or at least this action) is `[Authorize(Roles = "Teacher")]`, a student polling their own practice-exam generation gets **403 Forbidden** on every request. There is no student-facing equivalent endpoint.
+- Net effect: a student who requests a practice exam currently has no reliable way to know when it's ready — the frontend falls back to a fragile heuristic (polling `/students/exams` and fuzzy-matching the newly created exam by title) specifically because this endpoint is unusable for students.
+
+### 💡 Recommendation for Backend Team
+
+- Same fix shape as Note 11 — either:
+  ```csharp
+  [Authorize(Roles = "Teacher,Student")]
+  ```
+  on `GET /api/v1/exams/generations/{generationId}`, with a check that the requesting student owns the generation job (matches the `studentId` that triggered it) before returning status — a student should not be able to poll another student's or a teacher's generation job by guessing its id.
+- OR provide a dedicated student-scoped endpoint, e.g. `GET /api/v1/students/exam-generations/{generationId}`, scoped to the authenticated student's own jobs only.
+- Please also confirm: does `POST /students/{studentId}/weak-topics/{topicName}/practice-exam` return a `generationId` (or similarly named field) in its 202 body at all? This is currently unconfirmed — see `BACKEND_ISSUES_REPORT.md` item 4 — and is a prerequisite for polling this endpoint regardless of the authorization fix above.
+
+---
+
+## 📌 Note 16: `finalScore` Has No Reliable Scale Indicator (drives fragile frontend score-guessing)
+
+### 🔍 Issue Description
+
+- `AttemptResultResponseDto.finalScore` (returned by `GET /api/v1/attempts/{attemptId}/results`) is sometimes a raw points value (e.g. `7` out of a 10-point exam) and sometimes appears to already be a 0–100 percentage, with no field reliably indicating which. `maxScore` on the same DTO is present in some responses and absent/zero in others.
+- Per-answer detail (`AnswerGradingResultDto.score`/`.maxScore`) is the one reliable source — the frontend correctly derives the percentage from `sum(score)/sum(maxScore)` when that detail is present. The ambiguity only shows up in the **fallback** path, when only the aggregate `finalScore` is available (e.g. a weak-topic summary in `WeakTopicResult`/`PerformanceReportDto`, or a `StudentExamSummaryDto.latestScore`) with no per-answer breakdown to compute from.
+- To work around this, the frontend previously guessed the scale from the raw number's magnitude (`<=5` → assume out of 5, `<=10` → assume out of 10, `>10` → assume already a percentage). This is unreliable by construction — a genuine low score like `8%` is indistinguishable from `8/10` — and different frontend call sites had drifted to slightly different guessing thresholds, which is part of why the same exam could show different percentages on different screens.
+
+### 💡 Recommendation for Backend Team
+
+- Please make one of these true everywhere `finalScore` (or any other bare score field with no accompanying max) is returned:
+  1. **Always normalize it to a 0–100 percentage** before sending it to the client, regardless of the exam's point scale, or
+  2. **Always include the corresponding max/total** alongside it (e.g. `finalScore` + `maxScore` together, never one without the other) so the client can compute `finalScore / maxScore * 100` deterministically.
+- Whichever is chosen, please apply it consistently across `AttemptResultResponseDto.finalScore`, `StudentExamSummaryDto.latestScore`, `WeakTopicResult.proficiencyPercent`/`accuracyPercentage`, and any other "score-shaped" field — right now some of these are percentages and some are raw points, with no field name convention distinguishing them.
+- Frontend fix in progress on our side: centralizing all percentage formatting through one shared function and removing the magnitude-based guessing, falling back to "treat as already a percentage, clamp to 0–100" when no max is available — but this is strictly worse than getting a real scale indicator from the API, since a genuinely low percentage and a low raw score both look identical without one.
+
+---
+
+_Last updated: 2026-08-24 by Frontend Team_
