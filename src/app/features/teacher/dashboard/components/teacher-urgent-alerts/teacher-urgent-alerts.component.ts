@@ -15,4 +15,3 @@ import { TeacherUrgentAlert } from '../../../models/teacher-dashboard.model';
 export class TeacherUrgentAlertsComponent {
   readonly alerts = input<TeacherUrgentAlert[]>([]);
 }
-

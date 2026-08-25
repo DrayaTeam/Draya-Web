@@ -31,11 +31,11 @@
     {{ question().text }}
   </h2>
 
-  <!-- Question Answer Area (Essay vs MCQ) -->
-  @if (isEssay()) {
+  <!-- Question Answer Area (Open Ended vs MCQ) -->
+  @if (isOpenEnded()) {
     <div class="essay-answer-container">
       <div class="essay-header-row">
-        <label for="essay-answer-textarea" class="essay-label">
+        <label for="essay-answer-input" class="essay-label">
           <svg
             class="essay-label-icon"
             viewBox="0 0 24 24"
@@ -47,23 +47,47 @@
               stroke-linejoin="round"
               d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
-          <span>اكتب إجابتك النموذجية بالتفصيل:</span>
+          @if (isFillInBlank()) {
+            <span>اكتب الكلمة أو العبارة المناسبة في الفراغ:</span>
+          } @else if (isShortAnswer()) {
+            <span>اكتب إجابتك المباشرة هنا:</span>
+          } @else {
+            <span>اكتب إجابتك النموذجية بالتفصيل:</span>
+          }
         </label>
-        <span class="essay-badge">إجابة مقالية ✍️</span>
+        <span class="essay-badge">
+          @if (isFillInBlank()) {
+            أكمل الفراغ ✍️
+          } @else if (isShortAnswer()) {
+            إجابة قصيرة ✍️
+          } @else {
+            إجابة مقالية ✍️
+          }
+        </span>
       </div>
 
-      <textarea
-        id="essay-answer-textarea"
-        class="essay-textarea"
-        rows="8"
-        placeholder="اكتب إجابتك هنا بدقة ووضوح..."
-        [value]="question().answerText || ''"
-        (input)="onTextInput($event)"></textarea>
+      @if (isFillInBlank() || isShortAnswer()) {
+        <input
+          id="essay-answer-input"
+          type="text"
+          class="essay-textarea !min-h-0 !py-3"
+          [placeholder]="
+            isFillInBlank() ? 'اكتب الإجابة في المكان المخصص...' : 'اكتب إجابتك هنا بدقة ووضوح...'
+          "
+          [value]="question().answerText || ''"
+          (input)="onTextInput($event)" />
+      } @else {
+        <textarea
+          id="essay-answer-input"
+          class="essay-textarea"
+          rows="8"
+          placeholder="اكتب إجابتك هنا بدقة ووضوح..."
+          [value]="question().answerText || ''"
+          (input)="onTextInput($event)"></textarea>
+      }
 
       <div class="essay-meta-bar">
-        <span class="essay-hint">
-          💡 سيتم تصحيح وتقييم إجابتك المقالية تلقائياً أو عبر معلم المادة.
-        </span>
+        <span class="essay-hint">💡 سيتم تصحيح وتقييم إجابتك تلقائياً أو عبر معلم المادة.</span>
         <span class="char-count">
           <strong>{{ (question().answerText || '').length }}</strong>
           حرف

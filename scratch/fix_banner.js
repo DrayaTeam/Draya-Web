@@ -4,7 +4,8 @@ const fs = require('fs');
 const htmlPath = 'src/app/features/teacher/reports/teacher-reports.component.html';
 let htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
-const oldGridTopRegex = /<!-- Profile Block -->[\s\S]*?<!-- Subject Proficiency \(Spans 2 columns\) -->/;
+const oldGridTopRegex =
+  /<!-- Profile Block -->[\s\S]*?<!-- Subject Proficiency \(Spans 2 columns\) -->/;
 
 const newGridTop = `<!-- Top Banner (Spans 4 columns): Profile + Stats -->
         <div class="bento-box top-banner-box">

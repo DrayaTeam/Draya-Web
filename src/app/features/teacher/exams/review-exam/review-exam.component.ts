@@ -9,11 +9,12 @@ import {
   GeneratedQuestionDto,
 } from '../../../../core/models/teacher-exam.model';
 import { RefineQuestionModalComponent } from './components/refine-question-modal/refine-question-modal.component';
+import { EditQuestionModalComponent } from './components/edit-question-modal/edit-question-modal.component';
 
 @Component({
   selector: 'draya-review-exam',
   standalone: true,
-  imports: [DatePipe, RefineQuestionModalComponent],
+  imports: [DatePipe, RefineQuestionModalComponent, EditQuestionModalComponent],
   templateUrl: './review-exam.component.html',
   styleUrl: './review-exam.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +31,9 @@ export class ReviewExamComponent implements OnInit {
   // Modal State
   readonly isRefineModalOpen = signal(false);
   readonly selectedQuestionForRefine = signal<ExamQuestionDto | null>(null);
+
+  readonly isEditModalOpen = signal(false);
+  readonly selectedQuestionForEdit = signal<ExamQuestionDto | null>(null);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -119,6 +123,61 @@ export class ReviewExamComponent implements OnInit {
           this.isLoading.set(false);
         },
       });
+    }
+  }
+
+  openAddQuestionModal(): void {
+    this.selectedQuestionForEdit.set(null);
+    this.isEditModalOpen.set(true);
+  }
+
+  openEditQuestionModal(question: ExamQuestionDto): void {
+    this.selectedQuestionForEdit.set(question);
+    this.isEditModalOpen.set(true);
+  }
+
+  closeEditQuestionModal(): void {
+    this.isEditModalOpen.set(false);
+    this.selectedQuestionForEdit.set(null);
+  }
+
+  onQuestionSaved(question: ExamQuestionDto): void {
+    const currentExam = this.exam();
+    if (currentExam) {
+      const questions = currentExam.questions || [];
+      const exists = questions.find((q) => q.id === question.id);
+      if (exists) {
+        this.exam.set({
+          ...currentExam,
+          questions: questions.map((q) => (q.id === question.id ? question : q)),
+        });
+      } else {
+        this.exam.set({ ...currentExam, questions: [...questions, question] });
+      }
+    }
+  }
+
+  deleteQuestion(questionId: string): void {
+    if (confirm('?? ??? ????? ?? ????? ?? ??? ??? ???????')) {
+      const currentExam = this.exam();
+      if (currentExam) {
+        this.isLoading.set(true);
+        this.examService.deleteQuestion(currentExam.id, questionId).subscribe({
+          next: () => {
+            const questions = currentExam.questions || [];
+            this.exam.set({
+              ...currentExam,
+              questions: questions.filter((q) => q.id !== questionId),
+            });
+            this.toast.success('?? ??? ?????? ?????');
+            this.isLoading.set(false);
+          },
+          error: () => {
+            this.toast.error('??? ??? ????? ??? ??????');
+            this.isLoading.set(false);
+          },
+        });
+      }
     }
   }
 

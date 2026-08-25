@@ -30,13 +30,12 @@ a human to click through with a real login is called out explicitly below.
 the frontend during exam start, with no clear pattern ("sometimes it works").
 
 **Root cause:** `token.interceptor.ts` attaches whatever access token is currently in memory to every
-request, with no coordination between requests. `error.interceptor.ts` calls `auth.refresh()` on any
-401. Neither had any deduplication — so when the access token was expired and a page fired several
+request, with no coordination between requests. `error.interceptor.ts` calls `auth.refresh()` on any 401. Neither had any deduplication — so when the access token was expired and a page fired several
 API calls at once (loading an exam page typically fires 3-4 requests together), **every** 401'd
 request independently triggered its own `POST /auth/refresh-token` call, all racing in parallel.
 
 If the backend rotates refresh tokens on use (issues a new one and invalidates the old — standard,
-security-recommended practice), only the *first* of those parallel refresh calls succeeds. Every
+security-recommended practice), only the _first_ of those parallel refresh calls succeeds. Every
 other one arrives with an already-consumed refresh token, fails, and — critically — the failure
 handler calls `logout()`, which **wipes out the fresh tokens the winning call just stored** and
 force-ends a session that was actually fine. This exactly matches "works on Swagger" (one request,
@@ -44,6 +43,7 @@ no concurrency) vs. "fails intermittently on the frontend, seemingly at random" 
 several requests race a token refresh at once).
 
 **Fix** (`src/app/features/auth/services/auth.service.ts`):
+
 - `AuthService.refresh()` now shares one in-flight refresh `Observable` (via `shareReplay(1)`) across
   every concurrent caller, instead of firing one HTTP call per 401. All waiting requests get the same
   result once the single underlying call resolves.
@@ -141,6 +141,7 @@ field at all** for monthly growth or percentile ranking). `completedLessonsCount
 `subscribedPackagesCount` happened to already match by coincidence.
 
 **Fix:**
+
 - Retyped the API response to the confirmed contract, including `pointsNeedingFocus`
   (`topicName`/`proficiencyPercent`) for the weakness widget and the real `upcomingExams` shape
   (`examId`, not `id`).
@@ -171,7 +172,7 @@ in the session:
 - The class-average KPI card silently **lost its `%` suffix** after the first real data load (the
   static default was `"0%"`, but the update wrote a bare number).
 - `teacher-reports.component.ts` read `StudentAnalyticsDto.overallAverage`/`.highestScore` raw, while
-  the *student's own view* of the identical fields (`student-reports.service.ts`) already runs them
+  the _student's own view_ of the identical fields (`student-reports.service.ts`) already runs them
   through the shared `normalizeScoreToPercent()` — meaning a teacher and their student could see two
   different numbers for the same analytics. Now both reuse the same function.
 

@@ -7,9 +7,7 @@
   "paths": {
     "/api/v1/admin/classrooms/types": {
       "get": {
-        "tags": [
-          "AdminClassrooms"
-        ],
+        "tags": ["AdminClassrooms"],
         "responses": {
           "200": {
             "description": "OK",
@@ -27,9 +25,7 @@
         }
       },
       "post": {
-        "tags": [
-          "AdminClassrooms"
-        ],
+        "tags": ["AdminClassrooms"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -58,9 +54,7 @@
     },
     "/api/v1/admin/classrooms/types/{id}": {
       "get": {
-        "tags": [
-          "AdminClassrooms"
-        ],
+        "tags": ["AdminClassrooms"],
         "parameters": [
           {
             "name": "id",
@@ -96,9 +90,7 @@
         }
       },
       "put": {
-        "tags": [
-          "AdminClassrooms"
-        ],
+        "tags": ["AdminClassrooms"],
         "parameters": [
           {
             "name": "id",
@@ -146,9 +138,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "AdminClassrooms"
-        ],
+        "tags": ["AdminClassrooms"],
         "parameters": [
           {
             "name": "id",
@@ -179,9 +169,7 @@
     },
     "/api/v1/admin/classrooms/grade-levels": {
       "get": {
-        "tags": [
-          "AdminClassrooms"
-        ],
+        "tags": ["AdminClassrooms"],
         "responses": {
           "200": {
             "description": "OK",
@@ -199,9 +187,7 @@
         }
       },
       "post": {
-        "tags": [
-          "AdminClassrooms"
-        ],
+        "tags": ["AdminClassrooms"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -230,9 +216,7 @@
     },
     "/api/v1/admin/classrooms/grade-levels/{id}": {
       "get": {
-        "tags": [
-          "AdminClassrooms"
-        ],
+        "tags": ["AdminClassrooms"],
         "parameters": [
           {
             "name": "id",
@@ -268,9 +252,7 @@
         }
       },
       "put": {
-        "tags": [
-          "AdminClassrooms"
-        ],
+        "tags": ["AdminClassrooms"],
         "parameters": [
           {
             "name": "id",
@@ -318,9 +300,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "AdminClassrooms"
-        ],
+        "tags": ["AdminClassrooms"],
         "parameters": [
           {
             "name": "id",
@@ -351,9 +331,7 @@
     },
     "/api/v1/admin/financial/settings": {
       "get": {
-        "tags": [
-          "AdminFinancial"
-        ],
+        "tags": ["AdminFinancial"],
         "responses": {
           "200": {
             "description": "OK",
@@ -368,9 +346,7 @@
         }
       },
       "put": {
-        "tags": [
-          "AdminFinancial"
-        ],
+        "tags": ["AdminFinancial"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -416,9 +392,7 @@
     },
     "/api/v1/admin/financial/overview": {
       "get": {
-        "tags": [
-          "AdminFinancial"
-        ],
+        "tags": ["AdminFinancial"],
         "responses": {
           "200": {
             "description": "OK",
@@ -435,9 +409,7 @@
     },
     "/api/v1/admin/financial/withdrawals": {
       "get": {
-        "tags": [
-          "AdminFinancial"
-        ],
+        "tags": ["AdminFinancial"],
         "parameters": [
           {
             "name": "statusFilter",
@@ -481,9 +453,7 @@
     },
     "/api/v1/admin/financial/withdrawals/{id}/approve": {
       "post": {
-        "tags": [
-          "AdminFinancial"
-        ],
+        "tags": ["AdminFinancial"],
         "parameters": [
           {
             "name": "id",
@@ -524,9 +494,7 @@
     },
     "/api/v1/admin/financial/withdrawals/{id}/reject": {
       "post": {
-        "tags": [
-          "AdminFinancial"
-        ],
+        "tags": ["AdminFinancial"],
         "parameters": [
           {
             "name": "id",
@@ -586,9 +554,7 @@
     },
     "/api/v1/admin/financial/withdrawals/{id}/mark-paid": {
       "post": {
-        "tags": [
-          "AdminFinancial"
-        ],
+        "tags": ["AdminFinancial"],
         "parameters": [
           {
             "name": "id",
@@ -648,9 +614,7 @@
     },
     "/api/v1/admin/financial/adjustments": {
       "post": {
-        "tags": [
-          "AdminFinancial"
-        ],
+        "tags": ["AdminFinancial"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -689,9 +653,7 @@
     },
     "/api/v1/admin/profile": {
       "put": {
-        "tags": [
-          "AdminProfile"
-        ],
+        "tags": ["AdminProfile"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -730,9 +692,7 @@
     },
     "/api/v1/admin/supervisors/invite": {
       "post": {
-        "tags": [
-          "AdminSupervisors"
-        ],
+        "tags": ["AdminSupervisors"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -781,9 +741,7 @@
     },
     "/api/v1/admin/supervisors/{id}/resend-invite": {
       "post": {
-        "tags": [
-          "AdminSupervisors"
-        ],
+        "tags": ["AdminSupervisors"],
         "parameters": [
           {
             "name": "id",
@@ -807,9 +765,7 @@
     },
     "/api/v1/admin/supervisors": {
       "get": {
-        "tags": [
-          "AdminSupervisors"
-        ],
+        "tags": ["AdminSupervisors"],
         "responses": {
           "200": {
             "description": "OK"
@@ -819,9 +775,7 @@
     },
     "/api/v1/admin/supervisors/{id}/status": {
       "put": {
-        "tags": [
-          "AdminSupervisors"
-        ],
+        "tags": ["AdminSupervisors"],
         "parameters": [
           {
             "name": "id",
@@ -864,9 +818,7 @@
     },
     "/api/v1/admin/teachers/search": {
       "get": {
-        "tags": [
-          "AdminTeachers"
-        ],
+        "tags": ["AdminTeachers"],
         "parameters": [
           {
             "name": "q",
@@ -895,9 +847,7 @@
     },
     "/api/v1/auth/register/teacher": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -946,9 +896,7 @@
     },
     "/api/v1/auth/register/student": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -997,9 +945,7 @@
     },
     "/api/v1/auth/login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1048,9 +994,7 @@
     },
     "/api/v1/auth/refresh-token": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1089,9 +1033,7 @@
     },
     "/api/auth/refresh": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1130,9 +1072,7 @@
     },
     "/api/v1/auth/logout": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "responses": {
           "204": {
             "description": "No Content"
@@ -1142,9 +1082,7 @@
     },
     "/api/v1/auth/password-reset/request": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1173,9 +1111,7 @@
     },
     "/api/v1/auth/password-reset/confirm": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1214,9 +1150,7 @@
     },
     "/api/v1/auth/accept-invite": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1255,9 +1189,7 @@
     },
     "/api/v1/auth/change-password": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1306,9 +1238,7 @@
     },
     "/api/v1/auth/me": {
       "get": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "responses": {
           "200": {
             "description": "OK"
@@ -1328,9 +1258,7 @@
     },
     "/api/v1/classrooms/{classroomId}/questions": {
       "get": {
-        "tags": [
-          "ClassroomQuestions"
-        ],
+        "tags": ["ClassroomQuestions"],
         "parameters": [
           {
             "name": "classroomId",
@@ -1390,9 +1318,7 @@
         }
       },
       "post": {
-        "tags": [
-          "ClassroomQuestions"
-        ],
+        "tags": ["ClassroomQuestions"],
         "parameters": [
           {
             "name": "classroomId",
@@ -1439,9 +1365,7 @@
     },
     "/api/v1/classrooms/{classroomId}/questions/{questionId}": {
       "get": {
-        "tags": [
-          "ClassroomQuestions"
-        ],
+        "tags": ["ClassroomQuestions"],
         "parameters": [
           {
             "name": "classroomId",
@@ -1486,9 +1410,7 @@
         }
       },
       "put": {
-        "tags": [
-          "ClassroomQuestions"
-        ],
+        "tags": ["ClassroomQuestions"],
         "parameters": [
           {
             "name": "classroomId",
@@ -1535,9 +1457,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "ClassroomQuestions"
-        ],
+        "tags": ["ClassroomQuestions"],
         "parameters": [
           {
             "name": "classroomId",
@@ -1567,9 +1487,7 @@
     },
     "/api/v1/classrooms/{classroomId}/questions/with-photo": {
       "post": {
-        "tags": [
-          "ClassroomQuestions"
-        ],
+        "tags": ["ClassroomQuestions"],
         "parameters": [
           {
             "name": "classroomId",
@@ -1633,9 +1551,7 @@
     },
     "/api/v1/classrooms/{classroomId}/questions/{questionId}/replies": {
       "post": {
-        "tags": [
-          "ClassroomQuestions"
-        ],
+        "tags": ["ClassroomQuestions"],
         "parameters": [
           {
             "name": "classroomId",
@@ -1691,9 +1607,7 @@
     },
     "/api/v1/classrooms/{classroomId}/questions/{questionId}/replies/with-photo": {
       "post": {
-        "tags": [
-          "ClassroomQuestions"
-        ],
+        "tags": ["ClassroomQuestions"],
         "parameters": [
           {
             "name": "classroomId",
@@ -1766,9 +1680,7 @@
     },
     "/api/v1/classrooms/{classroomId}/questions/{questionId}/vote": {
       "post": {
-        "tags": [
-          "ClassroomQuestions"
-        ],
+        "tags": ["ClassroomQuestions"],
         "parameters": [
           {
             "name": "classroomId",
@@ -1796,9 +1708,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "ClassroomQuestions"
-        ],
+        "tags": ["ClassroomQuestions"],
         "parameters": [
           {
             "name": "classroomId",
@@ -1828,9 +1738,7 @@
     },
     "/api/v1/classrooms/{classroomId}/questions/{questionId}/replies/{replyId}": {
       "put": {
-        "tags": [
-          "ClassroomQuestions"
-        ],
+        "tags": ["ClassroomQuestions"],
         "parameters": [
           {
             "name": "classroomId",
@@ -1886,9 +1794,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "ClassroomQuestions"
-        ],
+        "tags": ["ClassroomQuestions"],
         "parameters": [
           {
             "name": "classroomId",
@@ -1927,9 +1833,7 @@
     },
     "/api/v1/subjects": {
       "get": {
-        "tags": [
-          "Classrooms"
-        ],
+        "tags": ["Classrooms"],
         "responses": {
           "200": {
             "description": "OK",
@@ -1947,9 +1851,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Classrooms"
-        ],
+        "tags": ["Classrooms"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1995,9 +1897,7 @@
     },
     "/api/v1/classrooms": {
       "post": {
-        "tags": [
-          "Classrooms"
-        ],
+        "tags": ["Classrooms"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2051,9 +1951,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Classrooms"
-        ],
+        "tags": ["Classrooms"],
         "parameters": [
           {
             "name": "page",
@@ -2114,9 +2012,7 @@
     },
     "/api/v1/classrooms/search": {
       "get": {
-        "tags": [
-          "Classrooms"
-        ],
+        "tags": ["Classrooms"],
         "parameters": [
           {
             "name": "page",
@@ -2177,9 +2073,7 @@
     },
     "/api/v1/classrooms/types": {
       "get": {
-        "tags": [
-          "Classrooms"
-        ],
+        "tags": ["Classrooms"],
         "responses": {
           "200": {
             "description": "OK",
@@ -2199,9 +2093,7 @@
     },
     "/api/v1/classrooms/grade-levels": {
       "get": {
-        "tags": [
-          "Classrooms"
-        ],
+        "tags": ["Classrooms"],
         "responses": {
           "200": {
             "description": "OK",
@@ -2221,9 +2113,7 @@
     },
     "/api/v1/classrooms/{classroomId}": {
       "get": {
-        "tags": [
-          "Classrooms"
-        ],
+        "tags": ["Classrooms"],
         "parameters": [
           {
             "name": "classroomId",
@@ -2259,9 +2149,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Classrooms"
-        ],
+        "tags": ["Classrooms"],
         "parameters": [
           {
             "name": "classroomId",
@@ -2326,9 +2214,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Classrooms"
-        ],
+        "tags": ["Classrooms"],
         "parameters": [
           {
             "name": "classroomId",
@@ -2359,9 +2245,7 @@
     },
     "/api/v1/classrooms/{classroomId}/regenerate-code": {
       "post": {
-        "tags": [
-          "Classrooms"
-        ],
+        "tags": ["Classrooms"],
         "parameters": [
           {
             "name": "classroomId",
@@ -2399,9 +2283,7 @@
     },
     "/api/v1/classrooms/enroll": {
       "post": {
-        "tags": [
-          "Classrooms"
-        ],
+        "tags": ["Classrooms"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2467,9 +2349,7 @@
     },
     "/api/v1/classrooms/{classroomId}/checkout": {
       "post": {
-        "tags": [
-          "Classrooms"
-        ],
+        "tags": ["Classrooms"],
         "parameters": [
           {
             "name": "classroomId",
@@ -2536,9 +2416,7 @@
     },
     "/api/v1/classrooms/{classroomId}/students": {
       "get": {
-        "tags": [
-          "Classrooms"
-        ],
+        "tags": ["Classrooms"],
         "parameters": [
           {
             "name": "classroomId",
@@ -2594,9 +2472,7 @@
     },
     "/api/v1/classrooms/{classroomId}/students/{studentId}": {
       "delete": {
-        "tags": [
-          "Classrooms"
-        ],
+        "tags": ["Classrooms"],
         "parameters": [
           {
             "name": "classroomId",
@@ -2636,9 +2512,7 @@
     },
     "/api/v1/classrooms/{classroomId}/materials": {
       "post": {
-        "tags": [
-          "Materials"
-        ],
+        "tags": ["Materials"],
         "parameters": [
           {
             "name": "classroomId",
@@ -2689,9 +2563,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Materials"
-        ],
+        "tags": ["Materials"],
         "parameters": [
           {
             "name": "classroomId",
@@ -2747,9 +2619,7 @@
     },
     "/api/v1/students/materials": {
       "get": {
-        "tags": [
-          "Materials"
-        ],
+        "tags": ["Materials"],
         "parameters": [
           {
             "name": "page",
@@ -2799,9 +2669,7 @@
     },
     "/api/v1/materials/enrolled": {
       "get": {
-        "tags": [
-          "Materials"
-        ],
+        "tags": ["Materials"],
         "parameters": [
           {
             "name": "page",
@@ -2851,9 +2719,7 @@
     },
     "/api/v1/materials/{materialId}": {
       "get": {
-        "tags": [
-          "Materials"
-        ],
+        "tags": ["Materials"],
         "parameters": [
           {
             "name": "materialId",
@@ -2872,9 +2738,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Materials"
-        ],
+        "tags": ["Materials"],
         "parameters": [
           {
             "name": "materialId",
@@ -2895,9 +2759,7 @@
     },
     "/api/v1/materials/{materialId}/versions": {
       "post": {
-        "tags": [
-          "Materials"
-        ],
+        "tags": ["Materials"],
         "parameters": [
           {
             "name": "materialId",
@@ -2936,9 +2798,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Materials"
-        ],
+        "tags": ["Materials"],
         "parameters": [
           {
             "name": "materialId",
@@ -2959,9 +2819,7 @@
     },
     "/api/v1/materials/{materialId}/versions/{versionId}/status": {
       "get": {
-        "tags": [
-          "Materials"
-        ],
+        "tags": ["Materials"],
         "parameters": [
           {
             "name": "materialId",
@@ -2991,9 +2849,7 @@
     },
     "/api/v1/materials/{materialId}/stream": {
       "get": {
-        "tags": [
-          "Materials"
-        ],
+        "tags": ["Materials"],
         "parameters": [
           {
             "name": "materialId",
@@ -3014,9 +2870,7 @@
     },
     "/api/v1/payments/webhook": {
       "post": {
-        "tags": [
-          "Payments"
-        ],
+        "tags": ["Payments"],
         "responses": {
           "200": {
             "description": "OK"
@@ -3026,9 +2880,7 @@
     },
     "/api/v1/payments/callback": {
       "get": {
-        "tags": [
-          "Payments"
-        ],
+        "tags": ["Payments"],
         "responses": {
           "200": {
             "description": "OK"
@@ -3038,9 +2890,7 @@
     },
     "/api/v1/payments/{id}/status": {
       "get": {
-        "tags": [
-          "Payments"
-        ],
+        "tags": ["Payments"],
         "parameters": [
           {
             "name": "id",
@@ -3078,9 +2928,7 @@
     },
     "/api/v1/payments/confirm/{id}": {
       "post": {
-        "tags": [
-          "Payments"
-        ],
+        "tags": ["Payments"],
         "parameters": [
           {
             "name": "id",
@@ -3119,9 +2967,7 @@
     },
     "/api/v1/payments/{id}/refund": {
       "post": {
-        "tags": [
-          "Payments"
-        ],
+        "tags": ["Payments"],
         "parameters": [
           {
             "name": "id",
@@ -3162,9 +3008,7 @@
     },
     "/api/v1/students/profile": {
       "put": {
-        "tags": [
-          "Students"
-        ],
+        "tags": ["Students"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3203,9 +3047,7 @@
     },
     "/api/v1/students/profile/picture": {
       "post": {
-        "tags": [
-          "Students"
-        ],
+        "tags": ["Students"],
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -3255,9 +3097,7 @@
     },
     "/api/v1/teachers": {
       "get": {
-        "tags": [
-          "Teachers"
-        ],
+        "tags": ["Teachers"],
         "parameters": [
           {
             "name": "specialization",
@@ -3286,9 +3126,7 @@
     },
     "/api/v1/teachers/profile": {
       "put": {
-        "tags": [
-          "Teachers"
-        ],
+        "tags": ["Teachers"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3327,9 +3165,7 @@
     },
     "/api/v1/teachers/profile/picture": {
       "post": {
-        "tags": [
-          "Teachers"
-        ],
+        "tags": ["Teachers"],
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -3379,9 +3215,7 @@
     },
     "/api/v1/teachers/{id}": {
       "get": {
-        "tags": [
-          "Teachers"
-        ],
+        "tags": ["Teachers"],
         "parameters": [
           {
             "name": "id",
@@ -3419,9 +3253,7 @@
     },
     "/api/v1/teachers/{id}/classrooms": {
       "get": {
-        "tags": [
-          "Teachers"
-        ],
+        "tags": ["Teachers"],
         "parameters": [
           {
             "name": "id",
@@ -3467,9 +3299,7 @@
     },
     "/api/v1/wallet/balance": {
       "get": {
-        "tags": [
-          "Wallet"
-        ],
+        "tags": ["Wallet"],
         "responses": {
           "200": {
             "description": "OK",
@@ -3486,9 +3316,7 @@
     },
     "/api/v1/wallet/transactions": {
       "get": {
-        "tags": [
-          "Wallet"
-        ],
+        "tags": ["Wallet"],
         "parameters": [
           {
             "name": "pageNumber",
@@ -3525,9 +3353,7 @@
     },
     "/api/v1/wallet/topup": {
       "post": {
-        "tags": [
-          "Wallet"
-        ],
+        "tags": ["Wallet"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3573,9 +3399,7 @@
     },
     "/api/v1/wallet/withdrawals": {
       "post": {
-        "tags": [
-          "Wallet"
-        ],
+        "tags": ["Wallet"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3629,9 +3453,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Wallet"
-        ],
+        "tags": ["Wallet"],
         "parameters": [
           {
             "name": "pageNumber",
@@ -3668,9 +3490,7 @@
     },
     "/api/v1/wallet/payout-accounts": {
       "get": {
-        "tags": [
-          "Wallet"
-        ],
+        "tags": ["Wallet"],
         "responses": {
           "200": {
             "description": "OK",
@@ -3688,9 +3508,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Wallet"
-        ],
+        "tags": ["Wallet"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -3736,9 +3554,7 @@
     },
     "/api/v1/wallet/payout-accounts/{id}": {
       "put": {
-        "tags": [
-          "Wallet"
-        ],
+        "tags": ["Wallet"],
         "parameters": [
           {
             "name": "id",
@@ -3803,9 +3619,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Wallet"
-        ],
+        "tags": ["Wallet"],
         "parameters": [
           {
             "name": "id",
@@ -4541,10 +4355,7 @@
         "additionalProperties": false
       },
       "PayoutAccountType": {
-        "enum": [
-          0,
-          1
-        ],
+        "enum": [0, 1],
         "type": "integer",
         "format": "int32"
       },
@@ -4604,7 +4415,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": { }
+        "additionalProperties": {}
       },
       "QuestionDetailsDto": {
         "type": "object",
@@ -5237,10 +5048,7 @@
         "additionalProperties": false
       },
       "WalletBalanceType": {
-        "enum": [
-          0,
-          1
-        ],
+        "enum": [0, 1],
         "type": "integer",
         "format": "int32"
       },
@@ -5316,14 +5124,7 @@
         "additionalProperties": false
       },
       "WalletTransactionType": {
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5
-        ],
+        "enum": [0, 1, 2, 3, 4, 5],
         "type": "integer",
         "format": "int32"
       },
@@ -5404,13 +5205,7 @@
         "additionalProperties": false
       },
       "WithdrawalStatus": {
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4
-        ],
+        "enum": [0, 1, 2, 3, 4],
         "type": "integer",
         "format": "int32"
       }
@@ -5426,7 +5221,7 @@
   },
   "security": [
     {
-      "Bearer": [ ]
+      "Bearer": []
     }
   ],
   "tags": [

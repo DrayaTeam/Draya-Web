@@ -4,8 +4,8 @@ const fs = require('fs');
 const tsPath = 'src/app/features/teacher/reports/teacher-reports.component.ts';
 let tsContent = fs.readFileSync(tsPath, 'utf8');
 tsContent = tsContent.replace(
-    'this.reportsService.getInteractiveReview(studentId, topic.topicId)',
-    'this.reportsService.getInteractiveReview(studentId, topic.topicName)'
+  'this.reportsService.getInteractiveReview(studentId, topic.topicId)',
+  'this.reportsService.getInteractiveReview(studentId, topic.topicName)',
 );
 fs.writeFileSync(tsPath, tsContent, 'utf8');
 
@@ -15,8 +15,8 @@ let htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
 // Remove the full card click
 htmlContent = htmlContent.replace(
-    '<div class="weakness-card cursor-pointer hover:border-[var(--draya-primary-400)] transition-colors" (click)="openInteractiveReview(topic)">',
-    '<div class="weakness-card">'
+  '<div class="weakness-card cursor-pointer hover:border-[var(--draya-primary-400)] transition-colors" (click)="openInteractiveReview(topic)">',
+  '<div class="weakness-card">',
 );
 
 // Add the explicit button inside the card, below the errors or as a footer
@@ -75,9 +75,10 @@ const newButtonScss = `
 // Insert the new button scss inside the .weakness-card block
 const insertPoint = scssContent.indexOf('.weakness-errors {');
 if (insertPoint !== -1) {
-    scssContent = scssContent.substring(0, insertPoint) + newButtonScss + scssContent.substring(insertPoint);
+  scssContent =
+    scssContent.substring(0, insertPoint) + newButtonScss + scssContent.substring(insertPoint);
 } else {
-    scssContent += newButtonScss; // Fallback
+  scssContent += newButtonScss; // Fallback
 }
 fs.writeFileSync(scssPath, scssContent, 'utf8');
 

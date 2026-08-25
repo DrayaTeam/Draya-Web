@@ -7,7 +7,7 @@ const modalMarker = '<!-- Interactive Review Modal -->';
 const markerIndex = htmlContent.indexOf(modalMarker);
 
 if (markerIndex !== -1) {
-    const newModalHtml = `<!-- Interactive Review Modal -->
+  const newModalHtml = `<!-- Interactive Review Modal -->
 <p-dialog 
   [(visible)]="showReviewModal" 
   [modal]="true" 
@@ -75,8 +75,8 @@ if (markerIndex !== -1) {
   </ng-template>
 </p-dialog>
 `;
-    
-    htmlContent = htmlContent.substring(0, markerIndex) + newModalHtml;
-    fs.writeFileSync(htmlPath, htmlContent, 'utf8');
-    console.log('Fixed modal HTML');
+
+  htmlContent = htmlContent.substring(0, markerIndex) + newModalHtml;
+  fs.writeFileSync(htmlPath, htmlContent, 'utf8');
+  console.log('Fixed modal HTML');
 }

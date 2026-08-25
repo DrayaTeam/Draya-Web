@@ -8,13 +8,13 @@
 
 **Draya (دراية)** is an **Arabic-first, AI-powered EdTech platform** for Egyptian secondary school students, teachers, and parents. It enables teachers to build AI-generated exams from uploaded lesson materials, students to take timed exams with anti-cheating enforcement, and parents to receive automated performance reports.
 
-| Property         | Value                                                                                |
-| ---------------- | ------------------------------------------------------------------------------------ |
-| **Platform**     | Web (Angular 20)                                                                     |
-| **Language**     | Arabic (RTL-first), English secondary                                                |
-| **Target Users** | Secondary school teachers, students, parents                                         |
-| **Market**       | Egypt (EGP currency, Paymob payments)                                                |
-| **AI Features**  | AI Exam Generation from materials (RAG), AI Grading (essay/rubric), Weakness Reports |
+| Property         | Value                                                                                                                 |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **Platform**     | Web (Angular 20)                                                                                                      |
+| **Language**     | Arabic (RTL-first), English secondary                                                                                 |
+| **Target Users** | Secondary school teachers, students, parents                                                                          |
+| **Market**       | Egypt (EGP currency, Paymob payments)                                                                                 |
+| **AI Features**  | AI Exam Generation from materials (RAG), AI Grading (essay/rubric), Weakness Reports                                  |
 | **API Status**   | See [`API_INTEGRATION_STATUS.md`](file:///e:/ITI/Draya/Draya-Web/API_INTEGRATION_STATUS.md) for full endpoint tracker |
 
 ---

@@ -1,0 +1,801 @@
+=== StudentExamSummaryDto ===
+{
+ "type": "object",
+ "properties": {
+  "id": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "classroomId": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "sectionId": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "title": {
+   "type": "string",
+   "nullable": true
+  },
+  "topic": {
+   "type": "string",
+   "nullable": true
+  },
+  "durationMinutes": {
+   "type": "integer",
+   "format": "int32"
+  },
+  "startDate": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "endDate": {
+   "type": "string",
+   "format": "date-time",
+   "nullable": true
+  },
+  "allowedAttempts": {
+   "type": "integer",
+   "format": "int32"
+  },
+  "createdAt": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "hasSubmitted": {
+   "type": "boolean"
+  },
+  "attemptStatus": {
+   "type": "string",
+   "nullable": true
+  },
+  "latestScore": {
+   "type": "number",
+   "format": "double",
+   "nullable": true
+  },
+  "maxScore": {
+   "type": "number",
+   "format": "double",
+   "nullable": true
+  },
+  "usedAttempts": {
+   "type": "integer",
+   "format": "int32"
+  },
+  "attempts": {
+   "type": "array",
+   "items": {
+    "$ref": "#/components/schemas/StudentExamAttemptSummaryDto"
+   },
+   "nullable": true
+  }
+ },
+ "additionalProperties": false
+}
+
+=== StudentExamAttemptSummaryDto ===
+{
+ "type": "object",
+ "properties": {
+  "id": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "finalScore": {
+   "type": "number",
+   "format": "double",
+   "nullable": true
+  },
+  "maxScore": {
+   "type": "number",
+   "format": "double",
+   "nullable": true
+  },
+  "needsTeacherReview": {
+   "type": "boolean"
+  },
+  "submittedAt": {
+   "type": "string",
+   "format": "date-time",
+   "nullable": true
+  },
+  "startedAt": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}
+
+=== StudentExamDto ===
+{
+ "type": "object",
+ "properties": {
+  "id": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "classroomId": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "sectionId": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "title": {
+   "type": "string",
+   "nullable": true
+  },
+  "topic": {
+   "type": "string",
+   "nullable": true
+  },
+  "durationMinutes": {
+   "type": "integer",
+   "format": "int32"
+  },
+  "startDate": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "endDate": {
+   "type": "string",
+   "format": "date-time",
+   "nullable": true
+  },
+  "allowedAttempts": {
+   "type": "integer",
+   "format": "int32"
+  },
+  "createdAt": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "teacherName": {
+   "type": "string",
+   "nullable": true
+  },
+  "questions": {
+   "type": "array",
+   "items": {
+    "$ref": "#/components/schemas/StudentExamQuestionDto"
+   },
+   "nullable": true
+  }
+ },
+ "additionalProperties": false
+}
+
+=== StudentExamQuestionDto ===
+{
+ "type": "object",
+ "properties": {
+  "id": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "text": {
+   "type": "string",
+   "nullable": true
+  },
+  "type": {
+   "type": "string",
+   "nullable": true
+  },
+  "difficulty": {
+   "type": "string",
+   "nullable": true
+  },
+  "options": {
+   "type": "array",
+   "items": {
+    "$ref": "#/components/schemas/StudentExamQuestionOptionDto"
+   },
+   "nullable": true
+  }
+ },
+ "additionalProperties": false
+}
+
+=== StudentExamQuestionOptionDto ===
+{
+ "type": "object",
+ "properties": {
+  "id": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "text": {
+   "type": "string",
+   "nullable": true
+  }
+ },
+ "additionalProperties": false
+}
+
+=== AttemptStartResponseDto ===
+{
+ "type": "object",
+ "properties": {
+  "attemptId": {
+   "type": "string",
+   "format": "uuid"
+  }
+ },
+ "additionalProperties": false
+}
+
+=== AttemptSubmitResponseDto ===
+{
+ "type": "object",
+ "properties": {
+  "message": {
+   "type": "string",
+   "nullable": true
+  },
+  "attemptId": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "gradingJobId": {
+   "type": "string",
+   "format": "uuid",
+   "nullable": true
+  }
+ },
+ "additionalProperties": false
+}
+
+=== AttemptResultsDto ===
+{
+ "type": "object",
+ "properties": {
+  "attemptId": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "examId": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "examTitle": {
+   "type": "string",
+   "nullable": true
+  },
+  "maxScore": {
+   "type": "number",
+   "format": "double"
+  },
+  "isSubmitted": {
+   "type": "boolean"
+  },
+  "submittedAt": {
+   "type": "string",
+   "format": "date-time",
+   "nullable": true
+  },
+  "finalScore": {
+   "type": "number",
+   "format": "double"
+  },
+  "needsTeacherReview": {
+   "type": "boolean"
+  },
+  "answers": {
+   "type": "array",
+   "items": {
+    "$ref": "#/components/schemas/AnswerResultDto"
+   },
+   "nullable": true
+  }
+ },
+ "additionalProperties": false
+}
+
+=== AnswerResultDto ===
+{
+ "type": "object",
+ "properties": {
+  "answerId": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "examQuestionId": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "questionText": {
+   "type": "string",
+   "nullable": true
+  },
+  "questionType": {
+   "type": "string",
+   "nullable": true
+  },
+  "rubric": {
+   "type": "string",
+   "nullable": true
+  },
+  "answerText": {
+   "type": "string",
+   "nullable": true
+  },
+  "selectedOptionId": {
+   "type": "string",
+   "format": "uuid",
+   "nullable": true
+  },
+  "correctOptionId": {
+   "type": "string",
+   "format": "uuid",
+   "nullable": true
+  },
+  "correctAnswerText": {
+   "type": "string",
+   "nullable": true
+  },
+  "gradingResult": {
+   "$ref": "#/components/schemas/GradingResultDto"
+  }
+ },
+ "additionalProperties": false
+}
+
+=== GradingResultDto ===
+{
+ "type": "object",
+ "properties": {
+  "score": {
+   "type": "number",
+   "format": "double"
+  },
+  "maxScore": {
+   "type": "number",
+   "format": "double"
+  },
+  "confidenceScore": {
+   "type": "number",
+   "format": "double"
+  },
+  "isAiGraded": {
+   "type": "boolean"
+  },
+  "needsTeacherReview": {
+   "type": "boolean"
+  },
+  "isFinalized": {
+   "type": "boolean"
+  },
+  "reviewedByTeacherId": {
+   "type": "string",
+   "format": "uuid",
+   "nullable": true
+  },
+  "rationale": {
+   "type": "string",
+   "nullable": true
+  },
+  "teacherOverrideScore": {
+   "type": "number",
+   "format": "double",
+   "nullable": true
+  }
+ },
+ "additionalProperties": false
+}
+
+=== GradingJobStatusDto ===
+{
+ "type": "object",
+ "properties": {
+  "id": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "studentExamAttemptId": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "status": {
+   "type": "string",
+   "nullable": true
+  },
+  "createdAt": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "completedAt": {
+   "type": "string",
+   "format": "date-time",
+   "nullable": true
+  },
+  "errorMessage": {
+   "type": "string",
+   "nullable": true
+  }
+ },
+ "additionalProperties": false
+}
+
+=== WeaknessDto ===
+{
+ "type": "object",
+ "properties": {
+  "id": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "topicId": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "topicName": {
+   "type": "string",
+   "nullable": true
+  },
+  "currentProficiencyPercent": {
+   "type": "number",
+   "format": "double"
+  },
+  "lastUpdatedAt": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}
+
+=== ResolvedWeaknessDto ===
+{
+ "type": "object",
+ "properties": {
+  "id": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "topicId": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "topicName": {
+   "type": "string",
+   "nullable": true
+  },
+  "currentProficiencyPercent": {
+   "type": "number",
+   "format": "double"
+  },
+  "previousProficiencyPercent": {
+   "type": "number",
+   "format": "double"
+  },
+  "delta": {
+   "type": "number",
+   "format": "double"
+  },
+  "lastUpdatedAt": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}
+
+=== WeaknessHistoryDto ===
+{
+ "type": "object",
+ "properties": {
+  "historyId": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "previousProficiencyPercent": {
+   "type": "number",
+   "format": "double"
+  },
+  "newProficiencyPercent": {
+   "type": "number",
+   "format": "double"
+  },
+  "previousIsActive": {
+   "type": "boolean"
+  },
+  "newIsActive": {
+   "type": "boolean"
+  },
+  "createdAt": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "triggeredByAttemptId": {
+   "type": "string",
+   "format": "uuid",
+   "nullable": true
+  }
+ },
+ "additionalProperties": false
+}
+
+=== WeakTopicDto ===
+{
+ "type": "object",
+ "properties": {
+  "topicName": {
+   "type": "string",
+   "nullable": true
+  },
+  "proficiencyPercent": {
+   "type": "number",
+   "format": "double"
+  },
+  "recommendation": {
+   "type": "string",
+   "nullable": true
+  },
+  "previousProficiencyPercent": {
+   "type": "number",
+   "format": "double"
+  },
+  "delta": {
+   "type": "number",
+   "format": "double"
+  },
+  "isResolved": {
+   "type": "boolean"
+  }
+ },
+ "additionalProperties": false
+}
+
+=== WeakTopicResult ===
+{
+ "type": "object",
+ "properties": {
+  "topicName": {
+   "type": "string",
+   "nullable": true
+  },
+  "subjectName": {
+   "type": "string",
+   "nullable": true
+  },
+  "proficiencyPercent": {
+   "type": "number",
+   "format": "double"
+  },
+  "status": {
+   "type": "string",
+   "nullable": true
+  },
+  "exampleIncorrectAnswers": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   },
+   "nullable": true
+  }
+ },
+ "additionalProperties": false
+}
+
+=== NotificationDto ===
+{
+ "type": "object",
+ "properties": {
+  "id": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "title": {
+   "type": "string",
+   "nullable": true
+  },
+  "message": {
+   "type": "string",
+   "nullable": true
+  },
+  "type": {
+   "type": "string",
+   "nullable": true
+  },
+  "link": {
+   "type": "string",
+   "nullable": true
+  },
+  "read": {
+   "type": "boolean"
+  },
+  "createdAt": {
+   "type": "string",
+   "format": "date-time"
+  }
+ },
+ "additionalProperties": false
+}
+
+=== GetNotificationsResponse ===
+{
+ "type": "object",
+ "properties": {
+  "items": {
+   "type": "array",
+   "items": {
+    "$ref": "#/components/schemas/NotificationDto"
+   },
+   "nullable": true
+  },
+  "unreadCount": {
+   "type": "integer",
+   "format": "int32"
+  },
+  "totalCount": {
+   "type": "integer",
+   "format": "int32"
+  }
+ },
+ "additionalProperties": false
+}
+
+=== PerformanceReportDto ===
+{
+ "type": "object",
+ "properties": {
+  "id": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "generatedAt": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "summaryText": {
+   "type": "string",
+   "nullable": true
+  },
+  "weakTopics": {
+   "type": "array",
+   "items": {
+    "$ref": "#/components/schemas/WeakTopicDto"
+   },
+   "nullable": true
+  },
+  "subjectProficiencies": {
+   "type": "array",
+   "items": {
+    "$ref": "#/components/schemas/SubjectProficiencyDto"
+   },
+   "nullable": true
+  },
+  "totalQuestionsAsked": {
+   "type": "integer",
+   "format": "int32"
+  },
+  "totalQuestionsReplied": {
+   "type": "integer",
+   "format": "int32"
+  },
+  "averageExamDurationMinutes": {
+   "type": "number",
+   "format": "double"
+  },
+  "completedLessons": {
+   "type": "integer",
+   "format": "int32"
+  },
+  "classroomPercentile": {
+   "type": "number",
+   "format": "double"
+  }
+ },
+ "additionalProperties": false
+}
+
+=== SubjectProficiencyDto ===
+{
+ "type": "object",
+ "properties": {
+  "subjectName": {
+   "type": "string",
+   "nullable": true
+  },
+  "proficiencyPercent": {
+   "type": "number",
+   "format": "double"
+  }
+ },
+ "additionalProperties": false
+}
+
+=== SubjectProficiencyResult ===
+{
+ "type": "object",
+ "properties": {
+  "subjectName": {
+   "type": "string",
+   "nullable": true
+  },
+  "proficiencyPercent": {
+   "type": "number",
+   "format": "double"
+  }
+ },
+ "additionalProperties": false
+}
+
+=== PracticeExamRequest ===
+{
+ "type": "object",
+ "additionalProperties": false
+}
+
+=== PracticeExamResponseDto ===
+{
+ "type": "object",
+ "properties": {
+  "generationId": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "message": {
+   "type": "string",
+   "nullable": true
+  }
+ },
+ "additionalProperties": false
+}
+
+=== StartAttemptRequestDto ===
+{
+ "type": "object",
+ "properties": {
+  "examId": {
+   "type": "string",
+   "format": "uuid"
+  }
+ },
+ "additionalProperties": false
+}
+
+=== SubmitAttemptRequestDto ===
+{
+ "type": "object",
+ "properties": {
+  "answers": {
+   "type": "array",
+   "items": {
+    "$ref": "#/components/schemas/AnswerSubmissionDto"
+   },
+   "nullable": true
+  },
+  "idempotencyKey": {
+   "type": "string",
+   "nullable": true
+  }
+ },
+ "additionalProperties": false
+}
+
+=== AnswerSubmissionDto ===
+{
+ "type": "object",
+ "properties": {
+  "examQuestionId": {
+   "type": "string",
+   "format": "uuid"
+  },
+  "answerText": {
+   "type": "string",
+   "nullable": true
+  },
+  "selectedOptionId": {
+   "type": "string",
+   "format": "uuid",
+   "nullable": true
+  }
+ },
+ "additionalProperties": false
+}
+

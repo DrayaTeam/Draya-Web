@@ -36,25 +36,25 @@ export class AdminDashboardComponent implements OnInit {
         next: (data) => {
           this.overview.set(
             data ?? {
-              totalClassroomRevenues: 0,
-              totalCommissionFees: 0,
+              totalClassroomRevenue: 0,
+              totalCommissionCollected: 0,
               totalTopUps: 0,
-              totalAiExamFees: 0,
-              totalEarnedTeacherBalance: 0,
-              totalPurchasedTeacherBalance: 0,
-              totalEarnedDue: 0,
+              totalAIExamCharges: 0,
+              totalTeacherEarnedBalance: 0,
+              totalTeacherPurchasedBalance: 0,
+              totalOutstandingEarnedBalance: 0,
             },
           );
         },
         error: () => {
           this.overview.set({
-            totalClassroomRevenues: 0,
-            totalCommissionFees: 0,
+            totalClassroomRevenue: 0,
+            totalCommissionCollected: 0,
             totalTopUps: 0,
-            totalAiExamFees: 0,
-            totalEarnedTeacherBalance: 0,
-            totalPurchasedTeacherBalance: 0,
-            totalEarnedDue: 0,
+            totalAIExamCharges: 0,
+            totalTeacherEarnedBalance: 0,
+            totalTeacherPurchasedBalance: 0,
+            totalOutstandingEarnedBalance: 0,
           });
         },
       });

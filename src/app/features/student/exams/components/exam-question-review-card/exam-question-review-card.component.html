@@ -5,7 +5,19 @@
   [class.pending-review]="reviewItem().isPendingGrading">
   <!-- Top Header Row -->
   <div class="card-header">
-    <span class="question-number-tag">سؤال {{ reviewItem().questionIndex }}</span>
+    <div class="flex items-center gap-3">
+      <span class="question-number-tag">سؤال {{ reviewItem().questionIndex }}</span>
+      @if (reviewItem().maxScore) {
+        <span
+          class="essay-score text-sm font-medium"
+          [class.text-red-500]="(reviewItem().earnedScore ?? 0) === 0"
+          [class.text-green-600]="(reviewItem().earnedScore ?? 0) > 0">
+          الدرجة:
+          <strong>{{ reviewItem().earnedScore || 0 }}</strong>
+          / {{ reviewItem().maxScore }}
+        </span>
+      }
+    </div>
     <span
       class="status-pill"
       [class.correct]="reviewItem().isCorrect"

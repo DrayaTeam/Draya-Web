@@ -16,7 +16,8 @@ async function runPaymentE2ETests() {
   page.on('pageerror', (err) => console.log('   [Browser Error]', err.message));
 
   // Valid future JWT token with role "student"
-  const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3ItMTIzIiwiZW1haWwiOiJzdHVkZW50QGRyYXlhLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlN0dWRlbnQiLCJleHAiOjE5OTk5OTk5OTl9.test_signature';
+  const mockToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3ItMTIzIiwiZW1haWwiOiJzdHVkZW50QGRyYXlhLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlN0dWRlbnQiLCJleHAiOjE5OTk5OTk5OTl9.test_signature';
   const mockUser = {
     userId: 'usr-student-e2e',
     fullName: 'يوسف أحمد',
@@ -26,10 +27,13 @@ async function runPaymentE2ETests() {
 
   // Helper to seed localStorage
   async function seedAuth() {
-    await page.addInitScript(({ token, user }) => {
-      localStorage.setItem('draya_access_token', token);
-      localStorage.setItem('draya_user', JSON.stringify(user));
-    }, { token: mockToken, user: mockUser });
+    await page.addInitScript(
+      ({ token, user }) => {
+        localStorage.setItem('draya_access_token', token);
+        localStorage.setItem('draya_user', JSON.stringify(user));
+      },
+      { token: mockToken, user: mockUser },
+    );
   }
 
   await seedAuth();
@@ -41,7 +45,9 @@ async function runPaymentE2ETests() {
   // Test 1: Phase 1 & 2 - Initiation & RedirectionUrl payload
   // -------------------------------------------------------------
   totalCount++;
-  console.log('🔹 Test 1: Checkout Initiation sends correct redirectionUrl and redirects to Paymob...');
+  console.log(
+    '🔹 Test 1: Checkout Initiation sends correct redirectionUrl and redirects to Paymob...',
+  );
   try {
     let capturedCheckoutPayload = null;
 
@@ -54,7 +60,8 @@ async function runPaymentE2ETests() {
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
-            checkoutUrl: 'https://accept-alpha.paymob.com/unifiedcheckout/?publicKey=pk_test_123&clientSecret=cs_test_456',
+            checkoutUrl:
+              'https://accept-alpha.paymob.com/unifiedcheckout/?publicKey=pk_test_123&clientSecret=cs_test_456',
           }),
         });
       } else {
@@ -78,28 +85,37 @@ async function runPaymentE2ETests() {
       });
     });
 
-    await page.goto('http://localhost:4200/student/checkout/cls-test-100', { waitUntil: 'networkidle' });
+    await page.goto('http://localhost:4200/student/checkout/cls-test-100', {
+      waitUntil: 'networkidle',
+    });
 
     // Verify checkout page loaded
-    const pageHeading = await page.locator('.summary-card h1, .checkout-title, h1').first().textContent();
+    const pageHeading = await page
+      .locator('.summary-card h1, .checkout-title, h1')
+      .first()
+      .textContent();
     console.log(`   Page loaded: "${pageHeading?.trim()}"`);
 
     // Intercept page navigation to external Paymob URL
     let redirectedToPaymob = false;
-    page.on('request', req => {
+    page.on('request', (req) => {
       if (req.url().includes('accept-alpha.paymob.com')) {
         redirectedToPaymob = true;
       }
     });
 
     // Click on Checkout submit button
-    const submitBtn = page.locator('button.btn-primary, button:has-text("تأكيد الدفع"), button[type="submit"]').first();
+    const submitBtn = page
+      .locator('button.btn-primary, button:has-text("تأكيد الدفع"), button[type="submit"]')
+      .first();
     await submitBtn.click();
     await page.waitForTimeout(1000);
 
     // Assert payload
     if (!capturedCheckoutPayload || !capturedCheckoutPayload.redirectionUrl) {
-      throw new Error(`Checkout payload missing redirectionUrl! Got: ${JSON.stringify(capturedCheckoutPayload)}`);
+      throw new Error(
+        `Checkout payload missing redirectionUrl! Got: ${JSON.stringify(capturedCheckoutPayload)}`,
+      );
     }
 
     console.log(`   ✅ Sent payload: ${JSON.stringify(capturedCheckoutPayload)}`);
@@ -167,9 +183,12 @@ async function runPaymentE2ETests() {
     });
 
     // Navigate to callback return URL
-    await page.goto('http://localhost:4200/payment/result?transactionId=txn-e2e-poll-123&status=success', {
-      waitUntil: 'domcontentloaded',
-    });
+    await page.goto(
+      'http://localhost:4200/payment/result?transactionId=txn-e2e-poll-123&status=success',
+      {
+        waitUntil: 'domcontentloaded',
+      },
+    );
 
     // Check initial pending state
     await page.waitForTimeout(500);
@@ -223,9 +242,12 @@ async function runPaymentE2ETests() {
       });
     });
 
-    await page.goto('http://localhost:4200/payment/result?transactionId=txn-e2e-failed-999&status=failed', {
-      waitUntil: 'networkidle',
-    });
+    await page.goto(
+      'http://localhost:4200/payment/result?transactionId=txn-e2e-failed-999&status=failed',
+      {
+        waitUntil: 'networkidle',
+      },
+    );
 
     await page.waitForSelector('.error-circle, .status-pill.error-pill', { timeout: 5000 });
 

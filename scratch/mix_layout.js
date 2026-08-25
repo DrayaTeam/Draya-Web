@@ -6,7 +6,8 @@ const scssPath = 'src/app/features/teacher/reports/teacher-reports.component.scs
 // ── 1. Update HTML ──
 let htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
-const oldCardsRegex = /<!-- Profile Block \(As in Image\) -->[\s\S]*?<!-- Subject Proficiency \(Spans 2 columns\) -->/;
+const oldCardsRegex =
+  /<!-- Profile Block \(As in Image\) -->[\s\S]*?<!-- Subject Proficiency \(Spans 2 columns\) -->/;
 
 const newHeaderHtml = `<!-- Document Header (Notion Style) -->
         <div class="doc-header-block">
@@ -41,12 +42,12 @@ const newHeaderHtml = `<!-- Document Header (Notion Style) -->
 htmlContent = htmlContent.replace(oldCardsRegex, newHeaderHtml);
 fs.writeFileSync(htmlPath, htmlContent, 'utf8');
 
-
 // ── 2. Update SCSS ──
 let scssContent = fs.readFileSync(scssPath, 'utf8');
 
 // Remove old top cards CSS
-const oldCardsScssRegex = /\/\/ Box Specifications\n\.image-profile-box \{[\s\S]*?\}\n\n\.image-stat-box \{[\s\S]*?\}\n\n\.subjects-box \{/;
+const oldCardsScssRegex =
+  /\/\/ Box Specifications\n\.image-profile-box \{[\s\S]*?\}\n\n\.image-stat-box \{[\s\S]*?\}\n\n\.subjects-box \{/;
 
 const newHeaderScss = `// Box Specifications
 

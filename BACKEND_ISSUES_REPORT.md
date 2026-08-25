@@ -8,7 +8,7 @@
 
 ## 1. Blocking / correctness
 
-1. **No endpoint exposes `StudentWeaknessHistory`.** The stated goal is tracking proficiency progression per topic (e.g. 40% → 60% → 90%) across attempts. Neither `GET /api/v1/Weaknesses/active` nor `/Weaknesses/resolved` returns a history array, and there is no `/weaknesses/{id}/history` endpoint. As shipped, the frontend can show the *current* proficiency and Active/Resolved status, but cannot render the progression chart the feature exists for. **Ask:** either a `history[]` embedded in the weakness DTO, or a dedicated history endpoint.
+1. **No endpoint exposes `StudentWeaknessHistory`.** The stated goal is tracking proficiency progression per topic (e.g. 40% → 60% → 90%) across attempts. Neither `GET /api/v1/Weaknesses/active` nor `/Weaknesses/resolved` returns a history array, and there is no `/weaknesses/{id}/history` endpoint. As shipped, the frontend can show the _current_ proficiency and Active/Resolved status, but cannot render the progression chart the feature exists for. **Ask:** either a `history[]` embedded in the weakness DTO, or a dedicated history endpoint.
 
 2. **No weakness `id` is exposed anywhere.** `latest backend changes v2.md` §3 describes `POST /weaknesses/{weaknessId}/review`, implying weaknesses have stable ids, but no response (`/Weaknesses/active`, `/Weaknesses/resolved`, `WeakTopicDto`, `WeakTopicResult`) includes one. Everything is currently keyed by `topicName` as a URL path segment (`/students/{studentId}/weak-topics/{topicName}/revision`), which is fragile for Arabic topic names requiring `encodeURIComponent`, and ambiguous if two subjects share a topic name. **Ask:** confirm whether weaknesses have a durable id, and if so expose it.
 
@@ -18,12 +18,12 @@
 
 5. **Endpoints referenced in the hand-off docs don't exist in swagger.** We built against swagger as the source of truth; flagging so the docs get corrected before mobile builds against the wrong paths:
 
-   | Doc says | Swagger reality |
-   |---|---|
-   | `GET /reports/interactive-review?topicName=` | `GET /students/{studentId}/weak-topics/{topicName}/revision` |
-   | `POST /weaknesses/{weaknessId}/review` | Same `.../revision` GET (cache is server-side) |
-   | `GET /weaknesses` | Only `/Weaknesses/active` and `/Weaknesses/resolved` |
-   | `POST /auth/request-password-reset` / `confirm-password-reset` | `/auth/password-reset/request` / `/confirm` |
+   | Doc says                                                       | Swagger reality                                              |
+   | -------------------------------------------------------------- | ------------------------------------------------------------ |
+   | `GET /reports/interactive-review?topicName=`                   | `GET /students/{studentId}/weak-topics/{topicName}/revision` |
+   | `POST /weaknesses/{weaknessId}/review`                         | Same `.../revision` GET (cache is server-side)               |
+   | `GET /weaknesses`                                              | Only `/Weaknesses/active` and `/Weaknesses/resolved`         |
+   | `POST /auth/request-password-reset` / `confirm-password-reset` | `/auth/password-reset/request` / `/confirm`                  |
 
 ---
 
@@ -50,7 +50,7 @@ The following endpoints return a bare `200`/`202`/`204` with **no response schem
 
 6. **`StudentExamQuestionDto` (the student-facing exam payload) includes `rubric` and `sourceChunkIds`.** The grading rubric is effectively the answer key for essay questions — showing it to the student before they answer is a spoiler, and `sourceChunkIds` leaks retrieval/RAG internals. **Ask:** confirm these are teacher-only fields that shouldn't appear in `GET /students/exams/{id}` or `GET /exams/{examId}/student-view`, and strip them from the student-facing DTO if they currently leak.
 
-   (For contrast: `StudentExamQuestionOptionDto` correctly omits `isCorrect` — the MCQ answer key is *not* leaked, which is why we removed the client-side logic that used to read it. Good pattern; `rubric`/`sourceChunkIds` should get the same treatment.)
+   (For contrast: `StudentExamQuestionOptionDto` correctly omits `isCorrect` — the MCQ answer key is _not_ leaked, which is why we removed the client-side logic that used to read it. Good pattern; `rubric`/`sourceChunkIds` should get the same treatment.)
 
 7. **OTP reset has no email binding.** `POST /auth/password-reset/confirm` accepts only `{ token, newPassword }` — no email/username. If the 6-digit code space is global (not scoped per-account), that's a meaningful brute-force and collision surface for a 6-digit code. **Ask:** confirm the token is scoped server-side to the account that requested it, confirm its expiry window, and confirm rate limiting exists on both the request and confirm endpoints.
 

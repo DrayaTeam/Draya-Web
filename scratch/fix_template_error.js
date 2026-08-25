@@ -4,7 +4,7 @@ const htmlPath = 'src/app/features/teacher/reports/teacher-reports.component.htm
 let htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
 // fix selectedStudent()?.id -> selectedStudent()?.studentId
-htmlContent = htmlContent.replace(/selectedStudent\(\)\?\.id/g, "selectedStudent()?.studentId");
+htmlContent = htmlContent.replace(/selectedStudent\(\)\?\.id/g, 'selectedStudent()?.studentId');
 
 fs.writeFileSync(htmlPath, htmlContent, 'utf8');
 console.log('Fixed selectedStudent id');

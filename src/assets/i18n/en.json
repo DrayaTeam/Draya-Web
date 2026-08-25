@@ -168,7 +168,8 @@
     "NO_DATA": "No data available",
     "NO_DATA_DESC": "No items available to display.",
     "CONFIRM_ACTION_TITLE": "Confirm Action",
-    "CONFIRM_ACTION_MESSAGE": "Are you sure you want to proceed with this action?"
+    "CONFIRM_ACTION_MESSAGE": "Are you sure you want to proceed with this action?",
+    "RETRY": "Retry"
   },
   "SHARED": {
     "TIME": {
@@ -955,6 +956,9 @@
       "ACTIVE": "Active",
       "INACTIVE": "Inactive",
       "PENDING": "Pending",
+      "IN_PROGRESS": "In Progress",
+      "COMPLETED": "Completed",
+      "FAILED": "Failed",
       "APPROVED": "Approved",
       "PAID": "Paid",
       "REJECTED": "Rejected",
@@ -970,6 +974,9 @@
       "ACTIVE": "Active",
       "INACTIVE": "Inactive",
       "PENDING": "Pending",
+      "IN_PROGRESS": "In Progress",
+      "COMPLETED": "Completed",
+      "FAILED": "Failed",
       "APPROVED": "Approved",
       "PAID": "Paid",
       "REJECTED": "Rejected",

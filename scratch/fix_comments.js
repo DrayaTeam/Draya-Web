@@ -11,14 +11,14 @@ scssContent = scssContent.replace(/box-shadow:[^;]+;/g, '');
 // Increase padding for dropdown options (via PrimeNG styling overrides)
 // Check if .p-select-option exists
 if (!scssContent.includes('.p-select-option')) {
-    scssContent += `
+  scssContent += `
 ::ng-deep .p-select-option {
     padding: 12px 16px !important;
 }
 `;
 } else {
-    // It's not in this file directly, but let's add the override globally for this component just in case
-    scssContent += `
+  // It's not in this file directly, but let's add the override globally for this component just in case
+  scssContent += `
 ::ng-deep {
     .p-select-list {
         padding: 8px !important;
@@ -34,7 +34,6 @@ if (!scssContent.includes('.p-select-option')) {
 
 fs.writeFileSync(scssPath, scssContent, 'utf8');
 
-
 // 2 & 3. Fix HTML (Remove blobs, add padding to items, add modal back)
 let htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
@@ -43,13 +42,19 @@ htmlContent = htmlContent.replace(/<div class="ambient-blob blob-top-right"><\/d
 htmlContent = htmlContent.replace(/<div class="ambient-blob blob-bottom-left"><\/div>/g, '');
 
 // Add padding directly to the dropdown item templates to be safe
-htmlContent = htmlContent.replace(/<div class="select-item-display">/g, '<div class="select-item-display px-2 py-1">');
-htmlContent = htmlContent.replace(/<div class="select-item-dropdown">/g, '<div class="select-item-dropdown px-3 py-2 w-full">');
+htmlContent = htmlContent.replace(
+  /<div class="select-item-display">/g,
+  '<div class="select-item-display px-2 py-1">',
+);
+htmlContent = htmlContent.replace(
+  /<div class="select-item-dropdown">/g,
+  '<div class="select-item-dropdown px-3 py-2 w-full">',
+);
 
 // Restore the Interactive Review click handler on weakness card
 htmlContent = htmlContent.replace(
-    '<div class="weakness-card">', 
-    '<div class="weakness-card cursor-pointer hover:border-[var(--draya-primary-400)] transition-colors" (click)="openInteractiveReview(topic)">'
+  '<div class="weakness-card">',
+  '<div class="weakness-card cursor-pointer hover:border-[var(--draya-primary-400)] transition-colors" (click)="openInteractiveReview(topic)">',
 );
 
 // Add the Interactive Review Modal back to the end of the file (before the last </div>)
@@ -129,9 +134,9 @@ const modalHtml = `
 // Replace the very last </div> in the file with our modal and the closing div
 const lastDivIndex = htmlContent.lastIndexOf('</div>');
 if (lastDivIndex !== -1) {
-    htmlContent = htmlContent.substring(0, lastDivIndex) + modalHtml;
+  htmlContent = htmlContent.substring(0, lastDivIndex) + modalHtml;
 } else {
-    htmlContent += modalHtml; // Fallback
+  htmlContent += modalHtml; // Fallback
 }
 
 fs.writeFileSync(htmlPath, htmlContent, 'utf8');

@@ -1,6 +1,5 @@
-// src/app/features/student/exams/result/student-exam-result.component.ts
-
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, effect } from '@angular/core';
+import { SignalRService } from '../../../../core/signalr/signalr.service';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StudentExamTakingService } from '../../../../core/services/student-exam-taking.service';
@@ -21,10 +20,29 @@ export class StudentExamResultComponent implements OnInit {
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly signalR = inject(SignalRService);
 
   readonly resultReport = this.examService.examResult;
   private attemptId: string | null = null;
   private examId: string | null = null;
+
+  constructor() {
+    effect(() => {
+      const gradingCompleted = this.signalR.gradingCompleted();
+      if (gradingCompleted && gradingCompleted.attemptId === this.attemptId) {
+        this.toastService.success('اكتمل التصحيح', 'تم تحديث النتيجة بنجاح');
+        this.loadResultsData();
+      }
+    });
+
+    effect(() => {
+      const answerScoreOverridden = this.signalR.answerScoreOverridden();
+      if (answerScoreOverridden && answerScoreOverridden.attemptId === this.attemptId) {
+        this.toastService.info('تحديث درجات', 'تم تعديل درجة أحد الأسئلة من قبل المعلم');
+        this.loadResultsData();
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.examId = this.route.snapshot.params['id'] || null;
@@ -49,9 +67,6 @@ export class StudentExamResultComponent implements OnInit {
       return;
     }
 
-    // No attemptId in the URL and none cached locally (e.g. a cold deep link
-    // straight to /result) — resolve the latest attempt from the exam's own
-    // attempt history instead of showing an empty report.
     if (!this.examId) return;
 
     this.examService.fetchExamStudentView(this.examId).subscribe((view) => {
@@ -66,13 +81,13 @@ export class StudentExamResultComponent implements OnInit {
 
   onRecheckResult(): void {
     if (this.attemptId) {
-      this.toastService.info('جارٍ التحقق...', 'يتم الآن فحص أحدث تقرير تصحيح من الخادم.');
+      this.toastService.info('جاري التحقق...', 'سيتم الآن طلب التحقق من حالة التصحيح.');
       this.examService.isGradingInProgress.set(true);
       this.examService.gradingStage.set('ai_evaluating');
       this.examService.gradingProgressPercent.set(50);
       this.examService.pollAttemptResultsDirectly(this.attemptId, 3);
     } else if (this.examId) {
-      this.toastService.info('جارٍ التحقق...', 'يتم الآن فحص وتحديث بيانات الامتحان من الخادم.');
+      this.toastService.info('جاري التحقق...', 'سيتم الآن طلب تحديث النتيجة من الخادم.');
       this.loadResultsData();
     }
   }

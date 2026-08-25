@@ -3,21 +3,24 @@ const { chromium } = require('playwright');
 const path = require('path');
 
 const TARGET_URL = 'http://localhost:4200/teacher/dashboard';
-const DESKTOP_SCREENSHOT = 'C:/Users/ana7o/.gemini/antigravity/brain/51236a8f-04bc-453b-bf68-3a98c9146101/teacher_dashboard_desktop.png';
-const MOBILE_SCREENSHOT = 'C:/Users/ana7o/.gemini/antigravity/brain/51236a8f-04bc-453b-bf68-3a98c9146101/teacher_dashboard_mobile.png';
+const DESKTOP_SCREENSHOT =
+  'C:/Users/ana7o/.gemini/antigravity/brain/51236a8f-04bc-453b-bf68-3a98c9146101/teacher_dashboard_desktop.png';
+const MOBILE_SCREENSHOT =
+  'C:/Users/ana7o/.gemini/antigravity/brain/51236a8f-04bc-453b-bf68-3a98c9146101/teacher_dashboard_mobile.png';
 
-const CHROMIUM_PATH = 'C:/Users/ana7o/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe';
+const CHROMIUM_PATH =
+  'C:/Users/ana7o/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe';
 
 (async () => {
   console.log('🚀 Launching Playwright E2E test for Teacher Dashboard...');
   const browser = await chromium.launch({
     executablePath: CHROMIUM_PATH,
-    headless: true
+    headless: true,
   });
 
   // 1. Desktop Test
   const desktopContext = await browser.newContext({
-    viewport: { width: 1440, height: 900 }
+    viewport: { width: 1440, height: 900 },
   });
   const page = await desktopContext.newPage();
 
@@ -53,7 +56,7 @@ const CHROMIUM_PATH = 'C:/Users/ana7o/AppData/Local/ms-playwright/chromium-1234/
   const mobileContext = await browser.newContext({
     viewport: { width: 390, height: 844 },
     isMobile: true,
-    hasTouch: true
+    hasTouch: true,
   });
   const mobilePage = await mobileContext.newPage();
   await mobilePage.goto(TARGET_URL, { waitUntil: 'networkidle' });

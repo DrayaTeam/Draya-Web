@@ -168,7 +168,8 @@
     "NO_DATA": "لا توجد بيانات متاحة",
     "NO_DATA_DESC": "لا توجد عناصر لعرضها حالياً.",
     "CONFIRM_ACTION_TITLE": "تأكيد الإجراء",
-    "CONFIRM_ACTION_MESSAGE": "هل أنت متأكد من رغبتك في متابعة هذا الإجراء؟"
+    "CONFIRM_ACTION_MESSAGE": "هل أنت متأكد من رغبتك في متابعة هذا الإجراء؟",
+    "RETRY": "إعادة المحاولة"
   },
   "SHARED": {
     "TIME": {
@@ -955,6 +956,9 @@
       "ACTIVE": "نشط",
       "INACTIVE": "غير نشط",
       "PENDING": "قيد الانتظار",
+      "IN_PROGRESS": "قيد التنفيذ",
+      "COMPLETED": "مكتمل",
+      "FAILED": "فشل",
       "APPROVED": "تمت الموافقة",
       "PAID": "تم الصرف",
       "REJECTED": "مرفوض",
@@ -970,6 +974,9 @@
       "ACTIVE": "نشط",
       "INACTIVE": "غير نشط",
       "PENDING": "قيد الانتظار",
+      "IN_PROGRESS": "قيد التنفيذ",
+      "COMPLETED": "مكتمل",
+      "FAILED": "فشل",
       "APPROVED": "تمت الموافقة",
       "PAID": "تم الصرف",
       "REJECTED": "مرفوض",

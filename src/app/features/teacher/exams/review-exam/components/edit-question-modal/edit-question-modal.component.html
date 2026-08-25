@@ -1,0 +1,142 @@
+@if (isOpen()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <button
+      type="button"
+      aria-label="إغلاق"
+      class="absolute inset-0 h-full w-full cursor-default border-0 bg-black/50 backdrop-blur-sm"
+      (click)="closeModal()"></button>
+    <div
+      class="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-xl">
+      <div
+        class="sticky top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white p-6">
+        <h3 class="text-xl font-bold text-gray-900">
+          {{ question() ? 'تعديل السؤال' : 'إضافة سؤال جديد' }}
+        </h3>
+        <button
+          type="button"
+          aria-label="إغلاق"
+          (click)="closeModal()"
+          class="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="form-group mb-4">
+            <label for="q-text" class="mb-2 block text-sm font-medium text-gray-700">
+              نص السؤال
+            </label>
+            <textarea
+              id="q-text"
+              formControlName="text"
+              rows="3"
+              class="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-[#1B6D63]"></textarea>
+          </div>
+          <div class="mb-4 grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label for="q-type" class="mb-2 block text-sm font-medium text-gray-700">
+                نوع السؤال
+              </label>
+              <select
+                id="q-type"
+                formControlName="type"
+                class="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-[#1B6D63]">
+                <option value="MultipleChoice">اختيار من متعدد</option>
+                <option value="TrueFalse">صح أو خطأ</option>
+                <option value="ShortAnswer">إجابة قصيرة</option>
+                <option value="FillInTheBlank">إكمال الفراغ</option>
+                <option value="Essay">مقال</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="q-difficulty" class="mb-2 block text-sm font-medium text-gray-700">
+                درجة الصعوبة
+              </label>
+              <select
+                id="q-difficulty"
+                formControlName="difficulty"
+                class="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-[#1B6D63]">
+                <option value="Easy">سهل</option>
+                <option value="Medium">متوسط</option>
+                <option value="Hard">صعب</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group mb-4">
+            <label for="q-rubric" class="mb-2 block text-sm font-medium text-gray-700">
+              معايير التقييم (Rubric)
+            </label>
+            <textarea
+              id="q-rubric"
+              formControlName="rubric"
+              rows="2"
+              class="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-[#1B6D63]"></textarea>
+          </div>
+          @if (form.value.type === 'MultipleChoice' || form.value.type === 'TrueFalse') {
+            <div class="mb-4">
+              <div class="mb-2 flex items-center justify-between">
+                <span class="block text-sm font-medium text-gray-700">
+                  الخيارات (حدد الإجابة الصحيحة)
+                </span>
+                @if (form.value.type === 'MultipleChoice') {
+                  <button
+                    type="button"
+                    (click)="addOption()"
+                    class="text-sm text-[#1B6D63] hover:underline">
+                    + خيار جديد
+                  </button>
+                }
+              </div>
+              <div formArrayName="options" class="space-y-2">
+                @for (opt of options.controls; track $index) {
+                  <div [formGroupName]="$index" class="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      aria-label="Is correct"
+                      [checked]="opt.get('isCorrect')?.value"
+                      (change)="setCorrectOption($index)"
+                      name="correctOpt"
+                      class="h-5 w-5 text-[#1B6D63] focus:ring-[#1B6D63]" />
+                    <input
+                      formControlName="text"
+                      aria-label="Option text"
+                      type="text"
+                      class="flex-1 rounded-xl border border-gray-200 px-4 py-2 outline-none focus:ring-2 focus:ring-[#1B6D63]"
+                      placeholder="نص الخيار" />
+                    @if (form.value.type === 'MultipleChoice' && options.length > 2) {
+                      <button
+                        type="button"
+                        aria-label="حذف الخيار"
+                        (click)="removeOption($index)"
+                        class="text-red-500 hover:text-red-700">
+                        <i class="pi pi-trash"></i>
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+          <div class="mt-6 flex justify-end gap-3">
+            <button
+              type="button"
+              (click)="closeModal()"
+              [disabled]="isSubmitting()"
+              class="rounded-xl bg-gray-100 px-5 py-2.5 font-medium text-gray-600 hover:bg-gray-200">
+              إلغاء
+            </button>
+            <button
+              type="submit"
+              [disabled]="form.invalid || isSubmitting()"
+              class="flex items-center gap-2 rounded-xl bg-[#1B6D63] px-6 py-2.5 font-medium text-white hover:bg-teal-800 disabled:opacity-50">
+              @if (isSubmitting()) {
+                <i class="pi pi-spinner pi-spin"></i>
+              }
+              {{ question() ? 'حفظ التعديلات' : 'إضافة السؤال' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}

@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MessageService } from 'primeng/api';
 import { finalize } from 'rxjs/operators';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SectionService } from '../../../../services/section.service';
@@ -18,6 +17,7 @@ import {
   UpdateSectionRequest,
 } from '../../../../../../core/models/section.model';
 import { TeacherModalComponent } from '../../../../components/teacher-modal/teacher-modal.component';
+import { ToastService } from '../../../../../../core/services/toast.service';
 
 @Component({
   selector: 'draya-edit-section-modal',
@@ -35,13 +35,13 @@ export class EditSectionModalComponent {
 
   private readonly fb = inject(FormBuilder);
   private readonly sectionService = inject(SectionService);
-  private readonly messageService = inject(MessageService, { optional: true });
+  private readonly toastService = inject(ToastService);
 
   readonly isSubmitting = signal<boolean>(false);
 
   readonly form: FormGroup = this.fb.group({
     title: ['', [Validators.required, Validators.maxLength(100)]],
-    description: ['', [Validators.maxLength(500)]],
+    description: ['', [Validators.required, Validators.maxLength(500)]],
     order: [0],
   });
 
@@ -61,6 +61,7 @@ export class EditSectionModalComponent {
   submit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.toastService.error('يرجى ملء جميع الحقول المطلوبة');
       return;
     }
 
@@ -80,20 +81,12 @@ export class EditSectionModalComponent {
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {
-          this.messageService?.add({
-            severity: 'success',
-            summary: 'نجاح',
-            detail: 'تم تحديث القسم بنجاح',
-          });
+          this.toastService.success('تم تحديث القسم بنجاح');
           this.sectionUpdated.emit();
         },
         error: (err: unknown) => {
           console.error('Failed to update section', err);
-          this.messageService?.add({
-            severity: 'error',
-            summary: 'خطأ',
-            detail: 'حدث خطأ أثناء تحديث القسم',
-          });
+          this.toastService.error('حدث خطأ أثناء تحديث القسم');
         },
       });
   }

@@ -2938,7 +2938,14 @@
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttemptStartResponseDto"
+                }
+              }
+            }
           },
           "404": {
             "description": "Not Found",
@@ -2988,10 +2995,24 @@
         },
         "responses": {
           "202": {
-            "description": "Accepted"
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttemptSubmitResponseDto"
+                }
+              }
+            }
           },
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttemptSubmitResponseDto"
+                }
+              }
+            }
           },
           "404": {
             "description": "Not Found",
@@ -3072,7 +3093,14 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GradingJobStatusDto"
+                }
+              }
+            }
           },
           "404": {
             "description": "Not Found",
@@ -3162,7 +3190,14 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttemptResultsDto"
+                }
+              }
+            }
           },
           "404": {
             "description": "Not Found",
@@ -3341,6 +3376,52 @@
         ],
         "responses": {
           "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExamSummaryDtoPagedResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/exams/{examId}/attempts": {
+      "get": {
+        "tags": ["Exams"],
+        "parameters": [
+          {
+            "name": "examId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
             "description": "OK"
           }
         }
@@ -3493,6 +3574,37 @@
         }
       }
     },
+    "/api/v1/exams/{examId}/student-view": {
+      "get": {
+        "tags": ["Exams"],
+        "parameters": [
+          {
+            "name": "examId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/exams/{examId}/questions/{questionId}/refine": {
       "post": {
         "tags": ["Exams"],
@@ -3558,6 +3670,33 @@
           },
           "400": {
             "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/exams/quota": {
+      "get": {
+        "tags": ["Exams"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIExamQuotaDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "application/json": {
                 "schema": {
@@ -3658,7 +3797,24 @@
         },
         "responses": {
           "202": {
-            "description": "Accepted"
+            "description": "Accepted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PracticeExamResponseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PracticeExamResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PracticeExamResponseDto"
+                }
+              }
+            }
           }
         }
       }
@@ -4008,6 +4164,121 @@
         "parameters": [
           {
             "name": "materialId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/Notifications": {
+      "get": {
+        "tags": ["Notifications"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "unreadOnly",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetNotificationsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetNotificationsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetNotificationsResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Notifications"],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/Notifications/{id}/read": {
+      "put": {
+        "tags": ["Notifications"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/Notifications/read-all": {
+      "put": {
+        "tags": ["Notifications"],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/Notifications/{id}": {
+      "delete": {
+        "tags": ["Notifications"],
+        "parameters": [
+          {
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -4698,6 +4969,43 @@
         }
       }
     },
+    "/api/v1/teachers/pending-reviews": {
+      "get": {
+        "tags": ["Teachers"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PendingReviewClassroomDtoPagedResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/wallet/balance": {
       "get": {
         "tags": ["Wallet"],
@@ -5048,10 +5356,194 @@
           }
         }
       }
+    },
+    "/api/v1/weaknesses/active": {
+      "get": {
+        "tags": ["Weaknesses"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeaknessDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeaknessDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeaknessDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/weaknesses/resolved": {
+      "get": {
+        "tags": ["Weaknesses"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResolvedWeaknessDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResolvedWeaknessDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResolvedWeaknessDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/weaknesses/{id}/history": {
+      "get": {
+        "tags": ["Weaknesses"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeaknessHistoryDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeaknessHistoryDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeaknessHistoryDto"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AIExamQuotaDto": {
+        "type": "object",
+        "properties": {
+          "freeMonthlyQuota": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "freeExamsUsed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "remainingFreeQuota": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "aiExamPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "hasSufficientBalanceForPaid": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "AcceptInviteRequest": {
         "type": "object",
         "properties": {
@@ -5269,6 +5761,53 @@
         },
         "additionalProperties": false
       },
+      "AnswerResultDto": {
+        "type": "object",
+        "properties": {
+          "answerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "examQuestionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "questionText": {
+            "type": "string",
+            "nullable": true
+          },
+          "questionType": {
+            "type": "string",
+            "nullable": true
+          },
+          "rubric": {
+            "type": "string",
+            "nullable": true
+          },
+          "answerText": {
+            "type": "string",
+            "nullable": true
+          },
+          "selectedOptionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "correctOptionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "correctAnswerText": {
+            "type": "string",
+            "nullable": true
+          },
+          "gradingResult": {
+            "$ref": "#/components/schemas/GradingResultDto"
+          }
+        },
+        "additionalProperties": false
+      },
       "AnswerSubmissionDto": {
         "type": "object",
         "properties": {
@@ -5281,6 +5820,79 @@
             "nullable": true
           },
           "selectedOptionId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AttemptResultsDto": {
+        "type": "object",
+        "properties": {
+          "attemptId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "examId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "examTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "maxScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "isSubmitted": {
+            "type": "boolean"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "finalScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "needsTeacherReview": {
+            "type": "boolean"
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnswerResultDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AttemptStartResponseDto": {
+        "type": "object",
+        "properties": {
+          "attemptId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AttemptSubmitResponseDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "attemptId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "gradingJobId": {
             "type": "string",
             "format": "uuid",
             "nullable": true
@@ -5385,6 +5997,14 @@
             "nullable": true
           },
           "materialsCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sectionsCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lessonsCount": {
             "type": "integer",
             "format": "int32"
           },
@@ -5910,6 +6530,79 @@
         },
         "additionalProperties": false
       },
+      "ExamSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "topic": {
+            "type": "string",
+            "nullable": true
+          },
+          "durationMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "allowedAttempts": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "questionsCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExamSummaryDtoPagedResult": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExamSummaryDto"
+            },
+            "nullable": true
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "FinancialOverviewDto": {
         "type": "object",
         "properties": {
@@ -6062,6 +6755,30 @@
           "text": {
             "type": "string",
             "nullable": true
+          },
+          "isCorrect": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetNotificationsResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotificationDto"
+            },
+            "nullable": true
+          },
+          "unreadCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -6091,6 +6808,78 @@
           "createdAt": {
             "type": "string",
             "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GradingJobStatusDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "studentExamAttemptId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GradingResultDto": {
+        "type": "object",
+        "properties": {
+          "score": {
+            "type": "number",
+            "format": "double"
+          },
+          "maxScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "confidenceScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "isAiGraded": {
+            "type": "boolean"
+          },
+          "needsTeacherReview": {
+            "type": "boolean"
+          },
+          "isFinalized": {
+            "type": "boolean"
+          },
+          "reviewedByTeacherId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "rationale": {
+            "type": "string",
+            "nullable": true
+          },
+          "teacherOverrideScore": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -6332,6 +7121,39 @@
         },
         "additionalProperties": false
       },
+      "NotificationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "link": {
+            "type": "string",
+            "nullable": true
+          },
+          "read": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
       "OverrideScoreRequestDto": {
         "type": "object",
         "properties": {
@@ -6401,6 +7223,105 @@
         "type": "integer",
         "format": "int32"
       },
+      "PendingReviewAttemptDto": {
+        "type": "object",
+        "properties": {
+          "attemptId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "studentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "studentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "score": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PendingReviewClassroomDto": {
+        "type": "object",
+        "properties": {
+          "classroomId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "classroomName": {
+            "type": "string",
+            "nullable": true
+          },
+          "exams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PendingReviewExamDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PendingReviewClassroomDtoPagedResult": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PendingReviewClassroomDto"
+            },
+            "nullable": true
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PendingReviewExamDto": {
+        "type": "object",
+        "properties": {
+          "examId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "examTitle": {
+            "type": "string",
+            "nullable": true
+          },
+          "pendingReviews": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PendingReviewAttemptDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PerformanceReportDto": {
         "type": "object",
         "properties": {
@@ -6429,6 +7350,26 @@
               "$ref": "#/components/schemas/SubjectProficiencyDto"
             },
             "nullable": true
+          },
+          "totalQuestionsAsked": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalQuestionsReplied": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "averageExamDurationMinutes": {
+            "type": "number",
+            "format": "double"
+          },
+          "completedLessons": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "classroomPercentile": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false
@@ -6480,10 +7421,18 @@
       },
       "PracticeExamRequest": {
         "type": "object",
+        "additionalProperties": false
+      },
+      "PracticeExamResponseDto": {
+        "type": "object",
         "properties": {
-          "subjectId": {
+          "generationId": {
             "type": "string",
             "format": "uuid"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -6838,6 +7787,40 @@
         },
         "additionalProperties": false
       },
+      "ResolvedWeaknessDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "topicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "topicName": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentProficiencyPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "previousProficiencyPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "delta": {
+            "type": "number",
+            "format": "double"
+          },
+          "lastUpdatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
       "StartAttemptRequestDto": {
         "type": "object",
         "properties": {
@@ -6893,6 +7876,26 @@
               "$ref": "#/components/schemas/WeakTopicResult"
             },
             "nullable": true
+          },
+          "totalQuestionsAsked": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalQuestionsReplied": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "averageExamDurationMinutes": {
+            "type": "number",
+            "format": "double"
+          },
+          "completedLessons": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "classroomPercentile": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false
@@ -6970,6 +7973,38 @@
         },
         "additionalProperties": false
       },
+      "StudentExamAttemptSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "finalScore": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "maxScore": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "needsTeacherReview": {
+            "type": "boolean"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
       "StudentExamDto": {
         "type": "object",
         "properties": {
@@ -7014,6 +8049,10 @@
             "type": "string",
             "format": "date-time"
           },
+          "teacherName": {
+            "type": "string",
+            "nullable": true
+          },
           "questions": {
             "type": "array",
             "items": {
@@ -7040,14 +8079,6 @@
             "nullable": true
           },
           "difficulty": {
-            "type": "string",
-            "nullable": true
-          },
-          "sourceChunkIds": {
-            "type": "string",
-            "nullable": true
-          },
-          "rubric": {
             "type": "string",
             "nullable": true
           },
@@ -7131,9 +8162,21 @@
             "format": "double",
             "nullable": true
           },
+          "maxScore": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "usedAttempts": {
             "type": "integer",
             "format": "int32"
+          },
+          "attempts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StudentExamAttemptSummaryDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -7525,6 +8568,10 @@
           "averageScore": {
             "type": "number",
             "format": "double"
+          },
+          "averageMaxScore": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false
@@ -7909,6 +8956,17 @@
           "recommendation": {
             "type": "string",
             "nullable": true
+          },
+          "previousProficiencyPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "delta": {
+            "type": "number",
+            "format": "double"
+          },
+          "isResolved": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -7937,6 +8995,65 @@
             "items": {
               "type": "string"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WeaknessDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "topicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "topicName": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentProficiencyPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "lastUpdatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WeaknessHistoryDto": {
+        "type": "object",
+        "properties": {
+          "historyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "previousProficiencyPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "newProficiencyPercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "previousIsActive": {
+            "type": "boolean"
+          },
+          "newIsActive": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "triggeredByAttemptId": {
+            "type": "string",
+            "format": "uuid",
             "nullable": true
           }
         },
@@ -8082,6 +9199,9 @@
       "name": "Materials"
     },
     {
+      "name": "Notifications"
+    },
+    {
       "name": "Payments"
     },
     {
@@ -8107,6 +9227,9 @@
     },
     {
       "name": "Wallet"
+    },
+    {
+      "name": "Weaknesses"
     }
   ]
 }

@@ -68,14 +68,14 @@
     <!-- Stat Cards Grid -->
     <div class="stats-grid">
       <draya-admin-stat-card
-        [value]="overview()?.totalClassroomRevenues ?? 0"
+        [value]="overview()?.totalClassroomRevenue ?? 0"
         [labelKey]="'ADMIN.DASHBOARD.TOTAL_CLASSROOM_REVENUE'"
         [iconClass]="'pi pi-book'"
         [variant]="'teal'"
         [currencySuffix]="'ADMIN.DASHBOARD.CURRENCY' | translate"></draya-admin-stat-card>
 
       <draya-admin-stat-card
-        [value]="overview()?.totalCommissionFees ?? 0"
+        [value]="overview()?.totalCommissionCollected ?? 0"
         [labelKey]="'ADMIN.DASHBOARD.TOTAL_COMMISSION_FEES'"
         [iconClass]="'pi pi-percentage'"
         [variant]="'emerald'"
@@ -89,7 +89,7 @@
         [currencySuffix]="'ADMIN.DASHBOARD.CURRENCY' | translate"></draya-admin-stat-card>
 
       <draya-admin-stat-card
-        [value]="overview()?.totalAiExamFees ?? 0"
+        [value]="overview()?.totalAIExamCharges ?? 0"
         [labelKey]="'ADMIN.DASHBOARD.TOTAL_AI_EXAM_FEES'"
         [iconClass]="'pi pi-bolt'"
         [variant]="'violet'"
@@ -109,21 +109,21 @@
 
     <div class="stats-grid grid-cols-3">
       <draya-admin-stat-card
-        [value]="overview()?.totalEarnedTeacherBalance ?? 0"
+        [value]="overview()?.totalTeacherEarnedBalance ?? 0"
         [labelKey]="'ADMIN.DASHBOARD.EARNED_TEACHER_BALANCE'"
         [iconClass]="'pi pi-check-circle'"
         [variant]="'emerald'"
         [currencySuffix]="'ADMIN.DASHBOARD.CURRENCY' | translate"></draya-admin-stat-card>
 
       <draya-admin-stat-card
-        [value]="overview()?.totalPurchasedTeacherBalance ?? 0"
+        [value]="overview()?.totalTeacherPurchasedBalance ?? 0"
         [labelKey]="'ADMIN.DASHBOARD.PURCHASED_TEACHER_BALANCE'"
         [iconClass]="'pi pi-shopping-cart'"
         [variant]="'blue'"
         [currencySuffix]="'ADMIN.DASHBOARD.CURRENCY' | translate"></draya-admin-stat-card>
 
       <draya-admin-stat-card
-        [value]="overview()?.totalEarnedDue ?? 0"
+        [value]="overview()?.totalOutstandingEarnedBalance ?? 0"
         [labelKey]="'ADMIN.DASHBOARD.EARNED_DUE'"
         [iconClass]="'pi pi-clock'"
         [variant]="'amber'"

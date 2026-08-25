@@ -33,4 +33,4 @@ let newPanel = `
 content = content.replace(/(activeTab\(\) === 3[\s\S]*?<\/div>\s*})/, '$1' + newPanel);
 
 fs.writeFileSync(path, content);
-console.log("Done");
+console.log('Done');

@@ -9,7 +9,7 @@ const startIndex = htmlContent.indexOf(startMarker);
 const endIndex = htmlContent.indexOf(endMarker, startIndex);
 
 if (startIndex !== -1 && endIndex !== -1) {
-    const newContent = `
+  const newContent = `
           <div class="space-y-6">
             <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200">
               <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2">
@@ -28,9 +28,9 @@ if (startIndex !== -1 && endIndex !== -1) {
             </div>
           </div>
 `;
-    htmlContent = htmlContent.substring(0, startIndex) + newContent + htmlContent.substring(endIndex);
-    fs.writeFileSync(htmlPath, htmlContent, 'utf8');
-    console.log('Fixed modal HTML');
+  htmlContent = htmlContent.substring(0, startIndex) + newContent + htmlContent.substring(endIndex);
+  fs.writeFileSync(htmlPath, htmlContent, 'utf8');
+  console.log('Fixed modal HTML');
 } else {
-    console.error('Could not find modal content to replace');
+  console.error('Could not find modal content to replace');
 }

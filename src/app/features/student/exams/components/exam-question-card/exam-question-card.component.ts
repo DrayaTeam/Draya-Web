@@ -25,11 +25,35 @@ export class ExamQuestionCardComponent {
   readonly prevQuestion = output<void>();
   readonly submitExam = output<void>();
 
-  isEssay(): boolean {
+  isFillInBlank(): boolean {
     const q = this.question();
+    const t = (q.type || '').toLowerCase();
+    const tag = (q.subjectTag || '').toLowerCase();
     return (
-      (q.type || '').toLowerCase().includes('essay') ||
-      (q.subjectTag || '').toLowerCase().includes('essay') ||
+      t.includes('fill') || t.includes('blank') || tag.includes('أكمل') || tag.includes('فراغ')
+    );
+  }
+
+  isShortAnswer(): boolean {
+    const q = this.question();
+    const t = (q.type || '').toLowerCase();
+    const tag = (q.subjectTag || '').toLowerCase();
+    return t.includes('short') || tag.includes('قصيرة');
+  }
+
+  isOpenEnded(): boolean {
+    const q = this.question();
+    const t = (q.type || '').toLowerCase();
+    const tag = (q.subjectTag || '').toLowerCase();
+    return (
+      t.includes('essay') ||
+      t.includes('fill') ||
+      t.includes('blank') ||
+      t.includes('short') ||
+      tag.includes('essay') ||
+      tag.includes('مقال') ||
+      tag.includes('أكمل') ||
+      tag.includes('قصيرة') ||
       q.options.length === 0
     );
   }
@@ -39,7 +63,7 @@ export class ExamQuestionCardComponent {
   }
 
   onTextInput(event: Event): void {
-    const val = (event.target as HTMLTextAreaElement)?.value ?? '';
+    const val = (event.target as HTMLTextAreaElement | HTMLInputElement)?.value ?? '';
     this.updateAnswerText.emit({ questionId: this.question().id, text: val });
   }
 }

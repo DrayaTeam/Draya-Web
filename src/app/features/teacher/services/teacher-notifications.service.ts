@@ -140,9 +140,7 @@ export class TeacherNotificationsService {
             severity: 'success',
             summary: 'معالجة المادة',
             detail:
-              'تمت معالجة المادة التعليمية بنجاح بنظام الذكاء الاصطناعي. (' +
-              payload.message +
-              ')',
+              'تمت معالجة المادة التعليمية بنجاح بنظام الذكاء الاصطناعي. (' + payload.message + ')',
             life: 5000,
           });
         } else {

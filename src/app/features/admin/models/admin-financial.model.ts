@@ -1,13 +1,13 @@
 import { WalletBalanceType, WithdrawalStatus, PayoutAccountType } from './admin-enums';
 
 export interface FinancialOverviewDto {
-  totalClassroomRevenues: number;
-  totalCommissionFees: number;
+  totalClassroomRevenue: number;
+  totalCommissionCollected: number;
   totalTopUps: number;
-  totalAiExamFees: number;
-  totalEarnedTeacherBalance: number;
-  totalPurchasedTeacherBalance: number;
-  totalEarnedDue: number;
+  totalAIExamCharges: number;
+  totalTeacherEarnedBalance: number;
+  totalTeacherPurchasedBalance: number;
+  totalOutstandingEarnedBalance: number;
 }
 
 export interface PayoutAccountDto {

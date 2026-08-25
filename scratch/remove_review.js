@@ -9,7 +9,8 @@ const modalVarsRegex = /\/\/ Modals[\s\S]*?readonly reviewError = signal<string 
 tsContent = tsContent.replace(modalVarsRegex, '');
 
 // Remove openInteractiveReview function
-const openInteractiveReviewRegex = /openInteractiveReview\(topic: any\): void \{[\s\S]*?\}\n\n  \}/g;
+const openInteractiveReviewRegex =
+  /openInteractiveReview\(topic: any\): void \{[\s\S]*?\}\n\n  \}/g;
 tsContent = tsContent.replace(openInteractiveReviewRegex, '}'); // Keep the closing bracket of the class
 
 fs.writeFileSync(tsPath, tsContent, 'utf8');
@@ -23,7 +24,8 @@ const modalHtmlRegex = /<!-- Interactive Review Modal -->[\s\S]*?<\/p-dialog>\n/
 htmlContent = htmlContent.replace(modalHtmlRegex, '');
 
 // Remove the explicit Interactive Review button
-const buttonRegex = /<div class="mt-4 pt-4 border-t border-slate-100 flex justify-end">[\s\S]*?<\/button>\n\s*<\/div>/g;
+const buttonRegex =
+  /<div class="mt-4 pt-4 border-t border-slate-100 flex justify-end">[\s\S]*?<\/button>\n\s*<\/div>/g;
 htmlContent = htmlContent.replace(buttonRegex, '');
 
 // Refine the Profile Summary Card (remove giant gradient hero)
@@ -147,7 +149,8 @@ const newProfileScss = `.simple-profile-header {
 scssContent = scssContent.replace(profileScssRegex, newProfileScss);
 
 // Remove the button SCSS for interactive review
-const buttonScssRegex = /\.btn-review-topic \{[\s\S]*?\}\n\s*\}\n\s*\}\n\}\n\n\/\/ ── Right Sidebar/g;
+const buttonScssRegex =
+  /\.btn-review-topic \{[\s\S]*?\}\n\s*\}\n\s*\}\n\}\n\n\/\/ ── Right Sidebar/g;
 scssContent = scssContent.replace(buttonScssRegex, '}\n  }\n}\n\n// ── Right Sidebar');
 
 fs.writeFileSync(scssPath, scssContent, 'utf8');

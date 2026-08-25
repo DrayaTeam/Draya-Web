@@ -16,12 +16,14 @@ To enable the remaining user journeys (**Exams Taking & Grading**, **Academic Pe
 ## 📝 1. Exam Engine & Student Attempts Lifecycle
 
 ### 1.1 Get Student Assigned Exams List
-* **Method & Route:** `GET /api/v1/students/exams`
-* **Headers:** `Authorization: Bearer <token>`
-* **Query Parameters:**
-  * `status`: `"all" | "available" | "scheduled" | "completed"` (optional, default: `"all"`)
-  * `classroomId`: `Guid` (optional, filters by enrolled classroom)
-* **Response Body (`200 OK`):**
+
+- **Method & Route:** `GET /api/v1/students/exams`
+- **Headers:** `Authorization: Bearer <token>`
+- **Query Parameters:**
+  - `status`: `"all" | "available" | "scheduled" | "completed"` (optional, default: `"all"`)
+  - `classroomId`: `Guid` (optional, filters by enrolled classroom)
+- **Response Body (`200 OK`):**
+
 ```json
 [
   {
@@ -44,10 +46,12 @@ To enable the remaining user journeys (**Exams Taking & Grading**, **Academic Pe
 ---
 
 ### 1.2 Start New Exam Attempt
-* **Method & Route:** `POST /api/v1/exams/{examId}/attempts/start`
-* **Headers:** `Authorization: Bearer <token>`
-* **Purpose:** Creates an active attempt session in the database, records start timestamp to prevent multi-device cheating, and returns questions with obfuscated answers.
-* **Response Body (`200 OK` / `201 Created`):**
+
+- **Method & Route:** `POST /api/v1/exams/{examId}/attempts/start`
+- **Headers:** `Authorization: Bearer <token>`
+- **Purpose:** Creates an active attempt session in the database, records start timestamp to prevent multi-device cheating, and returns questions with obfuscated answers.
+- **Response Body (`200 OK` / `201 Created`):**
+
 ```json
 {
   "attemptId": "e4b11f32-8419-4f76-8f3e-7a56e2ef1111",
@@ -73,24 +77,29 @@ To enable the remaining user journeys (**Exams Taking & Grading**, **Academic Pe
 
 ---
 
-### 1.3 Autosave Question Answer *(Optional but Recommended)*
-* **Method & Route:** `POST /api/v1/attempts/{attemptId}/answers`
-* **Headers:** `Authorization: Bearer <token>`
-* **Request Body:**
+### 1.3 Autosave Question Answer _(Optional but Recommended)_
+
+- **Method & Route:** `POST /api/v1/attempts/{attemptId}/answers`
+- **Headers:** `Authorization: Bearer <token>`
+- **Request Body:**
+
 ```json
 {
   "questionId": "3fa85f64-5717-4562-b3fc-2c963f66afa1",
   "selectedOptionId": "opt-2"
 }
 ```
-* **Response Body:** `200 OK`
+
+- **Response Body:** `200 OK`
 
 ---
 
 ### 1.4 Submit Exam Attempt & Final Grading
-* **Method & Route:** `POST /api/v1/attempts/{attemptId}/submit`
-* **Headers:** `Authorization: Bearer <token>`
-* **Request Body:**
+
+- **Method & Route:** `POST /api/v1/attempts/{attemptId}/submit`
+- **Headers:** `Authorization: Bearer <token>`
+- **Request Body:**
+
 ```json
 {
   "answers": [
@@ -102,7 +111,9 @@ To enable the remaining user journeys (**Exams Taking & Grading**, **Academic Pe
   "violationCount": 1
 }
 ```
-* **Response Body (`200 OK`):**
+
+- **Response Body (`200 OK`):**
+
 ```json
 {
   "attemptId": "e4b11f32-8419-4f76-8f3e-7a56e2ef1111",
@@ -119,9 +130,11 @@ To enable the remaining user journeys (**Exams Taking & Grading**, **Academic Pe
 ---
 
 ### 1.5 Get Attempt AI Result & Weakness Breakdown
-* **Method & Route:** `GET /api/v1/attempts/{attemptId}/results`
-* **Headers:** `Authorization: Bearer <token>`
-* **Response Body (`200 OK`):**
+
+- **Method & Route:** `GET /api/v1/attempts/{attemptId}/results`
+- **Headers:** `Authorization: Bearer <token>`
+- **Response Body (`200 OK`):**
+
 ```json
 {
   "attemptId": "e4b11f32-8419-4f76-8f3e-7a56e2ef1111",
@@ -159,10 +172,12 @@ To enable the remaining user journeys (**Exams Taking & Grading**, **Academic Pe
 ## 📊 2. Student Academic Reports & AI Analytics
 
 ### 2.1 Get Student Performance Summary
-* **Method & Route:** `GET /api/v1/students/reports/summary`
-* **Headers:** `Authorization: Bearer <token>`
-* **Purpose:** Aggregates cumulative student marks across all subjects, monthly progress trends, and AI radar skill distribution.
-* **Response Body (`200 OK`):**
+
+- **Method & Route:** `GET /api/v1/students/reports/summary`
+- **Headers:** `Authorization: Bearer <token>`
+- **Purpose:** Aggregates cumulative student marks across all subjects, monthly progress trends, and AI radar skill distribution.
+- **Response Body (`200 OK`):**
+
 ```json
 {
   "overallAverage": 87,
@@ -202,10 +217,12 @@ To enable the remaining user journeys (**Exams Taking & Grading**, **Academic Pe
 ## 📂 3. Digital Library & Downloadable Summaries
 
 ### 3.1 Get Student Available Books & PDF Summaries
-* **Method & Route:** `GET /api/v1/students/library`
-* **Headers:** `Authorization: Bearer <token>`
-* **Query Parameters:** `search` (optional), `subject` (optional)
-* **Response Body (`200 OK`):**
+
+- **Method & Route:** `GET /api/v1/students/library`
+- **Headers:** `Authorization: Bearer <token>`
+- **Query Parameters:** `search` (optional), `subject` (optional)
+- **Response Body (`200 OK`):**
+
 ```json
 [
   {
@@ -229,16 +246,20 @@ To enable the remaining user journeys (**Exams Taking & Grading**, **Academic Pe
 ## ⚙️ 4. Profile & Account Security
 
 ### 4.1 In-App Change Password
-* **Method & Route:** `POST /api/v1/auth/change-password`
-* **Headers:** `Authorization: Bearer <token>`
-* **Request Body:**
+
+- **Method & Route:** `POST /api/v1/auth/change-password`
+- **Headers:** `Authorization: Bearer <token>`
+- **Request Body:**
+
 ```json
 {
   "currentPassword": "OldPassword@123",
   "newPassword": "NewPassword@2026"
 }
 ```
-* **Response Body (`200 OK`):**
+
+- **Response Body (`200 OK`):**
+
 ```json
 {
   "success": true,
@@ -249,10 +270,12 @@ To enable the remaining user journeys (**Exams Taking & Grading**, **Academic Pe
 ---
 
 ### 4.2 Profile Picture / Avatar Upload
-* **Method & Route:** `POST /api/v1/students/avatar`
-* **Headers:** `Authorization: Bearer <token>`, `Content-Type: multipart/form-data`
-* **Request Body:** `file` (Image binary)
-* **Response Body (`200 OK`):**
+
+- **Method & Route:** `POST /api/v1/students/avatar`
+- **Headers:** `Authorization: Bearer <token>`, `Content-Type: multipart/form-data`
+- **Request Body:** `file` (Image binary)
+- **Response Body (`200 OK`):**
+
 ```json
 {
   "avatarUrl": "https://draya-api.runasp.net/uploads/avatars/student_avatar.png"
@@ -264,24 +287,27 @@ To enable the remaining user journeys (**Exams Taking & Grading**, **Academic Pe
 ## 👨‍🏫 5. Teacher Classrooms Binding Verification
 
 ### 5.1 Teacher's Created Classrooms
-* **Method & Route:** `GET /api/v1/teachers/{teacherId}/classrooms`
-* **Headers:** `Authorization: Bearer <token>`
-* **Current Status:** Present in Swagger. Please ensure that when teachers create new classrooms via the Teacher portal, they are automatically returned by this endpoint with valid `classroomId` (`Guid`), `name`, `price`, and `subjectName` so students can view and checkout directly.
+
+- **Method & Route:** `GET /api/v1/teachers/{teacherId}/classrooms`
+- **Headers:** `Authorization: Bearer <token>`
+- **Current Status:** Present in Swagger. Please ensure that when teachers create new classrooms via the Teacher portal, they are automatically returned by this endpoint with valid `classroomId` (`Guid`), `name`, `price`, and `subjectName` so students can view and checkout directly.
 
 ---
 
 ## 💳 6. Paymob Checkout Redirection / Auto-Close Popup
 
 ### 6.1 Option A (Recommended): Redirect to Frontend Callback (Auto-Closes Popup)
-* **Route:** `GET /api/v1/payments/callback`
-* **Behavior:** Redirect to the frontend callback URL. If opened in a popup tab, the frontend will automatically send a success message to the parent window and close itself (`window.close()`):
+
+- **Route:** `GET /api/v1/payments/callback`
+- **Behavior:** Redirect to the frontend callback URL. If opened in a popup tab, the frontend will automatically send a success message to the parent window and close itself (`window.close()`):
   ```csharp
   var frontendBaseUrl = _configuration["Frontend:Url"] ?? "http://localhost:4200";
   return Redirect($"{frontendBaseUrl}/student/checkout/callback?status=success&paymentTransactionId={paymentTransactionId}");
   ```
 
 ### 6.2 Option B: Return Auto-Close Script Directly from Backend
-* Alternatively, the backend can directly return an HTML snippet that notifies the opener and closes the tab immediately:
+
+- Alternatively, the backend can directly return an HTML snippet that notifies the opener and closes the tab immediately:
   ```csharp
   [HttpGet("callback")]
   public async Task<IActionResult> Callback([FromQuery] PaymobCallbackDto dto)
@@ -308,6 +334,7 @@ To enable the remaining user journeys (**Exams Taking & Grading**, **Academic Pe
 ---
 
 ## 🚀 Priority Action Checklist for Backend Team:
+
 - [ ] **Priority 1:** Update `GET /api/v1/payments/callback` to return `Redirect()` to the frontend callback URL instead of raw JSON.
 - [ ] **Priority 2:** Deploy / Enable `GET /api/v1/dashboard/student` (currently returning 404).
 - [ ] **Priority 3:** Implement Exam Attempt endpoints (`POST /attempts/start` and `POST /attempts/submit`).
@@ -315,5 +342,5 @@ To enable the remaining user journeys (**Exams Taking & Grading**, **Academic Pe
 - [ ] **Priority 5:** Add In-App Password Change endpoint (`POST /auth/change-password`).
 
 ---
-*Thank you for your continuous support and great collaboration!*
 
+_Thank you for your continuous support and great collaboration!_

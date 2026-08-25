@@ -15,6 +15,9 @@ import {
   providedIn: 'root',
 })
 export class TeacherExamService {
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = `${environment.apiBaseUrl}/exams`;
+
   getExamAttempts(
     examId: string,
     page = 1,
@@ -24,9 +27,6 @@ export class TeacherExamService {
       `${this.baseUrl}/${examId}/attempts?page=${page}&pageSize=${pageSize}`,
     );
   }
-
-  private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.apiBaseUrl}/exams`;
 
   getExam(examId: string): Observable<TeacherExamDto> {
     return this.http.get<TeacherExamDto>(`${this.baseUrl}/${examId}`);
@@ -79,8 +79,11 @@ export class TeacherExamService {
     );
   }
 
-  // Not strictly used in Step 3 plan, but good to have based on earlier design
   addQuestion(examId: string, payload: UpdateQuestionRequest): Observable<ExamQuestionDto> {
     return this.http.post<ExamQuestionDto>(`${this.baseUrl}/${examId}/questions`, payload);
+  }
+
+  deleteQuestion(examId: string, questionId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${examId}/questions/${questionId}`);
   }
 }

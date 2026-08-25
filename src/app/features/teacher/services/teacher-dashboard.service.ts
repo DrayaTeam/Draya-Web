@@ -19,7 +19,7 @@ export class TeacherDashboardService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiBaseUrl}/dashboard/teacher`;
 
-  // 🟢 Signals State 🟢──────────────────────────────────────────────────────────
+  // ðŸŸ¢ Signals State ðŸŸ¢â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   private readonly _aiAlert = signal<TeacherAiAlertBanner | null>(null);
   readonly aiAlert = this._aiAlert.asReadonly();
 
@@ -108,9 +108,18 @@ export class TeacherDashboardService {
   private readonly _recentSubmissions = signal<RecentSubmission[]>([]);
   readonly recentSubmissions = this._recentSubmissions.asReadonly();
 
-  // ── Actions ────────────────────────────────────────────────────────────────
   setTimeRange(range: 'week' | 'month' | 'quarter'): void {
     this._timeRange.set(range);
+    // Real API might fetch data again. For now, it just triggers the computed.
+  }
+
+  // 🎯 Actions
+  private normalizeScore(score: number | null | undefined): number {
+    if (score == null) return 0;
+    if (score <= 1.0 && score > 0) {
+      return Math.round(score * 100);
+    }
+    return score;
   }
 
   getDashboardData(): Observable<boolean> {
@@ -128,10 +137,11 @@ export class TeacherDashboardService {
           }
           const avgIdx = newStats.findIndex((s) => s.id === 'class_avg');
           if (avgIdx > -1) {
-            // Formatting the class average to 1 decimal place max
-            const avg = Number.isInteger(data.classAverage)
-              ? data.classAverage
-              : data.classAverage.toFixed(1);
+            // Normalize fractional scores if any
+            const normalizedClassAvg = this.normalizeScore(data.classAverage);
+            const avg = Number.isInteger(normalizedClassAvg)
+              ? normalizedClassAvg
+              : Number(normalizedClassAvg).toFixed(1);
             newStats[avgIdx] = { ...newStats[avgIdx], value: `${avg}%` };
           }
           const examIdx = newStats.findIndex((s) => s.id === 'pending_exams');
@@ -168,15 +178,15 @@ export class TeacherDashboardService {
           const names = s.studentName.split(' ');
           const initials =
             names.length > 1 ? names[0].charAt(0) + names[1].charAt(0) : names[0].charAt(0);
+
+          const normalizedScore = this.normalizeScore(s.overallAverage);
           return {
             id: s.studentId,
             studentName: s.studentName,
             initials: initials.toUpperCase(),
-            courseName: s.classroomName || 'عام',
-            // overallAverage is confirmed already a 0-100 percent, matching the
-            // rest of this API -- not a 0-5 scale.
-            averageScore: Number(s.overallAverage.toFixed(1)),
-            riskLevel: s.overallAverage < 50 ? 'high' : 'medium',
+            courseName: s.classroomName || 'â€”',
+            averageScore: Number(normalizedScore.toFixed(1)),
+            riskLevel: normalizedScore < 50 ? 'high' : 'medium',
           };
         });
         this._studentsNeedingFollowup.set(studentsNeedingFollowup);
@@ -186,17 +196,17 @@ export class TeacherDashboardService {
           const names = s.studentName.split(' ');
           const initials =
             names.length > 1 ? names[0].charAt(0) + names[1].charAt(0) : names[0].charAt(0);
+
+          const normalizedScore = this.normalizeScore(s.score);
           return {
             id: s.examAttemptId,
             studentName: s.studentName,
             initials: initials.toUpperCase(),
             timeAgoKey: 'SHARED.TIME.RECENTLY', // You can add logic to format date to timeAgo
             examTitle: s.examTitle,
-            // score is confirmed already a 0-100 percent (nullable when grading
-            // hasn't finished) -- not a 0-5 scale.
-            score: s.score ?? 0,
+            score: normalizedScore,
             gradeType:
-              (s.score ?? 0) >= 85 ? 'excellent' : (s.score ?? 0) >= 65 ? 'good' : 'average',
+              normalizedScore >= 85 ? 'excellent' : normalizedScore >= 65 ? 'good' : 'average',
           };
         });
         this._recentSubmissions.set(recentSubmissions);
@@ -205,7 +215,7 @@ export class TeacherDashboardService {
         const chartPoints: SubmissionChartPoint[] = data.weeklySubmissionsActivity.map((w) => ({
           dayNameKey: w.dayOfWeek,
           submissionsCount: w.submissionsCount,
-          averageScore: Number(w.averageScore.toFixed(1)),
+          averageScore: Number(this.normalizeScore(w.averageScore).toFixed(1)),
         }));
         this._weeklyChartPoints.set(chartPoints);
 

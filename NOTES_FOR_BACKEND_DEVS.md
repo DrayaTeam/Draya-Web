@@ -321,6 +321,7 @@ public class UpdateStudentProfileRequest
 ### 🔍 Issue Description
 
 Following up on Note 5 (mostly resolved — exam/attempt/weakness/notification DTOs are now typed): three endpoints touched by tonight's audit are still undocumented (`200: (no body)` in swagger), so the client is still parsing them tolerantly/defensively rather than against a real contract:
+
 - `GET /api/v1/exams/{examId}/attempts` (teacher-side attempt list per exam — used by the exam-attempts screen; in particular we cannot confirm whether `finalScore` here is paired with a `maxScore` the way `StudentExamAttemptSummaryDto`/`AttemptResultsDto` are).
 - `GET /api/v1/exams/{examId}/student-view`
 - `GET /api/v1/exams/generations/{generationId}` (also returns an undocumented `206` alongside `200`/`404` — please clarify what `206` means here, e.g. partial/in-progress vs. a paging convention).
