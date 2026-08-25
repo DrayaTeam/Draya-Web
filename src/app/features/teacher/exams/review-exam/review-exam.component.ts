@@ -10,12 +10,11 @@ import {
 } from '../../../../core/models/teacher-exam.model';
 import { RefineQuestionModalComponent } from './components/refine-question-modal/refine-question-modal.component';
 import { EditQuestionModalComponent } from './components/edit-question-modal/edit-question-modal.component';
-import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 
 @Component({
   selector: 'draya-review-exam',
   standalone: true,
-  imports: [DatePipe, RefineQuestionModalComponent, EditQuestionModalComponent, ModalComponent],
+  imports: [DatePipe, RefineQuestionModalComponent, EditQuestionModalComponent],
   templateUrl: './review-exam.component.html',
   styleUrl: './review-exam.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -174,11 +173,11 @@ export class ReviewExamComponent implements OnInit {
   executeDeleteQuestion(): void {
     const questionId = this.questionIdToDelete();
     const currentExam = this.exam();
-    
+
     if (questionId && currentExam) {
       this.closeDeleteModal();
       this.isLoading.set(true);
-      
+
       this.examService.deleteQuestion(currentExam.id, questionId).subscribe({
         next: () => {
           const questions = currentExam.questions || [];
