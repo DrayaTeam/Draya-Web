@@ -10,11 +10,12 @@ import {
 } from '../../../../core/models/teacher-exam.model';
 import { RefineQuestionModalComponent } from './components/refine-question-modal/refine-question-modal.component';
 import { EditQuestionModalComponent } from './components/edit-question-modal/edit-question-modal.component';
+import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 
 @Component({
   selector: 'draya-review-exam',
   standalone: true,
-  imports: [DatePipe, RefineQuestionModalComponent, EditQuestionModalComponent],
+  imports: [DatePipe, RefineQuestionModalComponent, EditQuestionModalComponent, ModalComponent],
   templateUrl: './review-exam.component.html',
   styleUrl: './review-exam.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,6 +35,9 @@ export class ReviewExamComponent implements OnInit {
 
   readonly isEditModalOpen = signal(false);
   readonly selectedQuestionForEdit = signal<ExamQuestionDto | null>(null);
+
+  readonly isDeleteModalOpen = signal(false);
+  readonly questionIdToDelete = signal<string | null>(null);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -157,27 +161,39 @@ export class ReviewExamComponent implements OnInit {
     }
   }
 
-  deleteQuestion(questionId: string): void {
-    if (confirm('?? ??? ????? ?? ????? ?? ??? ??? ???????')) {
-      const currentExam = this.exam();
-      if (currentExam) {
-        this.isLoading.set(true);
-        this.examService.deleteQuestion(currentExam.id, questionId).subscribe({
-          next: () => {
-            const questions = currentExam.questions || [];
-            this.exam.set({
-              ...currentExam,
-              questions: questions.filter((q) => q.id !== questionId),
-            });
-            this.toast.success('?? ??? ?????? ?????');
-            this.isLoading.set(false);
-          },
-          error: () => {
-            this.toast.error('??? ??? ????? ??? ??????');
-            this.isLoading.set(false);
-          },
-        });
-      }
+  confirmDeleteQuestion(questionId: string): void {
+    this.questionIdToDelete.set(questionId);
+    this.isDeleteModalOpen.set(true);
+  }
+
+  closeDeleteModal(): void {
+    this.isDeleteModalOpen.set(false);
+    this.questionIdToDelete.set(null);
+  }
+
+  executeDeleteQuestion(): void {
+    const questionId = this.questionIdToDelete();
+    const currentExam = this.exam();
+    
+    if (questionId && currentExam) {
+      this.closeDeleteModal();
+      this.isLoading.set(true);
+      
+      this.examService.deleteQuestion(currentExam.id, questionId).subscribe({
+        next: () => {
+          const questions = currentExam.questions || [];
+          this.exam.set({
+            ...currentExam,
+            questions: questions.filter((q) => q.id !== questionId),
+          });
+          this.toast.success('تم حذف السؤال بنجاح');
+          this.isLoading.set(false);
+        },
+        error: () => {
+          this.toast.error('حدث خطأ أثناء حذف السؤال');
+          this.isLoading.set(false);
+        },
+      });
     }
   }
 

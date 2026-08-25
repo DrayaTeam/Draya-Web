@@ -114,8 +114,14 @@ export class TeacherDashboardService {
   }
 
   // 🎯 Actions
-  private normalizeScore(score: number | null | undefined): number {
+  private normalizeScore(score: number | null | undefined, maxScore?: number | null): number {
     if (score == null) return 0;
+    
+    // If maxScore is provided and > 0, calculate percentage directly
+    if (maxScore != null && maxScore > 0) {
+      return Math.round((score / maxScore) * 100);
+    }
+    
     if (score <= 1.0 && score > 0) {
       return Math.round(score * 100);
     }
@@ -197,7 +203,7 @@ export class TeacherDashboardService {
           const initials =
             names.length > 1 ? names[0].charAt(0) + names[1].charAt(0) : names[0].charAt(0);
 
-          const normalizedScore = this.normalizeScore(s.score);
+          const normalizedScore = this.normalizeScore(s.score, s.maxScore);
           return {
             id: s.examAttemptId,
             studentName: s.studentName,

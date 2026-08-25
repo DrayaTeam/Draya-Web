@@ -42,15 +42,15 @@
                 formControlName="type"
                 class="w-full rounded-xl border border-gray-200 px-4 py-3 outline-none focus:ring-2 focus:ring-[#1B6D63]">
                 <option value="MultipleChoice">اختيار من متعدد</option>
-                <option value="TrueFalse">صح أو خطأ</option>
+                <option value="TrueFalse">صح أم خطأ</option>
                 <option value="ShortAnswer">إجابة قصيرة</option>
-                <option value="FillInTheBlank">إكمال الفراغ</option>
-                <option value="Essay">مقال</option>
+                <option value="FillInTheBlank">أكمل الفراغ</option>
+                <option value="Essay">مقالي</option>
               </select>
             </div>
             <div class="form-group">
               <label for="q-difficulty" class="mb-2 block text-sm font-medium text-gray-700">
-                درجة الصعوبة
+                مستوى الصعوبة
               </label>
               <select
                 id="q-difficulty"
@@ -64,7 +64,7 @@
           </div>
           <div class="form-group mb-4">
             <label for="q-rubric" class="mb-2 block text-sm font-medium text-gray-700">
-              معايير التقييم (Rubric)
+              معيار التقييم (Rubric)
             </label>
             <textarea
               id="q-rubric"
@@ -76,14 +76,14 @@
             <div class="mb-4">
               <div class="mb-2 flex items-center justify-between">
                 <span class="block text-sm font-medium text-gray-700">
-                  الخيارات (حدد الإجابة الصحيحة)
+                  الخيارات (اختر الإجابة الصحيحة)
                 </span>
                 @if (form.value.type === 'MultipleChoice') {
                   <button
                     type="button"
                     (click)="addOption()"
                     class="text-sm text-[#1B6D63] hover:underline">
-                    + خيار جديد
+                    + إضافة خيار
                   </button>
                 }
               </div>
@@ -132,7 +132,7 @@
               @if (isSubmitting()) {
                 <i class="pi pi-spinner pi-spin"></i>
               }
-              {{ question() ? 'حفظ التعديلات' : 'إضافة السؤال' }}
+              {{ question() ? 'حفظ التعديلات' : 'حفظ السؤال' }}
             </button>
           </div>
         </form>

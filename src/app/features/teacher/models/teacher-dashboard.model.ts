@@ -71,6 +71,7 @@ export interface RecentSubmissionDto {
   examTitle: string;
   submittedAt: string;
   score: number;
+  maxScore?: number;
 }
 
 export interface TeacherDashboardDto {
