@@ -19,7 +19,7 @@ The Live Exam Attempt Engine provides students with an interactive, real-time te
   - StudentActiveExamComponent: Master exam container managing timer, fullscreen security guards, and submit confirmation.
   - ExamQuestionCardComponent: Presentational component rendering question text, multiple-choice options, and navigation buttons. Essay vs MCQ is decided purely from `question.type` / options length — never from an answer key.
   - ExamQuestionMapComponent: Sidebar grid displaying indexed question pills colored by status (Active, Answered, Flagged, Unvisited).
-  - ExamSecurityWarningComponent: Security modal displayed upon tab switching or cheating violations. On the 3rd violation, the exam is now **submitted** (not zero-scored client-side) so the server grades whatever was answered.
+  - ExamSecurityWarningComponent: Security badge displaying anti-cheating rules. Upon tab switching or leaving the screen (1st violation), the exam is immediately **submitted** so the server grades whatever was answered and marks the attempt as completed.
   - StudentExamResultComponent: Exam result report with score percentage, pass/fail status, and weakness breakdown. Falls back to `GET /exams/{id}/student-view` to resolve the latest attempt when no `attemptId` is present in the URL (cold deep link).
   - ExamResultCardComponent: Visual score circle and summary metrics.
   - ExamQuestionReviewCardComponent: Accordion review of student answers vs correct answers with explanations.

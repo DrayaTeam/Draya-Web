@@ -8,7 +8,8 @@ import {
   effect,
 } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators, FormArray } from '@angular/forms';
-import { ExamQuestionDto } from '../../../../../../core/models/teacher-exam.model';
+import { ExamQuestionDto, UpdateQuestionRequest } from '../../../../../../core/models/teacher-exam.model';
+import { QuestionType } from '../../../../../../core/models/exam-generation.model';
 import { TeacherExamService } from '../../../../services/teacher-exam.service';
 import { ToastService } from '../../../../../../core/services/toast.service';
 
@@ -106,25 +107,27 @@ export class EditQuestionModalComponent {
       return;
     }
 
-    this.isSubmitting.set(true);
-    const payload = {
-      text: this.form.value.text,
-      type: this.form.value.type,
-      difficulty: this.form.value.difficulty,
-      rubric: this.form.value.rubric,
-    } as any;
-    
-    if (['MultipleChoice', 'TrueFalse'].includes(this.form.value.type!)) {
-      payload['options'] = this.form.value.options;
-    }
+    const payload: UpdateQuestionRequest = {
+      text: this.form.value.text || '',
+      type: this.form.value.type || undefined,
+      difficulty: this.form.value.difficulty || undefined,
+      rubric: this.form.value.rubric || undefined,
+      options: ['MultipleChoice', 'TrueFalse'].includes(this.form.value.type!)
+        ? (this.form.value.options as { text: string; isCorrect: boolean }[])
+        : undefined,
+    };
 
     const q = this.question();
     if (q) {
-      this.examService.updateQuestion(this.examId(), q.id, payload as any).subscribe({
+      this.examService.updateQuestion(this.examId(), q.id, payload).subscribe({
         next: () => {
           this.isSubmitting.set(false);
           this.toast.success('تم التحديث بنجاح');
-          this.saved.emit({ ...q, ...payload });
+          this.saved.emit({
+            ...q,
+            ...payload,
+            type: (payload.type as QuestionType) || q.type,
+          });
           this.closeModal();
         },
         error: () => {
@@ -133,7 +136,7 @@ export class EditQuestionModalComponent {
         },
       });
     } else {
-      this.examService.addQuestion(this.examId(), payload as any).subscribe({
+      this.examService.addQuestion(this.examId(), payload).subscribe({
         next: (res) => {
           this.isSubmitting.set(false);
           this.toast.success('تمت الإضافة بنجاح');

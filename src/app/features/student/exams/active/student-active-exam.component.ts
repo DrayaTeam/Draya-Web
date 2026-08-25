@@ -74,6 +74,8 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
   readonly showSubmitConfirm = signal<boolean>(false);
   private examId = '';
   private visibilityListener: (() => void) | null = null;
+  private blurListener: (() => void) | null = null;
+  private isForcedSubmitting = false;
 
   ngOnInit(): void {
     this.examId = this.route.snapshot.paramMap.get('id') || '';
@@ -105,29 +107,31 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
       error: () => void 0,
     });
 
-    // Anti-cheating tab-switching listener
+    // Anti-cheating tab-switching and window blur listener: Force submit immediately
+    const handleViolationAndSubmit = () => {
+      if (this.examService.isSubmitted() || this.isForcedSubmitting) return;
+      this.isForcedSubmitting = true;
+      this.examService.recordViolation();
+
+      this.toastService.error(
+        'تم إنهاء وتسليم الامتحان تلقائياً ⚠️',
+        'نظراً لمغادرة شاشة الامتحان (محاولة فتح تبويب جديد أو الانتقال لشاشة أخرى)، تم تسليم إجاباتك المسجلة حتى الآن للتصحيح وإغلاق المحاولة منعاً للغش.',
+      );
+      this.onSubmitExam(true);
+    };
+
     this.visibilityListener = () => {
       if (document.hidden) {
-        const vCount = this.examService.recordViolation();
-        if (vCount >= 3) {
-          this.toastService.error(
-            'تم تسليم الامتحان تلقائياً!',
-            'لتكرار مغادرة شاشة الامتحان التفاعلي (3 مخالفات)، تم تسليم إجاباتك الحالية للتصحيح.',
-          );
-          // Submit whatever was answered so far and let the server score it —
-          // forcing a fabricated 0% here would discard real answers and never
-          // reach the backend at all.
-          this.onSubmitExam();
-        } else {
-          this.toastService.warning(
-            'تحذير أمني مشدد ⚠️',
-            `لقد غادرت شاشة الامتحان (مخالفة رقم ${vCount} من أصل 3). تكرار ذلك سيلغي الاختبار!`,
-          );
-        }
+        handleViolationAndSubmit();
       }
     };
 
+    this.blurListener = () => {
+      handleViolationAndSubmit();
+    };
+
     document.addEventListener('visibilitychange', this.visibilityListener);
+    window.addEventListener('blur', this.blurListener);
   }
 
   ngOnDestroy(): void {
@@ -135,6 +139,10 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
     if (this.visibilityListener) {
       document.removeEventListener('visibilitychange', this.visibilityListener);
       this.visibilityListener = null;
+    }
+    if (this.blurListener) {
+      window.removeEventListener('blur', this.blurListener);
+      this.blurListener = null;
     }
   }
 
@@ -195,7 +203,7 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
     this.onRetryLoad();
   }
 
-  onSubmitExam(): void {
+  onSubmitExam(isForced = false): void {
     const attemptId = this.examService.currentAttemptId() || undefined;
     if (!attemptId) {
       // submitExam() will itself toast a clear error and refuse to call the
@@ -204,10 +212,12 @@ export class StudentActiveExamComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.toastService.success(
-      'تم تسليم الامتحان بنجاح! 🎉',
-      'جارٍ استخراج تقرير التحليل الذكي للدرجات والمهارات...',
-    );
+    if (!isForced) {
+      this.toastService.success(
+        'تم تسليم الامتحان بنجاح! 🎉',
+        'جارٍ استخراج تقرير التحليل الذكي للدرجات والمهارات...',
+      );
+    }
     this.examService.submitExam(attemptId);
     this.router.navigate(['/student/exams', this.examId, 'result'], {
       queryParams: { attemptId },
