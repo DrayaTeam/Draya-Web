@@ -7,10 +7,11 @@ import {
   signal,
   computed,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TeacherAttemptReviewService } from '../../services/teacher-attempt-review.service';
 import { AttemptResultResponseDto } from '../../../../core/models/student-exam-taking.model';
+import { formatExamScoreDisplay } from '../../../../core/services/student-exams.service';
 
 @Component({
   selector: 'draya-attempt-review',
@@ -23,6 +24,7 @@ import { AttemptResultResponseDto } from '../../../../core/models/student-exam-t
 export class AttemptReviewComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly location = inject(Location);
   private readonly attemptReviewService = inject(TeacherAttemptReviewService);
 
   readonly attemptId = signal<string | null>(null);
@@ -41,6 +43,13 @@ export class AttemptReviewComponent implements OnInit {
         (a) => a.gradingResult?.needsTeacherReview && !a.gradingResult?.isFinalized,
       ).length,
   );
+
+  readonly scorePercentage = computed(() => {
+    const res = this.result();
+    if (!res || res.finalScore === undefined || res.finalScore === null) return 0;
+    const total = res.maxScore || res.answers?.length || 0;
+    return formatExamScoreDisplay(res.finalScore, undefined, total).percent ?? 0;
+  });
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('attemptId');
@@ -102,6 +111,11 @@ export class AttemptReviewComponent implements OnInit {
   }
 
   onBack(): void {
-    this.router.navigate(['/teacher/exams']);
+    const examId = this.result()?.examId;
+    if (examId) {
+      this.router.navigate(['/teacher/exams', examId, 'attempts']);
+    } else {
+      this.location.back();
+    }
   }
 }

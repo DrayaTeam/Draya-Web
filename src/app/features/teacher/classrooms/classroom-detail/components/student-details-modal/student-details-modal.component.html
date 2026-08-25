@@ -62,7 +62,7 @@
         <div class="flex flex-col gap-1 rounded-[16px] border border-gray-100 bg-gray-50 p-5">
           <span class="text-sm font-medium text-gray-500">المتوسط العام</span>
           <div class="flex items-baseline gap-1 text-3xl font-bold text-gray-900">
-            {{ analytics()!.overallAverage || 0 | number: '1.0-0' }}
+            {{ normalizedOverallAverage() | number: '1.0-0' }}
             <span class="text-lg text-gray-500">%</span>
           </div>
         </div>
@@ -70,7 +70,7 @@
           class="flex flex-col gap-1 rounded-[16px] border border-[#1B6D63]/10 bg-[#1B6D63]/5 p-5">
           <span class="text-sm font-medium text-[#1B6D63]">أعلى درجة</span>
           <div class="flex items-baseline gap-1 text-3xl font-bold text-[#1B6D63]">
-            {{ analytics()!.highestScore || 0 | number: '1.0-0' }}
+            {{ normalizedHighestScore() | number: '1.0-0' }}
             <span class="text-lg opacity-70">%</span>
           </div>
         </div>

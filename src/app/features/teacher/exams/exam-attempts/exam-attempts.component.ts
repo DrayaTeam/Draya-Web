@@ -10,6 +10,7 @@ import { ExamAttemptDto, TeacherExamDto } from '../../../../core/models/teacher-
 import { StudentDetailsModalComponent } from '../../classrooms/classroom-detail/components/student-details-modal/student-details-modal.component';
 import { DrayaPaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { StudentRosterItemDto } from '../../../../core/models/student-roster.model';
+import { formatExamScoreDisplay } from '../../../../core/services/student-exams.service';
 
 @Component({
   selector: 'draya-exam-attempts',
@@ -80,6 +81,15 @@ export class ExamAttemptsComponent implements OnInit {
       });
   }
 
+  getScorePercent(attempt: ExamAttemptDto): number | null {
+    if (attempt.finalScore === undefined || attempt.finalScore === null) return null;
+    return formatExamScoreDisplay(
+      attempt.finalScore,
+      this.exam()?.totalQuestions,
+      attempt.maxScore,
+    ).percent;
+  }
+
   onPageChange(page: number): void {
     const id = this.examId();
     if (id) {
@@ -94,12 +104,17 @@ export class ExamAttemptsComponent implements OnInit {
     }
   }
 
-  openAttemptReview(attempt: ExamAttemptDto, event: Event): void {
-    event.stopPropagation();
+  openAttemptReview(attempt: ExamAttemptDto, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
     this.router.navigate(['/teacher/attempts', attempt.id, 'review']);
   }
 
-  openStudentDetails(attempt: ExamAttemptDto): void {
+  openStudentDetails(attempt: ExamAttemptDto, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
     // We map the attempt back to a StudentRosterItemDto so the modal can fetch analytics
     const mappedStudent: StudentRosterItemDto = {
       studentId: attempt.studentId,

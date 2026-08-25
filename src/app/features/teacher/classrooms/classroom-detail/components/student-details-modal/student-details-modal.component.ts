@@ -5,6 +5,7 @@ import {
   output,
   inject,
   signal,
+  computed,
   effect,
   OnDestroy,
 } from '@angular/core';
@@ -15,6 +16,7 @@ import { TeacherModalComponent } from '../../../../components/teacher-modal/teac
 import { TeacherReportsService } from '../../../../services/teacher-reports.service';
 import { StudentRosterItemDto } from '../../../../../../core/models/student-roster.model';
 import { StudentAnalyticsDto } from '../../../../../../core/models/teacher-reports.model';
+import { normalizeScoreToPercent } from '../../../../../../core/services/student-reports.service';
 
 @Component({
   selector: 'draya-student-details-modal',
@@ -35,6 +37,16 @@ export class StudentDetailsModalComponent implements OnDestroy {
   readonly isLoading = signal<boolean>(false);
   readonly analytics = signal<StudentAnalyticsDto | null>(null);
   readonly error = signal<string | null>(null);
+
+  readonly normalizedOverallAverage = computed(() => {
+    const raw = this.analytics()?.overallAverage;
+    return raw === undefined || raw === null ? 0 : normalizeScoreToPercent(raw);
+  });
+
+  readonly normalizedHighestScore = computed(() => {
+    const raw = this.analytics()?.highestScore;
+    return raw === undefined || raw === null ? 0 : normalizeScoreToPercent(raw);
+  });
 
   constructor() {
     effect(() => {

@@ -60,11 +60,11 @@ export interface ExamAttemptDto {
   studentId: string;
   studentName: string;
   finalScore: number;
+  maxScore?: number;
   submittedAt: string;
   /**
    * Whether the AI flagged one or more answers on this attempt for teacher
-   * review. Optional since GET /exams/{examId}/attempts returns a bare 200 OK
-   * with no schema in swagger — modeled from the backend hand-off doc.
+   * review.
    */
   needsTeacherReview?: boolean;
 }
