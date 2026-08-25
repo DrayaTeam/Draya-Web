@@ -62,6 +62,7 @@ export interface NeedsAttentionDto {
   studentName: string;
   classroomName?: string;
   overallAverage: number;
+  overallAverageMax?: number;
 }
 
 export interface RecentSubmissionDto {
@@ -77,6 +78,7 @@ export interface RecentSubmissionDto {
 export interface TeacherDashboardDto {
   examsAwaitingReview: number;
   classAverage: number;
+  classAverageMax?: number;
   activeStudents: number;
   reportsReadyForReview: number;
   newMessagesCount: number;

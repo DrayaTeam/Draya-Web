@@ -19,7 +19,7 @@ export class TeacherDashboardService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiBaseUrl}/dashboard/teacher`;
 
-  // ðŸŸ¢ Signals State ðŸŸ¢â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // Signals State
   private readonly _aiAlert = signal<TeacherAiAlertBanner | null>(null);
   readonly aiAlert = this._aiAlert.asReadonly();
 
@@ -79,11 +79,6 @@ export class TeacherDashboardService {
     const totalSubmissions = points.reduce((sum, p) => sum + p.submissionsCount, 0);
     const avgScoreSum = points.reduce((sum, p) => sum + p.averageScore, 0);
     const rawAverage = avgScoreSum / points.length;
-    // DailySubmissionActivityDto.averageScore has no paired max/total field in
-    // swagger, but every other score field in this API is confirmed already a
-    // 0-100 percent (see NOTES_FOR_BACKEND_DEVS.md) -- trusting that same
-    // convention here rather than guessing a /5 scale, which silently divided
-    // a real percentage by 5 and rendered a number a fifth of the true average.
     const averagePerformance = Math.max(0, Math.min(100, Math.round(rawAverage)));
 
     const peakPoint = points.reduce((prev, current) =>
@@ -110,22 +105,30 @@ export class TeacherDashboardService {
 
   setTimeRange(range: 'week' | 'month' | 'quarter'): void {
     this._timeRange.set(range);
-    // Real API might fetch data again. For now, it just triggers the computed.
   }
 
   // 🎯 Actions
   private normalizeScore(score: number | null | undefined, maxScore?: number | null): number {
     if (score == null) return 0;
-    
+
     // If maxScore is provided and > 0, calculate percentage directly
     if (maxScore != null && maxScore > 0) {
       return Math.round((score / maxScore) * 100);
     }
-    
+
     if (score <= 1.0 && score > 0) {
       return Math.round(score * 100);
     }
-    return score;
+
+    if (score > 1.0 && score <= 5.0) {
+      return Math.round((score / 5.0) * 100);
+    }
+
+    if (score > 5.0 && score <= 10.0) {
+      return Math.round((score / 10.0) * 100);
+    }
+
+    return Math.min(100, Math.round(score));
   }
 
   getDashboardData(): Observable<boolean> {
@@ -144,7 +147,10 @@ export class TeacherDashboardService {
           const avgIdx = newStats.findIndex((s) => s.id === 'class_avg');
           if (avgIdx > -1) {
             // Normalize fractional scores if any
-            const normalizedClassAvg = this.normalizeScore(data.classAverage);
+            const normalizedClassAvg = this.normalizeScore(
+              data.classAverage,
+              data.classAverageMax,
+            );
             const avg = Number.isInteger(normalizedClassAvg)
               ? normalizedClassAvg
               : Number(normalizedClassAvg).toFixed(1);
@@ -181,16 +187,16 @@ export class TeacherDashboardService {
 
         // Update Students Needing Followup
         const studentsNeedingFollowup: StudentNeedFollowup[] = data.needsAttentionList.map((s) => {
-          const names = s.studentName.split(' ');
+          const names = s.studentName ? s.studentName.split(' ') : ['طالب'];
           const initials =
             names.length > 1 ? names[0].charAt(0) + names[1].charAt(0) : names[0].charAt(0);
 
-          const normalizedScore = this.normalizeScore(s.overallAverage);
+          const normalizedScore = this.normalizeScore(s.overallAverage, s.overallAverageMax);
           return {
             id: s.studentId,
-            studentName: s.studentName,
+            studentName: s.studentName || 'طالب',
             initials: initials.toUpperCase(),
-            courseName: s.classroomName || 'â€”',
+            courseName: s.classroomName || '—',
             averageScore: Number(normalizedScore.toFixed(1)),
             riskLevel: normalizedScore < 50 ? 'high' : 'medium',
           };
@@ -199,16 +205,16 @@ export class TeacherDashboardService {
 
         // Update Recent Submissions
         const recentSubmissions: RecentSubmission[] = data.recentSubmissions.map((s) => {
-          const names = s.studentName.split(' ');
+          const names = s.studentName ? s.studentName.split(' ') : ['طالب'];
           const initials =
             names.length > 1 ? names[0].charAt(0) + names[1].charAt(0) : names[0].charAt(0);
 
           const normalizedScore = this.normalizeScore(s.score, s.maxScore);
           return {
             id: s.examAttemptId,
-            studentName: s.studentName,
+            studentName: s.studentName || 'طالب',
             initials: initials.toUpperCase(),
-            timeAgoKey: 'SHARED.TIME.RECENTLY', // You can add logic to format date to timeAgo
+            timeAgoKey: 'SHARED.TIME.RECENTLY',
             examTitle: s.examTitle,
             score: normalizedScore,
             gradeType:
