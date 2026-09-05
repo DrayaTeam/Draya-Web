@@ -26,12 +26,12 @@ describe('AdminFinancialService', () => {
 
   it('should get overview', () => {
     service.getOverview().subscribe((res) => {
-      expect(res.totalClassroomRevenues).toBe(1000);
+      expect(res.totalClassroomRevenue).toBe(1000);
     });
 
     const req = httpMock.expectOne((r) => r.url.endsWith('/admin/financial/overview'));
     expect(req.request.method).toBe('GET');
-    req.flush({ totalClassroomRevenues: 1000 });
+    req.flush({ totalClassroomRevenue: 1000 });
   });
 
   it('should get withdrawals with params', () => {

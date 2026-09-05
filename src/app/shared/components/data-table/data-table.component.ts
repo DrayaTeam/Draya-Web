@@ -1,6 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ButtonComponent } from '../button/button.component';
 import { DrayaEmptyStateComponent } from '../empty-state/empty-state.component';
 
 export interface Column<T = Record<string, unknown>> {
@@ -13,7 +12,7 @@ export interface Column<T = Record<string, unknown>> {
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, DrayaEmptyStateComponent],
+  imports: [CommonModule, DrayaEmptyStateComponent],
   template: `
     @if (data.length === 0) {
       <draya-empty-state
@@ -79,22 +78,22 @@ export interface Column<T = Record<string, unknown>> {
               الصفحة {{ currentPage }} من {{ totalPages }} ({{ data.length }} عناصر إجمالاً)
             </span>
             <div class="flex gap-1.5">
-              <app-button
-                variant="secondary"
-                size="sm"
+              <button
+                type="button"
+                class="border-border bg-card text-foreground hover:bg-muted inline-flex items-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors disabled:pointer-events-none disabled:opacity-50"
                 [disabled]="currentPage === 1"
-                (btnClick)="prevPage()">
+                (click)="prevPage()">
                 السابق
-                <span class="pi pi-chevron-left" style="font-size: 0.75rem;"></span>
-              </app-button>
-              <app-button
-                variant="secondary"
-                size="sm"
+                <span class="pi pi-chevron-left text-[10px]"></span>
+              </button>
+              <button
+                type="button"
+                class="border-border bg-card text-foreground hover:bg-muted inline-flex items-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors disabled:pointer-events-none disabled:opacity-50"
                 [disabled]="currentPage === totalPages"
-                (btnClick)="nextPage()">
+                (click)="nextPage()">
                 التالي
-                <span class="pi pi-chevron-right" style="font-size: 0.75rem;"></span>
-              </app-button>
+                <span class="pi pi-chevron-right text-[10px]"></span>
+              </button>
             </div>
           </div>
         }

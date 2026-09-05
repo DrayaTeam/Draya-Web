@@ -14,13 +14,13 @@ describe('AdminDashboardComponent', () => {
   let financialServiceSpy: jasmine.SpyObj<AdminFinancialService>;
 
   const mockOverview: FinancialOverviewDto = {
-    totalClassroomRevenues: 125000,
-    totalCommissionFees: 18750,
+    totalClassroomRevenue: 125000,
+    totalCommissionCollected: 18750,
     totalTopUps: 45000,
-    totalAiExamFees: 12000,
-    totalEarnedTeacherBalance: 85000,
-    totalPurchasedTeacherBalance: 33000,
-    totalEarnedDue: 15000,
+    totalAIExamCharges: 12000,
+    totalTeacherEarnedBalance: 85000,
+    totalTeacherPurchasedBalance: 33000,
+    totalOutstandingEarnedBalance: 15000,
   };
 
   beforeEach(async () => {
@@ -55,8 +55,8 @@ describe('AdminDashboardComponent', () => {
 
   it('should load financial overview on init', () => {
     expect(financialServiceSpy.getOverview).toHaveBeenCalled();
-    expect(component.overview()?.totalClassroomRevenues).toBe(125000);
-    expect(component.overview()?.totalCommissionFees).toBe(18750);
+    expect(component.overview()?.totalClassroomRevenue).toBe(125000);
+    expect(component.overview()?.totalCommissionCollected).toBe(18750);
     expect(component.loading()).toBeFalse();
   });
 
@@ -72,7 +72,7 @@ describe('AdminDashboardComponent', () => {
   it('should fallback to zero values gracefully on API error', () => {
     financialServiceSpy.getOverview.and.returnValue(throwError(() => new Error('Server Error')));
     component.loadOverview();
-    expect(component.overview()?.totalClassroomRevenues).toBe(0);
+    expect(component.overview()?.totalClassroomRevenue).toBe(0);
     expect(component.loading()).toBeFalse();
   });
 });

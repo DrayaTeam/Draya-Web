@@ -8,7 +8,10 @@ import {
   effect,
 } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators, FormArray } from '@angular/forms';
-import { ExamQuestionDto, UpdateQuestionRequest } from '../../../../../../core/models/teacher-exam.model';
+import {
+  ExamQuestionDto,
+  UpdateQuestionRequest,
+} from '../../../../../../core/models/teacher-exam.model';
 import { QuestionType } from '../../../../../../core/models/exam-generation.model';
 import { TeacherExamService } from '../../../../services/teacher-exam.service';
 import { ToastService } from '../../../../../../core/services/toast.service';

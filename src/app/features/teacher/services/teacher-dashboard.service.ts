@@ -113,22 +113,22 @@ export class TeacherDashboardService {
 
     // If maxScore is provided and > 0, calculate percentage directly
     if (maxScore != null && maxScore > 0) {
-      return Math.round((score / maxScore) * 100);
+      return Math.round((score / maxScore) * 1000) / 10;
     }
 
     if (score <= 1.0 && score > 0) {
-      return Math.round(score * 100);
+      return Math.round(score * 1000) / 10;
     }
 
     if (score > 1.0 && score <= 5.0) {
-      return Math.round((score / 5.0) * 100);
+      return Math.round(((score / 5.0) * 100) * 10) / 10;
     }
 
     if (score > 5.0 && score <= 10.0) {
-      return Math.round((score / 10.0) * 100);
+      return Math.round(((score / 10.0) * 100) * 10) / 10;
     }
 
-    return Math.min(100, Math.round(score));
+    return Math.min(100, Math.round(score * 10) / 10);
   }
 
   getDashboardData(): Observable<boolean> {
@@ -147,10 +147,7 @@ export class TeacherDashboardService {
           const avgIdx = newStats.findIndex((s) => s.id === 'class_avg');
           if (avgIdx > -1) {
             // Normalize fractional scores if any
-            const normalizedClassAvg = this.normalizeScore(
-              data.classAverage,
-              data.classAverageMax,
-            );
+            const normalizedClassAvg = this.normalizeScore(data.classAverage, data.classAverageMax);
             const avg = Number.isInteger(normalizedClassAvg)
               ? normalizedClassAvg
               : Number(normalizedClassAvg).toFixed(1);

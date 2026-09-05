@@ -83,11 +83,8 @@ export class ExamAttemptsComponent implements OnInit {
 
   getScorePercent(attempt: ExamAttemptDto): number | null {
     if (attempt.finalScore === undefined || attempt.finalScore === null) return null;
-    return formatExamScoreDisplay(
-      attempt.finalScore,
-      this.exam()?.totalQuestions,
-      attempt.maxScore,
-    ).percent;
+    return formatExamScoreDisplay(attempt.finalScore, this.exam()?.totalQuestions, attempt.maxScore)
+      .percent;
   }
 
   onPageChange(page: number): void {

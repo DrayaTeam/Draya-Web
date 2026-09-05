@@ -105,7 +105,8 @@
                     </span>
                     @if (attempt.maxScore || exam()?.totalQuestions) {
                       <span class="mt-0.5 text-xs text-gray-400">
-                        ({{ attempt.finalScore }} / {{ attempt.maxScore || exam()?.totalQuestions }})
+                        ({{ attempt.finalScore }} /
+                        {{ attempt.maxScore || exam()?.totalQuestions }})
                       </span>
                     }
                   } @else {
